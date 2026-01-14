@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # 首席全维量化科学家系统 (GUCP-X 20.0 Pro)
 
 ## 项目概述
@@ -362,7 +362,8 @@ python chief_quant_scientist_system.py
 **首席全维量化科学家系统 (GUCP-X 20.0 Pro)**
 
 *专业的量化分析系统，为您提供全面的数据分析和预测服务*
-=======
+
 # KL8-python
 KL8-python
 >>>>>>> af2ec50b21215c572708d3f5b06af2312a22416c
+
