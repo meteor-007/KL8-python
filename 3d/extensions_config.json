@@ -1,0 +1,9 @@
+{
+  "skills": {
+    "deer-flow-public": {
+      "enabled": true,
+      "path": "D:/Dpanqianyi/Python-Project/3d/deer-flow/skills/public",
+      "description": "Register DeerFlow public skills for local loading"
+    }
+  }
+}
