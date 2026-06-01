@@ -1,0 +1,34 @@
+# Python字节码缓存
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 各种缓存目录
+.cache/
+.pytest_cache/
+.mypy_cache/
+.hypothesis/
+
+# IDE缓存
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 虚拟环境
+venv/
+.venv/
+ENV/
+
+# 安装包
+dist/
+build/
+*.egg-info/
+
+# 日志文件
+*.log
+logs/
+
+# 临时文件
+*.tmp
+*.temp
