@@ -74,10 +74,14 @@ class DataLoader:
 
     @property
     def latest(self) -> Optional[KL8Draw]:
+        if not self._loaded:
+            self.load()
         return self._history[-1] if self._history else None
 
     def lag_warning(self) -> Optional[str]:
         """If daily_points latest period > history latest, return warning string."""
+        if not self._loaded:
+            self.load()
         if not self.daily_points_file.exists() or not self._history:
             return None
         text = self.daily_points_file.read_text(encoding="utf-8")
