@@ -1,11 +1,12 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Tuple
-import re
 
-from config.paths import KL8_HISTORY_FILE, DAILY_POINTS_FILE
+from config.paths import KL8_HISTORY_FILE
 from core.road_mapper import road_vector
+
 
 @dataclass
 class KL8Draw:
@@ -25,9 +26,10 @@ class KL8Draw:
 
 
 class DataLoader:
-    def __init__(self, history_file: Optional[Path] = None, daily_points: Optional[Path] = None):
+    """只读开奖历史 kl8_history_final.txt（与点位 daily_points 无关）。"""
+
+    def __init__(self, history_file: Optional[Path] = None):
         self.history_file = Path(history_file) if history_file else KL8_HISTORY_FILE
-        self.daily_points_file = Path(daily_points) if daily_points else DAILY_POINTS_FILE
         self._history: List[KL8Draw] = []
         self.skipped: int = 0
         self._loaded = False
@@ -77,19 +79,3 @@ class DataLoader:
         if not self._loaded:
             self.load()
         return self._history[-1] if self._history else None
-
-    def lag_warning(self) -> Optional[str]:
-        """If daily_points latest period > history latest, return warning string."""
-        if not self._loaded:
-            self.load()
-        if not self.daily_points_file.exists() or not self._history:
-            return None
-        text = self.daily_points_file.read_text(encoding="utf-8")
-        periods = re.findall(r"period:(\d+)", text)
-        if not periods:
-            return None
-        dp_latest = max(periods)
-        hist_latest = self._history[-1].period
-        if dp_latest > hist_latest:
-            return f"历史文件滞后: history={hist_latest}, daily_points={dp_latest}"
-        return None

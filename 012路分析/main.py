@@ -1,9 +1,9 @@
 """
 012路分析 — KL8 分路统计规则引擎（增强 ML）
 用法:
-    python main.py              # 完整：分析+预测+分层号码
+    python main.py              # 完整：分析+预测+分层号码 → 写 txt
     python main.py --analyze    # 仅深度分析
-    python main.py --predict    # 仅分路比+分层号码
+    python main.py --predict    # 仅分路比+分层号码 → 写 txt
     python main.py --review     # 复盘上期预测
     python main.py --backtest N # N 期回测
     python main.py --no-ml      # 关闭 ML
@@ -23,7 +23,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from config.model_config import ModelConfig
-from config.paths import OUTPUT_DIR, PRED_LOG, REPORT_JSON, REPORT_TXT
+from config.paths import OUTPUT_DIR, PRED_DIR, PRED_LOG, REPORT_JSON, REPORT_TXT
 from core.association import analyze_association
 from core.data_loader import DataLoader, KL8Draw
 from core.distribution import analyze_distribution
@@ -47,6 +47,11 @@ def fmt_nums(nums: Sequence[int], per_line: int = 10) -> str:
         chunk = nums[i : i + per_line]
         lines.append(" ".join(f"{n:02d}" for n in chunk))
     return "\n".join(lines)
+
+
+def next_period(period: str) -> str:
+    """下一期期号（开奖历史期内连续递增）。"""
+    return str(int(period) + 1)
 
 
 def build_cfg(args: argparse.Namespace) -> ModelConfig:
@@ -137,11 +142,85 @@ def run_predict(draws: List[KL8Draw], cfg: ModelConfig) -> dict:
     return {"prediction": pred, "scores": scores}
 
 
-def append_pred_log(period_based_on: str, payload: dict) -> None:
+def build_prediction_txt(
+    *,
+    based_on: KL8Draw,
+    target_period: str,
+    pred_block: dict,
+    analysis: Optional[dict] = None,
+) -> str:
+    """生成可读的每日预测 txt 全文。"""
+    pred = pred_block["prediction"]
+    scores = pred_block["scores"]
+    lines: List[str] = []
+    lines.append("=" * 70)
+    lines.append("012路分析 — 每日预测报告")
+    lines.append("=" * 70)
+    lines.append(f"生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    lines.append(f"数据依据期: {based_on.period}  开奖日={based_on.date}  分路={fmt_ratio(based_on.road)}")
+    lines.append(f"预测目标期: {target_period}")
+    lines.append("数据源: data/kl8_history_final.txt（开奖历史）")
+    lines.append("说明: daily_points.txt 为点位数据，本系统不参与开奖预测。")
+    lines.append("")
+    lines.append("-" * 70)
+    lines.append("一、下期分路比预测 (0路:1路:2路)")
+    lines.append("-" * 70)
+    lines.append(f"最佳预测: {fmt_ratio(pred['best'])}")
+    lines.append(f"置信度:   {pred['confidence']:.2f}")
+    lines.append(f"ML启用:   {pred['ml_used']}")
+    lines.append("Top3候选:")
+    for i, s in enumerate(pred["top3"], 1):
+        lines.append(f"  {i}. {fmt_ratio(s)}")
+    lines.append("")
+    lines.append("-" * 70)
+    lines.append("二、分层推荐号码")
+    lines.append("-" * 70)
+    for title, key in (
+        ("高置信推荐", "rec_high"),
+        ("中置信推荐", "rec_mid"),
+        ("低置信推荐", "rec_low"),
+    ):
+        nums = scores[key]
+        lines.append(f"[{title}] 共{len(nums)}个")
+        lines.append(fmt_nums(nums))
+        lines.append("")
+    lines.append("-" * 70)
+    lines.append("三、分层杀号")
+    lines.append("-" * 70)
+    for title, key in (("高置信杀号", "kill_high"), ("中置信杀号", "kill_mid")):
+        nums = scores[key]
+        lines.append(f"[{title}] 共{len(nums)}个")
+        lines.append(fmt_nums(nums))
+        lines.append("")
+    if analysis and "distribution" in analysis:
+        dist = analysis["distribution"]
+        lines.append("-" * 70)
+        lines.append("四、近期分路摘要")
+        lines.append("-" * 70)
+        lines.append(f"全量均值: {tuple(round(x, 2) for x in dist['mean_all'])}")
+        lines.append(f"近窗均值: {tuple(round(x, 2) for x in dist['mean_short'])}")
+        lines.append(f"热冷偏离: {tuple(round(x, 2) for x in dist['hot_cold']['dev'])}")
+        lines.append("Top形态:")
+        for ratio, cnt, freq in dist["top_patterns"][:5]:
+            lines.append(f"  {ratio}  ×{cnt} ({freq:.1%})")
+        lines.append("")
+    lines.append("=" * 70)
+    lines.append("免责声明: 快乐8近随机，本报告仅供统计分析参考，不构成投注建议。")
+    lines.append("=" * 70)
+    lines.append("")
+    return "\n".join(lines)
+
+
+def append_pred_log(
+    based_on_period: str,
+    target_period: str,
+    payload: dict,
+) -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     record = {
         "ts": datetime.now().isoformat(timespec="seconds"),
-        "based_on_period": period_based_on,
+        "based_on_period": based_on_period,
+        "target_period": target_period,
         "best": list(payload["prediction"]["best"]),
         "top3": [list(x) for x in payload["prediction"]["top3"]],
         "confidence": payload["prediction"]["confidence"],
@@ -156,9 +235,18 @@ def append_pred_log(period_based_on: str, payload: dict) -> None:
         f.write(json.dumps(record, ensure_ascii=False) + "\n")
 
 
-def write_reports(text: str, data: dict) -> None:
+def write_prediction_files(
+    txt_body: str,
+    data: dict,
+    target_period: str,
+) -> Path:
+    """写入 latest_report.txt + predictions/prediction_{期号}.txt + json。"""
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    REPORT_TXT.write_text(text, encoding="utf-8")
+    PRED_DIR.mkdir(parents=True, exist_ok=True)
+
+    period_txt = PRED_DIR / f"prediction_{target_period}.txt"
+    period_txt.write_text(txt_body, encoding="utf-8")
+    REPORT_TXT.write_text(txt_body, encoding="utf-8")
 
     def _default(o: Any):
         if isinstance(o, tuple):
@@ -169,6 +257,7 @@ def write_reports(text: str, data: dict) -> None:
         json.dumps(data, ensure_ascii=False, indent=2, default=_default),
         encoding="utf-8",
     )
+    return period_txt
 
 
 def run_review(loader: DataLoader) -> None:
@@ -182,13 +271,16 @@ def run_review(loader: DataLoader) -> None:
         return
     last = json.loads(lines[-1])
     based = last["based_on_period"]
-    # 找 based 之后的下一期实际开奖
+    target = last.get("target_period") or next_period(based)
     hist = loader.history
-    idx = next((i for i, d in enumerate(hist) if d.period == based), None)
-    if idx is None or idx + 1 >= len(hist):
-        print(f"  基于期 {based} 尚无下一期开奖可复盘。")
-        return
-    actual = hist[idx + 1]
+    actual = next((d for d in hist if d.period == target), None)
+    if actual is None:
+        # 兼容旧日志：取 based 的下一期
+        idx = next((i for i, d in enumerate(hist) if d.period == based), None)
+        if idx is None or idx + 1 >= len(hist):
+            print(f"  目标期 {target} 尚无开奖可复盘（请先更新 kl8_history_final.txt）。")
+            return
+        actual = hist[idx + 1]
     best = tuple(last["best"])
     top3 = [tuple(x) for x in last["top3"]]
     exact = actual.road == best
@@ -199,7 +291,7 @@ def run_review(loader: DataLoader) -> None:
     kill_miss = len(kill - opened) / len(kill) if kill else 0.0
     rec_hit = len(rec & opened)
 
-    print(f"  预测基于期: {based}")
+    print(f"  预测基于期: {based} → 目标期: {target}")
     print(f"  实际期: {actual.period}  分路={fmt_ratio(actual.road)}")
     print(f"  预测最佳: {fmt_ratio(best)}  精确命中={exact}  Top3命中={in_top3}")
     print(f"  杀号未开出率: {kill_miss:.1%}  (杀{len(kill)}个)")
@@ -219,7 +311,6 @@ def run_backtest(draws: List[KL8Draw], cfg: ModelConfig, n: int) -> None:
     for i in range(start, len(draws)):
         train = draws[:i]
         actual = draws[i]
-        # 回测默认关 ML 加速；若 cfg.use_ml 仍尊重配置
         bt_cfg = ModelConfig(**{**cfg.__dict__})
         pred = RoadPredictor(train, bt_cfg).predict()
         scores = NumberScorer(train, bt_cfg).score(pred["best"])
@@ -262,18 +353,18 @@ def main() -> int:
         print(f"❌ {e}")
         return 1
 
-    warn = loader.lag_warning()
-    if warn:
-        print(f"⚠️  {warn}")
-
     draws = loader.history
     if not draws:
         print("❌ 历史为空")
         return 1
 
     latest = loader.latest
+    target = next_period(latest.period)
     print(f"╔{'═' * (WIDTH - 2)}╗")
-    print(f"║  012路分析  最新期 {latest.period}  分路 {fmt_ratio(latest.road):<{WIDTH - 28}}║")
+    print(
+        f"║  012路分析  依据期 {latest.period} → 预测期 {target}  "
+        f"分路 {fmt_ratio(latest.road):<{WIDTH - 42}}║"
+    )
     print(f"╚{'═' * (WIDTH - 2)}╝")
     if loader.skipped:
         print(f"  (跳过异常行 {loader.skipped} 条)")
@@ -281,12 +372,10 @@ def main() -> int:
     do_all = not (args.analyze or args.predict or args.review or args.backtest is not None)
 
     report_data: Dict[str, Any] = {
-        "latest_period": latest.period,
+        "based_on_period": latest.period,
+        "target_period": target,
         "latest_road": latest.road,
     }
-    text_chunks: List[str] = [
-        f"012路分析报告  period={latest.period}  road={fmt_ratio(latest.road)}"
-    ]
 
     if args.review:
         run_review(loader)
@@ -296,6 +385,7 @@ def main() -> int:
         run_backtest(draws, cfg, args.backtest)
         return 0
 
+    analysis = None
     if do_all or args.analyze:
         analysis = run_analyze(draws, cfg)
         report_data["analysis"] = analysis
@@ -307,15 +397,27 @@ def main() -> int:
             k: pred_block["scores"][k]
             for k in ("rec_high", "rec_mid", "rec_low", "kill_high", "kill_mid")
         }
-        append_pred_log(latest.period, pred_block)
-        text_chunks.append(
-            f"best={fmt_ratio(pred_block['prediction']['best'])} "
-            f"conf={pred_block['prediction']['confidence']:.2f}"
+        append_pred_log(latest.period, target, pred_block)
+        txt_body = build_prediction_txt(
+            based_on=latest,
+            target_period=target,
+            pred_block=pred_block,
+            analysis=analysis if do_all else None,
         )
+        out_path = write_prediction_files(txt_body, report_data, target)
+        print(f"\n  预测TXT已写入: {out_path}")
+        print(f"  同步副本:       {REPORT_TXT}")
+        print(f"  JSON:           {REPORT_JSON}")
+    elif do_all or args.analyze:
+        # 仅分析时写简要 txt
+        body = (
+            f"012路分析（仅分析）\n"
+            f"依据期={latest.period} 分路={fmt_ratio(latest.road)}\n"
+            f"生成时间={datetime.now().isoformat(timespec='seconds')}\n"
+        )
+        REPORT_TXT.write_text(body, encoding="utf-8")
+        print(f"\n  报告已写入: {REPORT_TXT}")
 
-    write_reports("\n".join(text_chunks) + "\n", report_data)
-    print(f"\n  报告已写入: {REPORT_TXT}")
-    print(f"  JSON已写入: {REPORT_JSON}")
     return 0
 
 
