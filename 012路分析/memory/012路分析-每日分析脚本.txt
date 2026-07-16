@@ -1,0 +1,38 @@
+# 012路分析 — 每日分析脚本
+
+## 目录
+D:\Dpanqianyi\Python-Project\012路分析
+
+## 日常命令
+
+```bat
+cd /d D:\Dpanqianyi\Python-Project\012路分析
+python main.py
+python main.py --review
+python main.py --backtest 30
+```
+
+## 常用参数
+
+- `--analyze`  仅深度分析
+- `--predict`  仅分路比 + 分层推荐/杀号
+- `--no-ml`    关闭随机森林增强（更快）
+- `--window N` 分析近窗覆盖
+
+## 数据
+
+- 开奖历史：`..\data\kl8_history_final.txt`
+- 若 `daily_points.txt` 期号更新而历史滞后，启动会警告
+
+## 输出
+
+- `outputs/latest_report.txt`
+- `outputs/latest_report.json`
+- `outputs/pred_logs.jsonl`（供 --review 复盘）
+
+## 分路规则
+
+- 0路: n%3==0（26个）
+- 1路: n%3==1（27个）
+- 2路: n%3==2（27个）
+- 期望约 7:7:6（精确 6.5:6.75:6.75）
