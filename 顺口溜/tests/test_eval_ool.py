@@ -9,8 +9,8 @@ from 顺口溜 import eval_ool
 
 class TestEvalOOL(unittest.TestCase):
     def test_correct_baseline_for_two_choice(self):
-        # 二选一规则至少一中基线 = 1-(0.75)^2
-        self.assertAlmostEqual(eval_ool.at_least_one_baseline(2), 1 - 0.75 ** 2)
+        # 二选一规则至少一中基线（精确超几何）= 1 - C(60,2)/C(80,2)
+        self.assertAlmostEqual(eval_ool.at_least_one_baseline(2), 1 - 1770 / 3160)
 
     def test_parse_history(self):
         lines = [

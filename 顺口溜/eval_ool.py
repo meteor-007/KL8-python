@@ -18,8 +18,9 @@ def parse_numbers(lines):
 
 
 def at_least_one_baseline(k):
-    """随机选 k 个号至少一中基线 = 1 - (1-20/80)^k = 1 - 0.75^k。"""
-    return 1.0 - 0.75 ** k
+    """随机选 k 个号至少一中基线（不放回超几何精确值）= 1 - C(60,k)/C(80,k)。"""
+    from math import comb
+    return 1.0 - comb(80 - 20, k) / comb(80, k)
 
 
 def hit_rate_for_rule(rule_outputs, actuals):
