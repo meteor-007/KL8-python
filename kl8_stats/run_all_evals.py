@@ -514,7 +514,11 @@ def _eval_aggregate(draws, history_len=60, n_perm=200, seed=0):
                     records_le = [
                         r for r in collector.get_deduped_records() if r.period <= T
                     ]
-                    history_le = {p: s for p, s in history.items() if p <= T}
+                    # 严格要求 p < T：目标期 T 自己的开奖不得进入稳定特征索引，
+                    # 否则 T 恒为近期窗口最新一期，num_period_hits[T] 会命中 T 的结果，
+                    # 违反「≤T-1 历史预测 T 期」。records_le 保持 ≤T（T 的记录是聚合输入，
+                    # 当 T 的开奖不在 history 中时其记录降级为 pending，退出命中率计算）。
+                    history_le = {p: s for p, s in history.items() if p < T}
 
                     class _LeCollector:
                         def get_deduped_records(self):
