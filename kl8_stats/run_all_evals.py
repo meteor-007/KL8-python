@@ -394,11 +394,10 @@ def _eval_data(draws, history_len=60, n_perm=200, seed=0):
 #    需 daily_points.txt 提供点位；目标期 T 必须有点位，否则跳过。
 # ────────────────────────────────────────────────────────────────
 _ZD_POINTS_DF = None
-_ZD_HISTORY_DF = None
 
 
 def _eval_zdpoint(draws, history_len=60, n_perm=200, seed=0):
-    global _ZD_POINTS_DF, _ZD_HISTORY_DF
+    global _ZD_POINTS_DF
 
     def build(mod):
         me_mod = mod  # 已加载 model_engine.py
@@ -497,22 +496,43 @@ def _eval_aggregate(draws, history_len=60, n_perm=200, seed=0):
                         date_period_map=agg_mod.build_date_period_map()
                     )
                     collector.collect_all()
-                    analyzer = agg_mod.StableHitAnalyzer(collector, history, window=20)
-                    aggregator = agg_mod.ZoneDeepAggregator(
-                        collector, analyzer, history
-                    )
-                    _AGG_CTX = (collector, aggregator)
+                    _AGG_CTX = (collector, history)
             return _AGG_CTX
 
         def pred(hist_lines):
             periods = [_parse_line(ln)[0] for ln in hist_lines]
             T = str(periods[-1] + 1)
             try:
-                collector, aggregator = get_ctx()
+                collector, history = get_ctx()
                 if not collector.get_records_by_period(T):
                     return []  # 目标期无生产预测记录，聚合无输入
                 with _quiet():
-                    res = aggregator.aggregate_period(T)
+                    # 严格未来隔离：为每个目标期 T 重建分析器，仅用 ≤T 的记录与开奖。
+                    # StableHitAnalyzer 的"近期窗口"取 self.all_periods 中最新 20 期；
+                    # 若用全量索引，对过去的 T 会取到 T 之后的未来期（开奖泄漏）。
+                    # 故按 T 过滤记录与 history，使稳定命中特征只基于 ≤T-1 数据。
+                    records_le = [
+                        r for r in collector.get_deduped_records() if r.period <= T
+                    ]
+                    history_le = {p: s for p, s in history.items() if p <= T}
+
+                    class _LeCollector:
+                        def get_deduped_records(self):
+                            return records_le
+
+                        def get_all_periods(self):
+                            return {r.period for r in records_le}
+
+                        def get_records_by_period(self, period):
+                            return [r for r in records_le if r.period == period]
+
+                    analyzer_le = agg_mod.StableHitAnalyzer(
+                        _LeCollector(), history_le, window=20
+                    )
+                    aggregator_le = agg_mod.ZoneDeepAggregator(
+                        _LeCollector(), analyzer_le, history_le
+                    )
+                    res = aggregator_le.aggregate_period(T)
                 return [c["num"] for c in res.get("global_elite_12", [])] or []
             except Exception:
                 return []
@@ -542,9 +562,8 @@ def _wilson_lift_ci(hits, n, mean_hits):
     return (lo / 0.25, hi / 0.25)
 
 
-def _fmt_ci(ci, lift):
-    if not ci:
-        return "—"
+def _fmt_ci(ci):
+    """格式化 95%CI 为 `lo~hi`。ci 恒为 (lo, hi) 二元组。"""
     return f"{ci[0]:.2f}~{ci[1]:.2f}"
 
 
@@ -643,7 +662,7 @@ def _render_report(rows, args):
         if r["ok"]:
             out.append(
                 "| {name} | {lift:.2f} | {ci} | {p:.3f} | {n} | {hits} | {verdict} |"
-                .format(name=r["name"], lift=r["lift"], ci=_fmt_ci(r["ci"], r["lift"]),
+                .format(name=r["name"], lift=r["lift"], ci=_fmt_ci(r["ci"]),
                         p=r["p"], n=r["n"], hits=r["hits"], verdict=r["verdict"])
             )
         else:
