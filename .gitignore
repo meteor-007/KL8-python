@@ -32,3 +32,26 @@ logs/
 # 临时文件
 *.tmp
 *.temp
+*.excel_lock
+
+# 敏感文件
+cookies.txt
+
+# Windows误生成的nul文件
+nul
+
+# ================================
+# KL8 量化系统动态数据物理隔离区
+# 彻底封堵 Language Server 内存泄漏
+# ================================
+data/
+output/
+reports/
+models/
+*.csv
+*.json_lock
+.agents/
+.codegraph/
+
+# 运行时生成的每日信号审计报告
+数据汇总复盘/信号审计报告_*.md
