@@ -37,6 +37,9 @@ logs/
 # 敏感文件
 cookies.txt
 
+# Claude Code 本机配置（权限规则/启动配置，不上传）
+.claude/
+
 # Windows误生成的nul文件
 nul
 
