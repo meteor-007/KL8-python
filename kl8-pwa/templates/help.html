@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KL8 PWA 操作指南</title>
+    <style>
+        :root {
+            --bg: #0f0f1a; --bg2: #1a1a2e; --bg3: #16213e;
+            --card: #1f1f38; --border: #2d2d5e;
+            --text: #e0e0f0; --text2: #8888aa; --text3: #555577;
+            --primary: #6c5ce7; --primary-glow: rgba(108,92,231,0.3);
+            --success: #00b894; --danger: #e74c3c; --warning: #fdcb6e; --info: #74b9ff;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.7;
+        }
+        .header {
+            background: linear-gradient(135deg, var(--bg2), var(--bg3));
+            border-bottom: 1px solid var(--border);
+            padding: 16px 20px; position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .header h1 {
+            font-size: 20px; font-weight: 700;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .header a { color: var(--primary); text-decoration: none; font-size: 14px; padding: 6px 14px; border: 1px solid var(--primary); border-radius: 8px; transition: all .2s; }
+        .header a:hover { background: var(--primary); color: #fff; }
+        .container { max-width: 860px; margin: 0 auto; padding: 20px 16px 80px; }
+
+        /* ── 概览卡片 ── */
+        .overview {
+            background: linear-gradient(135deg, rgba(108,92,231,0.1), rgba(0,184,148,0.06));
+            border: 1px solid rgba(108,92,231,0.2);
+            border-radius: 14px; padding: 20px; margin-bottom: 24px;
+        }
+        .overview h2 { font-size: 18px; margin-bottom: 10px; color: var(--primary); }
+        .overview p { font-size: 14px; color: var(--text2); }
+        .overview .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+        .overview .tag { font-size: 12px; padding: 3px 10px; border-radius: 12px; background: var(--bg2); color: var(--text2); border: 1px solid var(--border); }
+
+        /* ── 章节标题 ── */
+        .section { margin-bottom: 32px; }
+        .section-title {
+            font-size: 20px; font-weight: 700; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 10px;
+            padding-bottom: 10px; border-bottom: 2px solid var(--border);
+        }
+        .section-title .num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--primary); color: #fff; font-size: 15px; font-weight: 700;
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+
+        /* ── 步骤卡片 ── */
+        .step-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px; margin-bottom: 14px;
+        }
+        .step-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+        .step-card .step-desc { font-size: 13px; color: var(--text2); margin-bottom: 10px; }
+        .step-card .step-tip {
+            font-size: 12px; padding: 8px 12px; border-radius: 8px;
+            background: rgba(116,185,255,0.08); border: 1px solid rgba(116,185,255,0.2);
+            color: var(--info); margin-top: 8px;
+        }
+        .step-card .step-warn {
+            font-size: 12px; padding: 8px 12px; border-radius: 8px;
+            background: rgba(253,203,110,0.08); border: 1px solid rgba(253,203,110,0.2);
+            color: var(--warning); margin-top: 8px;
+        }
+
+        /* ── UI 模拟图 ── */
+        .ui-mockup {
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 10px; padding: 14px; margin: 12px 0;
+            font-size: 12px; font-family: 'Cascadia Code', monospace;
+        }
+        .ui-mockup .mockup-label { font-size: 11px; color: var(--text3); margin-bottom: 8px; font-family: sans-serif; }
+
+        /* 步骤条模拟 */
+        .mockup-stepper { display: flex; justify-content: space-between; align-items: center; padding: 8px 4px; }
+        .mockup-step { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .mockup-circle { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid var(--border); color: var(--text3); }
+        .mockup-circle.active { border-color: var(--primary); background: var(--primary); color: #fff; }
+        .mockup-circle.done { border-color: var(--success); background: var(--success); color: #fff; }
+        .mockup-circle.running { border-color: var(--primary); background: var(--primary); color: #fff; animation: pulse 1.5s infinite; }
+        .mockup-label-step { font-size: 9px; color: var(--text2); text-align: center; }
+        .mockup-connector { flex: 1; height: 2px; background: var(--border); margin: 0 2px; margin-top: 14px; }
+        .mockup-connector.done { background: var(--success); }
+        @keyframes pulse { 0%,100%{box-shadow:0 0 5px var(--primary-glow);} 50%{box-shadow:0 0 15px var(--primary-glow);} }
+
+        /* 按钮模拟 */
+        .mockup-btn { display: inline-block; padding: 4px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; }
+        .mockup-btn-primary { background: var(--primary); color: #fff; }
+        .mockup-btn-success { background: var(--success); color: #fff; }
+        .mockup-btn-outline { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
+
+        /* 号码徽章模拟 */
+        .mockup-num { display: inline-block; min-width: 24px; text-align: center; padding: 2px 5px; margin: 1px; border-radius: 4px; font-size: 11px; color: #fff; font-weight: 500; }
+        .mockup-progress { width: 100%; height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin: 6px 0; }
+        .mockup-progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--success)); border-radius: 3px; }
+
+        /* 子系统卡片模拟 */
+        .mockup-subgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 8px 0; }
+        .mockup-subcard { background: var(--bg3); border-radius: 6px; padding: 8px; text-align: center; font-size: 10px; }
+        .mockup-subcard .sub-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 3px; }
+
+        /* 日志模拟 */
+        .mockup-log { background: #080810; border-radius: 6px; padding: 8px; font-size: 10px; line-height: 1.6; max-height: 100px; overflow: hidden; }
+        .mockup-log .log-line { color: var(--text2); }
+        .mockup-log .log-ok { color: var(--success); }
+        .mockup-log .log-err { color: var(--danger); }
+        .mockup-log .log-sys { color: var(--primary); }
+
+        /* 预测结果模拟 */
+        .mockup-pred { background: var(--bg3); border-radius: 8px; padding: 10px; margin: 6px 0; }
+        .mockup-pred-title { font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+        .mockup-pred-label { font-size: 10px; color: var(--text2); margin-top: 4px; }
+
+        /* ── 表格 ── */
+        .info-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 13px; }
+        .info-table th { background: var(--bg2); color: var(--text); padding: 8px 10px; text-align: left; border: 1px solid var(--border); font-weight: 600; }
+        .info-table td { padding: 8px 10px; border: 1px solid var(--border); color: var(--text2); }
+        .info-table tr:hover td { background: var(--bg2); }
+
+        /* ── 流程图 ── */
+        .flow-diagram { display: flex; flex-direction: column; gap: 0; margin: 16px 0; }
+        .flow-node {
+            display: flex; align-items: center; gap: 12px;
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 12px 16px;
+            position: relative;
+        }
+        .flow-node .flow-icon { font-size: 24px; }
+        .flow-node .flow-info { flex: 1; }
+        .flow-node .flow-info h4 { font-size: 14px; font-weight: 600; }
+        .flow-node .flow-info p { font-size: 12px; color: var(--text2); margin-top: 2px; }
+        .flow-node .flow-time { font-size: 11px; color: var(--text3); background: var(--bg2); padding: 2px 8px; border-radius: 10px; }
+        .flow-arrow { text-align: center; color: var(--text3); font-size: 16px; margin: -2px 0; }
+
+        /* ── 命令行 ── */
+        .cmd-block {
+            background: #080810; border: 1px solid var(--border); border-radius: 8px;
+            padding: 12px; font-family: 'Cascadia Code', monospace; font-size: 12px;
+            color: var(--success); margin: 10px 0; overflow-x: auto;
+        }
+        .cmd-block .cmd-comment { color: var(--text3); }
+
+        /* ── 目录 ── */
+        .toc {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px; margin-bottom: 24px;
+        }
+        .toc h3 { font-size: 14px; margin-bottom: 10px; color: var(--text); }
+        .toc ul { list-style: none; }
+        .toc li { padding: 4px 0; font-size: 13px; }
+        .toc a { color: var(--primary); text-decoration: none; transition: color .2s; }
+        .toc a:hover { color: #a29bfe; text-decoration: underline; }
+
+        /* ── FAQ ── */
+        .faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+        .faq-item .faq-q { font-size: 14px; font-weight: 600; color: var(--warning); margin-bottom: 6px; }
+        .faq-item .faq-a { font-size: 13px; color: var(--text2); }
+
+        @media (max-width: 600px) {
+            .mockup-subgrid { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 14px 10px 60px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>📋 KL8 PWA 操作指南</h1>
+    <a href="/">← 返回主页</a>
+</div>
+
+<div class="container">
+
+    <!-- ════════ 概览 ════════ -->
+    <div class="overview">
+        <h2>🎯 KL8 每日全流程调度系统</h2>
+        <p>本系统是一个 PWA (Progressive Web App) 应用，用于自动化执行快乐8每日全流程分析。通过 6 个步骤完成从数据采集到预测输出的完整流程，支持 SSE 实时日志推送、7 个子系统顺序执行、预测结果一键复制/导出。</p>
+        <div class="tags">
+            <span class="tag">🖥️ PWA 离线可用</span>
+            <span class="tag">📡 SSE 实时推送</span>
+            <span class="tag">⚡ 7子系统顺序执行</span>
+            <span class="tag">📋 一键复制/导出</span>
+            <span class="tag">🔄 失败重试</span>
+        </div>
+    </div>
+
+    <!-- ════════ 目录 ════════ -->
+    <div class="toc">
+        <h3>📑 目录</h3>
+        <ul>
+            <li>🔹 <a href="#start">一、启动应用</a></li>
+            <li>🔹 <a href="#flow">二、整体流程概览</a></li>
+            <li>🔹 <a href="#step1">三、Step 1 — 确认今日点位</a></li>
+            <li>🔹 <a href="#step2">四、Step 2 — 执行 Data 子系统</a></li>
+            <li>🔹 <a href="#step3">五、Step 3 — 顺序执行 7 个分析子系统</a></li>
+            <li>🔹 <a href="#step4">六、Step 4 — 输入 Gemini 金银铜数据</a></li>
+            <li>🔹 <a href="#step5">七、Step 5 — 执行数据汇总复盘</a></li>
+            <li>🔹 <a href="#step6">八、Step 6 — 预测结果汇总</a></li>
+            <li>🔹 <a href="#tips">九、使用技巧与注意事项</a></li>
+            <li>🔹 <a href="#faq">十、常见问题 (FAQ)</a></li>
+        </ul>
+    </div>
+
+    <!-- ════════ 启动 ════════ -->
+    <div class="section" id="start">
+        <div class="section-title"><span class="num">1</span> 🚀 启动应用</div>
+
+        <div class="step-card">
+            <h3>方式一：双击启动（推荐）</h3>
+            <div class="step-desc">在 <code>kl8-pwa</code> 目录下双击 <code>start.bat</code> 文件即可启动。</div>
+            <div class="cmd-block">
+                <span class="cmd-comment"># 文件位置</span><br>
+                D:\Dpanqianyi\Python-Project\kl8-pwa\start.bat
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h3>方式二：命令行启动</h3>
+            <div class="cmd-block">
+                <span class="cmd-comment"># 进入目录</span><br>
+                cd D:\Dpanqianyi\Python-Project\kl8-pwa<br><br>
+                <span class="cmd-comment"># 启动应用</span><br>
+                python app.py
+            </div>
+            <div class="step-desc">启动后终端会显示如下信息：</div>
+            <div class="ui-mockup">
+                <div class="mockup-label">终端输出</div>
+                <div style="color:var(--success)">============================================================</div>
+                <div style="color:var(--primary)">  KL8 每日全流程调度 PWA v2.0 (SSE实时推送)</div>
+                <div style="color:var(--info)">  http://localhost:5888</div>
+                <div style="color:var(--success)">============================================================</div>
+                <div style="color:var(--text2)"> * Running on http://127.0.0.1:5888</div>
+                <div style="color:var(--text2)"> * Running on http://192.168.x.x:5888</div>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h3>方式三：手机访问（PWA 安装）</h3>
+            <div class="step-desc">在同一局域网下，用手机浏览器访问 <code>http://你的电脑IP:5888</code>，可添加到主屏幕作为 PWA 应用使用。</div>
+            <div class="step-tip">💡 提示：确保手机和电脑在同一 WiFi 网络下，防火墙允许 5888 端口访问。</div>
+            <div class="step-warn">🔐 访问控制：应用默认监听 <code>0.0.0.0</code>（局域网可访问）。如需防止局域网其他设备触发重型任务，可设置环境变量 <code>TOKEN</code>（或创建 <code>kl8-pwa/token.txt</code> 写入一行令牌）。启用后所有 <code>/api/</code> 请求必须携带令牌：在浏览器控制台执行 <code>localStorage.setItem('kl8_api_token','你的令牌')</code> 后刷新页面即可自动附带。</div>
+        </div>
+
+        <div class="step-card">
+            <h3>访问页面</h3>
+            <div class="step-desc">浏览器打开 <code>http://localhost:5888</code>，你将看到如下主界面：</div>
+            <div class="ui-mockup">
+                <div class="mockup-label">主界面顶部</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+                    <div>
+                        <div style="font-size:15px;font-weight:700;color:var(--primary)">🎯 KL8 每日全流程调度</div>
+                        <div style="font-size:10px;color:var(--text2)">SSE实时推送 · 7子系统顺序执行 · PYTHONUNBUFFERED无缓冲</div>
+                    </div>
+                    <div style="font-size:10px;color:var(--success);background:var(--bg2);padding:3px 8px;border-radius:12px;border:1px solid var(--border)">
+                        🟢 实时连接
+                    </div>
+                </div>
+                <div class="mockup-stepper" style="margin-top:10px">
+                    <div class="mockup-step"><div class="mockup-circle active">1</div><div class="mockup-label-step">点位输入</div></div>
+                    <div class="mockup-connector"></div>
+                    <div class="mockup-step"><div class="mockup-circle">2</div><div class="mockup-label-step">Data</div></div>
+                    <div class="mockup-connector"></div>
+                    <div class="mockup-step"><div class="mockup-circle">3</div><div class="mockup-label-step">7系统顺序</div></div>
+                    <div class="mockup-connector"></div>
+                    <div class="mockup-step"><div class="mockup-circle">4</div><div class="mockup-label-step">Gemini</div></div>
+                    <div class="mockup-connector"></div>
+                    <div class="mockup-step"><div class="mockup-circle">5</div><div class="mockup-label-step">汇总复盘</div></div>
+                    <div class="mockup-connector"></div>
+                    <div class="mockup-step"><div class="mockup-circle">6</div><div class="mockup-label-step">预测结果</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════ 流程概览 ════════ -->
+    <div class="section" id="flow">
+        <div class="section-title"><span class="num">2</span> 📊 整体流程概览</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">系统共分 6 个步骤，按顺序执行，全程自动化流转：</p>
+
+        <div class="flow-diagram">
+            <div class="flow-node">
+                <span class="flow-icon">📍</span>
+                <div class="flow-info">
+                    <h4>Step 1: 确认今日点位</h4>
+                    <p>自动读取 daily_points.txt，确认今日 20 个点位号码</p>
+                </div>
+                <span class="flow-time">~5秒</span>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">
+                <span class="flow-icon">📂</span>
+                <div class="flow-info">
+                    <h4>Step 2: 执行 Data 子系统</h4>
+                    <p>数据采集 → 热码统计 → Excel同步 → 分析报告（12个子任务串行）</p>
+                </div>
+                <span class="flow-time">~3-5分钟</span>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">
+                <span class="flow-icon">⚡</span>
+                <div class="flow-info">
+                    <h4>Step 3: 顺序执行 7 个分析子系统</h4>
+                    <p>双层LSTM / 顺口溜 / 重点点位 / 定金选2 / KillSeeker / 点位期数 / gemini选2</p>
+                </div>
+                <span class="flow-time">~3-5分钟</span>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">
+                <span class="flow-icon">🔮</span>
+                <div class="flow-info">
+                    <h4>Step 4: 输入 Gemini 金银铜数据</h4>
+                    <p>粘贴 Gemini 分析的金银铜数据，保存到汇总文件</p>
+                </div>
+                <span class="flow-time">~30秒</span>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">
+                <span class="flow-icon">📊</span>
+                <div class="flow-info">
+                    <h4>Step 5: 执行数据汇总复盘</h4>
+                    <p>V18.0聚合器 → Evolution Machine → 复盘分析报告</p>
+                </div>
+                <span class="flow-time">~2-3分钟</span>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-node">
+                <span class="flow-icon">🏆</span>
+                <div class="flow-info">
+                    <h4>Step 6: 预测结果汇总</h4>
+                    <p>8个子系统预测结果一目了然，支持一键复制/导出</p>
+                </div>
+                <span class="flow-time">即时</span>
+            </div>
+        </div>
+
+        <div class="step-tip">💡 总耗时约 10-15 分钟。Step 3 的 7 个子系统是<b>顺序执行</b>的（前一系统完成后自动启动下一系统）。每个步骤完成后会自动跳转到下一步。</div>
+    </div>
+
+    <!-- ════════ Step 1 ════════ -->
+    <div class="section" id="step1">
+        <div class="section-title"><span class="num">3</span> 📍 Step 1 — 确认今日点位</div>
+
+        <div class="step-card">
+            <h3>操作说明</h3>
+            <div class="step-desc">
+                1. 系统自动读取 <code>data/daily_points.txt</code> 最新一条记录<br>
+                2. 页面顶部显示日期、期号和 20 个点位号码<br>
+                3. 确认号码无误后，点击「✅ 确认点位并进入下一步」按钮
+            </div>
+            <div class="ui-mockup">
+                <div class="mockup-label">Step 1 界面</div>
+                <div style="background:var(--bg2);border-radius:8px;padding:10px;margin-bottom:8px">
+                    <div style="font-size:11px;color:var(--text2);margin-bottom:4px">日期: <span style="color:var(--text)">2026-07-09</span> | 期号: <span style="color:var(--text)">2026180</span></div>
+                    <div style="display:flex;flex-wrap:wrap;gap:3px">
+                        <span class="mockup-num" style="background:var(--primary)">03</span>
+                        <span class="mockup-num" style="background:var(--primary)">05</span>
+                        <span class="mockup-num" style="background:var(--primary)">10</span>
+                        <span class="mockup-num" style="background:var(--primary)">13</span>
+                        <span class="mockup-num" style="background:var(--primary)">17</span>
+                        <span class="mockup-num" style="background:var(--primary)">19</span>
+                        <span class="mockup-num" style="background:var(--primary)">22</span>
+                        <span class="mockup-num" style="background:var(--primary)">28</span>
+                        <span class="mockup-num" style="background:var(--primary)">32</span>
+                        <span class="mockup-num" style="background:var(--primary)">35</span>
+                        <span style="color:var(--text2);font-size:11px">... 共20个</span>
+                    </div>
+                </div>
+                <div style="font-size:11px;color:var(--text2);margin-bottom:6px">点位号码（可编辑修改）</div>
+                <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:11px;color:var(--text2)">03 05 10 13 17 19 22 28 32 35 37 38 43 45 52 53 60 68 73 75</div>
+                <div style="margin-top:8px"><span class="mockup-btn mockup-btn-primary">✅ 确认点位并进入下一步</span></div>
+            </div>
+            <div class="step-tip">💡 如果点位号码有误，可以直接在输入框中修改，修改后点击确认按钮即可保存。</div>
+        </div>
+    </div>
+
+    <!-- ════════ Step 2 ════════ -->
+    <div class="section" id="step2">
+        <div class="section-title"><span class="num">4</span> 📂 Step 2 — 执行 Data 子系统</div>
+
+        <div class="step-card">
+            <h3>操作说明</h3>
+            <div class="step-desc">
+                1. 点击「▶️ 开始执行 Data 子系统」按钮<br>
+                2. 系统自动执行 12 个子任务（环境预检 → 数据校验 → 数据采集 → 热码统计 → 热码同步 → 历史同步 → 格式美化 → 深度复盘 → 回测验证 → 分析报告 → main_v2 → 清理缓存）<br>
+                3. 实时日志在下方滚动显示，进度条显示当前任务进度<br>
+                4. 全部完成后自动跳转到 Step 3
+            </div>
+            <div class="ui-mockup">
+                <div class="mockup-label">Step 2 界面 — 进度追踪</div>
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px">
+                    <span>获取最新开奖历史数据</span>
+                    <span style="color:var(--primary)">75%</span>
+                </div>
+                <div class="mockup-progress"><div class="mockup-progress-fill" style="width:75%"></div></div>
+                <div style="display:flex;flex-wrap:wrap;gap:3px;margin:8px 0">
+                    <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:rgba(0,184,148,0.15);color:var(--success);border:1px solid var(--success)">✓ 校验</span>
+                    <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:rgba(0,184,148,0.15);color:var(--success);border:1px solid var(--success)">✓ 采集</span>
+                    <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:rgba(108,92,231,0.2);color:#a29bfe;border:1px solid var(--primary)">⏳ 热码</span>
+                    <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:var(--bg2);color:var(--text3);border:1px solid var(--border)">同步</span>
+                    <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:var(--bg2);color:var(--text3);border:1px solid var(--border)">格式化</span>
+                    <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:var(--bg2);color:var(--text3);border:1px solid var(--border)">报告</span>
+                    <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:var(--bg2);color:var(--text3);border:1px solid var(--border)">main_v2</span>
+                    <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:var(--bg2);color:var(--text3);border:1px solid var(--border)">清理</span>
+                </div>
+            </div>
+            <div class="ui-mockup">
+                <div class="mockup-label">Step 2 界面 — 实时日志</div>
+                <div class="mockup-log">
+                    <div class="log-line log-sys">═══ 阶段2: 执行 data 子系统 ═══</div>
+                    <div class="log-line">[2.1/12] 数据一致性校验(auto-fix)</div>
+                    <div class="log-line log-ok">✅ [数据一致性校验] 完成 (3.2s)</div>
+                    <div class="log-line">[2.2/12] 获取最新开奖历史数据</div>
+                    <div class="log-line log-ok">✅ [获取最新开奖历史数据] 完成 (5.1s)</div>
+                    <div class="log-line">[2.3/12] 生成热码统计(含缺期补偿)</div>
+                    <div class="log-line" style="color:var(--info)">  正在生成热码统计...</div>
+                </div>
+            </div>
+            <div class="step-tip">💡 日志支持「自动滚动」和「清空」功能。日志行数超过 3000 行会自动裁剪旧行。</div>
+        </div>
+
+        <table class="info-table">
+            <tr><th>子任务</th><th>说明</th><th>超时</th></tr>
+            <tr><td>clean_locks</td><td>环境预检（清理锁文件）</td><td>30s</td></tr>
+            <tr><td>data_validator</td><td>数据一致性校验（自动修复）</td><td>120s</td></tr>
+            <tr><td>fetch_kl8_history</td><td>从CWL获取最新开奖数据</td><td>120s</td></tr>
+            <tr><td>generate_hot_excel</td><td>生成热码统计Excel（含缺期补偿）</td><td>120s</td></tr>
+            <tr><td>process_hot_numbers</td><td>同步热码数据到Excel</td><td>120s</td></tr>
+            <tr><td>sync_history</td><td>同步历史数据到Excel双Sheet</td><td>120s</td></tr>
+            <tr><td>apply_formats</td><td>Excel格式美化</td><td>120s</td></tr>
+            <tr><td>trigger_review</td><td>深度复盘+闭环学习触发</td><td>120s</td></tr>
+            <tr><td>wf_backtest</td><td>Walk-Forward回测验证</td><td>300s</td></tr>
+            <tr><td>daily_report</td><td>运行data分析报告（主入口）</td><td>300s</td></tr>
+            <tr><td>main_v2</td><td>运行main_v2分析引擎</td><td>300s</td></tr>
+            <tr><td>cleanup_pycache</td><td>清理__pycache__缓存</td><td>30s</td></tr>
+        </table>
+    </div>
+
+    <!-- ════════ Step 3 ════════ -->
+    <div class="section" id="step3">
+        <div class="section-title"><span class="num">5</span> ⚡ Step 3 — 顺序执行 7 个分析子系统</div>
+
+        <div class="step-card">
+            <h3>操作说明</h3>
+            <div class="step-desc">
+                1. 点击「🚀 启动顺序执行(7个子系统)」按钮<br>
+                2. 7 个子系统<b>顺序执行</b>（前一系统完成后自动启动下一系统，有前序依赖链）：<br>
+                &nbsp;&nbsp;&nbsp;双层LSTM → 顺口溜 → 重点点位分析 → 定金选2-分析<br>
+                &nbsp;&nbsp;&nbsp;→ KillSeeker → 点位期数-追踪 → gemini选2-预测<br>
+                3. 每个子系统有独立的状态卡片和日志通道<br>
+                4. 点击子系统卡片或顶部 Tab 可切换查看对应子系统的实时日志<br>
+                5. 全部完成后（无论成功或失败）自动跳转到 Step 4
+            </div>
+
+            <div class="ui-mockup">
+                <div class="mockup-label">Step 3 界面 — 7个子系统状态卡片</div>
+                <div class="mockup-subgrid">
+                    <div class="mockup-subcard" style="border-top:2px solid #e74c3c">
+                        <div>🎯 KillSeeker</div>
+                        <div style="margin-top:3px"><span class="sub-dot" style="background:var(--success)"></span>✅ 完成</div>
+                        <div style="color:var(--text3);font-size:9px">45.2s</div>
+                    </div>
+                    <div class="mockup-subcard" style="border-top:2px solid #3498db">
+                        <div>📍 重点点位</div>
+                        <div style="margin-top:3px"><span class="sub-dot" style="background:var(--primary);animation:blink 1s infinite"></span>执行中...</div>
+                        <div style="color:var(--text3);font-size:9px">28.5s</div>
+                    </div>
+                    <div class="mockup-subcard" style="border-top:2px solid #9b59b6">
+                        <div>🧠 双层LSTM</div>
+                        <div style="margin-top:3px"><span class="sub-dot" style="background:var(--success)"></span>✅ 完成</div>
+                        <div style="color:var(--text3);font-size:9px">88.3s</div>
+                    </div>
+                    <div class="mockup-subcard" style="border-top:2px solid #f39c12">
+                        <div>📝 顺口溜</div>
+                        <div style="margin-top:3px"><span class="sub-dot" style="background:var(--success)"></span>✅ 完成</div>
+                        <div style="color:var(--text3);font-size:9px">35.7s</div>
+                    </div>
+                    <div class="mockup-subcard" style="border-top:2px solid #1abc9c">
+                        <div>💰 定金选2</div>
+                        <div style="margin-top:3px"><span class="sub-dot" style="background:var(--danger)"></span>❌ 失败</div>
+                        <div style="color:var(--text3);font-size:9px">12.4s</div>
+                    </div>
+                    <div class="mockup-subcard" style="border-top:2px solid #16a085">
+                        <div>〽️ 点位期数-追踪</div>
+                        <div style="margin-top:3px"><span class="sub-dot" style="background:var(--success)"></span>✅ 完成</div>
+                        <div style="color:var(--text3);font-size:9px">30.1s</div>
+                    </div>
+                    <div class="mockup-subcard" style="border-top:2px solid #e67e22">
+                        <div>✨ gemini选2</div>
+                        <div style="margin-top:3px"><span class="sub-dot" style="background:var(--primary);animation:blink 1s infinite"></span>执行中...</div>
+                        <div style="color:var(--text3);font-size:9px">20.6s</div>
+                    </div>
+                </div>
+                <div style="display:flex;gap:6px;margin-top:8px">
+                    <span class="mockup-btn mockup-btn-primary" style="flex:1">🚀 启动顺序执行7个子系统</span>
+                    <span class="mockup-btn mockup-btn-outline">🔄 重试失败子系统</span>
+                </div>
+            </div>
+            <div class="ui-mockup">
+                <div class="mockup-label">Step 3 界面 — 日志Tab切换</div>
+                <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
+                    <span style="font-size:10px;padding:3px 8px;border-radius:6px;background:var(--primary);color:#fff">📊 全部</span>
+                    <span style="font-size:10px;padding:3px 8px;border-radius:6px;background:var(--bg2);color:var(--text2);border:1px solid var(--success)">🎯 KillSeeker</span>
+                    <span style="font-size:10px;padding:3px 8px;border-radius:6px;background:var(--bg2);color:var(--text2);border:1px solid var(--primary)">📍 重点点位</span>
+                    <span style="font-size:10px;padding:3px 8px;border-radius:6px;background:var(--bg2);color:var(--text2)">🧠 双层LSTM</span>
+                    <span style="font-size:10px;padding:3px 8px;border-radius:6px;background:var(--bg2);color:var(--text2)">📝 顺口溜</span>
+                    <span style="font-size:10px;padding:3px 8px;border-radius:6px;background:var(--bg2);color:var(--text2);border:1px solid var(--danger)">💰 定金选2</span>
+                    <span style="font-size:10px;padding:3px 8px;border-radius:6px;background:var(--bg2);color:var(--text2)">〽️ 点位期数</span>
+                    <span style="font-size:10px;padding:3px 8px;border-radius:6px;background:var(--bg2);color:var(--text2)">✨ gemini</span>
+                </div>
+                <div class="mockup-log">
+                    <div class="log-line log-sys">═══ 阶段3: 顺序执行7个分析子系统 ═══</div>
+                    <div class="log-line" style="color:#e74c3c">🎯 [KillSeeker] 启动...</div>
+                    <div class="log-line" style="color:#3498db">📍 [重点点位分析] 启动...</div>
+                    <div class="log-line log-ok">✅ [KillSeeker] 完成 (45.2s)</div>
+                    <div class="log-line log-ok">✅ [点位期数-追踪] 完成 (30.1s)</div>
+                    <div class="log-line" style="color:#f39c12">📝 [顺口溜] 启动...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h3>失败重试</h3>
+            <div class="step-desc">如果有子系统执行失败，会出现「🔄 重试失败子系统」按钮。点击后只重新执行失败的子系统，不影响已成功的子系统。</div>
+            <div class="step-warn">⚠️ 注意：即使有子系统失败，也不会阻断后续流程。可以继续执行 Step 4/5，最后在 Step 6 查看已成功子系统的预测结果。</div>
+        </div>
+
+        <table class="info-table">
+            <tr><th>子系统</th><th>执行脚本</th><th>超时</th></tr>
+            <tr><td>🧠 双层LSTM</td><td>main.py predict</td><td>600s</td></tr>
+            <tr><td>📝 顺口溜</td><td>daily_predict.py --with-c</td><td>500s</td></tr>
+            <tr><td>📍 重点点位分析</td><td>main_predictor.py</td><td>300s</td></tr>
+            <tr><td>💰 定金选2-分析</td><td>main_predictor.py --no-interactive</td><td>300s</td></tr>
+            <tr><td>🎯 KillSeeker</td><td>main.py --full</td><td>300s</td></tr>
+            <tr><td>〽️ 点位期数-追踪</td><td>main.py</td><td>300s</td></tr>
+            <tr><td>✨ gemini选2-预测</td><td>main.py</td><td>300s</td></tr>
+        </table>
+    </div>
+
+    <!-- ════════ Step 4 ════════ -->
+    <div class="section" id="step4">
+        <div class="section-title"><span class="num">6</span> 🔮 Step 4 — 输入 Gemini 金银铜数据</div>
+
+        <div class="step-card">
+            <h3>操作说明</h3>
+            <div class="step-desc">
+                1. 页面顶部显示已有的 Gemini 数据预览（最新日期和前 3000 字符）<br>
+                2. 在文本框中粘贴今日 Gemini 分析的金银铜数据<br>
+                3. 点击「💾 保存Gemini数据」按钮<br>
+                4. 数据会保存到 <code>数据汇总复盘/gemini金银铜数据分析-汇总.txt</code>
+            </div>
+            <div class="ui-mockup">
+                <div class="mockup-label">Step 4 界面</div>
+                <div style="background:var(--bg2);border-radius:6px;padding:8px;margin-bottom:8px;font-size:10px;color:var(--text2)">
+                    📄 最新日期: <span style="color:var(--text)">20260708</span> (45行)<br>
+                    <span style="color:var(--info)">20260708:</span><br>
+                    <span style="color:var(--info)">Genimi-选3-分析算法1预测：</span><br>
+                    <span style="color:var(--info)">【 首席金胆 】： 63</span>...
+                </div>
+                <div style="font-size:11px;color:var(--text2);margin-bottom:4px">今日 Gemini 金银铜数据</div>
+                <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:8px;min-height:60px;font-size:10px;color:var(--text3)">
+                    20260709:<br>
+                    Genimi-选3-分析算法1预测：<br>
+                    【 首席金胆 】： 36<br>
+                    ...
+                </div>
+                <div style="margin-top:8px"><span class="mockup-btn mockup-btn-success">💾 保存Gemini数据</span></div>
+            </div>
+            <div class="step-tip">💡 数据格式示例：每行一条记录，以日期开头（如 20260709:），后续为算法1和算法2的金银铜胆码。</div>
+        </div>
+    </div>
+
+    <!-- ════════ Step 5 ════════ -->
+    <div class="section" id="step5">
+        <div class="section-title"><span class="num">7</span> 📊 Step 5 — 执行数据汇总复盘</div>
+
+        <div class="step-card">
+            <h3>操作说明</h3>
+            <div class="step-desc">
+                1. 点击「▶️ 执行数据汇总复盘」按钮<br>
+                2. 系统依次执行 5 个子任务：数据预检 → V18.0聚合器 → Evolution Machine → 复盘分析报告 → 环境清理<br>
+                3. 全部完成后，底部显示全流程执行结果摘要<br>
+                4. 自动加载 Step 6 预测结果
+            </div>
+            <div class="ui-mockup">
+                <div class="mockup-label">Step 5 界面 — 全流程完成摘要</div>
+                <div style="background:rgba(0,184,148,0.1);border:1px solid rgba(0,184,148,0.3);border-radius:8px;padding:10px;font-size:12px">
+                    <div style="color:var(--success);font-weight:600;margin-bottom:6px">🎉 全流程执行完毕</div>
+                    <div>📂 Data: ✅ 成功</div>
+                    <div>⚡ 7系统顺序: 7/7 完成</div>
+                    <div>🔮 Gemini: ✅ 已保存</div>
+                    <div>📊 汇总复盘: ✅ 成功</div>
+                    <div style="margin-top:6px;color:var(--primary);cursor:pointer">👉 点击查看各子系统预测结果汇总 →</div>
+                </div>
+            </div>
+        </div>
+
+        <table class="info-table">
+            <tr><th>子任务</th><th>说明</th><th>超时</th></tr>
+            <tr><td>precheck</td><td>数据预检（历史+点位+子系统）</td><td>60s</td></tr>
+            <tr><td>aggregate_v18</td><td>V18.0 聚合器（4系统采集去重）</td><td>300s</td></tr>
+            <tr><td>evolution_engine</td><td>Evolution Machine（自适应调控）</td><td>300s</td></tr>
+            <tr><td>generate_review</td><td>生成复盘分析报告</td><td>120s</td></tr>
+            <tr><td>cleanup_all</td><td>项目级环境清理（__pycache__）</td><td>30s</td></tr>
+        </table>
+    </div>
+
+    <!-- ════════ Step 6 ════════ -->
+    <div class="section" id="step6">
+        <div class="section-title"><span class="num">8</span> 🏆 Step 6 — 预测结果汇总</div>
+
+        <div class="step-card">
+            <h3>操作说明</h3>
+            <div class="step-desc">
+                1. 点击「🔄 刷新」按钮加载所有子系统的最新预测数据<br>
+                2. 页面展示跨系统共识号码和 8 个子系统的详细预测卡片<br>
+                3. 点击「📋 一键复制」将所有预测结果复制到剪贴板<br>
+                4. 点击「💾 导出文件」下载纯文本格式的预测结果
+            </div>
+
+            <div class="ui-mockup">
+                <div class="mockup-label">Step 6 界面 — 顶部操作栏</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+                    <div style="font-size:14px;font-weight:600">🏆 Step 6: 各子系统预测结果汇总</div>
+                    <div style="display:flex;gap:4px">
+                        <span class="mockup-btn mockup-btn-outline" style="font-size:10px">🔄 刷新</span>
+                        <span class="mockup-btn mockup-btn-outline" style="font-size:10px">📋 一键复制</span>
+                        <span class="mockup-btn mockup-btn-outline" style="font-size:10px">💾 导出文件</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-mockup">
+                <div class="mockup-label">跨系统共识号码（≥2系统推荐）</div>
+                <div style="background:linear-gradient(135deg,rgba(108,92,231,0.08),rgba(0,184,148,0.06));border:1px solid rgba(108,92,231,0.2);border-radius:8px;padding:10px;margin-top:6px">
+                    <div style="font-size:13px;font-weight:600;margin-bottom:6px">🔥 跨系统共识号码（≥2系统推荐）</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px">
+                        <span class="mockup-num" style="background:var(--danger);font-weight:bold">33</span>
+                        <span style="font-size:10px;color:var(--text2)">5系统</span>
+                        <span class="mockup-num" style="background:var(--danger);font-weight:bold">53</span>
+                        <span style="font-size:10px;color:var(--text2)">4系统</span>
+                        <span class="mockup-num" style="background:var(--warning)">13</span>
+                        <span style="font-size:10px;color:var(--text2)">3系统</span>
+                        <span class="mockup-num" style="background:var(--primary)">27</span>
+                        <span style="font-size:10px;color:var(--text2)">2系统</span>
+                        <span style="font-size:10px;color:var(--text2)">... 共16个</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-mockup">
+                <div class="mockup-label">子系统预测卡片示例 — Data分析引擎</div>
+                <div class="mockup-pred">
+                    <div class="mockup-pred-title" style="color:#6c5ce7">📉 Data分析引擎 <span style="font-size:10px;color:var(--text2);background:var(--bg2);padding:1px 6px;border-radius:8px">第2026180期</span></div>
+                    <div style="font-size:10px;color:var(--text2);padding:3px 6px;background:var(--bg2);border-radius:4px;margin:4px 0">环境: 平衡震荡期 | 权重: EF:0.4/RW:0.3/FO:0.3</div>
+                    <div class="mockup-pred-label">三维融合 Top5</div>
+                    <div><span class="mockup-num" style="background:#6c5ce7">39</span><span class="mockup-num" style="background:#6c5ce7">43</span><span class="mockup-num" style="background:#6c5ce7">44</span><span class="mockup-num" style="background:#6c5ce7">49</span><span class="mockup-num" style="background:#6c5ce7">54</span></div>
+                    <div class="mockup-pred-label">Golden Core 共振号</div>
+                    <div><span class="mockup-num" style="background:#f39c12">20</span><span class="mockup-num" style="background:#f39c12">33</span><span class="mockup-num" style="background:#f39c12">39</span><span class="mockup-num" style="background:#f39c12">44</span><span class="mockup-num" style="background:#f39c12">54</span></div>
+                    <div class="mockup-pred-label">⚡ HE5 隐能 (B3质量=0.89)</div>
+                    <div><span class="mockup-num" style="background:#e74c3c">38</span><span class="mockup-num" style="background:#e74c3c">49</span><span class="mockup-num" style="background:#e74c3c">54</span><span class="mockup-num" style="background:#e74c3c">67</span><span class="mockup-num" style="background:#e74c3c">76</span></div>
+                    <div style="font-size:10px;color:var(--text2);margin-top:6px;padding:3px 6px;background:rgba(243,156,18,0.08);border-radius:4px">
+                        📋 <b>上期复盘:</b> 开奖:69-80-27... | 三维Top5 2/5 | AI Top5 2/5 | mRMR 1/12 | HE5 1/5
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-mockup">
+                <div class="mockup-label">子系统预测卡片示例 — 数据汇总复盘</div>
+                <div class="mockup-pred" style="border:1px solid rgba(108,92,231,0.3)">
+                    <div class="mockup-pred-title" style="color:#6c5ce7">🏆 数据汇总复盘 V18.0 <span style="font-size:10px;color:var(--text2);background:var(--bg2);padding:1px 6px;border-radius:8px">第2026180期</span></div>
+                    <div style="font-size:10px;color:var(--text2);padding:3px 6px;background:var(--bg2);border-radius:4px;margin:4px 0">市场: CHOS极度混沌 | Hurst EWMA=0.20 | FDR=0.0022 | 连败=0</div>
+                    <div class="mockup-pred-label" style="font-size:12px">💎 核心定胆</div>
+                    <div style="font-size:14px"><span class="mockup-num" style="background:#f1c40f;color:#000;font-weight:bold;font-size:13px">33</span><span class="mockup-num" style="background:#f1c40f;color:#000;font-weight:bold;font-size:13px">53</span></div>
+                    <div class="mockup-pred-label">🔥 分区主推</div>
+                    <div><span class="mockup-num" style="background:#e74c3c">05</span><span class="mockup-num" style="background:#e74c3c">13</span><span class="mockup-num" style="background:#e74c3c">27</span><span class="mockup-num" style="background:#e74c3c">33</span><span class="mockup-num" style="background:#e74c3c">36</span><span class="mockup-num" style="background:#e74c3c">43</span><span class="mockup-num" style="background:#e74c3c">52</span><span class="mockup-num" style="background:#e74c3c">53</span><span class="mockup-num" style="background:#e74c3c">73</span></div>
+                    <div class="mockup-pred-label">🛡️ 防守号码</div>
+                    <div><span class="mockup-num" style="background:#95a5a6">09</span><span class="mockup-num" style="background:#95a5a6">16</span></div>
+                    <div style="font-size:10px;color:var(--text2);margin-top:6px;padding:3px 6px;background:rgba(243,156,18,0.08);border-radius:4px">
+                        📋 <b>上期复盘:</b> 核心定胆 1/2 (Lift 2.00x) | 分区主推 3/8 (Lift 1.50x) | FDR=0.0022 | 连败=0
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h3>预测卡片说明</h3>
+            <table class="info-table">
+                <tr><th>卡片</th><th>展示内容</th></tr>
+                <tr><td>🔥 跨系统共识</td><td>≥2个子系统同时推荐的号码，按推荐系统数排序，颜色越红共识越高</td></tr>
+                <tr><td>📉 Data分析引擎</td><td>三维融合Top5/12、Golden Core、AI Top5/12、mRMR、HE5隐能(含EF/RW/FO明细)、纯净池、FO Baseline、对冲方案、上期复盘</td></tr>
+                <tr><td>🎯 KillSeeker</td><td>高/中/低置信杀号、保留号、市场状态、Hurst、把握度、上期复盘</td></tr>
+                <tr><td>📍 重点点位分析</td><td>核心五码、精选十码、扩展十五码、完整10个点位详情(排名/区域/得分/p值)、上期复盘</td></tr>
+                <tr><td>🧠 双层LSTM</td><td>金/银/铜胆、Top10/20、分区预测、一致性评分、训练种子/轮次、上期复盘</td></tr>
+                <tr><td>📝 顺口溜</td><td>传统顺口溜核心推荐 + C数据挖掘选十/金胆、上期复盘</td></tr>
+                <tr><td>💰 定金选2-分析</td><td>动态金胆/热号金胆、备选金胆、Top3组合(含评分)、热号Top3、温号池、上期复盘</td></tr>
+                <tr><td>〽️ 点位期数-追踪</td><td>强共振点位(≥3路)、综合评估点位(共振度降序)、7路信号共振度、上期区分力复盘</td></tr>
+                <tr><td>✨ gemini选2-预测</td><td>金银铜号、Top推荐、上期复盘</td></tr>
+                <tr><td>🏆 数据汇总复盘</td><td>核心定胆、分区主推、防守号码、关注号码、稳定命中号、Matrix Play、市场状态/Evolution、上期复盘</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ════════ 技巧 ════════ -->
+    <div class="section" id="tips">
+        <div class="section-title"><span class="num">9</span> 💡 使用技巧与注意事项</div>
+
+        <div class="step-card">
+            <h3>🔄 SSE 实时连接</h3>
+            <div class="step-desc">页面右上角的连接状态指示灯：</div>
+            <table class="info-table">
+                <tr><th>状态</th><th>颜色</th><th>含义</th></tr>
+                <tr><td>🟢 实时连接</td><td>绿色</td><td>SSE 连接正常，日志实时推送中</td></tr>
+                <tr><td>🟡 连接中</td><td>黄色闪烁</td><td>正在建立连接或重连中</td></tr>
+                <tr><td>🔴 未连接</td><td>红色</td><td>连接断开，正在自动重连（最多5次）</td></tr>
+            </table>
+            <div class="step-tip">💡 如果连接断开，系统会自动重连。超过 5 次重连失败会创建新会话。无需手动刷新页面。</div>
+        </div>
+
+        <div class="step-card">
+            <h3>📋 日志操作</h3>
+            <div class="step-desc">
+                • <b>自动滚动</b>：默认开启，新日志自动滚动到底部。点击「📌 自动滚动」按钮可暂停<br>
+                • <b>清空日志</b>：点击「🗑 清空」按钮清空当前显示的日志（不影响后端记录）<br>
+                • <b>子系统Tab</b>：Step 3 中点击顶部 Tab 可切换查看单个子系统的日志，点击「📊 全部」查看所有日志<br>
+                • <b>日志颜色</b>：绿色=成功，红色=失败，黄色=警告，紫色=系统消息，蓝色=信息
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h3>⏱️ 计时器</h3>
+            <div class="step-desc">
+                • 每个步骤标题右侧有计时徽章，实时显示当前步骤的执行耗时<br>
+                • Step 3 中每个子系统卡片右下角有独立计时器<br>
+                • 步骤完成后，计时器显示最终耗时（如 ✅ 45.2s）
+            </div>
+        </div>
+
+        <div class="step-card">
+            <h3>📋 一键复制 vs 导出文件</h3>
+            <table class="info-table">
+                <tr><th>功能</th><th>说明</th><th>输出格式</th></tr>
+                <tr><td>📋 一键复制</td><td>将预测结果提取为纯文本，复制到系统剪贴板</td><td>纯文本（可直接粘贴到微信/笔记）</td></tr>
+                <tr><td>💾 导出文件</td><td>下载完整预测结果文件到本地</td><td>.txt 文件（predictions_export.txt）</td></tr>
+            </table>
+            <div class="step-tip">💡 两种方式都包含所有 8 个子系统的完整预测数据和跨系统共识号码。复制功能支持降级方案（如果剪贴板API不可用，会自动使用 textarea + execCommand）。</div>
+        </div>
+
+        <div class="step-card">
+            <h3>⚠️ 注意事项</h3>
+            <div class="step-warn">
+                1. <b>执行顺序</b>：必须按 Step 1 → 2 → 3 → 4 → 5 → 6 的顺序执行，不能跳步<br>
+                2. <b>Step 2 必须先于 Step 3</b>：Data 子系统为后续 7 个子系统提供基础数据<br>
+                3. <b>Step 4 需要 Gemini 数据</b>：请提前在 Gemini 中获取金银铜分析数据<br>
+                4. <b>顺序执行</b>：Step 3 的 7 个子系统按依赖链顺序执行（双层LSTM → 顺口溜 → 重点点位 → 定金选2 → KillSeeker → 点位期数 → gemini选2）<br>
+                5. <b>失败不阻断</b>：个别子系统失败不影响整体流程，可在 Step 6 查看已成功子系统的结果<br>
+                6. <b>刷新预测</b>：Step 6 可随时点击「🔄 刷新」重新加载最新预测数据
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════ FAQ ════════ -->
+    <div class="section" id="faq">
+        <div class="section-title"><span class="num">10</span> ❓ 常见问题 (FAQ)</div>
+
+        <div class="faq-item">
+            <div class="faq-q">Q: 页面打不开 / 连接被拒绝？</div>
+            <div class="faq-a">A: 确认 Flask 应用已启动（终端显示 "Running on http://127.0.0.1:5888"）。如果端口被占用，修改 app.py 最后一行的 port 参数。访问地址是 <code>http://localhost:5888</code>。</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q">Q: SSE 连接频繁断开怎么办？</div>
+            <div class="faq-a">A: 系统会自动重连（最多 5 次）。如果持续断开，检查网络连接，或刷新页面创建新会话。SSE 连接有 30 秒心跳保活机制。</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q">Q: 某个子系统执行失败了怎么办？</div>
+            <div class="faq-a">A: Step 3 完成后会出现「🔄 重试失败子系统」按钮，点击即可重新执行失败的子系统。也可以直接继续后续步骤，在 Step 6 查看已成功子系统的结果。建议查看日志定位失败原因。</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q">Q: 预测结果中的「上期复盘」数据是怎么计算的？</div>
+            <div class="faq-a">A: 系统自动读取上一期开奖结果和上一期各子系统的预测数据，动态计算命中率、Lift 值和金/银/铜胆命中情况。Data 和 Aggregate 子系统的复盘数据从报告中直接解析，其他子系统通过动态计算引擎自动补全。</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q">Q: 手机上可以使用吗？</div>
+            <div class="faq-a">A: 可以。本应用是 PWA，在手机浏览器访问 <code>http://你的电脑IP:5888</code>，然后「添加到主屏幕」即可像原生 App 一样使用。需要手机和电脑在同一 WiFi 网络下。</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q">Q: 日志太多了看不到重要信息？</div>
+            <div class="faq-a">A: Step 3 中可以点击子系统 Tab 只查看单个子系统的日志。也可以点击「🗑 清空」清除当前日志。日志超过 3000 行会自动裁剪旧行。✅ 和 ❌ 开头的行分别表示成功和失败，可以快速扫描。</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q">Q: 导出的文件保存在哪里？</div>
+            <div class="faq-a">A: 点击「💾 导出文件」后，浏览器会自动下载 <code>predictions_export.txt</code> 文件到默认下载目录。文件包含所有 8 个子系统的完整预测数据和跨系统共识号码。</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q">Q: 步骤执行到一半可以中断吗？</div>
+            <div class="faq-a">A: 可以关闭浏览器页面，但后端子进程会继续执行直到完成或超时。重新打开页面会创建新会话，之前的执行状态不会保留。建议等待当前步骤完成后再关闭。</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q">Q: 如何查看历史预测结果？</div>
+            <div class="faq-a">A: 各子系统的预测结果文件保存在各自目录下：<br>
+                • Data: <code>data/reports/daily_analysis_report_*.md</code><br>
+                • KillSeeker: <code>KillSeeker/logs/kill_report.txt</code><br>
+                • 重点点位: <code>重点点位分析/logs/prediction_logs.txt</code><br>
+                • 双层LSTM: <code>双层LSTM/outputs/predictions/prediction_*.txt</code><br>
+                • 顺口溜: <code>顺口溜/output/latest_predict.txt</code> + <code>output/c/latest_c_predict.txt</code><br>
+                • 定金选2: <code>定金选2-分析/logs/prediction_logs.txt</code><br>
+                • 点位期数: <code>点位期数-追踪/output/点位每日分析_*.md</code><br>
+                • gemini选2: <code>gemini选2-预测/...</code><br>
+                • 数据汇总: <code>数据汇总复盘/logs/分区深度聚合推荐_*.txt</code>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align:center;padding:20px 0;color:var(--text3);font-size:12px">
+        KL8 PWA v2.0 操作指南 · 更新时间: 2026-07-09
+    </div>
+
+</div>
+
+</body>
+</html>

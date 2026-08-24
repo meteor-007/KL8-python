@@ -1,0 +1,37 @@
+{
+  "include": [
+    "."
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/venv",
+    "**/.venv",
+    "**/.pytest_cache",
+    "**/.mypy_cache",
+    "**/.idea",
+    "**/.git",
+    "**/.agents",
+    "**/.claude",
+    "**/.codegraph",
+    "**/outputs",
+    "**/output",
+    "**/predictions",
+    "**/models",
+    "**/logs",
+    "**/reports",
+    "**/archive",
+    "data",
+    "archive",
+    "**/*.csv",
+    "**/*.xlsx",
+    "**/*.xls",
+    "**/*.zip"
+  ],
+  "ignore": [
+    "**/outputs/**",
+    "**/output/**",
+    "data/**",
+    "archive/**"
+  ]
+}

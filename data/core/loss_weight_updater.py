@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Loss Function 回溯比对权重更新 + Hurst系数估计
+Loss Function 回溯比对权重更新
 ================================================
-实现技术白皮书中描述的 Cross-Entropy Loss + Softmax 权重更新机制,
-以及正确的多尺度 R/S 分析 Hurst 系数估计。
+实现技术白皮书中描述的 Cross-Entropy Loss + Softmax 权重更新机制。
 """
 import os
 import json
@@ -12,7 +11,12 @@ import collections
 import numpy as np
 from typing import Dict, List, Tuple, Optional
 
-_PROJ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+import os, sys
+if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.paths import get_project_root, data_path, _ensure_project_path
+_ensure_project_path()
+_PROJ = get_project_root()
 LOSS_HISTORY_FILE = os.path.join(_PROJ, 'cache', 'loss_history.json')
 
 
@@ -57,33 +61,64 @@ def compute_mse_loss(prediction_probs: Dict[int, float],
 
 
 def softmax_weight_update(losses: Dict[str, float],
-                          temperature: float = 0.5) -> Dict[str, float]:
+                          temperature: float = 0.5,
+                          old_weights: Optional[Dict[str, float]] = None,
+                          ema_alpha: float = 0.3) -> Dict[str, float]:
     """
-    Softmax权重更新: Loss越小 → 新权重越大
-    
-    公式: W_k^(t+1) = exp(-Loss_k / τ) / Σ exp(-Loss_j / τ)
-    
+    Softmax权重更新 + EMA指数移动平均阻尼器 (红线二平滑阻尼器强制要求)
+
+    公式:
+      raw_W_k = exp(-Loss_k / τ) / Σ exp(-Loss_j / τ)
+      W_k^(t+1) = α * raw_W_k + (1 - α) * W_k^t      (EMA阻尼)
+
+    EMA阻尼器作用: 抑制单期噪声导致的权重跳变。α=0.3 等效于约6期半衰期窗口,
+    能有效过滤单期异常Loss同时保留趋势信号。
+
     Args:
         losses: 各算子的损失值 {'markov': 0.8, 'energy': 0.6, ...}
         temperature: 温度系数 (越小权重差异越大)
-    
+        old_weights: 上一期权重 (用于EMA阻尼); 为None时退化为纯Softmax
+        ema_alpha: EMA混合系数, 新权重占比 (默认0.3, 即旧权重占0.7)
+
     Returns:
         更新后的权重字典 (和为1)
     """
     if not losses:
         return {}
-    
-    exp_vals = {}
-    for name, loss in losses.items():
-        exp_vals[name] = math.exp(-loss / temperature)
-    
+
+    # log-sum-exp 数值稳定技巧
+    neg_loss = {name: -loss / temperature for name, loss in losses.items()}
+    max_val = max(neg_loss.values())
+    exp_vals = {name: math.exp(v - max_val) for name, v in neg_loss.items()}
+
     total = sum(exp_vals.values())
     if total == 0:
-        # 全部Loss为0时等权
         n = len(losses)
-        return {name: 1.0 / n for name in losses}
-    
-    weights = {name: val / total for name, val in exp_vals.items()}
+        raw_weights = {name: 1.0 / n for name in losses}
+    else:
+        raw_weights = {name: val / total for name, val in exp_vals.items()}
+
+    # EMA阻尼: 新旧权重混合
+    if old_weights is None or ema_alpha <= 0:
+        return raw_weights
+    if ema_alpha >= 1.0:
+        return raw_weights
+
+    # 对old_weights中缺失的算子补均权
+    n = len(losses)
+    default_w = 1.0 / n
+    weights = {}
+    for name, raw_w in raw_weights.items():
+        old_w = old_weights.get(name, default_w)
+        # Tanh 抑震阻尼器: 替代硬编码线性EMA，平滑限制步长
+        delta = raw_w - old_w
+        damped_delta = math.tanh(delta / temperature) * ema_alpha
+        weights[name] = max(0.0, old_w + damped_delta)
+
+    # 归一化保障和为1
+    s = sum(weights.values())
+    if s > 0:
+        weights = {k: v / s for k, v in weights.items()}
     return weights
 
 
@@ -153,6 +188,12 @@ class LossBasedWeightUpdater:
             更新后的权重字典
         """
         try:
+            from core.learning_gate import is_learning_enabled
+            if not is_learning_enabled():
+                return {}
+        except Exception:
+            pass
+        try:
             from config import get_config
             cfg = get_config()
             temperature = cfg.get('loss_function.temperature', 0.5)
@@ -180,7 +221,8 @@ class LossBasedWeightUpdater:
             losses[algo_name] = round(loss, 6)
         
         # Softmax权重更新
-        new_weights = softmax_weight_update(losses, temperature)
+        old_weights = self.get_current_weights()
+        new_weights = softmax_weight_update(losses, temperature, old_weights=old_weights)
         
         # 记录
         target_record['losses'] = losses
@@ -229,115 +271,6 @@ class LossBasedWeightUpdater:
             }
         return result
 
-
-# ══════════════════════════════════════════════════════════════════
-#  核心模块二: Hurst 系数估计 (多尺度 R/S 回归修正版)
-# ══════════════════════════════════════════════════════════════════
-
-def estimate_hurst_coefficient(series: List[float],
-                                min_scale: int = 10,
-                                n_scales: int = 5) -> float:
-    """
-    Hurst 系数的多尺度 R/S 分析估计 — 修正版
-    
-    原理:
-      经典R/S分析法: 在多个时间尺度n下计算 R(n)/S(n),
-      然后通过 log(R/S) ~ H * log(n) 回归估计Hurst指数H。
-      
-      H < 0.5: 均值回复 (反持续)
-      H = 0.5: 随机游走
-      H > 0.5: 趋势持续
-      
-    修正点:
-      - 旧版: 仅用单点 log(R/S)/log(n), 仅在n→∞时成立, 短序列偏差大
-      - 新版: 多尺度回归, 使用至少5个不同尺度, 更稳健
-    
-    Args:
-        series: 时间序列数据 (如各期命中数)
-        min_scale: 最小尺度
-        n_scales: 尺度数量
-    
-    Returns:
-        Hurst系数 (0-1之间)
-    """
-    try:
-        from config import get_config
-        cfg = get_config()
-        min_len = cfg.get('hurst.min_series_length', 150)
-        cfg_scales = cfg.get('hurst.n_scales', 5)
-        n_scales = max(n_scales, cfg_scales)
-    except Exception:
-        min_len = 150
-    
-    # 物理锁死防线红线四：150期以下默认0.5
-    if len(series) < 150:
-        return 0.5
-    
-    arr = np.array(series, dtype=float)
-    n_total = len(arr)
-    
-    scales = [5, 10, 20, 30, 40, 60]
-    scales = [s for s in scales if s < n_total]
-    
-    if len(scales) < 3:
-        return 0.5
-    
-    log_ns = []
-    log_rs = []
-    
-    for n in scales:
-        if n < 2 or n >= n_total:
-            continue
-        
-        # 将序列分为 n_total // n 个子段, 计算平均 R/S
-        n_subsegments = n_total // n
-        if n_subsegments < 1:
-            continue
-        
-        rs_values = []
-        for seg in range(n_subsegments):
-            segment = arr[seg * n : (seg + 1) * n]
-            if len(segment) < 2:
-                continue
-            
-            mean = segment.mean()
-            deviations = segment - mean
-            cumdev = np.cumsum(deviations)
-            R = cumdev.max() - cumdev.min()
-            S = np.sqrt(np.mean(deviations ** 2))
-            
-            if S > 0:
-                rs_values.append(R / S)
-        
-        if rs_values:
-            avg_rs = np.mean(rs_values)
-            log_ns.append(math.log(n))
-            log_rs.append(math.log(avg_rs))
-    
-    if len(log_ns) < 3:
-        return 0.5
-    
-    # 线性回归: log(R/S) = H * log(n) + c
-    log_ns = np.array(log_ns)
-    log_rs = np.array(log_rs)
-    
-    # 最小二乘法
-    n_pts = len(log_ns)
-    sum_x = log_ns.sum()
-    sum_y = log_rs.sum()
-    sum_xy = (log_ns * log_rs).sum()
-    sum_x2 = (log_ns ** 2).sum()
-    
-    denominator = n_pts * sum_x2 - sum_x ** 2
-    if abs(denominator) < 1e-10:
-        return 0.5
-    
-    H = (n_pts * sum_xy - sum_x * sum_y) / denominator
-    
-    # 限制在合理范围 [0.20, 0.80] (神父防线红线四)
-    H = max(0.20, min(0.80, H))
-    
-    return round(H, 4)
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -407,9 +340,3 @@ if __name__ == '__main__':
     new_weights = updater.update_with_actual('2026133', actual)
     
     print(f"\n更新后权重: {new_weights}")
-    
-    # 测试Hurst系数
-    import random
-    test_series = [random.randint(0, 5) for _ in range(100)]
-    H = estimate_hurst_coefficient(test_series)
-    print(f"\n测试序列Hurst系数: {H}")

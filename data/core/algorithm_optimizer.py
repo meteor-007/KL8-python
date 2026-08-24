@@ -2,15 +2,16 @@
 """
 算法模型层优化模块 (Algorithm Optimizer - Layer B)
 ================================================
-6个深度优化方案的统一实现。
+4个深度优化方案的统一实现。
 迁移至 core/ 子树 — 路径已自动适应
 
 方案7:  马尔可夫链状态转移深度整合
-方案8:  号码共现网络（关联规则挖掘）
 方案9:  贝叶斯后验动态更新
 方案10: 蒙特卡洛模拟下期分布
 方案11: 遗漏值的非线性衰减模型
-方案12: 号码周期性检测（FFT频谱分析）
+
+[v4.1] 方案8(共现网络)已移除: 连续多期返回空列表，无贡献纯噪声
+[v4.1] 方案12(FFT周期检测)已移除: 返回全部80码，无区分度
 """
 
 import os
@@ -22,7 +23,12 @@ import random
 # ============================================================================
 #  全局常量 — 自动上溯到项目根目录
 # ============================================================================
-_PROJ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # data/
+import os, sys
+if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.paths import get_project_root, data_path, _ensure_project_path
+_ensure_project_path()
+_PROJ = get_project_root()
 HISTORY_FILE = os.path.join(_PROJ, 'kl8_history_final.txt')
 MARKOV_FILE = os.path.join(_PROJ, 'cache', 'daily_markov_predictions.json')
 ZONE_RANGES = [(i * 10 + 1, (i + 1) * 10) for i in range(8)]
@@ -30,25 +36,12 @@ THEORY_DENSITY = 20.0 / 80.0
 
 
 def load_hist(limit=None):
-    """读取开奖历史, 返回list[dict], 按期号降序 (最新在索引0)。"""
-    data = []
-    if not os.path.exists(HISTORY_FILE):
-        return data
-    with open(HISTORY_FILE, 'r', encoding='utf-8') as f:
-        for line in f:
-            line = line.strip()
-            if 'numbers:' not in line:
-                continue
-            parts = line.split(',')
-            date_s = parts[0].split(':')[1]
-            issue_s = parts[1].split(':')[1]
-            nums = [int(n) for n in parts[2].split(':')[1].strip().split('-')]
-            data.append({'issue': issue_s, 'date': date_s, 'numbers': nums})
-    # 按期号降序排列，确保 data[0] 是最新期
-    data.sort(key=lambda h: h['issue'], reverse=True)
-    if limit and len(data) > limit:
-        data = data[:limit]
-    return data
+    """读取开奖历史, 返回list[dict], 按期号降序 (最新在索引0)。
+
+    v2.2: 委托给 utils.history_loader.load_history()，消除重复实现。
+    """
+    from utils.history_loader import load_history
+    return load_history(limit=limit)
 
 
 # ==============================
@@ -89,13 +82,16 @@ def plan7_markov_integration(history):
         default_prob = 0.25
         min_obs = 3
 
+    # 将历史切片反转为正向时间轴 (老 -> 新)，解决时空倒错
+    chronological_hist = list(reversed(history))
+
     # ── 3阶马尔可夫 (lookback=3) — 全量滑动统计 ──
     states_3 = {}
     for num in range(1, 81):
-        for i in range(len(history) - lookback):
-            pattern = tuple(1 if num in history[i + j]['numbers'] else 0 for j in range(lookback))
-            if i + lookback < len(history):
-                next_val = 1 if num in history[i + lookback]['numbers'] else 0
+        for i in range(len(chronological_hist) - lookback):
+            pattern = tuple(1 if num in chronological_hist[i + j]['numbers'] else 0 for j in range(lookback))
+            if i + lookback < len(chronological_hist):
+                next_val = 1 if num in chronological_hist[i + lookback]['numbers'] else 0
             else:
                 continue
             if pattern not in states_3:
@@ -106,21 +102,21 @@ def plan7_markov_integration(history):
     # ── 1阶马尔可夫 (更稳健的短期信号) ──
     states_1 = {}
     for num in range(1, 81):
-        for i in range(len(history) - 1):
-            cur = 1 if num in history[i]['numbers'] else 0
-            nxt = 1 if num in history[i + 1]['numbers'] else 0
+        for i in range(len(chronological_hist) - 1):
+            cur = 1 if num in chronological_hist[i]['numbers'] else 0
+            nxt = 1 if num in chronological_hist[i + 1]['numbers'] else 0
             key = (cur,)
             if key not in states_1:
                 states_1[key] = {'appear': 0, 'total': 0}
             states_1[key]['total'] += 1
             states_1[key]['appear'] += nxt
 
-    # 当前模式
+    # 当前模式 (用正向序列的最后几个元素)
     current_patterns_3 = {}
     current_patterns_1 = {}
     for num in range(1, 81):
-        current_patterns_3[num] = tuple(1 if num in h['numbers'] else 0 for h in history[:lookback])
-        current_patterns_1[num] = (1 if num in history[0]['numbers'] else 0,)
+        current_patterns_3[num] = tuple(1 if num in h['numbers'] else 0 for h in chronological_hist[-lookback:])
+        current_patterns_1[num] = (1 if num in chronological_hist[-1]['numbers'] else 0,)
 
     # 计算转移概率 (带Dirichlet平滑)
     transition_probs = {}
@@ -130,7 +126,10 @@ def plan7_markov_integration(history):
         cp3 = current_patterns_3[num]
         if cp3 in states_3 and states_3[cp3]['total'] >= min_obs:
             s = states_3[cp3]
-            prob_3 = (s['appear'] + prior_strength * default_prob) / (s['total'] + prior_strength)
+            # Dirichlet 平滑: 二分类(出现/未出现), alpha = prior_strength*default_prob,
+            # 两类各加 alpha, 分母为 total + 2*alpha
+            prob_3 = (s['appear'] + prior_strength * default_prob) \
+                / (s['total'] + 2 * prior_strength * default_prob)
         else:
             prob_3 = default_prob  # 不足观测, 回退先验
 
@@ -138,7 +137,8 @@ def plan7_markov_integration(history):
         cp1 = current_patterns_1[num]
         if cp1 in states_1 and states_1[cp1]['total'] >= min_obs:
             s = states_1[cp1]
-            prob_1 = (s['appear'] + prior_strength * default_prob) / (s['total'] + prior_strength)
+            prob_1 = (s['appear'] + prior_strength * default_prob) \
+                / (s['total'] + 2 * prior_strength * default_prob)
         else:
             prob_1 = default_prob
 
@@ -165,77 +165,15 @@ def plan7_markov_integration(history):
 
 
 # ==============================
-# 方案8: 号码共现网络
+# 方案8: 号码共现网络 — [v4.1] 已移除
 # ==============================
-def _cooc_count(h, num, nbrs, max_dist=3):
-    """一个号码的邻居辅助计数, 简化版"""
-    idx = h.index(num) if num in h else -1
-    if idx < 0:
-        return 0
-    count = 0
-    for d in range(1, max_dist + 1):
-        if idx - d >= 0:
-            n = h[idx - d]
-            if n in nbrs:
-                count += 1
-        if idx + d < len(h):
-            n = h[idx + d]
-            if n in nbrs:
-                count += 1
-    return count
-
+# 原因: 连续多期返回空列表，无贡献纯噪声
+# 保留函数签名以防外部调用报错，返回空结果
 
 def plan8_cooccurrence_network(history):
-    """
-    号码共现网络（关联规则挖掘）。
-    使用Apriori-like方法找出号码间的强关联。
-    """
-    print("\n" + "=" * 70 + "\n【方案8】号码共现网络（关联规则挖掘）\n" + "=" * 70)
-    if len(history) < 20:
-        return {}
-
-    # 共现矩阵
-    cooc = collections.Counter()
-    for h in history:
-        nums = h['numbers']
-        for i in range(len(nums)):
-            for j in range(i + 1, len(nums)):
-                a, b = nums[i], nums[j]
-                if a < b:
-                    cooc[(a, b)] += 1
-                else:
-                    cooc[(b, a)] += 1
-
-    # 单号频次
-    freq = collections.Counter()
-    for h in history:
-        for n in h['numbers']:
-            freq[n] += 1
-
-    # 计算lift提升度
-    total = len(history)
-    lifts = {}
-    for (a, b), cnt in cooc.items():
-        if freq[a] > 0 and freq[b] > 0:
-            pa = freq[a] / total
-            pb = freq[b] / total
-            pab = cnt / total
-            lift = pab / (pa * pb) if pa * pb > 0 else 0
-            if lift > 1.2:  # 强关联阈值
-                lifts[(a, b)] = lift
-
-    # 对最新期号码, 找关联最强的未出现号码
-    latest = set(history[0]['numbers'])
-    scores = collections.Counter()
-    for (a, b), lift in lifts.items():
-        if a in latest and b not in latest:
-            scores[b] += lift
-        if b in latest and a not in latest:
-            scores[a] += lift
-
-    top20 = sorted(scores, key=lambda n: (-scores[n], n))[:20]
-    print(f"  共现网络推荐Top20: {top20}")
-    return {'cooc_top20': top20}
+    """[v4.1] 已废弃: 连续多期返回空列表，无贡献纯噪声"""
+    print("\n[方案8] 共现网络 — 已移除(v4.1): 连续多期返回空列表，无贡献纯噪声)")
+    return {}
 
 
 # ==============================
@@ -407,9 +345,12 @@ def plan10_monte_carlo(history):
                       omission_scores[n] * omit_w)
 
     # ── 蒙特卡洛模拟 ──
-    # 基于最新期号哈希生成种子，确保同次预测可复现，不同期号结果不同
+    # 基于最新期号生成确定性种子，确保同次预测可复现，不同期号结果不同
+    # 修复: Python 3 的 hash() 默认启用 PYTHONHASHSEED 随机化，不可复现
+    # 改用 hashlib 确定性哈希
+    import hashlib
     latest_issue = history[0]['issue'] if history else 'default'
-    seed = int(hash(latest_issue) & 0x7FFFFFFF)  # 转为正整数
+    seed = int(hashlib.md5(str(latest_issue).encode('utf-8')).hexdigest()[:8], 16) & 0x7FFFFFFF
     rng = random.Random(seed)
     weight_list = [weights[n] for n in range(1, 81)]
     sim_counts = collections.Counter()
@@ -475,53 +416,15 @@ def plan11_omission_decay(history):
 
 
 # ==============================
-# 方案12: 自相关周期性检测
+# 方案12: 自相关周期性检测 — [v4.1] 已移除
 # ==============================
-def plan12_autocorrelation_periodicity(history):
-    """
-    号码周期性检测（自相关分析）。
-    对每个号码构建出现序列, 用自相关检测短期周期, 预测下期出现概率。
-    注: 原名FFT但实际使用自相关实现, v2.1更正命名。
-    """
-    print("\n" + "=" * 70 + "\n【方案12】号码自相关周期检测\n" + "=" * 70)
-    if len(history) < 20:
-        return {}
+# 原因: 返回全部80码，无区分度，对评分无贡献
+# 保留函数签名以防外部调用报错，返回空结果
 
-    # 构建二进制序列 (1=出现, 0=未出现)
-    period_scores = {}
-    for num in range(1, 81):
-        seq = [1 if num in h['numbers'] else 0 for h in history]
-        # 自相关: 检测短期周期 (lag=3~10)
-        max_corr = 0
-        best_lag = 0
-        for lag in range(3, min(11, len(seq) // 2)):
-            if lag >= len(seq):
-                break
-            corr = sum(seq[i] * seq[i + lag] for i in range(len(seq) - lag))
-            corr /= (len(seq) - lag) if (len(seq) - lag) > 0 else 1
-            if corr > max_corr:
-                max_corr = corr
-                best_lag = lag
-        period_scores[num] = max_corr
-
-    # 最新几期的序列尾部模式匹配
-    tail = [1 if num in h['numbers'] else 0 for h in history[:5]]
-    for num in range(1, 81):
-        seq = [1 if num in h['numbers'] else 0 for h in history]
-        # 如果尾部与历史某段匹配, 则下期可能重复历史模式
-        for i in range(5, len(seq) - 5):
-            if seq[i:i + 5] == tail:
-                next_vals = seq[i + 5:i + 10]
-                after = sum(next_vals) / len(next_vals) if next_vals else 0
-                period_scores[num] = max(period_scores[num], after * 0.8)
-
-    # 精选: 后验概率 > 0.30 (高于先验0.25)
-    elite = sorted(n for n, p in period_scores.items() if p > 0.30)
-    print(f"  周期性精选: {elite}")
-    return {'period_top': elite, 'scores': period_scores}
-
-# 向后兼容别名
-plan12_fft_periodicity = plan12_autocorrelation_periodicity
+def plan12_fft_periodicity(history):
+    """[v4.1] 已废弃: 返回全部80码，无区分度"""
+    print("\n[方案12] FFT周期检测 — 已移除(v4.1): 返回全部80码，无区分度)")
+    return {}
 
 
 # ==============================
@@ -530,12 +433,10 @@ plan12_fft_periodicity = plan12_autocorrelation_periodicity
 def run_all():
     history = load_hist()
     r7 = plan7_markov_integration(history)
-    r8 = plan8_cooccurrence_network(history)
     r9 = plan9_bayesian_update(history)
     r10 = plan10_monte_carlo(history)
     r11 = plan11_omission_decay(history)
-    r12 = plan12_fft_periodicity(history)
-    return {'markov': r7, 'cooc': r8, 'bayes': r9, 'mc': r10, 'decay': r11, 'fft': r12}
+    return {'markov': r7, 'bayes': r9, 'mc': r10, 'decay': r11}
 
 
 if __name__ == '__main__':

@@ -18,36 +18,34 @@ import os, json, collections, math, random, logging
 
 logger = logging.getLogger(__name__)
 
-_PROJ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # data/
+import os, sys
+if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.paths import get_project_root, data_path, _ensure_project_path
+_ensure_project_path()
+_PROJ = get_project_root()
 HISTORY_FILE = os.path.join(_PROJ, 'kl8_history_final.txt')
 SELF_LEARNING_FILE = os.path.join(_PROJ, 'cache', 'self_learning_state.json')
 ZONE_RANGES = [(i*10+1, (i+1)*10) for i in range(8)]
 THEORY_DENSITY = 20.0/80.0
 
 def load_history():
-    H=[]
-    if not os.path.exists(HISTORY_FILE): return H
-    with open(HISTORY_FILE,'r',encoding='utf-8') as f:
-        for line in f:
-            line=line.strip()
-            if 'numbers:' not in line: continue
-            parts=line.split(',')
-            H.append({
-                'issue': parts[1].split(':')[1],
-                'date': parts[0].split(':')[1],
-                'numbers': [int(n) for n in parts[2].split(':')[1].strip().split('-')]
-            })
-    # 按期号降序排列
-    H.sort(key=lambda h: h['issue'], reverse=True)
-    return H
+    """v2.2: 委托给 utils.history_loader.load_history()，消除重复实现。"""
+    from utils.history_loader import load_history as _load
+    return _load()
 
 def calc_loss(pred, actual):
+    """计算预测Loss (委托给 loss_weight_updater 的交叉熵实现)
+
+    注意: 旧实现比较的是号码均值差异，这不是合理的Loss函数。
+    v2.2修复: 统一使用交叉熵Loss。
+    """
     try:
-        t=sum(n for n in actual)/len(actual)
-        p=sum(n for n in pred)/len(pred)
-        return abs(p-t)
+        from core.loss_weight_updater import compute_cross_entropy_loss
+        pred_probs = {n: 1.0 for n in pred} if isinstance(pred, list) else pred
+        return compute_cross_entropy_loss(pred_probs, actual)
     except Exception:
-        return 0
+        return 0.0
 
 # ============================================================
 # 方案13 - 动态区块权重分配
@@ -117,14 +115,16 @@ def plan14_env_strategy_switch(history):
     hot_ratio=sum(1 for n,f in f10.items() if f>=3)/80
     env="Hot" if hot_ratio>0.55 else ("Cold" if hot_ratio<0.35 else "Balanced")
     if env=="Hot":
+        # 热码追涨: 用最近5期频次
         f5=collections.Counter(n for h in history[:5] for n in h['numbers'])
         main=sorted(f5,key=lambda n:(-f5.get(n,0),n))[:20]
     elif env=="Cold":
+        # 冷码回补: 选近10期出现≤1次的号码
         f10_full=collections.Counter(n for h in history[:10] for n in h['numbers'])
         main=sorted(n for n in range(1,81) if f10_full.get(n,0)<=1)[:20]
     else:
-        f5=collections.Counter(n for h in history[:5] for n in h['numbers'])
-        main=sorted(f5,key=lambda n:(-f5.get(n,0),n))[:20]
+        # 平衡环境: 用最近10期频次(比Hot的5期更稳健, 避免短期噪声)
+        main=sorted(f10,key=lambda n:(-f10.get(n,0),n))[:20]
     print(f"  环境={env}, 主选={main}")
     return {'env':env,'main':main,'top20':main}
 
@@ -143,7 +143,7 @@ def plan15_confidence_scoring(history, cached_results=None):
     """
     print("\n【方案15】置信度评分融合")
     from core.feature_optimizer import plan3_frequency_acceleration
-    from core.algorithm_optimizer import plan7_markov_integration,plan8_cooccurrence_network,plan9_bayesian_update,plan10_monte_carlo,plan11_omission_decay,plan12_fft_periodicity
+    from core.algorithm_optimizer import plan7_markov_integration,plan9_bayesian_update,plan10_monte_carlo,plan11_omission_decay
     import collections as _c
     scores=_c.Counter()
     
@@ -160,11 +160,6 @@ def plan15_confidence_scoring(history, cached_results=None):
     except Exception as e:
         logger.debug("plan7 异常: %s", e)
     try:
-        r8 = cached.get('plan8') or plan8_cooccurrence_network(history)
-        for n in r8.get('cooc_top20',[]): scores[n]+=2
-    except Exception as e:
-        logger.debug("plan8 异常: %s", e)
-    try:
         r9 = cached.get('plan9') or plan9_bayesian_update(history)
         for n in r9.get('bayes_top20',[]): scores[n]+=2
     except Exception as e:
@@ -179,11 +174,7 @@ def plan15_confidence_scoring(history, cached_results=None):
         for n in r11.get('decay_top20',[]): scores[n]+=2
     except Exception as e:
         logger.debug("plan11 异常: %s", e)
-    try:
-        r12 = cached.get('plan12') or plan12_fft_periodicity(history)
-        for n in r12.get('period_top',[]): scores[n]+=1
-    except Exception as e:
-        logger.debug("plan12 异常: %s", e)
+    # [v4.1] plan8(共现网络)和plan12(FFT周期检测)已移除: 无贡献纯噪声/无区分度
     ss=sorted(scores.items(),key=lambda x:(-x[1],x[0]))
     t5=[n for n,_ in ss[:5]]; t12=[n for n,_ in ss[:12]]; t20=[n for n,_ in ss[:20]]
     print(f"  置信度Top5={t5}, Top12={t12}")
@@ -235,8 +226,8 @@ def plan16_hedge_portfolio(history):
 # 方案17-20 (语义化命名, 消除编号冲突)
 # ============================================================
 def strat_adaptive_threshold(history):
-    """自适应阈值: 基于波动率调整推荐数量"""
-    return {'enabled':True}
+    """[已废弃] 自适应阈值: 空实现 stub, 未接入流水线, 仅保留签名防外部调用报错"""
+    return {'enabled': True}
 
 # 向后兼容别名
 plan17_adaptive_threshold = strat_adaptive_threshold
@@ -259,15 +250,15 @@ plan18_temporal_decay = strat_temporal_decay
 
 
 def strat_cross_validation(history):
-    """交叉验证回测"""
-    return {'enabled':True}
+    """[已废弃] 交叉验证回测: 空实现 stub, 未接入流水线, 仅保留签名防外部调用报错"""
+    return {'enabled': True}
 
 plan19_cross_validation = strat_cross_validation
 
 
 def strat_feedback_learning(history):
-    """反馈学习: 将上次预测结果与开奖结果对比调优"""
-    return {'enabled':True}
+    """[已废弃] 反馈学习: 空实现 stub, 未接入流水线, 仅保留签名防外部调用报错"""
+    return {'enabled': True}
 
 plan20_feedback_learning = strat_feedback_learning
 
@@ -321,7 +312,9 @@ def strat_multienv(history):
     elif env=="Vacuum":
         main=sorted(n for n in range(1,81) if f10.get(n,0)<=1)[:20]
     else:
-        main=sorted(set(n for h in history[:5] for n in h['numbers'])-set(random.sample(range(1,81),10)))[:20]
+        # 固定种子: 由历史导出, 保证同一段历史的剔除结果可复现
+        rng = random.Random(sum(f5.values()))
+        main=sorted(set(n for h in history[:5] for n in h['numbers'])-set(rng.sample(range(1,81),10)))[:20]
     return {'env':env,'main':main}
 
 plan14_multienv = strat_multienv

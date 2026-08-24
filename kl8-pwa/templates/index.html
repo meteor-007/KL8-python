@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6c5ce7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KL8调度">
+    <link rel="manifest" href="/manifest.json">
+    <title>KL8 每日全流程调度 v3</title>
+    <style>
+        :root {
+            --bg: #0f0f1a; --bg2: #1a1a2e; --bg3: #16213e;
+            --card: #1f1f38; --border: #2d2d5e;
+            --text: #e0e0f0; --text2: #8888aa; --text3: #555577;
+            --primary: #6c5ce7; --primary-glow: rgba(108,92,231,0.3);
+            --success: #00b894; --success-glow: rgba(0,184,148,0.3);
+            --danger: #e74c3c; --danger-glow: rgba(231,76,60,0.3);
+            --warning: #fdcb6e; --info: #74b9ff;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden;
+        }
+
+        /* ═══ Header ═══ */
+        .header {
+            background: linear-gradient(135deg, var(--bg2), var(--bg3));
+            border-bottom: 1px solid var(--border);
+            padding: 14px 20px; position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .header-left h1 {
+            font-size: 18px; font-weight: 700;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .header-left .subtitle { font-size: 11px; color: var(--text2); margin-top: 2px; }
+        .sse-status {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 11px; color: var(--text2);
+            background: var(--bg2); padding: 4px 10px; border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+        .sse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--danger); }
+        .sse-dot.connected { background: var(--success); animation: none; }
+        .sse-dot.connecting { background: var(--warning); animation: blink 1s infinite; }
+
+        /* ═══ Content ═══ */
+        .content { padding: 0 14px 100px; max-width: 960px; margin: 0 auto; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+        .card-title { font-size: 15px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+        .fade-in { animation: fadeIn 0.3s ease; }
+
+        /* ═══ 状态横幅 ═══ */
+        .pipe-banner {
+            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+            padding: 12px 14px; border-radius: 10px; margin-bottom: 12px;
+            background: var(--bg2); border: 1px solid var(--border); font-size: 13px;
+        }
+        .pipe-banner .pipe-status { font-weight: 700; }
+        .pipe-banner .pipe-time { margin-left: auto; font-family: 'Cascadia Code', monospace; font-size: 12px; color: var(--text2); }
+        .pipe-banner.running { border-color: var(--primary); background: rgba(108,92,231,0.08); }
+        .pipe-banner.done   { border-color: var(--success); background: rgba(0,184,148,0.08); }
+        .pipe-banner.error  { border-color: var(--danger); background: rgba(231,76,60,0.08); }
+        .pipe-banner.stopped { border-color: var(--warning); background: rgba(253,203,110,0.08); }
+        .pipe-summary { font-size: 12px; color: var(--text2); width: 100%; }
+
+        /* ═══ 控制按钮 ═══ */
+        .ctrl-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 11px 22px; border-radius: 10px; font-size: 14px; font-weight: 600;
+            border: none; cursor: pointer; transition: all 0.2s ease;
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: #fff; }
+        .btn-primary:hover:not(:disabled) { box-shadow: 0 4px 16px var(--primary-glow); transform: translateY(-1px); }
+        .btn-danger { background: linear-gradient(135deg, #e74c3c, #ff7675); color: #fff; }
+        .btn-danger:hover:not(:disabled) { box-shadow: 0 4px 16px var(--danger-glow); }
+        .btn-outline { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
+        .btn-outline:hover:not(:disabled) { background: rgba(108,92,231,0.1); }
+        .btn-sm { padding: 5px 12px; font-size: 11px; border-radius: 8px; }
+        .force-toggle { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); cursor: pointer; user-select: none; }
+        .force-toggle input { accent-color: var(--primary); width: 15px; height: 15px; }
+        /* 批量补跑日期范围（v3.1） */
+        .backfill-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2); flex-wrap: wrap; margin-top: 10px; }
+        .backfill-row input[type="date"] {
+            background: var(--bg3); color: var(--text); border: 1px solid var(--border);
+            border-radius: 8px; padding: 6px 8px; font-size: 12px; color-scheme: dark;
+        }
+        .backfill-row .bf-hint { font-size: 11px; color: var(--text3); }
+
+        /* ═══ 进度条 ═══ */
+        .progress-wrap { margin: 12px 0 4px; }
+        .progress-info { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+        .progress-info .pct { color: var(--primary); font-weight: 600; }
+        .progress-bar { width: 100%; height: 8px; background: var(--bg2); border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--success)); border-radius: 4px; transition: width 0.4s ease; position: relative; }
+        .progress-fill::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); animation: shimmer 1.5s infinite; }
+        @keyframes shimmer { 0%{transform:translateX(-100%);} 100%{transform:translateX(100%);} }
+
+        /* ═══ 今日点位 ═══ */
+        .points-strip { display: flex; align-items: center; gap: 14px; font-size: 12px; color: var(--text2);
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin-top: 10px; flex-wrap: wrap; }
+        .points-strip strong { color: var(--text); }
+        .points-strip .num-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 26px; height: 22px; border-radius: 5px; font-size: 11px; font-weight: 600;
+            background: rgba(108,92,231,0.15); color: #a29bfe; border: 1px solid rgba(108,92,231,0.3);
+        }
+
+        /* ═══ 流水线列表 ═══ */
+        .pipe-list { display: flex; flex-direction: column; gap: 8px; }
+        .pipe-row {
+            background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+            overflow: hidden; transition: border-color 0.2s;
+        }
+        .pipe-row.running { border-color: var(--primary); box-shadow: 0 0 12px var(--primary-glow); }
+        .pipe-row.done { border-color: rgba(0,184,148,0.4); }
+        .pipe-row.error { border-color: rgba(231,76,60,0.4); }
+        .pipe-row.skipped { border-color: rgba(253,203,110,0.3); opacity: 0.85; }
+        .pipe-head {
+            display: flex; align-items: center; gap: 10px; padding: 11px 14px; cursor: pointer; user-select: none;
+        }
+        .pipe-head:hover { background: rgba(108,92,231,0.05); }
+        .pipe-seq {
+            width: 22px; height: 22px; border-radius: 50%; font-size: 11px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            background: var(--bg3); color: var(--text3); border: 1px solid var(--border);
+        }
+        .pipe-row.running .pipe-seq { background: var(--primary); color: #fff; border-color: var(--primary); animation: pulse 1.5s infinite; }
+        .pipe-row.done .pipe-seq { background: var(--success); color: #fff; border-color: var(--success); }
+        .pipe-row.error .pipe-seq { background: var(--danger); color: #fff; border-color: var(--danger); }
+        .pipe-row.skipped .pipe-seq { background: var(--warning); color: #000; border-color: var(--warning); }
+        @keyframes pulse { 0%,100%{box-shadow:0 0 5px var(--primary-glow);} 50%{box-shadow:0 0 20px var(--primary-glow);} }
+        .pipe-icon { font-size: 18px; }
+        .pipe-name { font-size: 13px; font-weight: 600; }
+        .pipe-status { font-size: 11px; display: flex; align-items: center; gap: 5px; margin-left: auto; }
+        .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); }
+        .status-dot.running { background: var(--primary); animation: blink 1s infinite; }
+        .status-dot.done { background: var(--success); }
+        .status-dot.error { background: var(--danger); }
+        .status-dot.skipped { background: var(--warning); }
+        .pipe-timer { font-size: 11px; color: var(--text2); font-family: monospace; min-width: 52px; text-align: right; }
+        .pipe-caret { color: var(--text3); font-size: 11px; transition: transform 0.2s; }
+        .pipe-row.open .pipe-caret { transform: rotate(90deg); }
+        .pipe-body { display: none; border-top: 1px solid var(--border); padding: 10px 14px; }
+        .pipe-row.open .pipe-body { display: block; }
+        .pipe-outputs { margin-bottom: 8px; }
+        .pipe-outputs .out-title { font-size: 11px; color: var(--success); margin-bottom: 4px; }
+        .pipe-outputs .out-item {
+            font-size: 11px; font-family: 'Cascadia Code', monospace; color: var(--info);
+            background: var(--bg3); border-radius: 5px; padding: 3px 8px; margin: 2px 0; word-break: break-all;
+        }
+        .pipe-log {
+            background: #080810; border: 1px solid var(--border); border-radius: 8px; padding: 8px;
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; font-size: 11px; line-height: 1.55;
+            max-height: 260px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;
+        }
+        .pipe-log .log-line { padding: 0.5px 0; }
+        .log-line .log-ts { color: var(--text3); margin-right: 6px; font-size: 10px; }
+        .log-line.log-ok { color: var(--success); }
+        .log-line.log-err { color: var(--danger); }
+        .log-line.log-warn { color: var(--warning); }
+        .log-line.log-info { color: var(--info); }
+        .log-line.log-sys { color: var(--primary); font-weight: 600; }
+        .pipe-log-count { font-size: 11px; color: var(--text3); margin-top: 6px; }
+
+        /* ═══ 主日志 ═══ */
+        .log-toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+        .log-toolbar .log-count { font-size: 11px; color: var(--text2); }
+        .log-toolbar .log-btn {
+            font-size: 11px; padding: 3px 8px; border-radius: 6px;
+            background: var(--bg2); color: var(--text2); border: 1px solid var(--border);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .log-toolbar .log-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .log-toolbar .log-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .log-container {
+            background: #080810; border: 1px solid var(--border); border-radius: 8px; padding: 10px;
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; font-size: 12px; line-height: 1.55;
+            max-height: 420px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;
+        }
+        .log-container::-webkit-scrollbar { width: 5px; }
+        .log-container::-webkit-scrollbar-track { background: var(--bg); }
+        .log-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        .log-src { font-size: 10px; padding: 0 4px; border-radius: 3px; margin-right: 4px; }
+
+        /* ═══ 预测结果 ═══ */
+        .pred-card { padding: 14px; }
+        .pred-card-title { font-size: 14px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+        .pred-period { font-size: 11px; font-weight: 400; color: var(--text2); background: var(--bg2); padding: 2px 8px; border-radius: 10px; }
+        .pred-meta { font-size: 11px; color: var(--text2); margin-bottom: 8px; padding: 4px 8px; background: var(--bg2); border-radius: 6px; }
+        .pred-section { margin-bottom: 8px; }
+        .pred-label { font-size: 11px; color: var(--text2); display: block; margin-bottom: 4px; }
+        .pred-num { display: inline-block; min-width: 26px; text-align: center; padding: 2px 6px; margin: 1px; border-radius: 5px; font-size: 12px; color: #fff; font-weight: 500; }
+        .pred-detail { font-size: 11px; color: var(--text2); line-height: 1.6; padding: 4px 8px; background: var(--bg2); border-radius: 6px; }
+        .pred-review { font-size: 11px; color: var(--text2); margin-top: 6px; padding: 4px 8px; background: rgba(243,156,18,0.08); border-radius: 6px; }
+        .pred-error { color: var(--danger); font-size: 13px; padding: 20px; text-align: center; }
+
+        /* ═══ Toast / Spinner / Footer ═══ */
+        .toast-container { position: fixed; bottom: 16px; right: 16px; z-index: 9999; }
+        .toast { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; margin-top: 6px; font-size: 12px; display: flex; align-items: center; gap: 6px; animation: slideIn 0.3s ease; box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+        @keyframes slideIn { from{transform:translateX(100%);opacity:0;} to{transform:translateX(0);opacity:1;} }
+        .spinner { width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+        .footer { text-align: center; padding: 14px; color: var(--text3); font-size: 11px; }
+
+        @media (max-width: 600px) {
+            .card { padding: 12px; } .header-left h1 { font-size: 16px; } .header-left .subtitle { font-size: 10px; }
+            .pipe-timer { font-size: 10px; min-width: 44px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="header-left">
+        <h1>🎯 KL8 每日全流程调度 v3</h1>
+        <div class="subtitle">9子系统一键全自动流水线 · SSE实时监控 · 每日幂等校验自动跳过</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+        <a href="/help" target="_blank" style="font-size:12px;color:var(--primary);text-decoration:none;padding:5px 12px;border:1px solid var(--primary);border-radius:8px;transition:all .2s;background:var(--bg2)" onmouseover="this.style.background='var(--primary)';this.style.color='#fff'" onmouseout="this.style.background='var(--bg2)';this.style.color='var(--primary)'">📋 操作指南</a>
+        <div class="sse-status">
+            <span class="sse-dot" id="sse-dot"></span>
+            <span id="sse-text">未连接</span>
+        </div>
+    </div>
+</div>
+
+<div class="content">
+
+    <!-- 控制面板 -->
+    <div class="card fade-in">
+        <div class="card-title">🚀 一键全自动流水线 <span class="pipe-timer" id="pipe-timer" style="margin-left:auto;display:none">⏱ 0.0s</span></div>
+        <div class="pipe-banner" id="pipe-banner">
+            <span class="pipe-status" id="pipe-status-text">⏳ 待执行 — 点击下方「一键执行全部」</span>
+            <span class="pipe-time" id="pipe-time-text"></span>
+            <span class="pipe-summary" id="pipe-summary-text"></span>
+        </div>
+        <div class="ctrl-row">
+            <button class="btn btn-primary" id="btn-pipeline" onclick="executePipeline()">▶️ 一键执行全部 (9子系统)</button>
+            <button class="btn btn-danger" id="btn-stop" onclick="stopPipeline()" style="display:none">⏹ 停止</button>
+            <label class="force-toggle"><input type="checkbox" id="force-check"> ♻️ 强制重跑（今日已执行的子系统也重新执行）</label>
+        </div>
+        <div class="backfill-row" id="backfill-row">
+            <span>📅 批量补跑历史:</span>
+            <input type="date" id="date-start">
+            <span>至</span>
+            <input type="date" id="date-end">
+            <button class="btn btn-outline btn-sm" id="btn-clear-dates" onclick="clearBackfillDates()">清空</button>
+            <span class="bf-hint">选中即逐日补跑（≤31天，每轮完整9子系统，耗时较长）；留空 = 仅跑今日</span>
+        </div>
+        <div class="progress-wrap" id="progress-wrap">
+            <div class="progress-info"><span id="progress-label">等待开始</span><span class="pct" id="progress-pct">0/9</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+        </div>
+        <div class="points-strip" id="points-strip">
+            <span>📌 今日点位: <strong id="ps-date">-</strong> | 期号 <strong id="ps-period">-</strong></span>
+            <span id="ps-numbers"></span>
+        </div>
+    </div>
+
+    <!-- 流水线列表 -->
+    <div class="card fade-in">
+        <div class="card-title" style="justify-content:space-between">
+            <span>⚙️ 子系统执行监控（按顺序执行）</span>
+            <span style="font-size:11px;color:var(--text2)" id="pipe-progress-note">9个子系统 · 顺序执行 · 点击行展开日志</span>
+        </div>
+        <div class="pipe-list" id="pipe-list"></div>
+    </div>
+
+    <!-- 主日志 -->
+    <div class="card fade-in">
+        <div class="card-title">📋 全流程实时日志</div>
+        <div class="log-toolbar">
+            <span class="log-count" id="log-count-main">0 行</span>
+            <button class="log-btn active" id="autoscroll-main" onclick="toggleAutoScroll()">📌 自动滚动</button>
+            <button class="log-btn" onclick="copyLog()">📋 复制日志</button>
+            <button class="log-btn" onclick="clearLog()">🗑 清空</button>
+        </div>
+        <div class="log-container" id="log-main"></div>
+    </div>
+
+    <!-- 预测结果汇总 -->
+    <div class="card fade-in">
+        <div class="card-title" style="flex-wrap:wrap;gap:6px">
+            🏆 各子系统预测结果汇总（可复制）
+            <div style="display:flex;gap:6px;margin-left:auto">
+                <button class="btn btn-outline btn-sm" onclick="loadPredictions()">🔄 刷新</button>
+                <button class="btn btn-outline btn-sm" onclick="copyPredictions()">📋 一键复制</button>
+                <button class="btn btn-outline btn-sm" onclick="exportPredictions()">💾 导出文件</button>
+            </div>
+        </div>
+        <div id="predictions-container">
+            <div style="text-align:center;padding:40px;color:var(--text2)">
+                <div style="font-size:28px;margin-bottom:8px">📊</div>
+                <div>流水线执行完成后自动加载 · 也可点击「刷新」查看最新预测数据</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="footer">KL8 PWA v3.0 · 一键全自动流水线 · SSE实时监控 · PYTHONUNBUFFERED无缓冲</div>
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// KL8 PWA v3.0 — 9子系统一键全自动流水线 + SSE实时监控
+// ═══════════════════════════════════════════════════════════
+
+const API = '';
+// 共享访问令牌：与后端 TOKEN 环境变量或 kl8-pwa/token.txt 对应。
+// 未配置时为空字符串，后端鉴权自动放行（兼容旧部署）；配置后所有 API 请求自动携带令牌。
+const API_TOKEN = localStorage.getItem('kl8_api_token') || '';
+
+// 统一 API 请求封装：自动附加 X-Api-Token 请求头
+async function apiFetch(url, options = {}) {
+    const opts = Object.assign({}, options);
+    const headers = new Headers(opts.headers || {});
+    if (API_TOKEN) headers.set('X-Api-Token', API_TOKEN);
+    opts.headers = headers;
+    return fetch(API + url, opts);
+}
+
+let sessionId = localStorage.getItem('kl8_session_id') || '';
+let pipelineStatus = 'idle';       // idle|running|done|stopped
+let subStatuses = {};              // sub_id -> pending|running|done|error|skipped
+let subElapsed = {};               // sub_id -> 秒
+let systemOutputs = {};            // sub_id -> [文件路径]
+let pipelineProgress = {current: 0, total: 9, label: '等待开始'};
+let autoScrollMain = true;
+let logCountMain = 0;
+let expandedSubs = {};             // sub_id -> true（行展开）
+let subLogCounts = {};             // sub_id -> 行数
+let lastPredictionsData = null;
+let sseSource = null;
+let timerInterval = null;
+
+// ── 子系统配置（与后端 app.py PIPELINE 顺序一致） ──
+const PIPELINE = [
+    {id:'data',       name:'data',           icon:'📂', color:'#6c5ce7'},
+    {id:'lstm',       name:'双层LSTM',       icon:'🧠', color:'#9b59b6'},
+    {id:'abc',        name:'顺口溜',         icon:'📝', color:'#f39c12'},
+    {id:'points',     name:'重点点位分析',   icon:'📍', color:'#3498db'},
+    {id:'dan2',       name:'定金选2-分析',   icon:'💰', color:'#1abc9c'},
+    {id:'killseeker', name:'KillSeeker',    icon:'🎯', color:'#e74c3c'},
+    {id:'pointtrack', name:'点位期数-追踪', icon:'〽️', color:'#16a085'},
+    {id:'gemini',     name:'gemini选2-预测', icon:'♊', color:'#34495e'},
+    {id:'aggregate',  name:'数据汇总复盘',   icon:'🏆', color:'#2ecc71'},
+    {id:'summary',    name:'预测结果汇总',   icon:'📋', color:'#6c5ce7'},
+];
+
+const STATUS_TEXTS = {pending:'等待中', running:'执行中...', done:'✅ 完成', error:'❌ 失败', skipped:'⏭️ 跳过(今日已执行)'};
+
+// ── 初始化 ──
+document.addEventListener('DOMContentLoaded', async () => {
+    buildPipelineList();
+    await initSession();
+    await loadDailyPoints();
+    startTimer();
+});
+
+async function initSession() {
+    let needNew = !sessionId;
+    if (sessionId) {
+        try {
+            const resp = await apiFetch('/api/session/' + sessionId);
+            if (!resp.ok) needNew = true;
+        } catch(e) { needNew = true; }
+    }
+    if (needNew) {
+        const resp = await apiFetch('/api/session', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({})});
+        const data = await resp.json();
+        sessionId = data.session_id;
+        localStorage.setItem('kl8_session_id', sessionId);
+    }
+    connectSSE();
+}
+
+// ═══ SSE 连接 ═══
+let sseRetryCount = 0;
+
+async function connectSSE() {
+    const dot = document.getElementById('sse-dot');
+    const text = document.getElementById('sse-text');
+    dot.className = 'sse-dot connecting';
+    text.textContent = '连接中...';
+
+    try {
+        const checkResp = await apiFetch('/api/session/' + sessionId);
+        if (!checkResp.ok) {
+            const newResp = await apiFetch('/api/session', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({})});
+            const newData = await newResp.json();
+            sessionId = newData.session_id;
+            localStorage.setItem('kl8_session_id', sessionId);
+            showToast('已创建新会话', 'info');
+        }
+    } catch(e) {}
+
+    // EventSource 无法自定义请求头，配置了 Token 时通过 URL 参数传递（后端兼容 token 参数）
+    sseSource = new EventSource(`${API}/api/stream/${sessionId}${API_TOKEN ? '?token=' + encodeURIComponent(API_TOKEN) : ''}`);
+
+    sseSource.onopen = () => {
+        sseRetryCount = 0;
+        dot.className = 'sse-dot connected';
+        text.textContent = '实时连接';
+    };
+
+    sseSource.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        handleSSEEvent(msg);
+    };
+
+    sseSource.onerror = () => {
+        dot.className = 'sse-dot';
+        sseRetryCount++;
+        text.textContent = `断开重连(${sseRetryCount})...`;
+        sseSource.close();
+        if (sseRetryCount > 5) sseRetryCount = 0;
+        setTimeout(connectSSE, 2000);
+    };
+}
+
+function handleSSEEvent(msg) {
+    switch(msg.type) {
+        case 'snapshot':
+            if (msg.data.pipeline_status) pipelineStatus = msg.data.pipeline_status;
+            if (msg.data.subsystem_status) {
+                subStatuses = msg.data.subsystem_status;
+                updateSubsystemsUI();
+            }
+            if (msg.data.system_outputs) {
+                systemOutputs = msg.data.system_outputs;
+                renderAllOutputs();
+            }
+            if (msg.data.step_progress && msg.data.step_progress['pipeline']) {
+                pipelineProgress = msg.data.step_progress['pipeline'];
+                updateProgressUI();
+            }
+            updatePipelineUI();
+            break;
+
+        case 'log':
+            // 全流程日志（step='pipeline'）
+            appendLogLine(msg.data.ts, msg.data.msg, msg.data.source);
+            break;
+
+        case 'sub_log':
+            // 子系统独立日志 → 追加到该子系统行内的日志区
+            appendSubLogLine(msg.data.sub_id, msg.data.ts, msg.data.msg);
+            break;
+
+        case 'progress':
+            if (String(msg.data.step) === 'pipeline' || msg.data.step === 'pipeline') {
+                pipelineProgress = {current: msg.data.current, total: msg.data.total, label: msg.data.label};
+                updateProgressUI();
+            }
+            break;
+
+        case 'sub_status':
+            subStatuses[msg.data.sub_id] = msg.data.status;
+            updateSubsystemsUI();
+            break;
+
+        case 'sub_outputs':
+            systemOutputs[msg.data.sub_id] = msg.data.outputs || [];
+            renderOutputs(msg.data.sub_id);
+            if (msg.data.sub_id === 'aggregate' || msg.data.sub_id === 'summary') {
+                // 汇总复盘/结果汇总完成，自动加载预测结果
+                setTimeout(() => loadPredictions(), 800);
+            }
+            break;
+
+        case 'pipeline_status':
+            pipelineStatus = msg.data.status;
+            if (msg.data.summary) document.getElementById('pipe-summary-text').textContent = msg.data.summary;
+            updatePipelineUI();
+            if (msg.data.status !== 'running') {
+                // 流水线结束（done/stopped）→ 自动加载预测结果汇总
+                setTimeout(() => loadPredictions(), 800);
+            }
+            break;
+
+        case 'heartbeat':
+            break;  // 忽略心跳
+    }
+}
+
+// ═══ Toast ═══
+function showToast(msg, type='info') {
+    const icons = {info:'ℹ️', success:'✅', error:'❌', warning:'⚠️'};
+    const container = document.getElementById('toast-container');
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.innerHTML = `<span>${icons[type]||''}</span><span>${msg}</span>`;
+    container.appendChild(el);
+    setTimeout(() => el.remove(), 3500);
+}
+
+// ═══ 流水线列表渲染 ═══
+function buildPipelineList() {
+    const list = document.getElementById('pipe-list');
+    list.innerHTML = '';
+    PIPELINE.forEach((sub, idx) => {
+        const row = document.createElement('div');
+        row.className = 'pipe-row';
+        row.id = `pipe-${sub.id}`;
+        row.innerHTML = `
+            <div class="pipe-head" onclick="toggleRow('${sub.id}')">
+                <span class="pipe-seq">${idx + 1}</span>
+                <span class="pipe-icon">${sub.icon}</span>
+                <span class="pipe-name">${sub.name}</span>
+                <span class="pipe-status">
+                    <span class="status-dot" id="dot-${sub.id}"></span>
+                    <span id="status-${sub.id}" style="color:var(--text2)">等待中</span>
+                </span>
+                <span class="pipe-timer" id="pipe-timer-${sub.id}"></span>
+                <span class="pipe-caret">▶</span>
+            </div>
+            <div class="pipe-body">
+                <div class="pipe-outputs" id="outputs-${sub.id}"></div>
+                <div class="pipe-log" id="pipe-log-${sub.id}"></div>
+                <div class="pipe-log-count" id="pipe-log-count-${sub.id}">0 行日志（运行中实时刷新）</div>
+            </div>
+        `;
+        list.appendChild(row);
+    });
+}
+
+function toggleRow(subId) {
+    expandedSubs[subId] = !expandedSubs[subId];
+    const row = document.getElementById(`pipe-${subId}`);
+    if (row) row.classList.toggle('open', !!expandedSubs[subId]);
+}
+
+function updateSubsystemsUI() {
+    for (const sub of PIPELINE) {
+        const row = document.getElementById(`pipe-${sub.id}`);
+        const dot = document.getElementById(`dot-${sub.id}`);
+        const label = document.getElementById(`status-${sub.id}`);
+        const status = subStatuses[sub.id] || 'pending';
+        if (row) {
+            row.className = 'pipe-row';
+            if (status !== 'pending') row.classList.add(status);
+        }
+        if (dot) dot.className = 'status-dot ' + status;
+        if (label) {
+            label.textContent = STATUS_TEXTS[status] || status;
+            label.style.color = status==='done'?'var(--success)':status==='error'?'var(--danger)':status==='running'?'var(--primary)':status==='skipped'?'var(--warning)':'var(--text2)';
+        }
+    }
+}
+
+function appendSubLogLine(subId, ts, msg) {
+    const logEl = document.getElementById(`pipe-log-${subId}`);
+    if (!logEl) return;
+    const div = document.createElement('div');
+    div.className = 'log-line' + classifyLog(msg);
+    div.innerHTML = `<span class="log-ts">${ts}</span>${escapeHtml(msg)}`;
+    logEl.appendChild(div);
+    subLogCounts[subId] = (subLogCounts[subId] || 0) + 1;
+    const countEl = document.getElementById(`pipe-log-count-${subId}`);
+    if (countEl) countEl.textContent = `${subLogCounts[subId]} 行日志`;
+    if (expandedSubs[subId]) logEl.scrollTop = logEl.scrollHeight;
+    // 限制行数防止DOM过大
+    if (logEl.children.length > 1500) logEl.removeChild(logEl.firstChild);
+}
+
+function renderOutputs(subId) {
+    const container = document.getElementById(`outputs-${subId}`);
+    if (!container) return;
+    const outs = systemOutputs[subId] || [];
+    if (!outs.length) {
+        container.innerHTML = '';
+        return;
+    }
+    container.innerHTML = `<div class="out-title">📄 本次生成的预测结果文件 (${outs.length})</div>` +
+        outs.map(o => `<div class="out-item">📎 ${escapeHtml(o)}</div>`).join('');
+}
+
+function renderAllOutputs() {
+    PIPELINE.forEach(s => renderOutputs(s.id));
+}
+
+// ═══ 流水线控制 ═══
+function clearBackfillDates() {
+    document.getElementById('date-start').value = '';
+    document.getElementById('date-end').value = '';
+    showToast('已清空补跑日期，下次执行将跑今日', 'info');
+}
+
+async function executePipeline() {
+    const btn = document.getElementById('btn-pipeline');
+    btn.disabled = true;
+    const force = document.getElementById('force-check').checked;
+    pipelineStatus = 'running';
+    // 批量补跑日期校验
+    const ds = document.getElementById('date-start').value;
+    const de = document.getElementById('date-end').value;
+    const payload = {session_id: sessionId, force};
+    if (ds || de) {
+        if (!ds || !de) {
+            showToast('补跑需同时填写起始与结束日期（或都留空跑今日）', 'warning');
+            pipelineStatus = 'idle';
+            btn.disabled = false;
+            updatePipelineUI();
+            return;
+        }
+        if (de < ds) {
+            showToast('结束日期不能早于起始日期', 'warning');
+            pipelineStatus = 'idle';
+            btn.disabled = false;
+            updatePipelineUI();
+            return;
+        }
+        payload.date_start = ds;
+        payload.date_end = de;
+    }
+    // 重置本地展示状态
+    subStatuses = {};
+    systemOutputs = {};
+    subLogCounts = {};
+    PIPELINE.forEach(s => {
+        const logEl = document.getElementById(`pipe-log-${s.id}`);
+        if (logEl) logEl.innerHTML = '';
+        renderOutputs(s.id);
+    });
+    document.getElementById('log-main').innerHTML = '';
+    logCountMain = 0;
+    updatePipelineUI();
+    updateSubsystemsUI();
+
+    const resp = await apiFetch('/api/execute/pipeline', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+    });
+    const data = await resp.json();
+    if (data.error) {
+        showToast(data.error, 'warning');
+        pipelineStatus = 'idle';
+        btn.disabled = false;
+        updatePipelineUI();
+    } else {
+        showToast(data.backfill
+            ? `已启动批量补跑：${data.date_start} → ${data.date_end}（${data.days}天）`
+            : (force ? '已启动流水线（强制重跑模式）' : '已启动流水线'), 'success');
+    }
+}
+
+async function stopPipeline() {
+    const resp = await apiFetch('/api/pipeline/stop', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({session_id: sessionId})
+    });
+    const data = await resp.json();
+    if (data.error) showToast(data.error, 'warning');
+    else showToast('已请求停止流水线', 'warning');
+}
+
+function updatePipelineUI() {
+    const banner = document.getElementById('pipe-banner');
+    const statusText = document.getElementById('pipe-status-text');
+    const timer = document.getElementById('pipe-timer');
+    const runBtn = document.getElementById('btn-pipeline');
+    const stopBtn = document.getElementById('btn-stop');
+
+    banner.className = 'pipe-banner';
+    if (pipelineStatus === 'running') {
+        banner.classList.add('running');
+        statusText.innerHTML = '<span class="spinner" style="width:14px;height:14px"></span> 🔄 流水线执行中...';
+        runBtn.disabled = true;
+        stopBtn.style.display = 'inline-flex';
+        timer.style.display = 'inline-flex';
+    } else if (pipelineStatus === 'done') {
+        banner.classList.add('done');
+        statusText.textContent = '✅ 流水线执行完成';
+        runBtn.disabled = false;
+        stopBtn.style.display = 'none';
+        timer.style.display = 'inline-flex';
+    } else if (pipelineStatus === 'stopped') {
+        banner.classList.add('stopped');
+        statusText.textContent = '⏹ 流水线已停止';
+        runBtn.disabled = false;
+        stopBtn.style.display = 'none';
+        timer.style.display = 'inline-flex';
+    } else {
+        statusText.textContent = '⏳ 待执行 — 点击上方「一键执行全部」';
+        runBtn.disabled = false;
+        stopBtn.style.display = 'none';
+        timer.style.display = 'none';
+    }
+}
+
+// ═══ 进度条 ═══
+function updateProgressUI() {
+    const p = pipelineProgress;
+    const pct = p.total > 0 ? Math.round(p.current / p.total * 100) : 0;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = p.label || `${p.current}/${p.total}`;
+    document.getElementById('progress-pct').textContent = `${p.current}/${p.total}`;
+}
+
+// ═══ 计时器 ═══
+function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    // 每100ms刷新子系统计时角标
+    timerInterval = setInterval(() => {
+        for (const sub of PIPELINE) {
+            if (subStatuses[sub.id] === 'running') {
+                const t = document.getElementById(`pipe-timer-${sub.id}`);
+                if (t) t.textContent = `⏱ ${(subElapsed[sub.id] || 0).toFixed(1)}s`;
+            }
+        }
+        if (pipelineStatus === 'running') {
+            const t = document.getElementById('pipe-timer');
+            if (t) t.textContent = `⏱ ${(pipeElapsed || 0).toFixed(1)}s`;
+        }
+    }, 100);
+
+    // 每1s从后端拉取耗时
+    setInterval(async () => {
+        if (!sessionId) return;
+        try {
+            const resp = await apiFetch('/api/session/' + sessionId);
+            const data = await resp.json();
+            if (data.sub_elapsed) subElapsed = data.sub_elapsed;
+            if (data.pipeline_elapsed) pipeElapsed = data.pipeline_elapsed;
+        } catch(e) {}
+    }, 1000);
+}
+let pipeElapsed = 0;
+
+// ═══ 今日点位 ═══
+async function loadDailyPoints() {
+    const resp = await apiFetch('/api/daily-points');
+    const data = await resp.json();
+    if (data.error || !data.parsed) return;
+    const p = data.parsed;
+    document.getElementById('ps-date').textContent = p.date || '-';
+    document.getElementById('ps-period').textContent = p.period || '-';
+    const numsDiv = document.getElementById('ps-numbers');
+    numsDiv.innerHTML = '';
+    if (p.points) {
+        p.points.split(/\s+/).forEach(n => {
+            const badge = document.createElement('span');
+            badge.className = 'num-badge';
+            badge.textContent = n;
+            numsDiv.appendChild(badge);
+        });
+    }
+}
+
+// ═══ 主日志渲染 ═══
+function appendLogLine(ts, msg, source) {
+    const logEl = document.getElementById('log-main');
+    if (!logEl) return;
+    const div = document.createElement('div');
+    div.className = 'log-line' + classifyLog(msg);
+
+    // 有 source（子系统标识）时显示彩色标签
+    let srcHtml = '';
+    if (source) {
+        const subInfo = PIPELINE.find(s => s.id === source);
+        if (subInfo) {
+            srcHtml = `<span class="log-src" style="background:${subInfo.color}20;color:${subInfo.color}">${subInfo.icon}</span>`;
+        }
+    }
+
+    div.innerHTML = `<span class="log-ts">${ts}</span>${srcHtml}${escapeHtml(msg)}`;
+    logEl.appendChild(div);
+
+    logCountMain++;
+    const countEl = document.getElementById('log-count-main');
+    if (countEl) countEl.textContent = `${logCountMain} 行`;
+
+    if (autoScrollMain) logEl.scrollTop = logEl.scrollHeight;
+    // 限制日志行数防止DOM过大
+    if (logEl.children.length > 3000) logEl.removeChild(logEl.firstChild);
+}
+
+function classifyLog(msg) {
+    if (msg.includes('✅')) return ' log-ok';
+    if (msg.includes('❌')) return ' log-err';
+    if (msg.includes('⚠') || msg.includes('WARN')) return ' log-warn';
+    if (msg.includes('▶') || msg.includes('═══') || msg.includes('[INFO]')) return ' log-sys';
+    return '';
+}
+
+function toggleAutoScroll() {
+    autoScrollMain = !autoScrollMain;
+    const btn = document.getElementById('autoscroll-main');
+    if (btn) {
+        btn.classList.toggle('active', autoScrollMain);
+        btn.textContent = autoScrollMain ? '📌 自动滚动' : '📍 已暂停';
+    }
+}
+
+function clearLog() {
+    document.getElementById('log-main').innerHTML = '';
+    logCountMain = 0;
+    const countEl = document.getElementById('log-count-main');
+    if (countEl) countEl.textContent = '0 行';
+}
+
+function copyLog() {
+    const logEl = document.getElementById('log-main');
+    if (!logEl || logEl.children.length === 0) {
+        showToast('暂无日志可复制', 'warning');
+        return;
+    }
+    let text = '';
+    const lines = logEl.querySelectorAll('.log-line');
+    lines.forEach(line => {
+        const ts = line.querySelector('.log-ts');
+        const src = line.querySelector('.log-src');
+        const tsText = ts ? ts.textContent.trim() : '';
+        const srcText = src ? src.textContent.trim() + ' ' : '';
+        const content = line.textContent.replace(tsText, '').trim();
+        text += `[${tsText}] ${srcText}${content}\n`;
+    });
+    navigator.clipboard.writeText(text).then(() => {
+        showToast(`已复制 ${lines.length} 行日志到剪贴板`, 'success');
+    }).catch(() => {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = 0;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showToast(`已复制 ${lines.length} 行日志到剪贴板`, 'success');
+        } catch(err) {
+            showToast('复制失败，请手动选择日志文本', 'error');
+        }
+        document.body.removeChild(textarea);
+    });
+}
+
+// ═══ 预测结果汇总 ═══
+async function loadPredictions() {
+    const container = document.getElementById('predictions-container');
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)"><div style="font-size:28px">⏳</div><div>正在加载各子系统预测数据...</div></div>';
+    try {
+        const resp = await apiFetch('/api/predictions');
+        const data = await resp.json();
+        if (data.error) {
+            container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--danger)">❌ ${data.error}</div>`;
+            lastPredictionsData = null;
+            return;
+        }
+        lastPredictionsData = data;
+        container.innerHTML = renderPredictions(data);
+    } catch(e) {
+        container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--danger)">❌ 加载失败: ${e.message}</div>`;
+    }
+}
+
+function fmtNums(nums, color) {
+    if (!nums || nums.length === 0) return '<span style="color:var(--text2)">无</span>';
+    return nums.map(n => `<span class="pred-num" style="background:${color || 'var(--primary)'}">${String(n).padStart(2,'0')}</span>`).join('');
+}
+
+function fmtPeriod(p) {
+    return p ? `第${p}期` : '未知期号';
+}
+
+// ═══ 统一文本生成函数 — 与界面展示数据完全一致 ═══
+function fmtNumsText(nums) {
+    if (!nums || nums.length === 0) return '无';
+    return nums.map(n => String(n).padStart(2,'0')).join(' ');
+}
+
+function fmtGoldSilverBronze(d) {
+    const parts = [];
+    if (d.gold) parts.push(`金胆${String(d.gold).padStart(2,'0')}`);
+    if (d.silver) parts.push(`银胆${String(d.silver).padStart(2,'0')}`);
+    if (d.bronze) parts.push(`铜胆${String(d.bronze).padStart(2,'0')}`);
+    return parts.length ? parts.join(' ') : '';
+}
+
+function fmtPeriodText(p) {
+    return p ? `第${p}期` : '';
+}
+
+function formatPredictionsAsText(data) {
+    let lines = [];
+    lines.push('='.repeat(60));
+    lines.push('  KL8 预测结果汇总 — 生成时间: ' + new Date().toLocaleString('zh-CN'));
+    lines.push('='.repeat(60));
+
+    // ── 共识号码 ──
+    const consensus = data._consensus || [];
+    if (consensus.length > 0) {
+        lines.push('');
+        lines.push('🔥 跨系统共识号码（≥2系统推荐）');
+        lines.push('-'.repeat(40));
+        consensus.forEach(c => {
+            lines.push(`  ${String(c.number).padStart(2,'0')} | ${c.count}系统 | ${(c.systems||[]).join(',')}`);
+        });
+    }
+
+    // ── 各子系统 ──
+
+    // 1. Data分析引擎
+    const d = data.data;
+    if (d && !d.error) {
+        lines.push('');
+        lines.push('─'.repeat(40));
+        lines.push(`📉 Data分析引擎 ${fmtPeriodText(d.target_period)}`);
+        lines.push('─'.repeat(40));
+        if (d.environment) lines.push(`  环境: ${d.environment}${d.trinity_weights ? ' | 权重: '+d.trinity_weights : ''}`);
+        if (d.confidence_level) lines.push(`  置信度: ${d.confidence_level} ${d.confidence_coeff||''}${d.kl_divergence ? ' | KL散度: '+d.kl_divergence+' (Z='+d.kl_zscore+'σ)' : ''}`);
+        lines.push(`  三维融合 Top5: ${fmtNumsText(d.trinity_top5)}`);
+        lines.push(`  三维融合 Top12: ${fmtNumsText(d.trinity_top12)}`);
+        lines.push(`  Golden Core 共振号: ${fmtNumsText(d.golden_core)}`);
+        lines.push(`  AI Top5: ${fmtNumsText(d.ai_top5)}`);
+        lines.push(`  AI Top12: ${fmtNumsText(d.ai_top12)}`);
+        lines.push(`  mRMR Top12: ${fmtNumsText(d.mrmr_top12)}`);
+        lines.push(`  HE5 隐能 (B3质量=${d.he5_b3_quality||'-'}): ${fmtNumsText(d.he5)}`);
+        if (d.he5_detail?.length) d.he5_detail.forEach(h => lines.push(`    号${String(h.num).padStart(2,'0')} EF=${h.ef} RW=${h.rw} FO=${h.fo} 动能=${h.score}`));
+        lines.push(`  纯净池号码: ${fmtNumsText(d.pure_pool)}`);
+        if (d.pure_pool_high?.length) lines.push(`  纯净池高置信(≥3): ${fmtNumsText(d.pure_pool_high)}`);
+        if (d.fo_top5?.length) lines.push(`  FO Baseline Top5: ${fmtNumsText(d.fo_top5)}`);
+        if (d.fo_top12?.length) lines.push(`  FO Baseline Top12: ${fmtNumsText(d.fo_top12)}`);
+        if (d.fo_top20?.length) lines.push(`  FO Baseline Top20: ${fmtNumsText(d.fo_top20)}`);
+        if (d.hedge_main?.length) lines.push(`  主攻方案: ${fmtNumsText(d.hedge_main)}`);
+        if (d.hedge_a?.length) lines.push(`  对冲方案 A: ${fmtNumsText(d.hedge_a)}`);
+        if (d.hedge_b?.length) lines.push(`  对冲方案 B: ${fmtNumsText(d.hedge_b)}`);
+        if (d.strategy_mode || d.learning_decision || d.wf_lift) lines.push(`  策略: ${d.strategy_mode||'-'} | 闭环: ${d.learning_decision||'-'} | WF Lift: ${d.wf_lift||'-'}${d.weight_change ? ' | 权重: '+d.weight_change : ''}`);
+        if (d.last_review_trinity || d.last_review_ai || d.last_review_he5 || d.last_review_mrmr) {
+            lines.push(`  📋 上期复盘: ${d.review_actual ? '开奖:'+d.review_actual+' | ' : ''}三维Top5 ${d.last_review_trinity||'-'} | 三维Top12 ${d.last_review_trinity12||'-'} | AI Top5 ${d.last_review_ai||'-'} | AI Top12 ${d.last_review_ai12||'-'} | mRMR ${d.last_review_mrmr||'-'} | HE5 ${d.last_review_he5||'-'} | 纯净池 ${d.last_review_pure||'-'}`);
+        }
+    }
+
+    // 2. KillSeeker
+    const k = data.killseeker;
+    if (k && !k.error) {
+        lines.push('');
+        lines.push('─'.repeat(40));
+        lines.push(`🎯 KillSeeker杀号 ${fmtPeriodText(k.target_period)}`);
+        lines.push('─'.repeat(40));
+        if (k.market_phase) lines.push(`  ${k.market_phase} | Hurst=${k.hurst||'-'} | 把握=${k.confidence||'-'}`);
+        lines.push(`  🔴 高置信杀号(${k.high_kill?.length||0}): ${fmtNumsText(k.high_kill)}`);
+        lines.push(`  🟡 中置信杀号(${k.medium_kill?.length||0}): ${fmtNumsText(k.medium_kill)}`);
+        lines.push(`  🟠 观察区(${k.watch_kill?.length||0}): ${fmtNumsText(k.watch_kill)}`);
+        lines.push(`  🟢 保留号(${k.keep_numbers?.length||0}): ${fmtNumsText(k.keep_numbers)}`);
+        if (k.avg_high_kill || k.avg_total_kill) lines.push(`  近8期平均: 高置信${k.avg_high_kill||'-'} | 全部${k.avg_total_kill||'-'}`);
+        if (k.last_review_high || k.last_review_total || k.last_review_keep) {
+            lines.push(`  📋 上期复盘: ${k.review_period ? '第'+k.review_period+'期 ' : ''}高置信杀号 ${k.last_review_high||'-'} | 中置信 ${k.last_review_medium||'-'} | 全部 ${k.last_review_total||'-'} | 保留号 ${k.last_review_keep||'-'}`);
+        }
+    }
+
+    // 3. 重点点位分析
+    const p = data.points;
+    if (p && !p.error) {
+        lines.push('');
+        lines.push('─'.repeat(40));
+        lines.push(`📍 重点点位分析 ${fmtPeriodText(p.target_period)}`);
+        lines.push('─'.repeat(40));
+        if (p.confidence_level) lines.push(`  ${p.confidence_level} | AUC=${p.oof_auc||'-'} | Lift=${p.oof_lift||'-'}${p.engine_consensus ? ' | 引擎共识: '+p.engine_consensus : ''}${p.space_balance ? ' | 空间均衡: '+p.space_balance : ''}`);
+        lines.push(`  核心五码: ${fmtNumsText(p.core5)}`);
+        lines.push(`  精选十码: ${fmtNumsText(p.top10)}`);
+        if (p.top15?.length) lines.push(`  扩展十五码: ${fmtNumsText(p.top15)}`);
+        if (p.points_detail?.length) {
+            lines.push(`  📍 完整点位详情(${p.points_detail.length}个):`);
+            p.points_detail.forEach(pt => lines.push(`    #${pt.rank} 点位[${String(pt.point).padStart(2,'0')}] 区域[${pt.zone}] 得分:${pt.score} p:${pt.p_value} ${parseFloat(pt.p_value)<0.05?'✅显著':'非显著'}`));
+        }
+        if (p.last_review_zone || p.last_review_top10 || p.last_review_core5) {
+            lines.push(`  📋 上期复盘: 一级区域 ${p.last_review_zone||'-'} (Lift ${p.last_review_zone_lift||'-'}) | 二级精排 ${p.last_review_top10||'-'} (Lift ${p.last_review_top10_lift||'-'}) | 核心五码 ${p.last_review_core5||'-'} (Lift ${p.last_review_core5_lift||'-'})`);
+        }
+    }
+
+    // 4. gemini选2-预测
+    const g = data.gemini;
+    if (g && !g.error) {
+        lines.push('');
+        lines.push('─'.repeat(40));
+        lines.push(`♊ gemini选2-预测 ${fmtPeriodText(g.target_period)}`);
+        lines.push('─'.repeat(40));
+        lines.push(`  算法1 金/银/铜胆: ${g.algo1_gold||'-'} / ${g.algo1_silver||'-'} / ${g.algo1_copper||'-'}`);
+        lines.push(`  算法1 核心4码: ${fmtNumsText(g.algo1_core4)}`);
+        lines.push(`  算法1 终极5码防线: ${fmtNumsText(g.algo1_defense5)}`);
+        lines.push(`  算法2 金/银/铜胆: ${g.algo2_gold||'-'} / ${g.algo2_silver||'-'} / ${g.algo2_copper||'-'}`);
+        lines.push(`  算法2 核心4码: ${fmtNumsText(g.algo2_core4)}`);
+        lines.push(`  算法2 终极5码防线: ${fmtNumsText(g.algo2_defense5)}`);
+        if (g.kill_zones?.length) lines.push(`  铁血纪律区(做空): ${fmtNumsText(g.kill_zones)}`);
+        if (g.last_review_gold || g.last_review_core4) {
+            lines.push(`  📋 上期复盘: 金胆 ${g.last_review_gold||'-'} | 核心4码命中 ${g.last_review_core4||'-'}${g.last_review_core4_lift ? ' (Lift '+g.last_review_core4_lift+')' : ''}`);
+        }
+    }
+
+    // 5. 双层LSTM
+    const l = data.lstm;
+    if (l && !l.error) {
+        lines.push('');
+        lines.push('─'.repeat(40));
+        lines.push(`🧠 双层LSTM ${fmtPeriodText(l.target_period)}`);
+        lines.push('─'.repeat(40));
+        if (l.consistency) lines.push(`  一致性=${l.consistency}[${l.consistency_level||'-'}] | Loss=${l.val_loss||'-'}${l.train_seed ? ' | 种子:'+l.train_seed : ''}${l.total_epochs ? ' | 轮次:'+l.total_epochs+'(最佳'+(l.best_epoch||'-')+')' : ''}`);
+        lines.push(`  金/银/铜胆: ${fmtGoldSilverBronze(l)}`);
+        lines.push(`  Top10: ${fmtNumsText(l.top10)}`);
+        lines.push(`  Top20: ${fmtNumsText(l.top20)}`);
+        if (l.zone_prediction && Object.keys(l.zone_prediction).length) lines.push(`  分区: ${Object.entries(l.zone_prediction).map(([k,v])=>`${k}:${v}个`).join(' | ')}`);
+        if (l.last_review_top10 || l.last_review_gold) {
+            lines.push(`  📋 上期复盘: Top10 ${l.last_review_top10||'-'} (Lift ${l.last_review_top10_lift||'-'}) | 金胆 ${l.last_review_gold||'-'} | 银胆 ${l.last_review_silver||'-'} | 铜胆 ${l.last_review_bronze||'-'}`);
+        }
+    }
+
+    // 6. 顺口溜
+    const a = data.abc;
+    if (a && !a.error) {
+        lines.push('');
+        lines.push('─'.repeat(40));
+        lines.push(`📝 顺口溜 ${fmtPeriodText(a.target_period)}`);
+        lines.push('─'.repeat(40));
+        lines.push(`  核心推荐: ${fmtNumsText(a.engine_a_top10 || a.combined_pool)}`);
+        lines.push(`  强推/金胆: ${fmtNumsText(a.engine_a_top5 || a.version_a_gold)}`);
+        if (a.version_c_top10?.length) lines.push(`  C数据挖掘选十: ${fmtNumsText(a.version_c_top10)}`);
+        if (a.version_c_gold?.length) lines.push(`  C数据挖掘金胆: ${fmtNumsText(a.version_c_gold)}`);
+        if (a.last_review_a || a.last_review_c) {
+            lines.push(`  📋 上期复盘: 顺口溜 ${a.last_review_a||'-'} | C ${a.last_review_c||'-'} (Lift ${a.last_review_c_lift||'-'})`);
+        }
+    }
+
+    // 7. 定金选2-分析
+    const d2 = data.dan2;
+    if (d2 && !d2.error) {
+        lines.push('');
+        lines.push('─'.repeat(40));
+        lines.push(`💰 定金选2-分析 ${fmtPeriodText(d2.target_period)}`);
+        lines.push('─'.repeat(40));
+        if (d2.market_phase) lines.push(`  ${d2.market_phase} | ${d2.level||'-'} | Hurst=${d2.hurst||'-'} | 温号池${d2.warm_pool_size||0}个`);
+        lines.push(`  💎 动态金胆: ${d2.gold ? String(d2.gold).padStart(2,'0') : '-'} | 🔥热号金胆: ${d2.hot_gold ? String(d2.hot_gold).padStart(2,'0') : '-'}`);
+        if (d2.alt_gold) lines.push(`  备选金胆: ${String(d2.alt_gold).padStart(2,'0')}`);
+        if (d2.top3_combos?.length) {
+            lines.push(`  Top3组合:`);
+            d2.top3_combos.forEach(c => lines.push(`    #${c.rank} [${c.pair}] 评分${c.score}`));
+        }
+        if (d2.hot_top3_combos?.length) {
+            lines.push(`  热号Top3:`);
+            d2.hot_top3_combos.forEach(c => lines.push(`    #${c.rank} [${c.pair}] 评分${c.score}`));
+        }
+        if (d2.last_review_gold || d2.last_review_hot_gold || d2.last_review_combo || d2.last_review_warm) {
+            lines.push(`  📋 上期复盘: 金胆 ${d2.last_review_gold||'-'} | 热号金胆 ${d2.last_review_hot_gold||'-'} | 组合中2 ${d2.last_review_combo||'-'} | 温号池 ${d2.last_review_warm||'-'}`);
+        }
+    }
+
+    // 8. 点位期数-追踪
+    const pt = data.pointtrack;
+    if (pt && !pt.error) {
+        lines.push('');
+        lines.push('─'.repeat(40));
+        lines.push(`〽️ 点位期数-追踪 ${fmtPeriodText(pt.target_period)}`);
+        lines.push('─'.repeat(40));
+        lines.push(`  ★ 强共振点位(≥3路): ${fmtNumsText(pt.strong_points)}`);
+        lines.push(`  ★ 综合评估点位(≥1路, Top20): ${fmtNumsText((pt.eval_points||[]).slice(0,20))}`);
+        if (pt.strong_count !== null && pt.strong_count !== undefined) lines.push(`  强共振点位数: ${pt.strong_count} 个`);
+        if (pt.last_review_discrim) lines.push(`  📋 上期复盘: 强共振区分力 ${pt.last_review_discrim}`);
+    }
+
+    // 9. 数据汇总复盘
+    const agg = data.aggregate;
+    if (agg && !agg.error) {
+        lines.push('');
+        lines.push('─'.repeat(40));
+        lines.push(`🏆 数据汇总复盘 V18.0 ${fmtPeriodText(agg.target_period)}`);
+        lines.push('─'.repeat(40));
+        if (agg.market_state || agg.hurst) lines.push(`  ${agg.market_state ? '市场: '+agg.market_state : ''}${agg.hurst ? ' | Hurst EWMA='+agg.hurst : ''}${agg.evolution_fdr ? ' | FDR='+agg.evolution_fdr : ''}${agg.evolution_fail!==undefined ? ' | 连败='+agg.evolution_fail : ''}`);
+        lines.push(`  💎 核心定胆: ${fmtNumsText(agg.core_dans)}`);
+        lines.push(`  🔥 分区主推: ${fmtNumsText(agg.zone_picks)}`);
+        lines.push(`  🛡️ 防守号码: ${fmtNumsText(agg.defense)}`);
+        lines.push(`  👁️ 关注号码: ${fmtNumsText(agg.watch)}`);
+        if (agg.stable_hits?.length) lines.push(`  历史稳定命中: ${fmtNumsText(agg.stable_hits)}`);
+        if (agg.matrix_bankers?.length || agg.matrix_runners?.length) lines.push(`  Matrix Play: 胆码: ${fmtNumsText(agg.matrix_bankers)} 拖码: ${fmtNumsText(agg.matrix_runners)}`);
+        if (agg.last_review_core || agg.last_review_zone || agg.last_review_total) {
+            lines.push(`  📋 上期复盘: 核心定胆 ${agg.last_review_core||'-'} (Lift ${agg.last_review_core_lift||'-'}) | 分区主推 ${agg.last_review_zone||'-'} (Lift ${agg.last_review_zone_lift||'-'}) | 综合 ${agg.last_review_total||'-'} (Lift ${agg.last_review_total_lift||'-'})${agg.evolution_fdr ? ' | FDR='+agg.evolution_fdr : ''}${agg.evolution_fail!==undefined ? ' | 连败='+agg.evolution_fail : ''}`);
+        }
+    }
+
+    lines.push('');
+    lines.push('='.repeat(60));
+    return lines.join('\n');
+}
+
+// ═══ 一键复制预测结果（10段可复制格式）═══
+async function fetchSummaryText() {
+    const res = await fetch('/api/summary');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    return data.text;
+}
+
+async function copyPredictions() {
+    let text;
+    try {
+        text = await fetchSummaryText();
+    } catch(e) {
+        showToast('无法生成汇总：' + e.message, 'error');
+        return;
+    }
+    try {
+        await navigator.clipboard.writeText(text);
+        showToast('已复制到剪贴板 (' + text.length + '字符)', 'success');
+    } catch(e) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = 0;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            showToast('已复制到剪贴板 (' + text.length + '字符)', 'success');
+        } catch(err) {
+            showToast('复制失败，请手动选择', 'error');
+        }
+        document.body.removeChild(textarea);
+    }
+}
+
+// ═══ 导出预测结果到文件（10段可复制格式）═══
+async function exportPredictions() {
+    try {
+        const text = await fetchSummaryText();
+        const blob = new Blob([text], {type: 'text/plain;charset=utf-8'});
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        link.download = `预测结果汇总_${today}.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        showToast('已导出文件 (' + text.length + '字符)', 'success');
+    } catch(e) {
+        showToast('导出失败：' + e.message, 'error');
+    }
+}
+
+function renderPredictions(data) {
+    let html = '';
+
+    // 共识分析
+    const consensus = data._consensus || [];
+    if (consensus.length > 0) {
+        html += `<div class="card" style="margin-bottom:12px;background:linear-gradient(135deg,rgba(108,92,231,0.08),rgba(0,184,148,0.06));border:1px solid rgba(108,92,231,0.2)">
+            <div style="font-size:15px;font-weight:600;margin-bottom:10px">🔥 跨系统共识号码（≥2系统推荐）</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+                ${consensus.map(c => {
+                    const bg = c.count >= 4 ? 'var(--danger)' : c.count >= 3 ? 'var(--warning)' : 'var(--primary)';
+                    return `<div style="display:flex;align-items:center;gap:4px">
+                        <span class="pred-num" style="background:${bg};font-weight:${c.count>=3?'bold':'normal'}">${String(c.number).padStart(2,'0')}</span>
+                        <span style="font-size:11px;color:var(--text2)">${c.count}系统</span>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>`;
+    }
+
+    // 各子系统结果卡片
+    const cards = [
+        renderDataCard(data.data),
+        renderKillSeekerCard(data.killseeker),
+        renderPointsCard(data.points),
+        renderLSTMCard(data.lstm),
+        renderABCCard(data.abc),
+        renderDan2Card(data.dan2),
+        renderPointtrackCard(data.pointtrack),
+        renderGeminiCard(data.gemini),
+        renderAggregateCard(data.aggregate),
+    ];
+    html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px">${cards.join('')}</div>`;
+    return html;
+}
+
+function renderDataCard(d) {
+    if (!d || d.error) return `<div class="card pred-card"><div class="pred-card-title" style="color:#e74c3c">📉 Data分析引擎</div><div class="pred-error">${d?.error || '解析失败'}</div></div>`;
+    let reviewHtml = '';
+    if (d.last_review_trinity || d.last_review_ai || d.last_review_he5 || d.last_review_mrmr) {
+        reviewHtml = `<div class="pred-review"><b>📋 上期复盘:</b> ${d.review_actual ? '开奖:'+d.review_actual+' | ' : ''}三维Top5 ${d.last_review_trinity||'-'} | 三维Top12 ${d.last_review_trinity12||'-'} | AI Top5 ${d.last_review_ai||'-'} | AI Top12 ${d.last_review_ai12||'-'} | mRMR ${d.last_review_mrmr||'-'} | HE5 ${d.last_review_he5||'-'} | 纯净池 ${d.last_review_pure||'-'}</div>`;
+    }
+    return `<div class="card pred-card">
+        <div class="pred-card-title" style="color:#6c5ce7">📉 Data分析引擎 <span class="pred-period">${fmtPeriod(d.target_period)}</span></div>
+        ${d.environment ? `<div class="pred-meta">环境: ${d.environment}${d.trinity_weights ? ' | 权重: '+d.trinity_weights : ''}</div>` : ''}
+        ${(d.confidence_level || d.kl_divergence) ? `<div class="pred-meta">${d.confidence_level ? '置信度: '+d.confidence_level+' '+d.confidence_coeff : ''}${d.kl_divergence ? ' | KL散度: '+d.kl_divergence+' (Z='+d.kl_zscore+'σ)' : ''}</div>` : ''}
+        <div class="pred-section"><span class="pred-label">三维融合 Top5</span><div>${fmtNums(d.trinity_top5, '#6c5ce7')}</div></div>
+        <div class="pred-section"><span class="pred-label">三维融合 Top12</span><div>${fmtNums(d.trinity_top12, '#6c5ce7')}</div></div>
+        <div class="pred-section"><span class="pred-label">Golden Core 共振号</span><div>${fmtNums(d.golden_core, '#f39c12')}</div></div>
+        <div class="pred-section"><span class="pred-label">AI Top5 / Top12</span><div>${fmtNums(d.ai_top5, '#3498db')}<br>${fmtNums(d.ai_top12, '#5dade2')}</div></div>
+        <div class="pred-section"><span class="pred-label">mRMR Top12</span><div>${fmtNums(d.mrmr_top12, '#2ecc71')}</div></div>
+        <div class="pred-section"><span class="pred-label">⚡ HE5 隐能 (B3质量=${d.he5_b3_quality||'-'})</span><div>${fmtNums(d.he5, '#e74c3c')}</div></div>
+        ${d.he5_detail?.length ? `<div class="pred-detail">${d.he5_detail.map(h=>`<div>号${String(h.num).padStart(2,'0')} EF=${h.ef} RW=${h.rw} FO=${h.fo} 动能=${h.score}</div>`).join('')}</div>` : ''}
+        <div class="pred-section"><span class="pred-label">纯净池号码</span><div>${fmtNums(d.pure_pool, '#1abc9c')}</div></div>
+        ${d.pure_pool_high?.length ? `<div class="pred-section"><span class="pred-label">纯净池高置信(≥3)</span><div>${fmtNums(d.pure_pool_high, '#16a085')}</div></div>` : ''}
+        ${d.fo_top5?.length ? `<div class="pred-section"><span class="pred-label">FO Baseline Top5</span><div>${fmtNums(d.fo_top5, '#e67e22')}</div></div>` : ''}
+        ${d.fo_top12?.length ? `<div class="pred-section"><span class="pred-label">FO Baseline Top12</span><div>${fmtNums(d.fo_top12, '#d35400')}</div></div>` : ''}
+        ${d.fo_top20?.length ? `<div class="pred-section"><span class="pred-label">FO Baseline Top20</span><div>${fmtNums(d.fo_top20, '#a04000')}</div></div>` : ''}
+        ${d.hedge_main?.length ? `<div class="pred-section"><span class="pred-label">主攻方案</span><div>${fmtNums(d.hedge_main, '#8e44ad')}</div></div>` : ''}
+        ${d.hedge_a?.length ? `<div class="pred-section"><span class="pred-label">对冲方案 A</span><div>${fmtNums(d.hedge_a, '#7f8c8d')}</div></div>` : ''}
+        ${d.hedge_b?.length ? `<div class="pred-section"><span class="pred-label">对冲方案 B</span><div>${fmtNums(d.hedge_b, '#95a5a6')}</div></div>` : ''}
+        ${(d.strategy_mode || d.learning_decision || d.wf_lift) ? `<div class="pred-detail">策略: ${d.strategy_mode||'-'} | 闭环: ${d.learning_decision||'-'} | WF Lift: ${d.wf_lift||'-'}${d.weight_change ? ' | 权重: '+d.weight_change : ''}</div>` : ''}
+        ${reviewHtml}
+    </div>`;
+}
+
+function renderKillSeekerCard(d) {
+    if (!d || d.error) return `<div class="card pred-card"><div class="pred-card-title" style="color:#e74c3c">🎯 KillSeeker</div><div class="pred-error">${d?.error || '解析失败'}</div></div>`;
+    let reviewHtml = '';
+    if (d.last_review_high || d.last_review_total || d.last_review_keep) {
+        reviewHtml = `<div class="pred-review"><b>📋 上期复盘:</b> ${d.review_period ? '第'+d.review_period+'期 ' : ''}高置信杀号 ${d.last_review_high||'-'} | 中置信 ${d.last_review_medium||'-'} | 全部 ${d.last_review_total||'-'} | 保留号 ${d.last_review_keep||'-'}</div>`;
+    }
+    return `<div class="card pred-card">
+        <div class="pred-card-title" style="color:#e74c3c">🎯 KillSeeker杀号 <span class="pred-period">${fmtPeriod(d.target_period)}</span></div>
+        ${d.market_phase ? `<div class="pred-meta">${d.market_phase} | Hurst=${d.hurst||'-'} | 把握=${d.confidence||'-'}</div>` : ''}
+        <div class="pred-section"><span class="pred-label" style="color:#e74c3c">🔴 高置信杀号(${d.high_kill?.length||0})</span><div>${fmtNums(d.high_kill, '#e74c3c')}</div></div>
+        <div class="pred-section"><span class="pred-label" style="color:#f39c12">🟡 中置信杀号(${d.medium_kill?.length||0})</span><div>${fmtNums(d.medium_kill, '#f39c12')}</div></div>
+        <div class="pred-section"><span class="pred-label" style="color:#e67e22">🟠 观察区(${d.watch_kill?.length||0})</span><div>${fmtNums(d.watch_kill, '#e67e22')}</div></div>
+        <div class="pred-section"><span class="pred-label" style="color:#2ecc71">🟢 保留号(${d.keep_numbers?.length||0})</span><div>${fmtNums(d.keep_numbers, '#2ecc71')}</div></div>
+        ${(d.avg_high_kill || d.avg_total_kill) ? `<div class="pred-detail">近8期平均: 高置信${d.avg_high_kill||'-'} | 全部${d.avg_total_kill||'-'}</div>` : ''}
+        ${reviewHtml}
+    </div>`;
+}
+
+function renderPointsCard(d) {
+    if (!d || d.error) return `<div class="card pred-card"><div class="pred-card-title" style="color:#3498db">📍 重点点位分析</div><div class="pred-error">${d?.error || '解析失败'}</div></div>`;
+    let reviewHtml = '';
+    if (d.last_review_zone || d.last_review_top10 || d.last_review_core5) {
+        reviewHtml = `<div class="pred-review"><b>📋 上期复盘:</b> 一级区域 ${d.last_review_zone||'-'} (Lift ${d.last_review_zone_lift||'-'}) | 二级精排 ${d.last_review_top10||'-'} (Lift ${d.last_review_top10_lift||'-'}) | 核心五码 ${d.last_review_core5||'-'} (Lift ${d.last_review_core5_lift||'-'})</div>`;
+    }
+    return `<div class="card pred-card">
+        <div class="pred-card-title" style="color:#3498db">📍 重点点位分析 <span class="pred-period">${fmtPeriod(d.target_period)}</span></div>
+        ${d.confidence_level ? `<div class="pred-meta">${d.confidence_level} | AUC=${d.oof_auc||'-'} | Lift=${d.oof_lift||'-'}${d.engine_consensus ? ' | 引擎共识: '+d.engine_consensus : ''}${d.space_balance ? ' | 空间均衡: '+d.space_balance : ''}</div>` : ''}
+        <div class="pred-section"><span class="pred-label">核心五码</span><div>${fmtNums(d.core5, '#3498db')}</div></div>
+        <div class="pred-section"><span class="pred-label">精选十码</span><div>${fmtNums(d.top10, '#2980b9')}</div></div>
+        ${d.top15?.length ? `<div class="pred-section"><span class="pred-label">扩展十五码</span><div>${fmtNums(d.top15, '#5dade2')}</div></div>` : ''}
+        ${d.points_detail?.length ? `<div class="pred-section"><span class="pred-label">📍 完整点位详情(${d.points_detail.length}个)</span><div class="pred-detail">${d.points_detail.map(p => `<div>#${p.rank} 点位[${String(p.point).padStart(2,'0')}] 区域[${p.zone}] 得分:${p.score} p:${p.p_value} ${parseFloat(p.p_value)<0.05?'✅显著':'非显著'}</div>`).join('')}</div></div>` : ''}
+        ${reviewHtml}
+    </div>`;
+}
+
+function renderPointtrackCard(d) {
+    if (!d || d.error) return `<div class="card pred-card"><div class="pred-card-title" style="color:#16a085">〽️ 点位期数-追踪</div><div class="pred-error">${d?.error || '解析失败'}</div></div>`;
+    let reviewHtml = '';
+    if (d.last_review_discrim) {
+        reviewHtml = `<div class="pred-review"><b>📋 上期复盘:</b> 强共振区分力指数 ${d.last_review_discrim}</div>`;
+    }
+    // 综合评估点位(≥1路)覆盖过宽(常≈80)，仅展示按共振度排序的前20，避免刷屏
+    const evalList = (d.eval_points || []).slice(0, 20);
+    const evalMore = (d.eval_points || []).length > 20 ? ` +${d.eval_points.length - 20}…` : '';
+    return `<div class="card pred-card">
+        <div class="pred-card-title" style="color:#16a085">〽️ 点位期数-追踪 <span class="pred-period">${fmtPeriod(d.target_period)}</span></div>
+        ${d.strong_count != null ? `<div class="pred-meta">强共振点位(≥3路) ${d.strong_count} 个</div>` : ''}
+        <div class="pred-section"><span class="pred-label" style="color:#16a085">★ 强共振点位(≥3路信号)</span><div>${fmtNums(d.strong_points, '#16a085')}</div></div>
+        <div class="pred-section"><span class="pred-label">★ 综合评估点位(≥1路, 共振度Top20)</span><div>${fmtNums(evalList, '#1abc9c')}${evalMore ? `<span style="font-size:11px;color:var(--text2)">${evalMore}</span>` : ''}</div></div>
+        ${reviewHtml}
+    </div>`;
+}
+
+function renderGeminiCard(d) {
+    if (!d || d.error) return `<div class="card pred-card"><div class="pred-card-title" style="color:#34495e">♊ gemini选2-预测</div><div class="pred-error">${d?.error || '解析失败'}</div></div>`;
+    const numBlock = (arr, color) => fmtNums(arr, color);
+    let reviewHtml = '';
+    if (d.last_review_gold || d.last_review_core4) {
+        reviewHtml = `<div class="pred-review"><b>📋 上期复盘:</b> 金胆 ${d.last_review_gold||'-'} | 核心4码命中 ${d.last_review_core4||'-'}${d.last_review_core4_lift ? ' (Lift '+d.last_review_core4_lift+')' : ''}</div>`;
+    }
+    return `<div class="card pred-card">
+        <div class="pred-card-title" style="color:#34495e">♊ gemini选2-预测 <span class="pred-period">${fmtPeriod(d.target_period)}</span></div>
+        <div class="pred-section"><span class="pred-label">🔴 算法1 金/银/铜胆</span><div>金<span class="pred-num" style="background:#f1c40f;color:#000;font-weight:bold">${String(d.algo1_gold||'').padStart(2,'0')}</span> 银<span class="pred-num" style="background:#bdc3c7;color:#000">${String(d.algo1_silver||'').padStart(2,'0')}</span> 铜<span class="pred-num" style="background:#cd7f32;color:#fff">${String(d.algo1_copper||'').padStart(2,'0')}</span></div></div>
+        <div class="pred-section"><span class="pred-label">算法1 核心4码</span><div>${numBlock(d.algo1_core4, '#c0392b')}</div></div>
+        <div class="pred-section"><span class="pred-label">算法1 终极5码防线</span><div>${numBlock(d.algo1_defense5, '#e74c3c')}</div></div>
+        <div class="pred-section"><span class="pred-label">🔵 算法2 金/银/铜胆</span><div>金<span class="pred-num" style="background:#f1c40f;color:#000;font-weight:bold">${String(d.algo2_gold||'').padStart(2,'0')}</span> 银<span class="pred-num" style="background:#bdc3c7;color:#000">${String(d.algo2_silver||'').padStart(2,'0')}</span> 铜<span class="pred-num" style="background:#cd7f32;color:#fff">${String(d.algo2_copper||'').padStart(2,'0')}</span></div></div>
+        <div class="pred-section"><span class="pred-label">算法2 核心4码</span><div>${numBlock(d.algo2_core4, '#2980b9')}</div></div>
+        <div class="pred-section"><span class="pred-label">算法2 终极5码防线</span><div>${numBlock(d.algo2_defense5, '#3498db')}</div></div>
+        ${d.kill_zones?.length ? `<div class="pred-section"><span class="pred-label" style="color:#e74c3c">铁血纪律区(坚决做空)</span><div>${fmtNums(d.kill_zones, '#e74c3c')}</div></div>` : ''}
+        ${reviewHtml}
+    </div>`;
+}
+
+function renderLSTMCard(d) {
+    if (!d || d.error) return `<div class="card pred-card"><div class="pred-card-title" style="color:#9b59b6">🧠 双层LSTM</div><div class="pred-error">${d?.error || '解析失败'}</div></div>`;
+    const gold = d.gold ? `<span class="pred-num" style="background:#f1c40f;color:#000;font-weight:bold">${String(d.gold).padStart(2,'0')}</span>` : '';
+    const silver = d.silver ? `<span class="pred-num" style="background:#bdc3c7;color:#000">${String(d.silver).padStart(2,'0')}</span>` : '';
+    const bronze = d.bronze ? `<span class="pred-num" style="background:#cd7f32;color:#fff">${String(d.bronze).padStart(2,'0')}</span>` : '';
+    let reviewHtml = '';
+    if (d.last_review_top10 || d.last_review_gold) {
+        reviewHtml = `<div class="pred-review"><b>📋 上期复盘:</b> Top10 ${d.last_review_top10||'-'} (Lift ${d.last_review_top10_lift||'-'}) | 金胆 ${d.last_review_gold||'-'} | 银胆 ${d.last_review_silver||'-'} | 铜胆 ${d.last_review_bronze||'-'}</div>`;
+    }
+    return `<div class="card pred-card">
+        <div class="pred-card-title" style="color:#9b59b6">🧠 双层LSTM <span class="pred-period">${fmtPeriod(d.target_period)}</span></div>
+        ${d.consistency ? `<div class="pred-meta">一致性=${d.consistency}[${d.consistency_level||'-'}] | Loss=${d.val_loss||'-'}${d.train_seed ? ' | 种子:'+d.train_seed : ''}${d.total_epochs ? ' | 轮次:'+d.total_epochs+'(最佳'+(d.best_epoch||'-')+')' : ''}</div>` : ''}
+        <div class="pred-section"><span class="pred-label">金/银/铜胆</span><div>${gold}${silver}${bronze}</div></div>
+        <div class="pred-section"><span class="pred-label">Top10</span><div>${fmtNums(d.top10, '#9b59b6')}</div></div>
+        <div class="pred-section"><span class="pred-label">Top20</span><div>${fmtNums(d.top20, '#8e44ad')}</div></div>
+        ${d.zone_prediction && Object.keys(d.zone_prediction).length ? `<div class="pred-detail">${Object.entries(d.zone_prediction).map(([k,v])=>`${k}:${v}个`).join(' | ')}</div>` : ''}
+        ${reviewHtml}
+    </div>`;
+}
+
+function renderABCCard(d) {
+    if (!d || d.error) return `<div class="card pred-card"><div class="pred-card-title" style="color:#f39c12">📝 顺口溜</div><div class="pred-error">${d?.error || '解析失败'}</div></div>`;
+    let reviewHtml = '';
+    if (d.last_review_a || d.last_review_c) {
+        reviewHtml = `<div class="pred-review"><b>📋 上期复盘:</b> 顺口溜 ${d.last_review_a||'-'} | C ${d.last_review_c||'-'} (Lift ${d.last_review_c_lift||'-'})</div>`;
+    }
+    return `<div class="card pred-card">
+        <div class="pred-card-title" style="color:#f39c12">📝 顺口溜 <span class="pred-period">${fmtPeriod(d.target_period)}</span></div>
+        <div class="pred-section"><span class="pred-label">核心推荐</span><div>${fmtNums(d.engine_a_top10 || d.combined_pool, '#e67e22')}</div></div>
+        <div class="pred-section"><span class="pred-label">强推/金胆</span><div>${fmtNums(d.engine_a_top5 || d.version_a_gold, '#f1c40f')}</div></div>
+        ${d.version_c_top10?.length ? `<div class="pred-section"><span class="pred-label">C数据挖掘选十</span><div>${fmtNums(d.version_c_top10, '#2ecc71')}</div></div>` : ''}
+        ${d.version_c_gold?.length ? `<div class="pred-section"><span class="pred-label">C数据挖掘金胆</span><div>${fmtNums(d.version_c_gold, '#27ae60')}</div></div>` : ''}
+        ${reviewHtml}
+    </div>`;
+}
+
+function renderDan2Card(d) {
+    if (!d || d.error) return `<div class="card pred-card"><div class="pred-card-title" style="color:#1abc9c">💰 定金选2-分析</div><div class="pred-error">${d?.error || '解析失败'}</div></div>`;
+    const gold = d.gold ? `<span class="pred-num" style="background:#f1c40f;color:#000;font-weight:bold;font-size:15px">${String(d.gold).padStart(2,'0')}</span>` : '';
+    const hotGold = d.hot_gold ? `<span class="pred-num" style="background:#e74c3c;color:#fff;font-size:15px">${String(d.hot_gold).padStart(2,'0')}</span>` : '';
+    let reviewHtml = '';
+    if (d.last_review_gold || d.last_review_hot_gold || d.last_review_combo || d.last_review_warm) {
+        reviewHtml = `<div class="pred-review"><b>📋 上期复盘:</b> 金胆 ${d.last_review_gold||'-'} | 热号金胆 ${d.last_review_hot_gold||'-'} | 组合中2 ${d.last_review_combo||'-'} | 温号池 ${d.last_review_warm||'-'}</div>`;
+    }
+    return `<div class="card pred-card">
+        <div class="pred-card-title" style="color:#1abc9c">💰 定金选2-分析 <span class="pred-period">${fmtPeriod(d.target_period)}</span></div>
+        ${d.market_phase ? `<div class="pred-meta">${d.market_phase} | ${d.level||'-'} | Hurst=${d.hurst||'-'} | 温号池${d.warm_pool_size||0}个</div>` : ''}
+        <div class="pred-section"><span class="pred-label">💎 动态金胆 / 🔥热号金胆</span><div style="display:flex;gap:8px;align-items:center">${gold}<span style="color:var(--text2)">/</span>${hotGold}</div></div>
+        ${d.alt_gold ? `<div class="pred-section"><span class="pred-label">备选金胆</span><div><span class="pred-num" style="background:#95a5a6">${String(d.alt_gold).padStart(2,'0')}</span></div></div>` : ''}
+        ${d.top3_combos?.length ? `<div class="pred-section"><span class="pred-label">Top3组合</span><div class="pred-detail">${d.top3_combos.map(c=>`<div>#${c.rank} [${c.pair}] 评分${c.score}</div>`).join('')}</div></div>` : ''}
+        ${d.hot_top3_combos?.length ? `<div class="pred-section"><span class="pred-label">热号Top3</span><div class="pred-detail">${d.hot_top3_combos.map(c=>`<div>#${c.rank} [${c.pair}] 评分${c.score}</div>`).join('')}</div></div>` : ''}
+        ${reviewHtml}
+    </div>`;
+}
+
+function renderAggregateCard(d) {
+    if (!d || d.error) return `<div class="card pred-card"><div class="pred-card-title" style="color:#6c5ce7">🏆 数据汇总复盘</div><div class="pred-error">${d?.error || '解析失败'}</div></div>`;
+    let reviewHtml = '';
+    if (d.last_review_core || d.last_review_zone || d.last_review_total) {
+        reviewHtml = `<div class="pred-review"><b>📋 上期复盘:</b> 核心定胆 ${d.last_review_core||'-'} (Lift ${d.last_review_core_lift||'-'}) | 分区主推 ${d.last_review_zone||'-'} (Lift ${d.last_review_zone_lift||'-'}) | 综合 ${d.last_review_total||'-'} (Lift ${d.last_review_total_lift||'-'})${d.evolution_fdr ? ' | FDR='+d.evolution_fdr : ''}${d.evolution_fail!==undefined ? ' | 连败='+d.evolution_fail : ''}</div>`;
+    }
+    return `<div class="card pred-card" style="grid-column:span 2">
+        <div class="pred-card-title" style="color:#6c5ce7">🏆 数据汇总复盘 V18.0 <span class="pred-period">${fmtPeriod(d.target_period)}</span></div>
+        ${(d.market_state || d.hurst) ? `<div class="pred-meta">${d.market_state ? '市场: '+d.market_state : ''}${d.hurst ? ' | Hurst EWMA='+d.hurst : ''}${d.evolution_fdr ? ' | FDR='+d.evolution_fdr : ''}${d.evolution_fail!==undefined ? ' | 连败='+d.evolution_fail : ''}</div>` : ''}
+        <div class="pred-section"><span class="pred-label" style="font-size:14px">💎 核心定胆</span><div style="font-size:16px">${fmtNums(d.core_dans, '#f1c40f')}</div></div>
+        <div class="pred-section"><span class="pred-label">🔥 分区主推</span><div>${fmtNums(d.zone_picks, '#e74c3c')}</div></div>
+        <div class="pred-section"><span class="pred-label">🛡️ 防守号码</span><div>${fmtNums(d.defense, '#95a5a6')}</div></div>
+        <div class="pred-section"><span class="pred-label">👁️ 关注号码</span><div>${fmtNums(d.watch, '#3498db')}</div></div>
+        ${d.stable_hits?.length ? `<div class="pred-section"><span class="pred-label">历史稳定命中</span><div>${fmtNums(d.stable_hits, '#2ecc71')}</div></div>` : ''}
+        ${(d.matrix_bankers?.length || d.matrix_runners?.length) ? `<div class="pred-section"><span class="pred-label">Matrix Play</span><div>胆码: ${fmtNums(d.matrix_bankers, '#f1c40f')} 拖码: ${fmtNums(d.matrix_runners, '#3498db')}</div></div>` : ''}
+        ${reviewHtml}
+    </div>`;
+}
+
+// ═══ Utils ═══
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ═══ Service Worker ═══
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+</script>
+
+</body>
+</html>

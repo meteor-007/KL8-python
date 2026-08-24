@@ -1,8 +1,0 @@
-outputs/*
-!outputs/.gitkeep
-!outputs/predictions/
-outputs/predictions/*
-!outputs/predictions/.gitkeep
-__pycache__/
-*.pyc
-.pytest_cache/

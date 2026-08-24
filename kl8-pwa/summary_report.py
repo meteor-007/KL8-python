@@ -2,7 +2,7 @@
 """
 预测结果汇总生成器 — 读取 9 个子系统最新输出，生成 10 段「可复制」汇总。
 用法: python summary_report.py
-输出: 项目根 预测结果汇总_YYYYMMDD.txt（同时打印到 stdout）
+输出: 本子系统目录(kl8-pwa) 预测结果汇总_YYYYMMDD.txt（同时打印到 stdout）
 """
 import re
 import sys
@@ -105,6 +105,12 @@ def sec_data():
     out.append(f"  {'Excel 精选5码':<{W}}: {cp['Excel 精选5码']} | 回避5码: {cp['回避5码']}")
     # 目标期
     m = re.search(r"目标期\s*[:：]?\s*(\d{7})", text)
+    # 规则选号器 (无前视验证信号) 输出
+    rp = _latest("data/reports/rule_picker_*.txt")
+    if rp:
+        rlines = _read(rp)
+        out.append("  ── 规则选号器（无前视验证信号）──")
+        out.extend("\t" + ln for ln in rlines)
     return f"【1】data 主流水线（{_mtime_hms(f)}）— 每日研判报告", out[1:], (m.group(1) if m else None)
 
 
@@ -459,7 +465,7 @@ def main():
         target = d[2]
     content = build(target)
     print(content)
-    out_file = BASE_DIR / f"预测结果汇总_{datetime.now():%Y%m%d}.txt"
+    out_file = Path(__file__).resolve().parent / f"预测结果汇总_{datetime.now():%Y%m%d}.txt"
     out_file.write_text(content, encoding="utf-8")
     print(f"▶ 已保存: {out_file}")
 

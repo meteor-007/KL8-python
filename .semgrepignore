@@ -1,0 +1,26 @@
+# 忽略数据、日志和模型，防止内存占用和分析卡死
+data/
+output/
+reports/
+logs/
+models/
+archive/
+
+# 忽略临时备份和历史分析文件夹
+*backup*/
+*分析/
+
+# 忽略系统和AI生成的辅助目录
+.codegraph/
+.agents/
+.claude/
+.idea/
+.vscode/
+
+# 忽略大数据集和日志文件
+*.csv
+*.txt
+*.json
+*.log
+*.sqlite
+*.db
