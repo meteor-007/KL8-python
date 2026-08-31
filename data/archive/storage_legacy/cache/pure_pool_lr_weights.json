@@ -1,0 +1,42 @@
+{
+  "active": true,
+  "feature_names": [
+    "omission",
+    "log_omis",
+    "consecutive",
+    "dual_source",
+    "recent_hits",
+    "consec_ge2"
+  ],
+  "weights": [
+    0.008798692499300514,
+    0.021497333250346473,
+    0.013329919205997952,
+    0.015563566370903389,
+    -0.007981550708297959,
+    0.019592716301444015
+  ],
+  "bias": -1.0768245878904898,
+  "delta": 0.04,
+  "top_k": 3,
+  "train_window": 50,
+  "train_rows": 483,
+  "train_positives": 127,
+  "train_start_issue": "2026136",
+  "train_end_issue": "2026185",
+  "wf": {
+    "ok": true,
+    "delta": 0.04,
+    "folds": 47,
+    "cover_rate": 0.44680851063829785,
+    "lr_hit_rate": 0.30303030303030304,
+    "lr_lift": 1.2121212121212122,
+    "lr_avg_size": 1.5714285714285714,
+    "old_lift": 1.1082251082251082,
+    "lift_gain_vs_old": 0.10389610389610393,
+    "lr_hits": 10,
+    "lr_picks": 33,
+    "composite": 1.1476466795615732
+  },
+  "updated_at": "2026-07-15T19:55:28"
+}

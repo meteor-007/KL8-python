@@ -1,0 +1,165 @@
+{
+  "period": "2026199",
+  "timestamp": "2026-07-29 13:17:03",
+  "actual_numbers": [
+    4,
+    14,
+    17,
+    18,
+    20,
+    21,
+    26,
+    27,
+    29,
+    34,
+    44,
+    48,
+    50,
+    53,
+    55,
+    59,
+    62,
+    67,
+    76,
+    79
+  ],
+  "hit_stats": {
+    "top5_hits": 2,
+    "top5_rate": 0.4,
+    "top5_lift": 1.6,
+    "top12_hits": 3,
+    "top12_rate": 0.25,
+    "top12_lift": 1.0,
+    "top20_hits": 5,
+    "top20_rate": 0.25,
+    "top20_lift": 1.0,
+    "he5_hits": 1,
+    "he5_lift": 0.8,
+    "ai5_hits": 0,
+    "ai5_lift": 0.0
+  },
+  "algo_contribution": {
+    "EF": "POSITIVE",
+    "RW": "POSITIVE",
+    "FO": "NEGATIVE"
+  },
+  "weights_used": {
+    "EF": 0.4,
+    "RW": 0.3,
+    "FO": 0.3
+  },
+  "optimization_decision": "N/A",
+  "learning_status": "FROZEN",
+  "gate": {
+    "wf_lift": 1.0043,
+    "threshold": 1.1
+  },
+  "channel_hits": {
+    "HE5": {
+      "hits": 1,
+      "n": 5,
+      "lift": 0.8,
+      "numbers": [
+        50
+      ]
+    },
+    "Tr5": {
+      "hits": 2,
+      "n": 5,
+      "lift": 1.6,
+      "numbers": [
+        50,
+        53
+      ]
+    },
+    "Tr12": {
+      "hits": 3,
+      "n": 12,
+      "lift": 1.0,
+      "numbers": [
+        27,
+        50,
+        53
+      ]
+    },
+    "AI5": {
+      "hits": 0,
+      "n": 5,
+      "lift": 0.0,
+      "numbers": []
+    },
+    "AI12": {
+      "hits": 2,
+      "n": 12,
+      "lift": 0.6667,
+      "numbers": [
+        14,
+        79
+      ]
+    },
+    "mRMR": {
+      "hits": 2,
+      "n": 12,
+      "lift": 0.6667,
+      "numbers": [
+        18,
+        27
+      ]
+    },
+    "PureH": {
+      "hits": 0,
+      "n": 3,
+      "lift": 0.0,
+      "numbers": []
+    },
+    "PureOld": {
+      "hits": 1,
+      "n": 7,
+      "lift": 0.5714,
+      "numbers": [
+        53
+      ]
+    },
+    "PureLR": {
+      "hits": 0,
+      "n": 3,
+      "lift": 0.0,
+      "numbers": []
+    },
+    "PureAll": {
+      "hits": 2,
+      "n": 12,
+      "lift": 0.6667,
+      "numbers": [
+        27,
+        53
+      ]
+    },
+    "Burst": {
+      "hits": 2,
+      "n": 5,
+      "lift": 1.6,
+      "numbers": [
+        27,
+        53
+      ]
+    },
+    "Cons": {
+      "hits": 1,
+      "n": 2,
+      "lift": 2.0,
+      "numbers": [
+        27
+      ]
+    }
+  },
+  "defend": {
+    "ok": [
+      46,
+      24
+    ],
+    "miss": [
+      55
+    ]
+  }
+}

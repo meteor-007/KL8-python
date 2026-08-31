@@ -1,0 +1,49 @@
+{
+  "period": "2026202",
+  "timestamp": "2026-08-02 15:46:14",
+  "actual_numbers": [
+    1,
+    4,
+    7,
+    10,
+    12,
+    15,
+    16,
+    17,
+    26,
+    29,
+    32,
+    40,
+    42,
+    44,
+    49,
+    65,
+    68,
+    73,
+    77,
+    78
+  ],
+  "hit_stats": {
+    "top5_hits": 1,
+    "top5_rate": 0.2,
+    "top5_lift": 0.8,
+    "top12_hits": 3,
+    "top12_rate": 0.25,
+    "top12_lift": 1.0,
+    "top20_hits": 6,
+    "top20_rate": 0.3,
+    "top20_lift": 1.2
+  },
+  "algo_contribution": {},
+  "weights_used": {
+    "EF": 0.4,
+    "RW": 0.3,
+    "FO": 0.3
+  },
+  "optimization_decision": "N/A",
+  "learning_status": "FROZEN",
+  "gate": {
+    "wf_lift": 1.0046,
+    "threshold": 1.1
+  }
+}

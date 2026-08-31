@@ -1,0 +1,35 @@
+﻿# -*- coding: utf-8 -*-
+import os, sys, re
+sys.path.insert(0, ".")
+checks = []
+src = open("utils/data_validator.py", encoding="utf-8").read()
+checks.append(("data_validator re-read after sync", "修复后必须回读" in src and "report['errors'] = [" in src))
+src2 = open("data_acquisition/process_hot_numbers.py", encoding="utf-8").read()
+checks.append(("process_hot shape guard", "df.shape[0] < 82" in src2 and "安全降级" in src2))
+checks.append(("process_hot _find_insert_row", "_find_insert_row" in src2))
+checks.append(("process_hot get_hot_files_by_period", "get_hot_files_by_period" in src2))
+src3 = open("data_acquisition/fetch_kl8_history.py", encoding="utf-8").read()
+checks.append(("fetch kjhyjsx priority", "kjhyjsx" in src3))
+checks.append(("fetch descending", "reverse=True" in src3))
+src4 = open("audit/v3_trinity_audit.py", encoding="utf-8").read()
+checks.append(("RW sigmoid", "calc_omission_sigmoid" in src4))
+checks.append(("no random in RW path", "random.random" not in src4 and "np.random" not in src4))
+src5 = open("core/learning_gate.py", encoding="utf-8").read()
+checks.append(("learning_gate threshold", "1.1" in src5))
+src6 = open("utils/excel_lock.py", encoding="utf-8").read()
+checks.append(("excel_lock 60s", "timeout" in src6.lower() and ("60" in src6)))
+src7 = open("pipeline/auto_generate_daily_report.py", encoding="utf-8").read()
+checks.append(("target_issue +1", "int(latest_issue) + 1" in src7))
+src8 = open("core/loss_weight_updater.py", encoding="utf-8").read()
+checks.append(("loss tanh", "tanh" in src8))
+src9 = open("data_acquisition/generate_hot_excel.py", encoding="utf-8").read()
+checks.append(("fill-missing", "fill-missing" in src9 or "fill_missing" in src9))
+src10 = open("format/apply_formats.py", encoding="utf-8").read()
+checks.append(("format pink+border", "FFFCE4EC" in src10 and "FFD966B3" in src10))
+src11 = open("run_full_pipeline.py", encoding="utf-8").read()
+checks.append(("runtime v4.2", "v4.2" in src11))
+fail = 0
+for name, ok in checks:
+    print(("OK" if ok else "FAIL"), "-", name)
+    if not ok: fail += 1
+print("SUMMARY", "PASS" if fail==0 else f"FAIL:{fail}")

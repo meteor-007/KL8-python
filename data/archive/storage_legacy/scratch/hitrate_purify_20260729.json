@@ -1,0 +1,57 @@
+{
+  "drawn": [],
+  "he5_avg": null,
+  "t5_avg": null,
+  "t12_avg": null,
+  "levels": {
+    "diamond": [],
+    "gold": [],
+    "silver": [],
+    "copper": [
+      {
+        "n": 12,
+        "src": [
+          "Burst5"
+        ]
+      },
+      {
+        "n": 42,
+        "src": [
+          "Burst5"
+        ]
+      },
+      {
+        "n": 49,
+        "src": [
+          "Burst5"
+        ]
+      },
+      {
+        "n": 75,
+        "src": [
+          "Burst5"
+        ]
+      },
+      {
+        "n": 76,
+        "src": [
+          "Burst5"
+        ]
+      }
+    ]
+  },
+  "he5_today": [],
+  "trinity5": [],
+  "trinity12": [],
+  "ai5": [],
+  "ai12": [],
+  "golden": [],
+  "pure": [],
+  "burst": [
+    75,
+    76,
+    12,
+    49,
+    42
+  ]
+}

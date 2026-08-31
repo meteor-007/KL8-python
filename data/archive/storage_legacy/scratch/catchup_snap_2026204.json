@@ -1,0 +1,91 @@
+{
+  "target": "2026204",
+  "report_date": "20260802",
+  "snap_keys": [
+    "b3_final5",
+    "conf_top12",
+    "conf_top5",
+    "deep_consensus",
+    "deep_kills",
+    "deep_picks",
+    "environment",
+    "kl_msg",
+    "latest_issue",
+    "mrmr_top12",
+    "pure_pool_all",
+    "pure_pool_lr",
+    "pure_pool_old_rule",
+    "pure_pool_top",
+    "run_time",
+    "target_issue",
+    "top12",
+    "top5",
+    "trinity_weights",
+    "yesterday_feedback"
+  ],
+  "snap": {
+    "top5": [
+      30,
+      32,
+      41,
+      42,
+      52
+    ],
+    "top12": [
+      12,
+      17,
+      29,
+      30,
+      31,
+      32,
+      41,
+      42,
+      43,
+      50,
+      52,
+      60
+    ],
+    "pure_pool_lr": [
+      6,
+      53,
+      29
+    ],
+    "pure_pool_all": [
+      6,
+      53,
+      29,
+      73
+    ],
+    "mrmr_top12": [
+      12,
+      75,
+      17,
+      42,
+      29,
+      18,
+      30,
+      27,
+      61,
+      2,
+      10,
+      53
+    ],
+    "deep_picks": [
+      30,
+      49,
+      3,
+      27,
+      58
+    ],
+    "deep_kills": [
+      24,
+      10,
+      22
+    ],
+    "deep_consensus": [
+      30,
+      73
+    ],
+    "kl_msg": "当前KL散度: 0.0766 (基线: 0.0802 ± 0.0135), Z-Score: -0.27 Sigma"
+  }
+}

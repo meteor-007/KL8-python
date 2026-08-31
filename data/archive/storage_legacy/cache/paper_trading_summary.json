@@ -1,0 +1,21 @@
+{
+  "n_records": 1,
+  "generated_at": "2026-08-05 10:17:13",
+  "rolling_window": 60,
+  "cumulative": {
+    "samples": 1,
+    "total_hits": 6,
+    "total_trials": 20,
+    "hit_rate": 0.3,
+    "lift": 1.2
+  },
+  "rolling": {
+    "samples": 1,
+    "total_hits": 6,
+    "total_trials": 20,
+    "hit_rate": 0.3,
+    "lift": 1.2
+  },
+  "baseline_hit_rate": 0.25,
+  "note": "判定: cumulative.lift > 1 且滚动窗口保持 >1 才说明存在可复现 edge; 否则建议观望不追号"
+}

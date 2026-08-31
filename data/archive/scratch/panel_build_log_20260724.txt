@@ -1,0 +1,7 @@
+﻿PANEL 4489
+COPY 591
+TREND_N 10 HE5_lift 1.28 Tr12_lift 1.0
+DIAMOND [46] GOLD [15, 30, 75]
+PURIFY VALID 涓婃湡閽荤煶鍛戒腑1/2 閾滅骇5/19 鍖哄垎鍔?1.90x 鈫?VALID
+OPT 鏃犻渶璋冩暣
+REV_HE5 (2, 5, 1.6, [47, 51]) REV_Tr5 (1, 5, 0.8, [74])

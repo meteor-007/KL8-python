@@ -1,0 +1,14 @@
+{
+  "weights": {
+    "markov": 0.226,
+    "graph": 0.431,
+    "omission": 0.133,
+    "bollinger": 0.13,
+    "trend": 0.048,
+    "signal": 0.032
+  },
+  "total_reviews": 0,
+  "consecutive_low_performance": 0,
+  "last_review_date": "2026-08-29",
+  "last_updated": "2026-08-29T16:44:42.621637"
+}

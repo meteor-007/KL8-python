@@ -1,0 +1,104 @@
+{
+  "latest_period": "2026138",
+  "last_review_time": "2026-05-29T11:07:22.264856",
+  "last_learn_time": "2026-05-29T11:07:22.378945",
+  "last_adjust_time": "2026-05-29T11:07:22.382944",
+  "last_optimize_time": "2026-05-29T11:07:22.383945",
+  "review_history": [
+    {
+      "period": "2026132",
+      "hit_count": 4,
+      "total_predicted": 10,
+      "hit_rate": 0.4,
+      "lift": 1.6
+    },
+    {
+      "period": "2026134",
+      "hit_count": 5,
+      "total_predicted": 20,
+      "hit_rate": 0.25,
+      "lift": 1.0
+    },
+    {
+      "period": "2026135",
+      "hit_count": 4,
+      "total_predicted": 20,
+      "hit_rate": 0.2,
+      "lift": 0.8
+    },
+    {
+      "period": "2026135",
+      "hit_count": 4,
+      "total_predicted": 20,
+      "hit_rate": 0.2,
+      "lift": 0.8
+    },
+    {
+      "period": "2026135",
+      "hit_count": 9,
+      "total_predicted": 20,
+      "hit_rate": 0.45,
+      "lift": 1.8
+    },
+    {
+      "period": "2026135",
+      "hit_count": 9,
+      "total_predicted": 20,
+      "hit_rate": 0.45,
+      "lift": 1.8
+    },
+    {
+      "period": "2026135",
+      "hit_count": 9,
+      "total_predicted": 20,
+      "hit_rate": 0.45,
+      "lift": 1.8
+    },
+    {
+      "period": "2026136",
+      "hit_count": 5,
+      "total_predicted": 20,
+      "hit_rate": 0.25,
+      "lift": 1.0
+    },
+    {
+      "period": "2026137",
+      "hit_count": 8,
+      "total_predicted": 20,
+      "hit_rate": 0.4,
+      "lift": 1.6
+    },
+    {
+      "period": "2026138",
+      "hit_count": 1,
+      "total_predicted": 5,
+      "hit_rate": 0.2,
+      "lift": 0.8
+    }
+  ],
+  "recent_10_hit_rate": 0.3314285714285714,
+  "recent_10_lift": 1.3257142857142856,
+  "recent_10_p_value": 0.009599046583204617,
+  "recent_10_bonferroni_p": 0.09599046583204617,
+  "is_significant": false,
+  "learning_changes": [
+    {
+      "param": "zone_loss_hot_penalty",
+      "old": 0.4,
+      "new": 0.4,
+      "reason": "命中率偏高，增加热区惩罚"
+    },
+    {
+      "param": "structural_diffusion_neutral",
+      "old": 0.3,
+      "new": 0.3,
+      "reason": "邻号漂移率38%过高，增加扩散"
+    }
+  ],
+  "adjustments": {
+    "confidence_level": "medium",
+    "strategy_mode": "moderate",
+    "extreme_cluster_chasing": "enabled",
+    "diffusion_increased": true
+  }
+}

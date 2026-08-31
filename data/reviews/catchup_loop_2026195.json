@@ -1,0 +1,29 @@
+{
+  "period": "2026195",
+  "timestamp": "2026-07-28 10:59:42",
+  "review_summary": {
+    "top5_hits": 1,
+    "top5_lift": 0.8,
+    "top12_hits": 3,
+    "top12_lift": 1.0
+  },
+  "learning_changes": [
+    "status",
+    "message"
+  ],
+  "adjustments": {
+    "status": "FROZEN",
+    "message": "自学习已冻结: 当前 WF Lift=1.0043, 未达阈值 1.1 (需先跑 python main_v2.py --backtest)"
+  },
+  "optimization_decision": "N/A",
+  "elapsed_seconds": 0.06,
+  "current_weights": {
+    "EF": 0.4,
+    "RW": 0.3,
+    "FO": 0.3
+  },
+  "strategy_mode": "balanced",
+  "total_reviews": 41,
+  "total_adaptations": 1,
+  "successful_adaptations": 0
+}

@@ -1,0 +1,11 @@
+{
+  "weights": {
+    "EF": 0.45,
+    "RW": 0.25,
+    "FO": 0.3
+  },
+  "description": "EF (蹭热度: 0.45) + RW (抓冷门: 0.25) + FO (找周期: 0.30)",
+  "circuit_breaker_kl_threshold": 0.15,
+  "beacon_warning_threshold": 0.5,
+  "last_updated": "2026-08-30T16:23:15.786639"
+}

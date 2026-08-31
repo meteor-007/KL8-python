@@ -1,0 +1,55 @@
+{
+  "period": "2026138",
+  "actual_numbers": [2, 6, 8, 10, 11, 14, 19, 22, 26, 30, 31, 33, 47, 53, 56, 62, 63, 73, 76, 77],
+  "review_date": "2026-05-29",
+  "hit_stats": {
+    "top5_hits": 0,
+    "top5_rate": 0.0,
+    "top5_lift": 0.0,
+    "top12_hits": 1,
+    "top12_rate": 0.083,
+    "top12_lift": 0.33,
+    "top20_hits": 2,
+    "top20_rate": 0.10,
+    "top20_lift": 0.40,
+    "he5_hits": 0,
+    "he5_rate": 0.0,
+    "he5_lift": 0.0,
+    "blast5_hits": 1,
+    "blast5_rate": 0.20,
+    "blast5_lift": 0.80,
+    "cluster5_hits": 3,
+    "cluster5_rate": 0.60,
+    "cluster5_lift": 2.40
+  },
+  "statistical_test": {
+    "n_periods": 6,
+    "top12_total_hits": 27,
+    "top12_total_trials": 72,
+    "top12_hit_rate": 0.375,
+    "top12_lift": 1.50,
+    "z_score": 2.451,
+    "p_value": 0.0143,
+    "bonferroni_p": 1.142,
+    "significant": false
+  },
+  "learning_decision": {
+    "optimization_decision": "KEPT",
+    "weight_changes": "none",
+    "strategy_mode": "balanced",
+    "wf_lift_before": 1.0036,
+    "wf_lift_after": 1.0036
+  },
+  "diagnostics": {
+    "period_character": "low_frequency_cold_numbers_heavy",
+    "zone_distribution": "Z1:4 Z2:3 Z3:3 Z4:2 Z5:1 Z6:2 Z7:2 Z8:3",
+    "key_insight": "聚类转移模块最有效(3/5命中)，HE5连续2期0命中"
+  },
+  "current_weights": {
+    "MK": 0.0952,
+    "EF": 0.2857,
+    "RW": 0.2857,
+    "FO": 0.2095,
+    "EO": 0.1238
+  }
+}

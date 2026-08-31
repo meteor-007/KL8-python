@@ -1,0 +1,68 @@
+LATEST_KEYS=b3_final5,conf_top12,conf_top5,deep_consensus,deep_kills,deep_picks,environment,kl_msg,latest_issue,mrmr_top12,pure_pool_all,pure_pool_lr,pure_pool_old_rule,pure_pool_top,run_time,target_issue,top12,top5,trinity_weights,yesterday_feedback
+target_issue='2026192'
+latest_issue='2026191'
+environment='平衡震荡期'
+trinity_weights={'EF': 0.5, 'RW': 0.2, 'FO': 0.3}
+top5=[23, 40, 42, 43, 44]
+top12=[2, 23, 27, 30, 33, 36, 40, 42, 43, 44, 74, 75]
+conf_top5=[2, 5, 32, 46, 53]
+conf_top12=[2, 5, 32, 46, 53, 71, 1, 6, 18, 23, 27, 29]
+mrmr_top12=[12, 33, 39, 69, 77, 30, 75, 27, 10, 42, 11, 6]
+pure_pool_top=[38, 33, 2]
+pure_pool_old_rule=[38, 33, 2, 55]
+pure_pool_lr=[38, 33, 2]
+pure_pool_all=[38, 33, 2, 12, 53, 55, 10, 69, 80, 77, 1, 45]
+deep_picks=[70, 80, 35, 39, 7]
+deep_kills=[71, 37, 55]
+deep_consensus=[35, 40]
+kl_msg='当前KL散度: 0.0931 (基线: 0.0748 ± 0.0150), Z-Score: 1.22 Sigma'
+HE5_FROM_REPORT=[]
+MD_trinity5=[]
+MD_trinity12=[]
+MD_ai5=[]
+MD_ai12=[]
+MD_golden=[]
+MD_mrmr=[]
+MD_pp_all=[]
+MD_pp_old=[38, 33, 2, 55]
+MD_pp_lr=[38, 33, 2]
+MD_pp_high=[38, 33, 2]
+MD_burst=[70, 80, 35, 39, 7]
+MD_defend=[71, 37, 55]
+MD_consensus=[35, 40]
+MD_gauss=[]
+MD_cluster=[]
+MD_fourier=[]
+MD_fusion=[]
+---REVIEW_2026191---
+Trinity5: 0/5 Lift=0.00x hits=[] picks=[11, 29, 33, 43, 44]
+Trinity12: 3/12 Lift=1.00x hits=[1, 42, 55] picks=[1, 11, 12, 27, 29, 33, 40, 42, 43, 44, 55, 79]
+AI5: 2/5 Lift=1.60x hits=[23, 32] picks=[11, 23, 32, 44, 56]
+AI12: 3/12 Lift=1.00x hits=[23, 32, 42] picks=[11, 23, 32, 44, 56, 61, 67, 26, 20, 21, 38, 42]
+PureHigh: 0/3 Lift=0.00x hits=[] picks=[38, 33, 20]
+PureOld: 2/4 Lift=2.00x hits=[6, 55] picks=[38, 33, 6, 55]
+PureLR: 0/3 Lift=0.00x hits=[] picks=[38, 33, 20]
+PureAll: 4/8 Lift=2.00x hits=[6, 2, 55, 53] picks=[38, 33, 20, 6, 2, 55, 53, 3]
+Burst: 1/5 Lift=0.80x hits=[55] picks=[55, 33, 78, 70, 38]
+Defend: success=3/3 avoided=[65, 61, 51] false_kill=[]
+Consensus: 1/4 Lift=1.00x hits=[55] picks=[11, 25, 33, 55]
+HE5: 1/5 Lift=0.80x hits=[42] picks=[41, 42, 44, 54, 70]
+Golden: 3/6 Lift=2.00x hits=[1, 42, 55] picks=[1, 11, 12, 33, 42, 55]
+mRMR: 2/12 Lift=0.67x hits=[77, 42] picks=[77, 69, 33, 38, 12, 39, 30, 7, 27, 42, 11, 67]
+---TREND---
+2026191 HE5=? Tr5=0/5 Tr12=3/12 AI5=2/5 AI12=3/12
+2026190 HE5=? Tr5=0/5 Tr12=1/12 AI5=0/5 AI12=2/12
+2026189 HE5=? Tr5=2/5 Tr12=5/12 AI5=1/5 AI12=2/12
+2026188 HE5=? Tr5=1/5 Tr12=3/12 AI5=1/5 AI12=2/12
+2026187 HE5=? Tr5=2/5 Tr12=2/12 AI5=1/5 AI12=5/12
+2026186 HE5=? Tr5=3/5 Tr12=3/12 AI5=2/5 AI12=3/12
+2026185 HE5=? Tr5=1/5 Tr12=3/12 AI5=1/5 AI12=3/12
+2026184 HE5=? Tr5=0/5 Tr12=2/12 AI5=1/5 AI12=3/12
+2026183 HE5=? Tr5=2/5 Tr12=4/12 AI5=1/5 AI12=2/12
+2026182 HE5=? Tr5=1/5 Tr12=2/12 AI5=2/5 AI12=3/12
+---PURIFY---
+modules={'HE5': [], 'Trinity': [2, 23, 27, 30, 33, 36, 40, 42, 43, 44, 74, 75], 'AI': [2, 5, 32, 46, 53, 71, 1, 6, 18, 23, 27, 29], 'mRMR': [12, 33, 39, 69, 77, 30, 75, 27, 10, 42, 11, 6], 'Pure': [38, 33, 2], 'HighOrd': [], 'Golden': []}
+diamond=[]
+gold=[2, 27, 33]
+silver=[6, 23, 30, 42, 75]
+copper_count=20

@@ -1,0 +1,98 @@
+{
+  "period": "2026146",
+  "date": "2026-06-05",
+  "actual_numbers": [
+    66,
+    48,
+    14,
+    45,
+    4,
+    39,
+    44,
+    38,
+    78,
+    70,
+    50,
+    40,
+    27,
+    56,
+    54,
+    10,
+    9,
+    43,
+    77,
+    7
+  ],
+  "results": {
+    "HE5": {
+      "hit": 5,
+      "total": 5,
+      "numbers": [
+        4,
+        27,
+        38,
+        39,
+        50
+      ],
+      "lift": 4.0
+    },
+    "Rapid5": {
+      "hit": 3,
+      "total": 5,
+      "numbers": [
+        48,
+        78,
+        38
+      ],
+      "lift": 2.4
+    },
+    "Top5": {
+      "hit": 3,
+      "total": 5,
+      "numbers": [
+        10,
+        50,
+        38
+      ],
+      "lift": 2.4
+    },
+    "Top12": {
+      "hit": 7,
+      "total": 12,
+      "numbers": [
+        38,
+        39,
+        40,
+        10,
+        77,
+        50,
+        27
+      ],
+      "lift": 2.33
+    },
+    "GC": {
+      "hit": 6,
+      "total": 8,
+      "lift": 3.0
+    },
+    "AI_Top12": {
+      "hit": 9,
+      "total": 12,
+      "lift": 3.0
+    }
+  },
+  "stats": {
+    "p_value": 0.0077,
+    "bonferroni_p": 0.6129,
+    "cohens_h": 0.691,
+    "significant": false
+  },
+  "learner_decision": "KEPT",
+  "weights": {
+    "MK": 0.3,
+    "EF": 0.25,
+    "RW": 0.1,
+    "FO": 0.2,
+    "EO": 0.15
+  }
+}

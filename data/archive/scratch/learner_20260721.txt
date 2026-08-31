@@ -1,0 +1,31 @@
+﻿2026-07-21 13:20:20,799 [INFO] AutonomousLearner: 
+============================================================
+2026-07-21 13:20:20,811 [INFO] AutonomousLearner:   鑷富闂幆瀛︿範: 鏈熷彿2026191
+2026-07-21 13:20:20,811 [INFO] AutonomousLearner: ============================================================
+2026-07-21 13:20:20,871 [INFO] AutonomousLearner: [澶嶇洏] 鏈熷彿2026191: Top5=0/5(Lift=0.00), Top12=3/12(Lift=1.00), Top20=5/20(Lift=1.00)
+2026-07-21 13:20:20,871 [INFO] AutonomousLearner:   EF             : 鍖哄垎搴?+0.2132 [POSITIVE]
+2026-07-21 13:20:20,871 [INFO] AutonomousLearner:   RW             : 鍖哄垎搴?-0.0928 [NEGATIVE]
+2026-07-21 13:20:20,871 [INFO] AutonomousLearner:   FO             : 鍖哄垎搴?-0.5937 [NEGATIVE]
+2026-07-21 13:20:20,985 [INFO] AutonomousLearner: [瀛︿範] 鑷涔犲凡鍐荤粨: 褰撳墠 WF Lift=1.0043, 鏈揪闃堝€?1.1 (闇€鍏堣窇 python main_v2.py --backtest)
+2026-07-21 13:20:21,023 [INFO] AutonomousLearner: [璋冩暣] 鑷涔犲凡鍐荤粨: 褰撳墠 WF Lift=1.0043, 鏈揪闃堝€?1.1 (闇€鍏堣窇 python main_v2.py --backtest)
+2026-07-21 13:20:21,059 [INFO] AutonomousLearner: [浼樺寲] 鑷涔犲凡鍐荤粨: 褰撳墠 WF Lift=1.0043, 鏈揪闃堝€?1.1 (闇€鍏堣窇 python main_v2.py --backtest)
+2026-07-21 13:20:21,072 [INFO] AutonomousLearner: [闂幆] 鏈熷彿2026191瀹屾垚, 鑰楁椂0.26s, 绛栫暐=balanced
+on_new_result {'period': '2026191', 'timestamp': '2026-07-21 13:20:21', 'review_summary': {'top5_hits': 0, 'top5_lift': 0.0, 'top12_hits': 3, 'top12_lift': 1.0}, 'learning_changes': ['status', 'message'], 'adjustments': {'status': 'FROZEN', 'message': '鑷涔犲凡鍐荤粨: 褰撳墠 WF Lift=1.0043, 鏈揪闃堝€?1.1 (闇€鍏堣窇 python main_v2.py --backtest)'}, 'optimization_decision': 'N/A', 'elapsed_seconds': 0.26, 'current_weights': {'EF': 0.4, 'RW': 0.3, 'FO': 0.3}, 'strategy_mode': 'balanced', 'total_reviews': 37, 'total_adaptations': 1, 'successful_adaptations': 0}
+
+======================================================================
+  鑷富瀛︿範寮曟搸 璇婃柇鎶ュ憡
+======================================================================
+  鎬诲鐩樻鏁?     37
+  鎬昏皟鏁存鏁?     1
+  鎴愬姛璋冩暣鐜?     0.00%
+  褰撳墠绛栫暐妯″紡:   balanced
+  褰撳墠鐜:       trend_accel (缃俊搴?1.00)
+  鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+  涓夌淮鏉冮噸: EF=0.40 RW=0.30 FO=0.30
+  杩戞湡Top5鍛戒腑鐜? [0.0, 0.0, 0.4, 0.2, 0.0, 0.0, 0.2, 0.4, 0.6, 0.4]
+  杩戞湡Top12鍛戒腑鐜? [0.25, 0.0833, 0.4167, 0.25, 0.1667, 0.1667, 0.25, 0.1667, 0.3333, 0.3333]
+  姝ｅ亸宸彿鐮?琚綆浼?: []
+  璐熷亸宸彿鐮?琚珮浼?: []
+  鐜婕傜Щ鍛婅: 1娆?
+  寰呭鐩橀娴? 31鏉?
+======================================================================

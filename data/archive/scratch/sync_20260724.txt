@@ -1,0 +1,15 @@
+﻿python.exe : 2026-07-24 10:51:04,058 [INFO] SyncHistoryToExcel: [校验] 历史数据校验通过: 2015期, 最新=2026194(2026-07-23)
+所在位置 C:\Users\zhiwei.chen\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1:8 字符: 26
++ function global:python { & "D:\python3116\python.exe" @args }
++                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (2026-07-24 10:5...194(2026-07-23):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+2026-07-24 10:51:05,131 [INFO] SyncHistoryToExcel: [开奖历史] 写入 2015 期, 最新=2026194
+2026-07-24 10:51:05,278 [INFO] SyncHistoryToExcel: [全量开奖数据] 写入 2015 期, 最新=2026194
+2026-07-24 10:51:05,279 [INFO] SyncHistoryToExcel: [验证] 开奖历史 最新期号=2026194 \u2705
+2026-07-24 10:51:05,280 [INFO] SyncHistoryToExcel: [验证] 全量开奖数据 最新期号=2026194 \u2705
+[同步] 从 kl8_history_final.txt 读取 2015 期数据
+[同步] 最新: 期号=2026194, 日期=2026-07-23
+[同步] 最旧: 期号=2020001, 日期=2020-10-28
+[完成] 已同步 2015 期历史到Excel（开奖历史+全量开奖数据）

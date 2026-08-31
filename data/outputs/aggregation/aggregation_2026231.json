@@ -1,0 +1,266 @@
+{
+  "target_period": 2026231,
+  "latest_period": 2026230,
+  "latest_date": "2026-08-28",
+  "subsystems_count": 5,
+  "subsystems_detail": {
+    "双层LSTM": [
+      2,
+      3,
+      5,
+      7,
+      12,
+      13,
+      23,
+      63,
+      71,
+      80
+    ],
+    "定金选2": [
+      2,
+      5,
+      20,
+      29,
+      32,
+      37
+    ],
+    "Gemini选2": [
+      12,
+      22,
+      46,
+      67,
+      76
+    ],
+    "跟随分析": [
+      1,
+      2,
+      6,
+      8,
+      10,
+      11,
+      18,
+      21,
+      24,
+      26,
+      27,
+      28,
+      29,
+      44,
+      53,
+      59,
+      62,
+      68,
+      77
+    ],
+    "16期中热": [
+      9,
+      15,
+      27,
+      48,
+      61
+    ]
+  },
+  "consensus_dan_pool": [
+    2,
+    5,
+    12,
+    27,
+    29,
+    32,
+    46,
+    53,
+    63,
+    71
+  ],
+  "votes_rank": [
+    {
+      "num": 2,
+      "votes": 3
+    },
+    {
+      "num": 5,
+      "votes": 2
+    },
+    {
+      "num": 12,
+      "votes": 2
+    },
+    {
+      "num": 27,
+      "votes": 2
+    },
+    {
+      "num": 29,
+      "votes": 2
+    },
+    {
+      "num": 1,
+      "votes": 1
+    },
+    {
+      "num": 3,
+      "votes": 1
+    },
+    {
+      "num": 6,
+      "votes": 1
+    },
+    {
+      "num": 7,
+      "votes": 1
+    },
+    {
+      "num": 8,
+      "votes": 1
+    },
+    {
+      "num": 9,
+      "votes": 1
+    },
+    {
+      "num": 10,
+      "votes": 1
+    },
+    {
+      "num": 11,
+      "votes": 1
+    },
+    {
+      "num": 13,
+      "votes": 1
+    },
+    {
+      "num": 15,
+      "votes": 1
+    },
+    {
+      "num": 18,
+      "votes": 1
+    },
+    {
+      "num": 20,
+      "votes": 1
+    },
+    {
+      "num": 21,
+      "votes": 1
+    },
+    {
+      "num": 22,
+      "votes": 1
+    },
+    {
+      "num": 23,
+      "votes": 1
+    },
+    {
+      "num": 24,
+      "votes": 1
+    },
+    {
+      "num": 26,
+      "votes": 1
+    },
+    {
+      "num": 28,
+      "votes": 1
+    },
+    {
+      "num": 32,
+      "votes": 1
+    },
+    {
+      "num": 37,
+      "votes": 1
+    },
+    {
+      "num": 44,
+      "votes": 1
+    },
+    {
+      "num": 46,
+      "votes": 1
+    },
+    {
+      "num": 48,
+      "votes": 1
+    },
+    {
+      "num": 53,
+      "votes": 1
+    },
+    {
+      "num": 59,
+      "votes": 1
+    },
+    {
+      "num": 61,
+      "votes": 1
+    },
+    {
+      "num": 62,
+      "votes": 1
+    },
+    {
+      "num": 63,
+      "votes": 1
+    },
+    {
+      "num": 67,
+      "votes": 1
+    },
+    {
+      "num": 68,
+      "votes": 1
+    },
+    {
+      "num": 71,
+      "votes": 1
+    },
+    {
+      "num": 76,
+      "votes": 1
+    },
+    {
+      "num": 77,
+      "votes": 1
+    },
+    {
+      "num": 80,
+      "votes": 1
+    }
+  ],
+  "stable_top10": [
+    24,
+    35,
+    21,
+    20,
+    51,
+    33,
+    47,
+    41,
+    3,
+    28
+  ],
+  "eight_zones_status": {
+    "full_coverage": false,
+    "miss_zones": [
+      "31-40",
+      "41-50",
+      "51-60",
+      "61-70",
+      "71-80"
+    ]
+  },
+  "walk_forward": {
+    "stable_mean_hits": 1.33,
+    "stable_expected": 1.25,
+    "stable_lift": 1.07,
+    "proxy_consensus_mean_hits": 0.93,
+    "proxy_consensus_size": 3.8,
+    "proxy_consensus_expected": 0.96,
+    "proxy_consensus_lift": 0.97
+  },
+  "generated_at": "2026-08-30 12:21:05",
+  "report_file": "汇总复盘_2026231.txt"
+}

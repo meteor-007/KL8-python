@@ -1,0 +1,8 @@
+{
+  "last_wf_lift": 1.0105,
+  "wf_ci_lift_lower": 0.9906,
+  "lift_threshold": 1.0,
+  "learning_enabled": false,
+  "pipeline_mode": "fo_baseline",
+  "n_folds": 197
+}

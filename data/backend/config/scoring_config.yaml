@@ -1,0 +1,185 @@
+# ============================================================
+# K8-Quant 统一评分配置文件
+# ============================================================
+# 所有评分权重、阈值、超参数集中管理
+# 修改此文件即可调整系统行为，无需改动代码
+# ============================================================
+
+# ── 三维融合权重 (EF + RW + FO) — 自学习解锁后可用 ──
+pentagon:
+  default_weights:
+    EF: 0.40
+    RW: 0.30
+    FO: 0.30
+  scale_factors:
+    EF: 1.0
+    RW: 10.0
+    FO: 0.5
+  environment_overrides:
+    hot_burst:
+      EF: 0.50
+      RW: 0.20
+      FO: 0.30
+    cold_rebound:
+      EF: 0.55
+      RW: 0.25
+      FO: 0.20
+    balanced:
+      EF: 0.40
+      RW: 0.30
+      FO: 0.30
+    trend_accel:
+      EF: 0.35
+      RW: 0.30
+      FO: 0.35
+    chaotic:
+      EF: 0.30
+      RW: 0.45
+      FO: 0.25
+  volatility_thresholds:
+    high: 0.25
+    low: 0.10
+
+# ── 特征优化层 (Layer A) 方案权重 ──
+feature_layer:
+  plan_hot_stealth_resonance: 5
+  plan_frequency_acceleration: 2
+  plan_adjacency_topology: 2
+  plan_multi_source_points: 4
+  plan_phase_transition: 3
+  plan_entropy_boost: 2
+  plan_stride_row_collision: 1.0
+  plan_cluster_accelerator: 1.6
+  plan_momentum_threshold: 1.2
+  plan_momentum_weight: 2.0
+  plan_omission_harmonics: 4
+
+# ── 贝叶斯推断配置 ──
+bayesian:
+  prior_alpha: 5.0
+  prior_beta: 15.0
+  likelihood_window: 20
+  decay_factor: 0.7
+
+# ── 蒙特卡洛配置 ──
+monte_carlo:
+  n_simulations: 5000
+  sampling_mode: constrained
+  constrained:
+    zone_balance_weight: 0.3
+    tail_balance_weight: 0.2
+    omission_boost_weight: 0.3
+    uniform_weight: 0.2
+
+# ── 马尔可夫链配置 ──
+markov:
+  lookback: 3
+  min_observations: 3
+  prior_strength: 1.0
+  default_prob: 0.25
+
+# ── 协同涌现检测配置 ──
+co_emergence:
+  min_support: 5
+  min_lift: 1.5
+  max_lookback: 200
+
+# ── 反共识去噪配置 ──
+anti_consensus:
+  score_threshold: 0.3
+  consensus_penalty: 0.7
+  singularity_bonus: 1.3
+
+# ── 隐能量场配置 ──
+energy_field:
+  decay_rate: 0.5
+  diffusion_factor: 0.4
+  lookback: 30
+  neighbor_range: 3
+  neighbor_decay_base: 0.5
+
+# ── 环境识别配置 ──
+environment:
+  n_clusters: 5
+  min_history: 10
+  hot_ratio_threshold: 0.55
+  cold_ratio_threshold: 0.35
+  cold_hot_max: 0.12
+  entropy_high: 0.85
+  trend_strength_threshold: 0.20
+  trend_hot_min: 0.18
+
+# ── B3 Right质量检查配置 ──
+b3_quality:
+  quality_threshold: 0.6
+  weights:
+    completeness: 0.3
+    hit_rate: 0.4
+    diversity: 0.2
+    point_alignment: 0.1
+  hit_rate_levels:
+    high: 0.3
+    medium: 0.2
+    low: 0.1
+
+# ── 深度命中率优化配置 ──
+deep_optimizer:
+  meta_learner:
+    val_window: 15
+    min_history: 25
+  decay_candidates: [0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5]
+  validation_windows: [5, 10, 20, 50]
+  stability_threshold: 0.25
+
+# ── 遗漏Sigmoid模型配置 ──
+omission_sigmoid:
+  midpoint: 8.0
+  steepness: 0.3
+  max_lookback: 50
+
+
+
+# ── Loss Function权重更新配置 (白皮书实现) ──
+loss_function:
+  method: cross_entropy
+  temperature: 0.5
+  max_history_losses: 30
+
+# ── 自学习冻结门控 (Lift 多折 95%CI 下界达标前禁止微调) ──
+learning_gate:
+  freeze_until_lift: true
+  lift_threshold: 1.0   # 语义: Lift 多折 95%CI 下界 > 1.0 (随机基线) 才解锁自动调参
+
+# ── 号码偏差校准 (Platt) 衰减回先验, 抑制追噪 ──
+number_bias:
+  decay: 0.9            # 每期对旧偏差的保留系数 (越小衰减越快回先验)
+  clamp: 0.5            # 偏差绝对值上限
+  max_step: 0.02        # 单期最大可移动幅度
+  min_reviews: 30       # 累计复盘达到该值前不启动偏差校准 (避免早期过拟合)
+
+# ── 信号通道筛选 (FDR 主信号 vs 对照组) ──
+signals:
+  max_primary: 1
+  fdr_alpha: 0.05
+  fdr_method: bh        # 多重检验方法: bh (Benjamini-Hochberg) | bonferroni
+  validation_window: 60
+  min_history: 80
+
+# ── Daily 极简 Baseline (FO + 随机对照) ──
+baseline:
+  mode: fo_only
+  primary_channel: FO
+  include_random_control: true
+  weekly_monitor_channels:
+    - EF
+    - RW
+    - MK
+    - EO
+    - BAYES
+    - MC
+
+# ── 数据源融合权重 ──
+datasource_fusion:
+  source1_weight: 0.30
+  source2_weight: 0.30
+  hotcode_weight: 0.40

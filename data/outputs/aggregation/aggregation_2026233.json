@@ -1,0 +1,250 @@
+{
+  "target_period": 2026233,
+  "latest_period": 2026232,
+  "latest_date": "2026-08-30",
+  "subsystems_count": 5,
+  "subsystems_detail": {
+    "双层LSTM": [
+      7,
+      12,
+      27,
+      36,
+      46,
+      51,
+      59,
+      60,
+      63,
+      73
+    ],
+    "定金选2": [
+      6,
+      10,
+      18,
+      19,
+      20,
+      25
+    ],
+    "Gemini选2": [
+      10,
+      28,
+      36,
+      50,
+      60
+    ],
+    "跟随分析": [
+      3,
+      4,
+      6,
+      10,
+      12,
+      21,
+      24,
+      26,
+      27,
+      38,
+      41,
+      42,
+      57,
+      66,
+      69,
+      71,
+      75,
+      77
+    ],
+    "16期中热": [
+      2,
+      6,
+      30,
+      58,
+      70
+    ]
+  },
+  "consensus_dan_pool": [
+    6,
+    10,
+    12,
+    27,
+    36,
+    46,
+    60,
+    63,
+    73
+  ],
+  "votes_rank": [
+    {
+      "num": 6,
+      "votes": 3
+    },
+    {
+      "num": 10,
+      "votes": 3
+    },
+    {
+      "num": 12,
+      "votes": 2
+    },
+    {
+      "num": 27,
+      "votes": 2
+    },
+    {
+      "num": 36,
+      "votes": 2
+    },
+    {
+      "num": 60,
+      "votes": 2
+    },
+    {
+      "num": 2,
+      "votes": 1
+    },
+    {
+      "num": 3,
+      "votes": 1
+    },
+    {
+      "num": 4,
+      "votes": 1
+    },
+    {
+      "num": 7,
+      "votes": 1
+    },
+    {
+      "num": 18,
+      "votes": 1
+    },
+    {
+      "num": 19,
+      "votes": 1
+    },
+    {
+      "num": 20,
+      "votes": 1
+    },
+    {
+      "num": 21,
+      "votes": 1
+    },
+    {
+      "num": 24,
+      "votes": 1
+    },
+    {
+      "num": 25,
+      "votes": 1
+    },
+    {
+      "num": 26,
+      "votes": 1
+    },
+    {
+      "num": 28,
+      "votes": 1
+    },
+    {
+      "num": 30,
+      "votes": 1
+    },
+    {
+      "num": 38,
+      "votes": 1
+    },
+    {
+      "num": 41,
+      "votes": 1
+    },
+    {
+      "num": 42,
+      "votes": 1
+    },
+    {
+      "num": 46,
+      "votes": 1
+    },
+    {
+      "num": 50,
+      "votes": 1
+    },
+    {
+      "num": 51,
+      "votes": 1
+    },
+    {
+      "num": 57,
+      "votes": 1
+    },
+    {
+      "num": 58,
+      "votes": 1
+    },
+    {
+      "num": 59,
+      "votes": 1
+    },
+    {
+      "num": 63,
+      "votes": 1
+    },
+    {
+      "num": 66,
+      "votes": 1
+    },
+    {
+      "num": 69,
+      "votes": 1
+    },
+    {
+      "num": 70,
+      "votes": 1
+    },
+    {
+      "num": 71,
+      "votes": 1
+    },
+    {
+      "num": 73,
+      "votes": 1
+    },
+    {
+      "num": 75,
+      "votes": 1
+    },
+    {
+      "num": 77,
+      "votes": 1
+    }
+  ],
+  "stable_top10": [
+    21,
+    41,
+    28,
+    33,
+    35,
+    47,
+    51,
+    24,
+    3,
+    7
+  ],
+  "eight_zones_status": {
+    "full_coverage": false,
+    "miss_zones": [
+      "41-50",
+      "61-70",
+      "71-80"
+    ]
+  },
+  "walk_forward": {
+    "stable_mean_hits": 1.27,
+    "stable_expected": 1.25,
+    "stable_lift": 1.01,
+    "proxy_consensus_mean_hits": 0.93,
+    "proxy_consensus_size": 3.8,
+    "proxy_consensus_expected": 0.94,
+    "proxy_consensus_lift": 0.99
+  },
+  "generated_at": "2026-08-31 19:10:58",
+  "report_file": "汇总复盘_2026233.txt"
+}

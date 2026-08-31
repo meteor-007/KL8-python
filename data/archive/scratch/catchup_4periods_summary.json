@@ -1,0 +1,58 @@
+[
+  {
+    "target": "2026201",
+    "review": "2026200",
+    "report_date": "20260730",
+    "loop": {
+      "top5_hits": 0,
+      "top5_lift": 0.0,
+      "top12_hits": 3,
+      "top12_lift": 1.0
+    },
+    "opt": "N/A",
+    "report": "D:\\Dpanqianyi\\Python-Project\\data\\reports\\daily_analysis_report_20260730.md",
+    "report_bytes": 10496
+  },
+  {
+    "target": "2026202",
+    "review": "2026201",
+    "report_date": "20260731",
+    "loop": {
+      "top5_hits": 1,
+      "top5_lift": 0.8,
+      "top12_hits": 3,
+      "top12_lift": 1.0
+    },
+    "opt": "N/A",
+    "report": "D:\\Dpanqianyi\\Python-Project\\data\\reports\\daily_analysis_report_20260731.md",
+    "report_bytes": 10245
+  },
+  {
+    "target": "2026203",
+    "review": "2026202",
+    "report_date": "20260801",
+    "loop": {
+      "top5_hits": 1,
+      "top5_lift": 0.8,
+      "top12_hits": 3,
+      "top12_lift": 1.0
+    },
+    "opt": "N/A",
+    "report": "D:\\Dpanqianyi\\Python-Project\\data\\reports\\daily_analysis_report_20260801.md",
+    "report_bytes": 10246
+  },
+  {
+    "target": "2026204",
+    "review": "2026203",
+    "report_date": "20260802",
+    "loop": {
+      "top5_hits": 2,
+      "top5_lift": 1.6,
+      "top12_hits": 3,
+      "top12_lift": 1.0
+    },
+    "opt": "N/A",
+    "report": "D:\\Dpanqianyi\\Python-Project\\data\\reports\\daily_analysis_report_20260802.md",
+    "report_bytes": 10317
+  }
+]

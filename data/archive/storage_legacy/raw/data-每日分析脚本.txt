@@ -1,0 +1,605 @@
+═══════════════════════════════════════════════════════════════════════════
+ 快乐8预测系统 — 每日全流程分析脚本 v4.3 (2026-08-27 极简选2黄金搭档决策架构版)
+═══════════════════════════════════════════════════════════════════════════
+
+请将工作目录切换到：D:\Dpanqianyi\Python-Project\data
+已增量更新今天的点位数据文件：daily_points.txt，开奖数据文件：kl8_history_final.txt。
+请遵守 GEMINI.md 执行协议（全局：D:\Dpanqianyi\Python-Project\GEMINI.md，本目录：D:\Dpanqianyi\Python-Project\data\GEMINI.md）。
+要求：发现代码和逻辑有问题请先指出来纠正，修复后验证，直到无问题再继续。
+
+═══ 任务0：环境预检与代码审计（最高优先级） ═══
+
+【0.1 环境预检】
+  □ 确认工作目录：D:\Dpanqianyi\Python-Project\data
+  □ 清理残留锁文件：仅在工作目录 D:\Dpanqianyi\Python-Project\data 下检查并删除 *.excel_lock 文件（非递归！禁止全盘扫描！）
+    安全命令：dir /b "D:\Dpanqianyi\Python-Project\data\*.excel_lock" 列出→确认后→del "D:\Dpanqianyi\Python-Project\data\*.excel_lock"
+  □ 检查是否有其他Python进程占用Excel：wmic process where "name='python.exe'" get processid,commandline
+  □ 如有残留引擎进程，先终止：taskkill /PID <残留PID> /F
+  □ 确认Python环境可用：python --version
+
+【0.0 ⚠️ 最高优先级：数据一致性强制校验】
+  □ 执行 python utils/data_validator.py --auto-fix
+  □ 检查6大校验项是否全通过：
+    A. kl8_history_final.txt 数据新鲜度（最新日期距今≤1天）+ 号码完整性（每期=20个）
+    B. daily_points.txt 期号与kl8_history对齐（最新期号≥history最新期号）
+    C. Excel「开奖历史」Sheet 最新期号与kl8_history一致
+    D. Excel「全量开奖数据」Sheet 最新期号与kl8_history一致
+    E. Excel「跟随号码统计」Sheet 期号覆盖与顺序正确
+    F. 热码统计文件与kl8_history对齐
+  □ 若有错误，auto-fix会自动修复（Excel同步+热码补生成），修复后重新校验
+  □ 只有校验全通过后才能继续后续任务！
+
+【0.2 代码审计（逐文件检查）】
+  ⚠️ 在执行任何数据分析之前，必须先完成代码审计。发现任何Bug必须先修复再继续。
+
+  审计范围与重点：
+
+  | 文件 | 审计重点 |
+  |------|----------|
+  | core/pair_selector.py | ① 5大子模块专属2码提取 ② KillSeeker一票否决与相克排斥过滤 ③ 双元共现Lift与No.1黄金搭档打分收敛 |
+  | pipeline/auto_generate_daily_report.py | ① target_issue fallback逻辑 ② DataCenter单例模式 ③ excel_lock上下文 ④ 报告输出完整性 |
+  | ⚠️ deep_resonance_5.py 已删除(v4.0架构精简) | 跳过，不再审计 |
+  | data_acquisition/fetch_kl8_history.py | ① 17500→CWL双源fallback ② kjhyjsx优先于red ③ 增量去重 |
+  | data_acquisition/process_hot_numbers.py | ① Stride-4解析逻辑 ② 数据1带*号提取 ③ 数据2前4后4提取 ④ 锁机制 ⑤ _find_insert_row()智能定位插入行(按期号顺序) ⑥ extract_raw_columns()边界检查 ⑦ get_hot_files_by_period()按期号排序(非修改时间) |
+  | data_acquisition/sync_history_to_excel.py | ① 期号一致性 ② 锁机制 |
+  | format/apply_formats.py | ① 点位底色FFFCE4EC ② 中奖边框FFD966B3 ③ 增量双期(最新预测期+已开奖上期) ④ 期号识别 |
+  | core/feature_optimizer.py | ① load_all_data()路径 ② 数据1/2解析 ③ 星标号提取 ④ 无前视泄露 |
+  | core/algorithm_optimizer.py | ① 马尔可夫状态定义 ② 概率归一化 ③ 无硬编码 |
+  | core/strategy_optimizer.py | ① 权重分配 ② 环境策略 ③ 置信度融合 |
+  | core/entropy_optimizer.py | ① 互信息计算 ② mRMR筛选 ③ 熵值评估 |
+  | core/score_composer.py | ① 归一化方法 ② Loss权重加载 ③ 环境自适应 ④ 波动率微调 |
+  | core/loss_weight_updater.py | ① Softmax权重更新 ② 跨熵Loss计算 ③ 历史Loss管理 |
+  | core/walk_forward_validator.py | ① 滑窗参数 ② 评估指标 ③ 报告生成 |
+  | audit/v3_trinity_audit.py | ① EF/RW/FO三维权重(MK/EO已移除) ② RW使用Sigmoid遗漏模型(非随机) ③ decay_rate参数 ④ 三维融合(非五维) |
+  | audit/b3_right_quality_checker.py | ① target_issue fallback ② 质量评分逻辑 ③ should_use判断 |
+  | recognition/simplified_env_recognition.py | ① 环境分类阈值合理性 ② 是否与scoring_config.yaml对齐 ③ 置信度计算 |
+  | learning/autonomous_learner.py | ① 闭环四力完整性 ② 状态持久化 ③ number_biases校准 ④ WF验证回滚 |
+  | utils/excel_lock.py | ① 锁文件创建/删除 ② 超时处理 ③ 死锁清理 |
+  | utils/paths.py | ① 路径解析正确性 |
+  | config/config_loader.py | ① YAML加载 ② 默认值兜底 ③ 缓存机制 |
+
+  审计检查项（每条必须逐条检查并记录结果）：
+  □ 路径硬编码：所有文件路径是否使用 utils/paths.py 统一管理？
+  □ 未来函数泄露：特征是否shift(1)封印？目标编码是否平滑？开奖列是否进入训练？
+  □ 统计检验与多重比较校正：是否强制引入 Benjamini-Hochberg (FDR-BH) 错误发现率校正与 Bonferroni 校正对 80 个号码显著性进行免疫校正（全局白噪声免疫值 $\alpha \le 0.000625$）？
+  □ 零信标 Stacking 四级降级（Level 0 - 3）：显著号码数少于 3 个时，是否自动逐级降级并渲染 Level 3 等权等幅警告，屏蔽噪声欺骗？
+  □ 硬编码阶跃权重：是否在 loss_weight_updater 中替换为双曲正切 (tanh) 等平滑可导抑震阻尼器？
+
+  □ 状态暴露与统计置信度底线：输出推荐结果时是否强绑定了统计置信度置信度状态输出系数（Level 0=1.0x, Level 1=0.5x, Level 2=0.1x, Level 3=停止预测状态）？
+  □ 特征正交化诊断：多维打分层是否执行了多重共线性阻断（如动量一阶与二阶特征相关性），并在日志中抛出共线性警告？
+  □ 全局熔断监控：是否计算预测分布与实际开奖分布的 KL 散度，连续10期发生极小概率突变（5 Sigma级）是否触发了结构性物理熔断？
+  □ Stride-4 批量同步 shape 拦截：process_hot_numbers 在读取 Excel 数据后，行数 < 82 或列数 < 13 时是否自动触发安全降级机制拒绝写入，防脏数据污染？
+  □ 增量数据期号强降序：抓取并增量写入 kl8_history_final.txt 时是否显式降序重排，保障期号头部最新？
+  □ ~~极速爆破点位 fallback~~：极速爆破模块v4.0已砍掉(近9期Lift=0.27x灾难性)，此项不再审计
+  □ RW 分量确定性：是否使用数据驱动的 Sigmoid 遗漏模型（彻底封锁 random 随机数）？
+  □ Excel 锁机制：所有 Excel 操作是否全部包裹 excel_lock 上下文？超时是否 60s？
+  □ 主 Excel 唯一性：确保只有一份 跟随+点位+开奖数据.xlsx（无自动预测版）
+  □ 缺期补偿机制：generate_hot_excel.py --fill-missing 是否扫描最近 30 期并补生成？
+  □ 极高阶前瞻算法完整性：高斯扩散中低频傅里叶外推 (PSD * cos 投影) 及聚类状态马尔可夫转移得分是否全部实施 Z-score 标准化对齐，防止 NaN 和复数泄露？
+  □ MK权重上限：MK已从三维融合中移除(v4.0)，此项不再审计。改为检查EF/RW/FO三维权重是否均衡
+
+  修复与验证循环：
+  对于每个发现的Bug：
+    1. 记录：文件名/函数名/行号/Before/After/修复依据
+    2. 修复：使用代码编辑工具修改
+    3. 验证：重新读取文件确认修改正确、逻辑自洽
+    4. Lint检查：read_lints确认无语法错误
+    5. 若仍有问题→继续修复→直到无问题
+
+═══ 任务1：数据源采集与更新（第二优先级） ═══
+
+数据是一切分析的基础，必须先确保数据完整、准确、最新。
+
+1.1 开奖数据抓取与更新：
+   - 执行 data_acquisition/fetch_kl8_history.py
+   - v2.0新增：自动校验每条新数据的号码完整性(=20)/日期格式/期号格式
+   - 检查双源抓取逻辑：17500 API(https://m.17500.cn) → 若返回500则fallback到CWL官方API(http://www.cwl.gov.cn)
+   - 检查kjhyjsx字段（真实出球顺序）是否优先于red字段（排序后号码）
+   - 检查增量更新逻辑：防止重复期号、防止遗漏期号
+   - v2.0新增：写入后自动验证文件完整性（期号降序+号码数=20）
+   - 验证：读取 kl8_history_final.txt 确认最新期号是否为昨天的，数据是否完整
+
+1.2 热码统计生成与同步（关键数据管线！）：
+   - 检查 热码统计/ 目录下是否有最新的 *-热码统计.xlsx
+   - 若无最新热码统计文件：执行 data_acquisition/generate_hot_excel.py 生成
+   - ⚠️ 缺期自动补偿：执行 data_acquisition/generate_hot_excel.py --fill-missing，自动扫描最近30期并补生成缺失的热码统计文件
+   - 若需指定某期：执行 data_acquisition/generate_hot_excel.py --target-period 2026134
+   - 执行 data_acquisition/process_hot_numbers.py：Stride-4四维度(All/50/25/10)热码同步到跟随+点位+开奖数据.xlsx
+   - ⚠️ 同步顺序保障：process_hot_numbers.py 已升级为按期号排序同步（而非文件修改时间），且新增 _find_insert_row() 智能定位——按期号顺序插入，已存在则覆盖，避免追加到末尾导致错乱
+   - 若需指定期号同步：执行 data_acquisition/process_hot_numbers.py --target-period 2026134
+   - 若需批量同步缺失：执行 data_acquisition/process_hot_numbers.py --sync-all-missing
+   - 验证数据1提取逻辑：带*号号码（前4后4布局，即每行左半+右半各4个星标位）
+   - 验证数据2提取逻辑：前4个和最后4个号码（位置精准提取）
+   - 验证主Excel只有一份文件：跟随+点位+开奖数据.xlsx（已删除_自动预测版）
+
+1.3 历史数据同步到Excel（v2.0 双Sheet同步）：
+   - 执行 data_acquisition/sync_history_to_excel.py
+   - v2.0核心修复：同时同步「开奖历史」Sheet + 「全量开奖数据」Sheet
+   - v2.0新增：同步前自动校验数据（号码完整性/期号降序/日期格式）
+   - v2.0新增：同步后自动验证（确认Sheet最新期号与kl8_history一致）
+   - ⚠️ 若只同步了开奖历史但漏了全量开奖数据，会导致DataCenter加载数据滞后！
+
+1.4 点位数据验证：
+   - 读取 daily_points.txt，确认今天日期的点位数据存在
+   - 检查点位格式：date:YYYY-MM-DD,period:NNNNNN,points:N1 N2 ...（20个号码）
+   - 若无今日点位数据，明确提示缺少点位，后续纯净池定胆等模块将使用fallback逻辑
+
+1.5 Excel格式化（跟随号码统计 Sheet — 点位底色 + 中奖边框）：
+   - 执行 format/apply_formats.py（默认增量双期，无需手动加参数）
+   - ✅ 必做两件事（每日都要落到 跟随+点位+开奖数据.xlsx）：
+     ① 最新预测期（如2026187）：点位底色 FFFCE4EC（对照 daily_points.txt 该期点位）
+     ② 最近已开奖期（如2026186）：中奖边框 FFD966B3（对照 kl8_history_final.txt 该期开奖号）
+   - ⚠️ v3.1：增量模式固定处理「最新预测期 + 最近已开奖期」两块，避免开奖入库后上期边框永远补不上。
+   - 若发现更早期号仍缺复盘标记，再执行 format/apply_formats.py --full 全量补齐。
+   - 验证清单：
+     □ 最新期有粉色点位底色
+     □ 昨日期号数据块中，与开奖号相同的单元格已有紫色粗边框(FFD966B3)
+     □ 控制台出现类似：`[增量] 已开奖复盘期 2026186 ... 中奖边框N格`
+
+1.6 数据完整性校验（v3.4升级：使用统一校验引擎）：
+   - ✅ 已由任务0.0的 data_validator.py --auto-fix 完成校验+自动修复
+   - 若仍有问题：手动排查以下项：
+     - 对比 kl8_history_final.txt 与 Excel 全量开奖数据Sheet，确认一致
+     - 检查是否存在期号断裂（连续期号中间缺期）
+     - 检查跟随号码统计Sheet的期号顺序是否按行递增
+   - 若发现期号断裂或顺序错乱：重新执行 generate_hot_excel.py --fill-missing 补生成 + process_hot_numbers.py --sync-all-missing 重新同步
+   - 若Excel损坏（EOFError），从 backup/fallback.xlsx 恢复
+
+1.7 数据问题修复：
+   - 发现任何数据问题必须先修复，修复后重新验证，直到数据完全正确
+   - 修复时遵守数据安全底线：不删除、不覆盖kl8_history_final.txt和daily_points.txt原始数据
+
+═══ 任务2：深度复盘昨天的推荐 + 闭环学习触发 ═══
+
+（数据已更新完毕，现在可以复盘）
+
+2.1 读取昨日预测报告：
+   - reports/daily_analysis_report_昨天日期.md（提取AI核心推荐Top5/Top12、多维共振号Golden Core、Hidden Energy 5、Trinity引擎Top7/Top14、区域与尾数分析、自学习权重、专家系数、复盘追溯内容）
+   - 必提取纯净池细则：高置信定胆 / 旧规则高置信(>=3) / LR定胆 / 纯净池全量
+   - 必提取方案2细则：爆发Top5 / 防守Top3 / 跨规则共识 /（参考）规则回测与黄金搭档
+   - 必提取物理熔断面板：KL散度与Z-Score状态
+   - reports/deep_optimization_report_昨天日期.md（如有，提取深度优化结果）
+   - cache/self_learning_state.json（自学习状态；优先读取 pure_pool_* / deep_picks / deep_kills / deep_consensus / kl_msg 字段）
+   - cache/learner_state.json（学习引擎状态：权重/偏差/策略模式）
+   - model_config.json（模型配置）
+   - 确定昨天日期→期号映射：从kl8_history_final.txt按date字段反查昨日对应期号
+
+2.2 基于任务1已更新的 kl8_history_final.txt，获取昨天对应期号的实际开奖号码
+
+2.3 对账统计：
+   - 🎯 极简选2黄金搭档（全场最优1组）：双中大捷(2/2) / 单中(1/2) / 未中(0/2)、命中号码、近窗超额倍数 Lift
+   - Hidden Energy 5（最终推荐5码）命中几码、命中号码、Lift（=命中率/25%，长期目标>2码）
+   - AI核心推荐Top5命中几码、Lift
+   - Top12命中几码、Lift
+   - Golden Core多维共振号命中情况
+   - Trinity引擎Top5/Top12命中情况（三维融合EF/RW/FO，MK/EO已移除）
+   - ⚠️ 极速爆破(Rapid Blast)v4.0已砍掉，不再复盘此项
+   - ✅ 纯净池定胆（必须逐项对账，对应报告§8）：
+     · 高置信定胆(LR软回退/主输出)：命中数/总数、Lift、命中号码、推荐清单
+     · 旧规则高置信(评分>=3)：命中数/总数、Lift、命中号码、推荐清单
+     · LR定胆(影子/候选)：命中数/总数、Lift、命中号码、推荐清单
+     · 纯净池全量号码：命中数/总数、Lift、命中号码
+   - ✅ 方案2深层关联（必须逐项对账，对应报告§10）：
+     · 爆发Top5精选：命中数/总数、Lift、命中号码、推荐清单
+     · 防守Top3杀号：成功数/总数、回避正确号码、误杀入奖号码
+     · 跨规则共识号码：命中数/总数、Lift、命中号码
+     · （可选）规则回测精选Top3 / 黄金搭档：仅作诊断参考，不强制计入主Lift
+   - ✅ 物理熔断面板（对应报告§9）：记录上期KL散度/Z-Score/是否触发熔断（结构性监控，非选号命中）
+
+2.4 结合 reports/ 下的历史报告汇总最近10期趋势
+
+2.5 诊断命中/偏离原因：
+   - Hidden Energy 5模块是否如GEMINI.md所述"最为稳定"？
+   - B3 Right矩阵映射 x AI置信度Top12 x EF/RW/FO提纯的逻辑链是否有效？
+   - ~~数据1右侧区域x点位标记x隐能量场提纯的极速爆破~~：已砍掉，不再诊断
+   - Trinity引擎三维权重(EF/RW/FO)是否均衡？MK已移除不再检查
+   - 纯净池：高置信定胆 vs 旧规则>=3 vs LR影子，哪条链路Lift更高？LR软回退是否优于硬阈值？
+   - 方案2：爆发Top5是否优于随机基线？防守Top3误杀率是否可控？跨规则共识是否有区分力？
+   - 环境识别(平衡震荡期/趋势突破期/混沌漂移期/热号爆发期/冷号反弹期)是否准确？
+   - 零信标降级状态保护：发生Level 2/3降级时，0.1x或0.0x状态约束是否成功拦截了置信度回撤？
+   - 结构性突变与正交性：是否存在多重共线性导致的方差膨胀？KL散度是否逼近熔断临界点？
+   - 数据源1/数据源2的信号质量如何？
+   - 20个优化方案(Plan1-20)中哪些贡献最大、哪些噪声偏多？
+   - number_biases偏差校准：正偏差号码(被低估)和负偏差号码(被高估)分布是否合理？
+
+2.6 触发闭环学习（关键新增！）：
+   - 调用 learning/autonomous_learner.py 的 on_new_result(period, actual_numbers, history)
+   - 触发完整闭环：复盘 → 学习 → 调整 → 优化
+   - ⚠️ 执行前必须先查学习门控（见下方【执行规范A】）：若 FROZEN，闭环可复盘，但 learn/adapt/optimize 写参会被拒绝
+   - 检查闭环报告中的决策结果：ADOPTED/ROLLED_BACK/KEPT/FIRST_RUN/FROZEN/N/A
+   - 检查权重是否有变更：pentagon_weights调整前后对比（FROZEN 时应无变更）
+   - 检查策略模式是否有切换：strategy_mode变更
+   - 检查环境漂移告警：drift_alerts新增记录
+   - 复盘结果落盘：reviews/review_<期号>.json（含 hit_stats / algo_contribution / weights_used）
+
+2.7 输出学习引擎诊断：
+   - 调用 AutonomousLearner.print_diagnosis() 输出当前学习引擎状态
+   - 重点关注：总复盘次数、成功调整率、当前权重、环境状态、近期命中率趋势
+   - 同步输出门控状态：python -c "from core.learning_gate import gate_status; print(gate_status())"
+   - 核对 param_store.json 的 _meta.auto_tune_frozen 与 cache/learning_gate_state.json
+
+2.8 结构化输出：对账表 + Lift统计 + 趋势 + 各算法区分度 + 深度洞察 + 改进方向
+
+2.9 诊断重点参数清单（逐项检查并给出当前值+评估）：
+   - Hidden Energy 5权重配比（EF×1.0 + RW×0.8 + FO×0.5，v4.0三维架构）
+   - Trinity decay_rate（当前值，是否需要调整）
+   - EF/RW/FO三维权重均衡性（MK已移除，不再检查MK超限）
+   - 环境识别策略（当前环境类型+置信度，与实际表现是否吻合）
+   - 自学习调整频率（total_adaptations / total_reviews 比率）
+   - 20方案权重分配（scoring_config.yaml中的plan权重是否需要微调）
+   - B3 Right质量阈值（当前0.6，是否偏高/偏低）
+   - number_biases偏差校准（正/负偏差号码分布是否合理）
+   - platt_a/platt_b校准参数（是否偏离1.0/0.0过大）
+   - Walk-Forward回测Lift趋势（最近一次WF报告的global_avg_lift）
+   - 运行时版本号确认（见【执行规范A】步骤1，当前主入口为 v4.2）
+
+2.10 给出明确结论
+   - 必须显式写出优化决策：「无需调整」或「有可落地方案」
+   - 若近10期主通道 Lift≈1.0x（贴近随机基线）→ 默认「无需调整」，禁止为升版而升版
+   - 若决策为「无需调整」或门控 FROZEN → 跳过任务3写参/升版，仅持续监控
+
+【执行规范A：回测复盘 → 学习门控 → 自动调参/冻结 → 版本状态】（2026-07-23 同步）
+  本规范与任务2/3联动，每日复盘后按序执行；「不作为胜过乱作为」。
+
+  A1. 确认当前版本
+   □ 主入口：run_full_pipeline.py 文件头 / banner → 当前运行时版本为 **v4.2**
+   □ 架构基线：v4.0 三维 EF/RW/FO；v4.1 候选集归一化；v4.2 移除高阶三元（历史 Lift≈0.80x）
+   □ 文档参考：docs/data_PRD.md 中 version 字段可能滞后，以 run_full_pipeline.py 为准
+   □ 日报引擎旁注：pipeline/auto_generate_daily_report.py / pipeline/full_report_engine.py
+
+  A2. 读取复盘建议（看「调什么」而不是先改代码）
+   □ reviews/review_<上期期号>.json → hit_stats（Top5/12/20 Lift）、algo_contribution、weights_used
+   □ reports/daily_analysis_report_今天日期.md →「优化结论 / 优化决策」段落
+   □ reports/control_panel_今天日期.txt、cache/ai_memory_*.md → 决策摘要
+   □ canvases/kl8-daily-analysis-*.canvas.tsx（如有）→ Stat「优化决策」
+   □ 决策枚举：
+      · 「无需调整」→ 不写参、不 bump 版本
+      · 「有方案」→ 进入任务3，改完必须 WF 回测验证
+
+  A3. 自动迭代闭环（已存在，受门控约束）
+   □ 入口：learning/autonomous_learner.py → AutonomousLearner.on_new_result(period, actual_numbers, history)
+   □ 四步：review（复盘）→ learn（学习）→ adapt（自我调整）→ optimize（自我优化）
+   □ 状态持久化：cache/learner_state.json、cache/self_learning_state.json
+   □ 复盘落盘：reviews/review_<period>.json
+
+  A4. 学习门控（冻结则禁止自动写参）
+   □ 实现：core/learning_gate.py（is_learning_enabled / update_param_store / gate_status）
+   □ 阈值：Walk-Forward global_avg_lift 必须 **> 1.1** 才解锁（默认 lift_threshold=1.1）
+   □ 数据源：cache/walk_forward_results.json → global_avg_lift
+   □ 门控状态：cache/learning_gate_state.json（learning_enabled / last_wf_lift）
+   □ 参数仓：param_store.json → _meta.auto_tune_frozen；唯一写入入口为 learning_gate.update_param_store
+   □ 当前典型状态（2026-07）：WF Lift≈1.0043 < 1.1 → **FROZEN**
+      · FROZEN 时：learn/adapt/optimize 返回 status=FROZEN，不改 pentagon_weights / param_store
+      · FROZEN 时：禁止“为了升级而升级”；版本号维持 v4.2
+   □ 解锁命令（仅当需要重新评估门控时）：python main_v2.py --backtest（或走 walk_forward_validator）
+
+  A5. 何时可以升版/调参，何时应维持
+   □ 应维持（默认）：
+      · 复盘优化决策 =「无需调整」
+      · 门控 FROZEN（WF Lift ≤ 1.1）
+      · 近10期主通道未显著优于随机基线；提纯 REFERENCE_ONLY
+   □ 允许调参（仍须走任务3验证）：
+      · 门控已解锁（WF Lift > 1.1）且复盘给出可落地调整
+      · 调参后 WF Lift 提升 >0.02 → ADOPTED；下降 >0.02 → ROLLED_BACK；±0.02 → KEPT
+   □ 允许升版（bump 版本号）：
+      · 有实质性架构/模块变更（如 v4.2 移除高阶三元），且复盘/回测支持该变更
+      · 禁止：仅改注释或无复盘依据的空升版
+   □ 原则：祭司原则——不可预测市场中，基线参数优于盲目微调
+
+  A6. 关键文件路径速查
+   | 用途 | 路径 |
+   |------|------|
+   | 运行时版本 | run_full_pipeline.py |
+   | 复盘 JSON | reviews/review_*.json |
+   | 闭环学习 | learning/autonomous_learner.py |
+   | 学习门控 | core/learning_gate.py |
+   | 门控状态 | cache/learning_gate_state.json |
+   | WF 回测结果 | cache/walk_forward_results.json |
+   | 参数仓 | param_store.json |
+   | 学习状态 | cache/learner_state.json |
+   | AI 记忆 | cache/ai_memory_*.md |
+   | 日报/面板 | reports/daily_analysis_report_*.md、reports/control_panel_*.txt |
+
+═══ 任务3：优化方案落地 + 回测验证（仅任务2确认有方案时执行） ═══
+
+3.0 执行门闸（先于 3.1）：
+   □ 任务2.10 优化决策必须为「有可落地方案」；若为「无需调整」→ 整节跳过
+   □ 若 learning_gate 为 FROZEN → 禁止自动写 param_store / 禁止空升版；仅允许人工记录观察项
+   □ 通过门闸后，按【执行规范A】A5 决定调参或升版
+
+3.1 若有方案：说明修改文件/函数/逻辑、Before/After对比、理论依据、风险评估、验证方法。
+
+3.2 若无方案：输出"经统计检验，当前命中率未显著优于随机基线，不建议增加新优化方案。当前架构已科学合理，继续增加复杂度可能引入过拟合。维持现状，持续监控。"
+   - 同步结论到 AI记忆 / 控制面板：优化决策=无需调整；版本维持当前（v4.2）
+
+3.3 优化后必须执行Walk-Forward回测验证（关键新增！）：
+   - 调用 core/walk_forward_validator.py 或 main_v2.py --backtest
+   - 比较优化前后的 global_avg_lift
+   - 若Lift提升>0.02：采纳（ADOPTED）
+   - 若Lift下降>0.02：回滚（ROLLED_BACK）
+   - 若Lift变化在±0.02内：保持（KEPT）
+   - 输出回测报告：各fold命中率 + 整体Lift + 置信区间
+   - 回测结束后调用 learning_gate.record_wf_report(...) 刷新门控；仅当 Lift>1.1 才解锁自动调参
+
+3.4 权重漂移监控（关键新增！）：
+   - 比较当前pentagon_weights与scoring_config.yaml中的default_weights
+   - 若任一维度偏差超过0.10：发出预警，评估是否需要回归默认值
+   - 检查策略模式是否频繁切换（adaptation_log最近5次是否有3次以上模式变更）
+
+3.5 版本 bump 规则（仅有实质变更时）：
+   - 更新 run_full_pipeline.py 文件头与 banner 中的版本号
+   - 在 AI记忆中记录：旧版本 → 新版本、变更摘要、依据的复盘期号/WF Lift
+   - 无复盘依据或门控 FROZEN 且决策「无需调整」时：禁止 bump
+
+═══ 任务4：跑今天的最新分析 ═══
+
+4.0 执行前确认：
+   □ 确认无残留锁文件: dir /b "D:\Dpanqianyi\Python-Project\data\*.excel_lock"（仅限data目录，非递归，禁止全盘扫描）
+   □ 确认无其他Python进程占用Excel
+   □ 确认任务0代码审计已通过
+   □ 确认任务1数据完整性校验已通过
+
+执行主入口 python pipeline/auto_generate_daily_report.py，完整输出以下所有模块：
+
+【数据中心加载】
+  - Excel数据: 跟随+点位+开奖数据.xlsx → 数据1(热码精准提取:All/50/25/10带星号) + 数据2(位置精准提取:前4后4)
+  - 历史数据: kl8_history_final.txt
+  - 点位数据: daily_points.txt
+  - 数据1星标号: d1_stars
+  - DataCenter自动同步热码统计文件到主Excel
+  - 确认DataCenter单例加载成功（历史期数、最新期号、data2最新期号）
+
+【Layer A: 特征提取层】
+  - Plan1 滑动窗口频率分析 (sliding_window)
+  - Plan2 热隐共振检测 (hot_stealth_resonance: 数据1星标 x 数据2 x 点位)
+  - Plan3 频率加速度 (frequency_acceleration)
+  - Plan4 邻接拓扑 (adjacency_topology: 数据2 x 历史)
+  - Plan5 多源点位融合 (multi_source_points: 历史 x 点位)
+  - Plan6 相变检测 (phase_transition)
+
+【Layer B: 深度数学建模层】
+  - Plan7 马尔可夫链状态转移 (markov_integration：3阶降维+Dirichlet平滑+1阶/3阶融合)
+  - Plan8 号码共现网络 (cooccurrence_network: 关联规则挖掘)
+  - Plan9 贝叶斯后验动态更新 (bayesian_update：Beta-Binomial共轭推断)
+  - Plan10 蒙特卡洛模拟 (monte_carlo：约束抽样，非循环论证)
+  - Plan11 遗漏值非线性衰减 (omission_decay: Sigmoid模型，非随机噪声)
+  - Plan12 FFT周期性检测 (fft_periodicity)
+
+【Layer C/D: 决策与反馈层】
+  - Plan13 动态区块权重分配 (dynamic_block_weights: 数据1/2各Block命中率动态调权)
+  - Plan14 环境策略切换 (env_strategy_switch: 热号爆发/冷号反弹/平衡震荡/趋势加速/混沌随机)
+  - Plan15 置信度评分 (confidence_scoring: 综合Top12输出)
+  - Plan16 对冲组合 (hedge_portfolio: 降低方差的风险分散)
+
+【Layer E: 熵控优化层】
+  - Shannon Entropy: 号码遗漏间隔的信息熵
+  - Mutual Information: 号码间互信息矩阵
+  - mRMR筛选: 最大相关性最小冗余度
+  - 动态对冲: 基于全系统熵值波动调整预测激进程度
+
+【环境识别】
+  - 环境类别(热号爆发期/冷号反弹期/平衡震荡期/趋势加速期/混沌随机期) + 置信度
+  - 对应Trinity三维权重配置(EF/RW/FO)
+  - 对应策略参数(top5_count/top12_count/use_b3_right/b3_right_quality_threshold)
+  - 与scoring_config.yaml中environment配置的一致性检查
+
+【Trinity引擎融合 — 三维架构(EF/RW/FO)，MK/EO已移除v4.0】
+  - EF(隐能量场/蹭热度) / RW(纯净池定胆/抓冷门) / FO(离散傅里叶/找周期) 三维融合
+  - 当前权重(w_ef/w_rw/w_fo)及decay_rate
+  - Top7输出（=环境策略top5_count，默认5；热号爆发期为7）
+  - Top14输出（=环境策略top12_count，默认12；热号爆发期为14）
+  - Top12输出
+
+【首席战略官特供：Hidden Energy 5】
+  - B3 Right矩阵映射 x AI置信度Top12 x EF/RW/FO提纯
+  - B3 Right质量评分 + should_use判断（阈值0.6）
+  - 最终5码 + 每码EF/RW/FO/Score明细
+  - 评分公式(v4.0)：total_score = EF×1.0 + RW×0.8 + FO×0.5
+
+【⚠️ 极速爆破 Rapid Blast — v4.0已砍掉(近9期Lift=0.27x灾难性)】
+  - 此模块已从代码中移除，不再执行和输出
+  - 替代方案：纯净池定胆 + 极高阶前瞻三元规律预测
+
+【AUC统计】auc_stats.json状态 + 各号码AUC分布概要
+
+【最终面板】
+  - 🏆 Hidden Energy 5（最终推荐5码）+ 每码信号来源(EF/RW/FO/B3 Right)
+  - ~~⚡ 极速爆破 Rapid Blast~~ (v4.0已砍掉，替代：纯净池定胆)
+  - 🎯 AI核心推荐 Top5 / Top12
+  - 🔮 Golden Core 多维共振号（Trinity Top12 ∩ 对冲主方案的交集）
+  - 💎 纯净池定胆（必须完整输出，供次日复盘）：
+    · 纯净池全量号码
+    · 旧规则高置信 (评分>=3)
+    · LR定胆 (影子/候选)
+    · 高置信定胆 (LR软回退主输出)
+  - 🛡️ Trinity引擎 三维融合 Top5 / Top12（EF/RW/FO）
+  - 🧩 方案2深层关联（必须完整输出，供次日复盘）：
+    · 规则回测验证表（近100期）
+    · 跨规则共识号码
+    · 黄金搭档
+    · 爆发Top5 + 防守Top3
+  - 🌊 极高阶前瞻三元规律预测与极致整合
+    - 维度一：量子质心高斯扩散（最优 5 码）
+    - 维度二：点位势能隐马尔可夫（最优 5 码）
+    - 维度三：离散傅里叶余弦外推（最优 5 码）
+    - 🌟 终极推荐：三元一体极致整合最优 5 码
+  - 💰 统计置信度状态约束指令：明确输出当前系统的置信度状态输出建议（Level 0=1.0x / Level 1=0.5x / Level 2=0.1x / Level 3=0.0x 停止预测）
+  - ⚖️ 物理熔断面板：输出 KL 散度突变预警状态（写入 self_learning_state.kl_msg 供次日复盘）
+  - 📊 区域与尾数分析（八区分布/尾数分布/逻辑推演）
+  - ⚙️ 自学习权重 + 专家系数（当前pentagon_weights + number_biases + strategy_mode）
+  - 🌍 环境识别结果 + 策略建议
+  - ⚠️ 风险提示（权重漂移预警、零信标降级警告、多重共线性警告）
+  - 📈 学习引擎状态（总复盘次数、成功调整率、近期命中率趋势）
+
+每模块用 ══════════ 分隔线区分，关键号码醒目标记，每码标注信号来源维度。
+
+【📋 最终可复制文本（用户可直接复制，纯文本格式，禁止表格）】
+  🔴 每日最终输出必须额外生成一段「可复制纯文本」，供用户直接复制使用，格式固定如下：
+  · 标题：快乐8 目标期 <期号> 精选号码
+  · 组别格式，每组前加 ◎ 标记，号码用「逗号 + 空格」分隔，无表格、无编号、无竖线：
+    ◎ 🎯 今日极简选2 · 黄金搭档（最优1组）→ 全系统唯一最优选2推荐组合
+    ◎ 最终精选爆发码（Top 5）→ 取「方案2 深层关联」的爆发Top5
+    ◎ 重点防守号码（杀号 Top 3）→ 取「方案2 深层关联」的防守Top3
+    ◎ 精选5码 → 取「Excel深度挖掘」的精选5码
+    ◎ 回避5码 → 取「Excel深度挖掘」的回避5码
+  · 展示顺序固定：爆发 → 防守 → 精选 → 回避
+  · 示例格式（供参考，非本期数据）：
+    快乐8 目标期 2026205 精选号码
+    ◎ 最终精选爆发码（Top 5）
+    72, 42, 44, 29, 38
+    ◎ 重点防守号码（杀号 Top 3）
+    52, 73, 24
+    ◎ 精选5码
+    12, 73, 04, 24, 02
+    ◎ 回避5码
+    23, 20, 50, 19, 62
+  · 该纯文本同时写入报告末尾「📋 可复制精选」小节，并作为控制台最终输出。
+
+4.1 报告完整性验证：
+   □ Hidden Energy 5有5码
+   - ~~极速爆破(Rapid Blast)不为空~~ (v4.0已砍掉)
+   □ Trinity 三维融合Top5/Top12有数据
+   □ 环境识别结果合理（非固定为"热号爆发期"，hot_ratio阈值≥0.55）
+   □ Golden Core有数据
+   □ 熵控优化有输出
+   □ 纯净池：高置信/旧规则>=3/LR/全量 四项均有输出
+   □ 方案2：爆发Top5 + 防守Top3 + 跨规则共识均有输出
+   □ 物理熔断面板：KL散度状态已输出
+   □ 复盘段已包含纯净池细则 + 方案2细则对账（命中号/Lift）
+   □ 自学习权重与learner_state.json一致
+   □ 报告中target_issue正确（=latest_issue+1）
+   □ self_learning_state 已写入 pure_pool_old_rule / pure_pool_lr / pure_pool_all / deep_consensus / kl_msg
+
+═══ 任务4.5：算法优化提纯（内部多模块自洽性验证） ═══
+
+在完成任务4（今日分析）后、保存记忆前，执行本系统内部多模块交叉验证提纯。
+⚠️ 本系统是每日执行顺序的第1个，尚无其他系统结果可供交叉验证。
+提纯聚焦于本系统内部多模块（HE5/Trinity/AI/mRMR/纯净池/极高阶）的信号一致性校验。
+
+【提纯逻辑 — 内部自洽性验证】
+
+第1步：本系统内部多模块信号采集
+  - Hidden Energy 5（HE5）：最终5码 + 每码EF/RW/FO/Score明细
+  - Trinity三维融合：Top5 + Top12（EF/RW/FO三维）
+  - AI核心推荐：Top5 + Top12
+  - mRMR筛选：Top12
+  - 纯净池定胆：高置信号码
+  - 极高阶前瞻：高斯5 + 聚类5 + 傅里叶5 + 极致整合5
+  - Golden Core：多维共振号
+  - 汇总为「内部推荐池」：{号码: [来源模块列表]}
+
+第2步：内部自洽性交叉验证
+  2a. 内部共振度提纯：
+     - ⭐⭐⭐⭐ 钻石级：被≥4个内部模块同时推荐 → 多模块高度共振，最高置信
+     - ⭐⭐⭐ 金级：被3个内部模块推荐 → 较高置信
+     - ⭐⭐ 银级：被2个内部模块推荐 → 中等置信
+     - ⭐ 铜级：仅1个模块独有 → 信号孤立，低置信
+     - 输出内部共振度矩阵：
+       每个推荐号码 | HE5 | Trinity | AI | mRMR | 纯净池 | 极高阶 | Golden Core | 共振度
+
+  2b. 三维权重自洽性校验：
+     - EF/RW/FO三维是否均衡？任一维度>0.5 → 信号来源单一化风险
+     - HE5评分公式(EF×1.0 + RW×0.8 + FO×0.5)中，EF主导的号码是否在Trinity EF维度也被推荐？
+     - 若HE5的EF高分号码不在Trinity Top12中 → 三维融合与HE5信号矛盾，需标注
+
+  2c. 极高阶前瞻与核心推荐一致性校验：
+     - 极高阶4维度(高斯/聚类/傅里叶/极致整合)的交集号码是否出现在HE5/Trinity/AI中？
+     - 若极高阶交集号码不在核心推荐中 → 高阶信号被低估，标注为"极高阶独有信号"
+     - 若核心推荐号码不在极高阶任一维度中 → 核心信号缺乏高阶支撑，标注为"低维独有"
+
+  2d. AUC统计提纯（统计学习）：
+     - 从auc_stats.json读取各号码的AUC值
+     - AUC>0.52且Bonferroni显著的号码 → 提升1个信号等级
+     - AUC<0.48的号码 → 降低1个信号等级
+     - FDR显著号码[3,11,15,69] → 标注"统计显著信号"
+
+第3步：输出内部提纯结果
+  - ⭐⭐⭐⭐钻石级号码（≥4模块共振，附具体模块列表）
+  - ⭐⭐⭐金级号码（3模块共振，附具体模块列表）
+  - ⭐⭐银级号码（2模块共振，附具体模块列表）
+  - ⭐铜级号码（单模块独有，附风险评估）
+  - 📊 三维权重自洽性校验结论
+  - 📊 极高阶前瞻与核心推荐一致性校验结论
+  - 📈 AUC统计提纯调整说明
+
+【提纯与已有推荐的关系】
+  - 提纯结果不替换原有推荐，而是在原有基础上增加「内部共振度等级」标注
+  - HE5/Trinity Top5等原有推荐保留，但每个号码附加内部共振度等级
+  - 后续系统（统计次数/LSTM/重点点位等）执行时会读取本系统结果做跨系统提纯
+
+审查与行动：
+  - ⭐⭐⭐⭐钻石级号码：优先选入最终投注方案
+  - ⭐⭐⭐金级号码：可靠备选
+  - ⭐⭐银级号码：中等置信，可组合使用
+  - ⭐铜级号码：仅供参考，不建议重仓
+
+【提纯复盘 — 回验上期提纯结果】
+  - 读取上期本系统的内部提纯输出（内部共振度等级/AUC统计提纯调整等）
+  - 对照上期实际开奖，验证：
+    · ⭐⭐⭐⭐钻石级号码命中率 vs ⭐铜级号码命中率 → 内部共振度是否真有区分力？
+    · AUC统计提纯提升的号码实际命中 → AUC提纯是否有效？
+    · 极高阶前瞻独有信号号码命中率 → 高阶信号是否被低估？
+  - 统计近5期提纯区分力：
+    · 钻石级命中率 / 铜级命中率 → 区分力指数
+    · 区分力指数>1.5x → 提纯有效 ✅
+    · 区分力指数1.0-1.5x → 提纯微弱 ⚠️
+    · 区分力指数<1.0x → 提纯无效 ❌
+  - ⚠️ 本系统是第1个执行，尚无杀号反哺数据，杀号复盘在V18聚合时补充
+
+【优化闭环 — 提纯参数自学习】
+  - 提纯复盘结论驱动参数调整：
+    · 若区分力有效 → 维持当前内部共振度阈值（钻石级≥4模块）
+    · 若区分力微弱 → 放宽阈值（钻石级≥4→≥3）或调整AUC提纯门槛
+    · 若区分力无效 → 内部提纯降级为纯参考，不驱动选号权重
+  - 三维权重自洽性复盘：
+    · 上期EF主导号码命中率 vs RW主导号码命中率 → 三维权重是否需调整？
+    · 若EF主导号码命中率持续低于RW主导 → 下期HE5评分公式中RW系数上调
+  - 调整持久化：将提纯参数变更记录至 cache/learner_state.json
+
+═══ 任务5：记忆保存与本地记录 ═══
+
+按现有格式写入（全部在本目录下）：
+
+5.1 保存今日报告到 reports/daily_analysis_report_今天日期.md
+   - 格式与已有文件一致
+   - 必含：目标期号/AI推荐/Golden Core/区域尾数/自学习权重/复盘追溯占位
+   - 必含：Hidden Energy 5每码EF/RW/FO/Score明细
+   - ~~必含：极速爆破每码评分明细~~ (v4.0已砍掉)
+   - 必含：环境识别结果+策略参数
+
+5.2 保存深度优化到 reports/deep_optimization_report_今天日期.md（如有新优化结果）
+
+5.3 保存系统追踪到 reports/系统复盘追踪_今天日期.md（如有）
+
+5.4 保存复盘记录到 reviews/review_昨天期号.json（autonomous_learner.review()输出）
+
+5.5 更新 auc_stats.json（如有新AUC计算结果）
+
+5.6 更新 model_config.json（如有新配置变更）
+
+5.7 更新学习引擎状态文件：
+   - cache/learner_state.json（autonomous_learner闭环学习后自动更新）
+   - cache/self_learning_state.json（PredictorEngine.save_memory()更新，追加存储 gauss_top5, cluster_top5, fourier_top5, fusion_top5 等极高阶预测快照）
+
+5.8 更新 cache/ 下其他缓存文件：
+   - cache/composed_scores.json（ScoreComposer统一评分结果）
+   - cache/k8_energy_cache_v4_phase3.json（隐能量场缓存）
+   - cache/daily_markov_predictions.json（马尔可夫预测缓存）
+   - cache/deviation_correction.json（偏差修正缓存）
+
+5.9 保存到 AI记忆，格式要求包含以下字段：
+   - 日期与期号
+   - 数据更新状态（kl8_history最新期号、daily_points是否完整、Excel是否同步）
+   - 复盘结果（各模块命中率、Lift、与随机基线对比）
+   - 统计检验结论（p值、Bonferroni校正后是否显著）
+   - Bug修复记录（文件/函数/Before/After/依据）
+   - 闭环学习决策（ADOPTED/ROLLED_BACK/KEPT/FIRST_RUN/FROZEN/N/A + 权重变更；FROZEN时注明 WF Lift 与阈值）
+   - 优化决策与版本状态（无需调整/有方案；当前运行时版本如 v4.2；是否 bump）
+   - 今日推荐摘要（HE5/纯净池定胆/Top5/Top12/Golden Core/Trinity三维/环境+策略）
+   - 风险预警（权重漂移/环境误判/EF/RW/FO失衡/数据源质量/门控长期冻结）
+
+═══ 任务6：环境清理（防污染） ═══
+绝对禁止遗留编译缓存污染系统目录！
+1. 强制执行环境清理指令：
+   - 在每日分析闭环完成之后，必须主动删除当前目录及子目录下的所有 `__pycache__` 文件夹。
+   - PowerShell 命令参考：`Get-ChildItem -Path "D:\Dpanqianyi\Python-Project\data" -Include "__pycache__" -Recurse -Force -Directory | Remove-Item -Recurse -Force`

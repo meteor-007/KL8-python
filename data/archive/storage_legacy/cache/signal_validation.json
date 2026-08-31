@@ -1,0 +1,47 @@
+{
+  "primary_channels": [
+    "RW"
+  ],
+  "control_channels": [
+    "EF",
+    "FO",
+    "MK",
+    "EO",
+    "BAYES",
+    "MC"
+  ],
+  "channel_stats": [
+    {
+      "channel": "RW",
+      "lift": 1.0533,
+      "hit_rate": 0.2633,
+      "p_value": 0.286192,
+      "n": 1200,
+      "significant_fdr": false
+    },
+    {
+      "channel": "FO",
+      "lift": 0.9567,
+      "hit_rate": 0.2392,
+      "p_value": 0.404657,
+      "n": 1200,
+      "significant_fdr": false
+    },
+    {
+      "channel": "EF",
+      "lift": 0.94,
+      "hit_rate": 0.235,
+      "p_value": 0.243299,
+      "n": 1200,
+      "significant_fdr": false
+    }
+  ],
+  "n_history": 2004,
+  "config": {
+    "max_primary": 1,
+    "fdr_alpha": 0.05,
+    "validation_window": 60,
+    "min_history": 80
+  },
+  "note": "无FDR显著通道, 使用Lift最高者作exploratory primary"
+}

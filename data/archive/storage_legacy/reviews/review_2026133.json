@@ -1,0 +1,36 @@
+{
+  "period": "2026133",
+  "timestamp": "2026-05-24 13:22:00",
+  "actual_numbers": [1, 6, 9, 16, 18, 19, 21, 26, 27, 29, 55, 58, 59, 60, 62, 66, 73, 74, 76, 80],
+  "predictions": {
+    "HE5": [4, 5, 12, 14, 33],
+    "rapid_blast": [12, 51, 56, 74, 80],
+    "trinity_top5": [12, 20, 33, 38, 40],
+    "trinity_top12": [9, 10, 12, 20, 33, 35, 38, 40, 48, 63, 74, 78],
+    "golden_core": [9, 12, 33, 38]
+  },
+  "hit_stats": {
+    "HE5": {"hits": 0, "total": 5, "rate": 0.0, "lift": 0.0, "hit_numbers": []},
+    "rapid_blast": {"hits": 2, "total": 5, "rate": 0.4, "lift": 1.6, "hit_numbers": [74, 80]},
+    "trinity_top5": {"hits": 0, "total": 5, "rate": 0.0, "lift": 0.0, "hit_numbers": []},
+    "trinity_top12": {"hits": 2, "total": 12, "rate": 0.167, "lift": 0.67, "hit_numbers": [9, 74]},
+    "golden_core": {"hits": 1, "total": 4, "rate": 0.25, "lift": 1.0, "hit_numbers": [9]}
+  },
+  "statistical_test": {
+    "all_p_values_above_0.05": true,
+    "bonferroni_significant": false,
+    "conclusion": "not_significant"
+  },
+  "bug_fixes": [
+    {
+      "file": "audit/b3_right_quality_checker.py",
+      "function": "get_fallback_recommendation",
+      "before": "from core.algorithm_optimizer import plan15_confidence_scoring",
+      "after": "from core.strategy_optimizer import plan15_confidence_scoring",
+      "reason": "plan15_confidence_scoring is defined in strategy_optimizer, not algorithm_optimizer"
+    }
+  ],
+  "learning_decision": "FIRST_RUN",
+  "current_weights": {"MK": 0.3, "EF": 0.25, "RW": 0.1, "FO": 0.2, "EO": 0.15},
+  "environment": "balanced"
+}

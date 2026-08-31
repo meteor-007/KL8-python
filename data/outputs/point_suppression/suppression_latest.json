@@ -1,0 +1,2428 @@
+{
+  "timestamp": "2026-08-31T19:10:40.981924",
+  "latest_period": 2026232,
+  "latest_date": "2026-08-30",
+  "target_period": 2026233,
+  "confidence": {
+    "code": "LEVEL_3",
+    "description": "🔴 弱置信 (Level 3) - 震荡观望区间",
+    "z_score": -0.19
+  },
+  "top1": {
+    "num": 53,
+    "k_suppression": 1,
+    "score": 85.7,
+    "res": 3,
+    "gap": 6,
+    "confidence": "🟡 A级 (稳健回补)",
+    "conf_grade": "A",
+    "active_surrs": [
+      71,
+      12
+    ],
+    "surr_list": [
+      {
+        "surrogate_num": 71,
+        "prob": 0.297,
+        "lift": 1.19,
+        "cnt": 225
+      },
+      {
+        "surrogate_num": 12,
+        "prob": 0.292,
+        "lift": 1.17,
+        "cnt": 221
+      }
+    ],
+    "sigs": [
+      "D",
+      "L",
+      "O"
+    ],
+    "region": [
+      52,
+      53,
+      54
+    ]
+  },
+  "top3_candidates": [
+    {
+      "num": 53,
+      "k_suppression": 1,
+      "score": 85.7,
+      "res": 3,
+      "gap": 6,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [
+        71,
+        12
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 71,
+          "prob": 0.297,
+          "lift": 1.19,
+          "cnt": 225
+        },
+        {
+          "surrogate_num": 12,
+          "prob": 0.292,
+          "lift": 1.17,
+          "cnt": 221
+        }
+      ],
+      "sigs": [
+        "D",
+        "L",
+        "O"
+      ],
+      "region": [
+        52,
+        53,
+        54
+      ]
+    },
+    {
+      "num": 66,
+      "k_suppression": 1,
+      "score": 78.2,
+      "res": 3,
+      "gap": 3,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [],
+      "surr_list": [],
+      "sigs": [
+        "D",
+        "G3",
+        "O"
+      ],
+      "region": [
+        65,
+        66,
+        67
+      ]
+    },
+    {
+      "num": 15,
+      "k_suppression": 2,
+      "score": 75.6,
+      "res": 2,
+      "gap": 4,
+      "confidence": "🟢 S级 (特级反弹共振)",
+      "conf_grade": "S",
+      "active_surrs": [
+        27,
+        54
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 27,
+          "prob": 0.301,
+          "lift": 1.21,
+          "cnt": 224
+        },
+        {
+          "surrogate_num": 54,
+          "prob": 0.288,
+          "lift": 1.15,
+          "cnt": 214
+        }
+      ],
+      "sigs": [
+        "D",
+        "O"
+      ],
+      "region": [
+        14,
+        15,
+        16
+      ]
+    }
+  ],
+  "all_candidates": [
+    {
+      "num": 53,
+      "k_suppression": 1,
+      "score": 85.7,
+      "res": 3,
+      "gap": 6,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [
+        71,
+        12
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 71,
+          "prob": 0.297,
+          "lift": 1.19,
+          "cnt": 225
+        },
+        {
+          "surrogate_num": 12,
+          "prob": 0.292,
+          "lift": 1.17,
+          "cnt": 221
+        }
+      ],
+      "sigs": [
+        "D",
+        "L",
+        "O"
+      ],
+      "region": [
+        52,
+        53,
+        54
+      ]
+    },
+    {
+      "num": 66,
+      "k_suppression": 1,
+      "score": 78.2,
+      "res": 3,
+      "gap": 3,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [],
+      "surr_list": [],
+      "sigs": [
+        "D",
+        "G3",
+        "O"
+      ],
+      "region": [
+        65,
+        66,
+        67
+      ]
+    },
+    {
+      "num": 15,
+      "k_suppression": 2,
+      "score": 75.6,
+      "res": 2,
+      "gap": 4,
+      "confidence": "🟢 S级 (特级反弹共振)",
+      "conf_grade": "S",
+      "active_surrs": [
+        27,
+        54
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 27,
+          "prob": 0.301,
+          "lift": 1.21,
+          "cnt": 224
+        },
+        {
+          "surrogate_num": 54,
+          "prob": 0.288,
+          "lift": 1.15,
+          "cnt": 214
+        }
+      ],
+      "sigs": [
+        "D",
+        "O"
+      ],
+      "region": [
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "num": 4,
+      "k_suppression": 1,
+      "score": 72.2,
+      "res": 2,
+      "gap": 5,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [],
+      "surr_list": [],
+      "sigs": [
+        "D",
+        "O"
+      ],
+      "region": [
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "num": 13,
+      "k_suppression": 1,
+      "score": 68.7,
+      "res": 3,
+      "gap": 2,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [
+        41
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 41,
+          "prob": 0.288,
+          "lift": 1.15,
+          "cnt": 242
+        }
+      ],
+      "sigs": [
+        "D",
+        "G2",
+        "L"
+      ],
+      "region": [
+        12,
+        13,
+        14
+      ]
+    },
+    {
+      "num": 40,
+      "k_suppression": 1,
+      "score": 66.1,
+      "res": 2,
+      "gap": 4,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [
+        27
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 27,
+          "prob": 0.298,
+          "lift": 1.19,
+          "cnt": 236
+        }
+      ],
+      "sigs": [
+        "D",
+        "O"
+      ],
+      "region": [
+        39,
+        40,
+        41
+      ]
+    },
+    {
+      "num": 39,
+      "k_suppression": 1,
+      "score": 66.0,
+      "res": 2,
+      "gap": 3,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [
+        27
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 27,
+          "prob": 0.297,
+          "lift": 1.19,
+          "cnt": 222
+        },
+        {
+          "surrogate_num": 53,
+          "prob": 0.291,
+          "lift": 1.17,
+          "cnt": 218
+        }
+      ],
+      "sigs": [
+        "G3",
+        "O"
+      ],
+      "region": [
+        38,
+        39,
+        40
+      ]
+    },
+    {
+      "num": 35,
+      "k_suppression": 1,
+      "score": 64.8,
+      "res": 3,
+      "gap": 2,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [
+        27
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 27,
+          "prob": 0.292,
+          "lift": 1.17,
+          "cnt": 213
+        }
+      ],
+      "sigs": [
+        "D",
+        "G2",
+        "L"
+      ],
+      "region": [
+        34,
+        35,
+        36
+      ]
+    },
+    {
+      "num": 33,
+      "k_suppression": 1,
+      "score": 63.2,
+      "res": 3,
+      "gap": 2,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [],
+      "surr_list": [],
+      "sigs": [
+        "D",
+        "G2",
+        "L"
+      ],
+      "region": [
+        32,
+        33,
+        34
+      ]
+    },
+    {
+      "num": 76,
+      "k_suppression": 2,
+      "score": 61.8,
+      "res": 2,
+      "gap": 3,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [
+        27
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 27,
+          "prob": 0.294,
+          "lift": 1.18,
+          "cnt": 246
+        }
+      ],
+      "sigs": [
+        "G3",
+        "O"
+      ],
+      "region": [
+        75,
+        76,
+        77
+      ]
+    },
+    {
+      "num": 16,
+      "k_suppression": 2,
+      "score": 59.6,
+      "res": 1,
+      "gap": 6,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [
+        12
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 2,
+          "prob": 0.29,
+          "lift": 1.16,
+          "cnt": 225
+        },
+        {
+          "surrogate_num": 12,
+          "prob": 0.288,
+          "lift": 1.15,
+          "cnt": 224
+        }
+      ],
+      "sigs": [
+        "O"
+      ],
+      "region": [
+        15,
+        16,
+        17
+      ]
+    },
+    {
+      "num": 43,
+      "k_suppression": 3,
+      "score": 58.3,
+      "res": 1,
+      "gap": 6,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [],
+      "surr_list": [
+        {
+          "surrogate_num": 50,
+          "prob": 0.291,
+          "lift": 1.16,
+          "cnt": 234
+        }
+      ],
+      "sigs": [
+        "O"
+      ],
+      "region": [
+        42,
+        43,
+        44
+      ]
+    },
+    {
+      "num": 22,
+      "k_suppression": 2,
+      "score": 57.5,
+      "res": 1,
+      "gap": 5,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [
+        62,
+        27
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 62,
+          "prob": 0.293,
+          "lift": 1.17,
+          "cnt": 243
+        },
+        {
+          "surrogate_num": 27,
+          "prob": 0.292,
+          "lift": 1.17,
+          "cnt": 242
+        }
+      ],
+      "sigs": [
+        "O"
+      ],
+      "region": [
+        21,
+        22,
+        23
+      ]
+    },
+    {
+      "num": 60,
+      "k_suppression": 1,
+      "score": 57.1,
+      "res": 3,
+      "gap": 1,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [
+        27
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 27,
+          "prob": 0.299,
+          "lift": 1.2,
+          "cnt": 230
+        }
+      ],
+      "sigs": [
+        "D",
+        "G1",
+        "L"
+      ],
+      "region": [
+        59,
+        60,
+        61
+      ]
+    },
+    {
+      "num": 78,
+      "k_suppression": 1,
+      "score": 56.9,
+      "res": 3,
+      "gap": 2,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [
+        27
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 27,
+          "prob": 0.293,
+          "lift": 1.17,
+          "cnt": 244
+        }
+      ],
+      "sigs": [
+        "D",
+        "G2",
+        "L"
+      ],
+      "region": [
+        77,
+        78,
+        79
+      ]
+    },
+    {
+      "num": 45,
+      "k_suppression": 1,
+      "score": 55.9,
+      "res": 1,
+      "gap": 4,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [
+        27
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 27,
+          "prob": 0.293,
+          "lift": 1.17,
+          "cnt": 241
+        }
+      ],
+      "sigs": [
+        "O"
+      ],
+      "region": [
+        44,
+        45,
+        46
+      ]
+    },
+    {
+      "num": 23,
+      "k_suppression": 1,
+      "score": 54.2,
+      "res": 1,
+      "gap": 4,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [],
+      "surr_list": [],
+      "sigs": [
+        "O"
+      ],
+      "region": [
+        22,
+        23,
+        24
+      ]
+    },
+    {
+      "num": 46,
+      "k_suppression": 1,
+      "score": 54.2,
+      "res": 1,
+      "gap": 4,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [],
+      "surr_list": [
+        {
+          "surrogate_num": 21,
+          "prob": 0.295,
+          "lift": 1.18,
+          "cnt": 220
+        }
+      ],
+      "sigs": [
+        "O"
+      ],
+      "region": [
+        45,
+        46,
+        47
+      ]
+    },
+    {
+      "num": 25,
+      "k_suppression": 5,
+      "score": 53.6,
+      "res": 0,
+      "gap": 7,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [
+        27
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 27,
+          "prob": 0.299,
+          "lift": 1.19,
+          "cnt": 241
+        }
+      ],
+      "sigs": [],
+      "region": [
+        24,
+        25,
+        26
+      ]
+    },
+    {
+      "num": 2,
+      "k_suppression": 3,
+      "score": 53.1,
+      "res": 1,
+      "gap": 10,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [
+        12
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 12,
+          "prob": 0.294,
+          "lift": 1.18,
+          "cnt": 212
+        }
+      ],
+      "sigs": [
+        "D"
+      ],
+      "region": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "num": 6,
+      "k_suppression": 1,
+      "score": 53.1,
+      "res": 1,
+      "gap": 8,
+      "confidence": "🟡 A级 (稳健回补)",
+      "conf_grade": "A",
+      "active_surrs": [
+        12
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 12,
+          "prob": 0.297,
+          "lift": 1.19,
+          "cnt": 238
+        }
+      ],
+      "sigs": [
+        "D"
+      ],
+      "region": [
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "num": 58,
+      "k_suppression": 1,
+      "score": 49.2,
+      "res": 2,
+      "gap": 10,
+      "confidence": "⚪ B级 (普通观察)",
+      "conf_grade": "B",
+      "active_surrs": [],
+      "surr_list": [
+        {
+          "surrogate_num": 2,
+          "prob": 0.294,
+          "lift": 1.18,
+          "cnt": 243
+        }
+      ],
+      "sigs": [
+        "D",
+        "L"
+      ],
+      "region": [
+        57,
+        58,
+        59
+      ]
+    },
+    {
+      "num": 70,
+      "k_suppression": 1,
+      "score": 48.2,
+      "res": 1,
+      "gap": 16,
+      "confidence": "⚪ B级 (普通观察)",
+      "conf_grade": "B",
+      "active_surrs": [],
+      "surr_list": [],
+      "sigs": [
+        "D"
+      ],
+      "region": [
+        69,
+        70,
+        71
+      ]
+    },
+    {
+      "num": 18,
+      "k_suppression": 1,
+      "score": 46.2,
+      "res": 1,
+      "gap": 5,
+      "confidence": "⚪ B级 (普通观察)",
+      "conf_grade": "B",
+      "active_surrs": [],
+      "surr_list": [
+        {
+          "surrogate_num": 53,
+          "prob": 0.293,
+          "lift": 1.17,
+          "cnt": 218
+        }
+      ],
+      "sigs": [
+        "O"
+      ],
+      "region": [
+        17,
+        18,
+        19
+      ]
+    },
+    {
+      "num": 75,
+      "k_suppression": 1,
+      "score": 44.8,
+      "res": 1,
+      "gap": 1,
+      "confidence": "⚪ B级 (普通观察)",
+      "conf_grade": "B",
+      "active_surrs": [
+        27
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 27,
+          "prob": 0.291,
+          "lift": 1.16,
+          "cnt": 234
+        }
+      ],
+      "sigs": [
+        "G1"
+      ],
+      "region": [
+        74,
+        75,
+        76
+      ]
+    },
+    {
+      "num": 52,
+      "k_suppression": 1,
+      "score": 43.2,
+      "res": 1,
+      "gap": 1,
+      "confidence": "⚪ B级 (普通观察)",
+      "conf_grade": "B",
+      "active_surrs": [],
+      "surr_list": [],
+      "sigs": [
+        "G1"
+      ],
+      "region": [
+        51,
+        52,
+        53
+      ]
+    },
+    {
+      "num": 38,
+      "k_suppression": 1,
+      "score": 35.2,
+      "res": 1,
+      "gap": 2,
+      "confidence": "⚪ B级 (普通观察)",
+      "conf_grade": "B",
+      "active_surrs": [],
+      "surr_list": [],
+      "sigs": [
+        "G2"
+      ],
+      "region": [
+        37,
+        38,
+        39
+      ]
+    },
+    {
+      "num": 49,
+      "k_suppression": 2,
+      "score": 33.0,
+      "res": 0,
+      "gap": 8,
+      "confidence": "⚪ B级 (普通观察)",
+      "conf_grade": "B",
+      "active_surrs": [],
+      "surr_list": [],
+      "sigs": [],
+      "region": [
+        48,
+        49,
+        50
+      ]
+    },
+    {
+      "num": 50,
+      "k_suppression": 1,
+      "score": 32.7,
+      "res": 1,
+      "gap": 2,
+      "confidence": "⚪ B级 (普通观察)",
+      "conf_grade": "B",
+      "active_surrs": [
+        27
+      ],
+      "surr_list": [
+        {
+          "surrogate_num": 27,
+          "prob": 0.288,
+          "lift": 1.15,
+          "cnt": 224
+        }
+      ],
+      "sigs": [
+        "G2"
+      ],
+      "region": [
+        49,
+        50,
+        51
+      ]
+    }
+  ],
+  "walk_forward": {
+    "n_periods": 30,
+    "top1_single_hit": 10,
+    "top1_single_rate": 0.3333,
+    "top1_single_lift": 1.333,
+    "top1_region_hit": 17,
+    "top1_region_rate": 0.5667,
+    "top1_region_lift": 0.971,
+    "top3_any_hit_rate": 0.7,
+    "avg_top3_hits": 1.0,
+    "s_level_total": 94,
+    "s_level_single_hit": 41,
+    "s_level_region_hit": 69,
+    "z_score": -0.19,
+    "confidence": {
+      "code": "LEVEL_3",
+      "description": "🔴 弱置信 (Level 3) - 震荡观望区间",
+      "z_score": -0.19
+    },
+    "period_logs": [
+      {
+        "period": 2026203,
+        "date": "2026-08-01",
+        "top1_num": 18,
+        "top1_score": 88.0,
+        "top1_k": 2,
+        "top1_grade": "S",
+        "top1_single_hit": false,
+        "top1_region_hit": false,
+        "top3_nums": [
+          18,
+          30,
+          72
+        ],
+        "top3_hits": 0,
+        "actual_numbers": [
+          2,
+          9,
+          10,
+          21,
+          22,
+          24,
+          29,
+          32,
+          38,
+          40,
+          42,
+          50,
+          51,
+          53,
+          58,
+          60,
+          63,
+          67,
+          70,
+          74
+        ]
+      },
+      {
+        "period": 2026204,
+        "date": "2026-08-02",
+        "top1_num": 33,
+        "top1_score": 84.3,
+        "top1_k": 3,
+        "top1_grade": "S",
+        "top1_single_hit": false,
+        "top1_region_hit": false,
+        "top3_nums": [
+          33,
+          11,
+          30
+        ],
+        "top3_hits": 0,
+        "actual_numbers": [
+          3,
+          10,
+          13,
+          21,
+          22,
+          24,
+          28,
+          37,
+          38,
+          46,
+          51,
+          52,
+          54,
+          56,
+          59,
+          60,
+          65,
+          66,
+          70,
+          73
+        ]
+      },
+      {
+        "period": 2026205,
+        "date": "2026-08-03",
+        "top1_num": 57,
+        "top1_score": 83.8,
+        "top1_k": 1,
+        "top1_grade": "A",
+        "top1_single_hit": false,
+        "top1_region_hit": true,
+        "top3_nums": [
+          57,
+          64,
+          25
+        ],
+        "top3_hits": 0,
+        "actual_numbers": [
+          4,
+          5,
+          9,
+          10,
+          11,
+          19,
+          28,
+          31,
+          32,
+          35,
+          36,
+          39,
+          43,
+          47,
+          53,
+          56,
+          59,
+          70,
+          77,
+          79
+        ]
+      },
+      {
+        "period": 2026206,
+        "date": "2026-08-04",
+        "top1_num": 55,
+        "top1_score": 85.4,
+        "top1_k": 1,
+        "top1_grade": "A",
+        "top1_single_hit": true,
+        "top1_region_hit": true,
+        "top3_nums": [
+          55,
+          57,
+          20
+        ],
+        "top3_hits": 1,
+        "actual_numbers": [
+          1,
+          6,
+          7,
+          16,
+          17,
+          21,
+          27,
+          32,
+          33,
+          36,
+          44,
+          47,
+          50,
+          51,
+          55,
+          62,
+          64,
+          76,
+          78,
+          79
+        ]
+      },
+      {
+        "period": 2026207,
+        "date": "2026-08-05",
+        "top1_num": 80,
+        "top1_score": 82.2,
+        "top1_k": 1,
+        "top1_grade": "A",
+        "top1_single_hit": false,
+        "top1_region_hit": false,
+        "top3_nums": [
+          80,
+          2,
+          48
+        ],
+        "top3_hits": 1,
+        "actual_numbers": [
+          2,
+          10,
+          16,
+          18,
+          19,
+          20,
+          28,
+          33,
+          39,
+          41,
+          46,
+          49,
+          51,
+          57,
+          60,
+          63,
+          64,
+          65,
+          71,
+          76
+        ]
+      },
+      {
+        "period": 2026208,
+        "date": "2026-08-06",
+        "top1_num": 61,
+        "top1_score": 85.7,
+        "top1_k": 1,
+        "top1_grade": "A",
+        "top1_single_hit": false,
+        "top1_region_hit": false,
+        "top3_nums": [
+          61,
+          52,
+          66
+        ],
+        "top3_hits": 0,
+        "actual_numbers": [
+          8,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          23,
+          25,
+          28,
+          34,
+          37,
+          38,
+          43,
+          45,
+          48,
+          58,
+          70,
+          73,
+          77
+        ]
+      },
+      {
+        "period": 2026209,
+        "date": "2026-08-07",
+        "top1_num": 35,
+        "top1_score": 82.2,
+        "top1_k": 1,
+        "top1_grade": "A",
+        "top1_single_hit": true,
+        "top1_region_hit": true,
+        "top3_nums": [
+          35,
+          74,
+          29
+        ],
+        "top3_hits": 1,
+        "actual_numbers": [
+          2,
+          4,
+          10,
+          11,
+          14,
+          16,
+          18,
+          23,
+          32,
+          35,
+          37,
+          45,
+          47,
+          51,
+          52,
+          53,
+          59,
+          67,
+          75,
+          80
+        ]
+      },
+      {
+        "period": 2026210,
+        "date": "2026-08-08",
+        "top1_num": 17,
+        "top1_score": 84.0,
+        "top1_k": 2,
+        "top1_grade": "S",
+        "top1_single_hit": true,
+        "top1_region_hit": true,
+        "top3_nums": [
+          17,
+          9,
+          50
+        ],
+        "top3_hits": 1,
+        "actual_numbers": [
+          3,
+          4,
+          7,
+          12,
+          14,
+          15,
+          17,
+          21,
+          22,
+          24,
+          27,
+          29,
+          45,
+          47,
+          56,
+          60,
+          72,
+          74,
+          78,
+          80
+        ]
+      },
+      {
+        "period": 2026211,
+        "date": "2026-08-09",
+        "top1_num": 5,
+        "top1_score": 86.1,
+        "top1_k": 1,
+        "top1_grade": "A",
+        "top1_single_hit": true,
+        "top1_region_hit": true,
+        "top3_nums": [
+          5,
+          46,
+          1
+        ],
+        "top3_hits": 2,
+        "actual_numbers": [
+          4,
+          5,
+          8,
+          12,
+          14,
+          20,
+          23,
+          24,
+          25,
+          30,
+          35,
+          37,
+          46,
+          51,
+          53,
+          60,
+          74,
+          75,
+          77,
+          78
+        ]
+      },
+      {
+        "period": 2026212,
+        "date": "2026-08-10",
+        "top1_num": 6,
+        "top1_score": 84.1,
+        "top1_k": 1,
+        "top1_grade": "A",
+        "top1_single_hit": false,
+        "top1_region_hit": false,
+        "top3_nums": [
+          6,
+          13,
+          34
+        ],
+        "top3_hits": 0,
+        "actual_numbers": [
+          1,
+          8,
+          10,
+          12,
+          14,
+          15,
+          26,
+          31,
+          37,
+          42,
+          45,
+          48,
+          58,
+          61,
+          66,
+          71,
+          72,
+          74,
+          77,
+          79
+        ]
+      },
+      {
+        "period": 2026213,
+        "date": "2026-08-11",
+        "top1_num": 59,
+        "top1_score": 88.0,
+        "top1_k": 2,
+        "top1_grade": "S",
+        "top1_single_hit": false,
+        "top1_region_hit": true,
+        "top3_nums": [
+          59,
+          11,
+          16
+        ],
+        "top3_hits": 1,
+        "actual_numbers": [
+          6,
+          7,
+          8,
+          11,
+          12,
+          13,
+          18,
+          21,
+          33,
+          36,
+          37,
+          42,
+          44,
+          56,
+          57,
+          58,
+          60,
+          66,
+          71,
+          80
+        ]
+      },
+      {
+        "period": 2026214,
+        "date": "2026-08-12",
+        "top1_num": 38,
+        "top1_score": 82.5,
+        "top1_k": 4,
+        "top1_grade": "A",
+        "top1_single_hit": false,
+        "top1_region_hit": true,
+        "top3_nums": [
+          38,
+          67,
+          32
+        ],
+        "top3_hits": 1,
+        "actual_numbers": [
+          2,
+          7,
+          12,
+          18,
+          20,
+          21,
+          23,
+          25,
+          32,
+          34,
+          35,
+          37,
+          40,
+          45,
+          47,
+          51,
+          55,
+          59,
+          61,
+          71
+        ]
+      },
+      {
+        "period": 2026215,
+        "date": "2026-08-13",
+        "top1_num": 22,
+        "top1_score": 82.3,
+        "top1_k": 3,
+        "top1_grade": "S",
+        "top1_single_hit": true,
+        "top1_region_hit": true,
+        "top3_nums": [
+          22,
+          38,
+          17
+        ],
+        "top3_hits": 1,
+        "actual_numbers": [
+          1,
+          9,
+          14,
+          19,
+          21,
+          22,
+          24,
+          27,
+          36,
+          41,
+          44,
+          51,
+          55,
+          60,
+          61,
+          69,
+          71,
+          76,
+          78,
+          80
+        ]
+      },
+      {
+        "period": 2026216,
+        "date": "2026-08-14",
+        "top1_num": 72,
+        "top1_score": 87.3,
+        "top1_k": 2,
+        "top1_grade": "S",
+        "top1_single_hit": true,
+        "top1_region_hit": true,
+        "top3_nums": [
+          72,
+          79,
+          10
+        ],
+        "top3_hits": 1,
+        "actual_numbers": [
+          2,
+          3,
+          13,
+          19,
+          22,
+          24,
+          25,
+          28,
+          29,
+          42,
+          43,
+          45,
+          49,
+          62,
+          63,
+          69,
+          70,
+          72,
+          76,
+          80
+        ]
+      },
+      {
+        "period": 2026217,
+        "date": "2026-08-15",
+        "top1_num": 26,
+        "top1_score": 82.2,
+        "top1_k": 1,
+        "top1_grade": "A",
+        "top1_single_hit": false,
+        "top1_region_hit": false,
+        "top3_nums": [
+          26,
+          75,
+          79
+        ],
+        "top3_hits": 0,
+        "actual_numbers": [
+          7,
+          8,
+          10,
+          11,
+          14,
+          18,
+          20,
+          21,
+          24,
+          28,
+          29,
+          33,
+          41,
+          46,
+          67,
+          68,
+          74,
+          76,
+          77,
+          78
+        ]
+      },
+      {
+        "period": 2026218,
+        "date": "2026-08-16",
+        "top1_num": 23,
+        "top1_score": 88.0,
+        "top1_k": 2,
+        "top1_grade": "S",
+        "top1_single_hit": false,
+        "top1_region_hit": true,
+        "top3_nums": [
+          23,
+          79,
+          30
+        ],
+        "top3_hits": 0,
+        "actual_numbers": [
+          3,
+          5,
+          7,
+          11,
+          15,
+          17,
+          18,
+          19,
+          22,
+          24,
+          29,
+          41,
+          43,
+          47,
+          49,
+          50,
+          59,
+          62,
+          78,
+          80
+        ]
+      },
+      {
+        "period": 2026219,
+        "date": "2026-08-17",
+        "top1_num": 61,
+        "top1_score": 82.2,
+        "top1_k": 1,
+        "top1_grade": "A",
+        "top1_single_hit": false,
+        "top1_region_hit": false,
+        "top3_nums": [
+          61,
+          1,
+          79
+        ],
+        "top3_hits": 1,
+        "actual_numbers": [
+          2,
+          3,
+          5,
+          6,
+          13,
+          15,
+          20,
+          35,
+          36,
+          39,
+          47,
+          48,
+          51,
+          58,
+          65,
+          67,
+          72,
+          73,
+          79,
+          80
+        ]
+      },
+      {
+        "period": 2026220,
+        "date": "2026-08-18",
+        "top1_num": 1,
+        "top1_score": 82.3,
+        "top1_k": 3,
+        "top1_grade": "S",
+        "top1_single_hit": false,
+        "top1_region_hit": false,
+        "top3_nums": [
+          1,
+          40,
+          12
+        ],
+        "top3_hits": 2,
+        "actual_numbers": [
+          5,
+          6,
+          10,
+          12,
+          17,
+          20,
+          21,
+          23,
+          24,
+          25,
+          33,
+          35,
+          38,
+          39,
+          40,
+          41,
+          43,
+          49,
+          67,
+          71
+        ]
+      },
+      {
+        "period": 2026221,
+        "date": "2026-08-19",
+        "top1_num": 68,
+        "top1_score": 84.2,
+        "top1_k": 1,
+        "top1_grade": "A",
+        "top1_single_hit": false,
+        "top1_region_hit": false,
+        "top3_nums": [
+          68,
+          37,
+          34
+        ],
+        "top3_hits": 1,
+        "actual_numbers": [
+          1,
+          2,
+          3,
+          5,
+          10,
+          18,
+          21,
+          25,
+          28,
+          34,
+          35,
+          41,
+          48,
+          51,
+          54,
+          58,
+          59,
+          60,
+          77,
+          79
+        ]
+      },
+      {
+        "period": 2026222,
+        "date": "2026-08-20",
+        "top1_num": 19,
+        "top1_score": 89.6,
+        "top1_k": 2,
+        "top1_grade": "S",
+        "top1_single_hit": false,
+        "top1_region_hit": true,
+        "top3_nums": [
+          19,
+          50,
+          61
+        ],
+        "top3_hits": 1,
+        "actual_numbers": [
+          2,
+          5,
+          7,
+          9,
+          17,
+          18,
+          21,
+          25,
+          28,
+          31,
+          32,
+          33,
+          34,
+          35,
+          38,
+          51,
+          57,
+          58,
+          61,
+          65
+        ]
+      },
+      {
+        "period": 2026223,
+        "date": "2026-08-21",
+        "top1_num": 19,
+        "top1_score": 82.3,
+        "top1_k": 3,
+        "top1_grade": "S",
+        "top1_single_hit": true,
+        "top1_region_hit": true,
+        "top3_nums": [
+          19,
+          29,
+          36
+        ],
+        "top3_hits": 2,
+        "actual_numbers": [
+          3,
+          19,
+          22,
+          27,
+          28,
+          33,
+          34,
+          35,
+          36,
+          40,
+          50,
+          51,
+          54,
+          57,
+          64,
+          67,
+          68,
+          69,
+          75,
+          79
+        ]
+      },
+      {
+        "period": 2026224,
+        "date": "2026-08-22",
+        "top1_num": 20,
+        "top1_score": 88.0,
+        "top1_k": 2,
+        "top1_grade": "S",
+        "top1_single_hit": true,
+        "top1_region_hit": true,
+        "top3_nums": [
+          20,
+          49,
+          29
+        ],
+        "top3_hits": 3,
+        "actual_numbers": [
+          3,
+          6,
+          15,
+          19,
+          20,
+          22,
+          23,
+          24,
+          27,
+          29,
+          36,
+          42,
+          45,
+          46,
+          49,
+          55,
+          56,
+          75,
+          76,
+          78
+        ]
+      },
+      {
+        "period": 2026225,
+        "date": "2026-08-23",
+        "top1_num": 18,
+        "top1_score": 67.2,
+        "top1_k": 1,
+        "top1_grade": "A",
+        "top1_single_hit": false,
+        "top1_region_hit": false,
+        "top3_nums": [
+          18,
+          14,
+          50
+        ],
+        "top3_hits": 0,
+        "actual_numbers": [
+          3,
+          4,
+          7,
+          12,
+          13,
+          16,
+          20,
+          21,
+          25,
+          26,
+          32,
+          41,
+          43,
+          44,
+          47,
+          53,
+          60,
+          68,
+          73,
+          76
+        ]
+      },
+      {
+        "period": 2026226,
+        "date": "2026-08-24",
+        "top1_num": 2,
+        "top1_score": 89.7,
+        "top1_k": 2,
+        "top1_grade": "S",
+        "top1_single_hit": false,
+        "top1_region_hit": false,
+        "top3_nums": [
+          2,
+          48,
+          77
+        ],
+        "top3_hits": 1,
+        "actual_numbers": [
+          8,
+          9,
+          10,
+          15,
+          16,
+          20,
+          30,
+          34,
+          36,
+          37,
+          43,
+          45,
+          46,
+          47,
+          48,
+          50,
+          53,
+          62,
+          65,
+          66
+        ]
+      },
+      {
+        "period": 2026227,
+        "date": "2026-08-25",
+        "top1_num": 54,
+        "top1_score": 84.0,
+        "top1_k": 2,
+        "top1_grade": "S",
+        "top1_single_hit": false,
+        "top1_region_hit": false,
+        "top3_nums": [
+          54,
+          17,
+          35
+        ],
+        "top3_hits": 1,
+        "actual_numbers": [
+          4,
+          9,
+          10,
+          12,
+          17,
+          18,
+          22,
+          28,
+          33,
+          38,
+          42,
+          44,
+          47,
+          48,
+          61,
+          63,
+          64,
+          67,
+          73,
+          74
+        ]
+      },
+      {
+        "period": 2026228,
+        "date": "2026-08-26",
+        "top1_num": 19,
+        "top1_score": 91.2,
+        "top1_k": 2,
+        "top1_grade": "S",
+        "top1_single_hit": true,
+        "top1_region_hit": true,
+        "top3_nums": [
+          19,
+          23,
+          27
+        ],
+        "top3_hits": 3,
+        "actual_numbers": [
+          8,
+          13,
+          15,
+          17,
+          19,
+          23,
+          24,
+          27,
+          28,
+          35,
+          40,
+          41,
+          42,
+          45,
+          46,
+          47,
+          52,
+          56,
+          67,
+          80
+        ]
+      },
+      {
+        "period": 2026229,
+        "date": "2026-08-27",
+        "top1_num": 25,
+        "top1_score": 84.2,
+        "top1_k": 1,
+        "top1_grade": "A",
+        "top1_single_hit": false,
+        "top1_region_hit": true,
+        "top3_nums": [
+          25,
+          26,
+          29
+        ],
+        "top3_hits": 1,
+        "actual_numbers": [
+          14,
+          26,
+          33,
+          39,
+          41,
+          47,
+          48,
+          56,
+          59,
+          61,
+          64,
+          65,
+          66,
+          68,
+          71,
+          72,
+          76,
+          77,
+          78,
+          80
+        ]
+      },
+      {
+        "period": 2026230,
+        "date": "2026-08-28",
+        "top1_num": 34,
+        "top1_score": 85.6,
+        "top1_k": 2,
+        "top1_grade": "S",
+        "top1_single_hit": false,
+        "top1_region_hit": true,
+        "top3_nums": [
+          34,
+          57,
+          62
+        ],
+        "top3_hits": 0,
+        "actual_numbers": [
+          3,
+          7,
+          8,
+          13,
+          14,
+          21,
+          24,
+          28,
+          33,
+          35,
+          38,
+          44,
+          50,
+          51,
+          54,
+          59,
+          69,
+          74,
+          77,
+          78
+        ]
+      },
+      {
+        "period": 2026231,
+        "date": "2026-08-29",
+        "top1_num": 9,
+        "top1_score": 82.2,
+        "top1_k": 1,
+        "top1_grade": "A",
+        "top1_single_hit": false,
+        "top1_region_hit": false,
+        "top3_nums": [
+          9,
+          49,
+          75
+        ],
+        "top3_hits": 1,
+        "actual_numbers": [
+          12,
+          17,
+          26,
+          28,
+          31,
+          34,
+          37,
+          42,
+          44,
+          51,
+          52,
+          55,
+          59,
+          60,
+          61,
+          62,
+          68,
+          74,
+          75,
+          79
+        ]
+      },
+      {
+        "period": 2026232,
+        "date": "2026-08-30",
+        "top1_num": 27,
+        "top1_score": 86.0,
+        "top1_k": 3,
+        "top1_grade": "S",
+        "top1_single_hit": true,
+        "top1_region_hit": true,
+        "top3_nums": [
+          27,
+          32,
+          67
+        ],
+        "top3_hits": 3,
+        "actual_numbers": [
+          1,
+          5,
+          9,
+          11,
+          14,
+          27,
+          29,
+          32,
+          36,
+          41,
+          54,
+          55,
+          57,
+          61,
+          63,
+          67,
+          69,
+          71,
+          73,
+          79
+        ]
+      }
+    ]
+  },
+  "cross_validation": {
+    "status": "ok",
+    "cross_items": [
+      {
+        "num": 53,
+        "score": 85.7,
+        "k_suppression": 1,
+        "conf_grade": "A",
+        "resonance_count": 3,
+        "tags": [
+          "📌 今日点位金叉",
+          "🎯 主系统Top12",
+          "🪞 激活替身(71,12)"
+        ]
+      },
+      {
+        "num": 66,
+        "score": 78.2,
+        "k_suppression": 1,
+        "conf_grade": "A",
+        "resonance_count": 2,
+        "tags": [
+          "📌 今日点位金叉"
+        ]
+      },
+      {
+        "num": 15,
+        "score": 75.6,
+        "k_suppression": 2,
+        "conf_grade": "S",
+        "resonance_count": 2,
+        "tags": [
+          "📌 今日点位金叉",
+          "🪞 激活替身(27,54)"
+        ]
+      },
+      {
+        "num": 4,
+        "score": 72.2,
+        "k_suppression": 1,
+        "conf_grade": "A",
+        "resonance_count": 0,
+        "tags": [
+          "🛡️ 独立弹簧回补"
+        ]
+      },
+      {
+        "num": 13,
+        "score": 68.7,
+        "k_suppression": 1,
+        "conf_grade": "A",
+        "resonance_count": 2,
+        "tags": [
+          "📌 今日点位金叉",
+          "🪞 激活替身(41)"
+        ]
+      },
+      {
+        "num": 40,
+        "score": 66.1,
+        "k_suppression": 1,
+        "conf_grade": "A",
+        "resonance_count": 2,
+        "tags": [
+          "📌 今日点位金叉",
+          "🪞 激活替身(27)"
+        ]
+      },
+      {
+        "num": 39,
+        "score": 66.0,
+        "k_suppression": 1,
+        "conf_grade": "A",
+        "resonance_count": 0,
+        "tags": [
+          "🪞 激活替身(27)"
+        ]
+      },
+      {
+        "num": 35,
+        "score": 64.8,
+        "k_suppression": 1,
+        "conf_grade": "A",
+        "resonance_count": 7,
+        "tags": [
+          "📌 今日点位金叉",
+          "🔥 主系统Top5金胆",
+          "👑 选2黄金搭档",
+          "🔮 重点点位Core5",
+          "🪞 激活替身(27)"
+        ]
+      },
+      {
+        "num": 33,
+        "score": 63.2,
+        "k_suppression": 1,
+        "conf_grade": "A",
+        "resonance_count": 0,
+        "tags": [
+          "🛡️ 独立弹簧回补"
+        ]
+      },
+      {
+        "num": 76,
+        "score": 61.8,
+        "k_suppression": 2,
+        "conf_grade": "A",
+        "resonance_count": 2,
+        "tags": [
+          "📌 今日点位金叉",
+          "🪞 激活替身(27)"
+        ]
+      },
+      {
+        "num": 16,
+        "score": 59.6,
+        "k_suppression": 2,
+        "conf_grade": "A",
+        "resonance_count": 3,
+        "tags": [
+          "📌 今日点位金叉",
+          "🔮 重点点位Core5",
+          "🪞 激活替身(12)"
+        ]
+      },
+      {
+        "num": 43,
+        "score": 58.3,
+        "k_suppression": 3,
+        "conf_grade": "A",
+        "resonance_count": 0,
+        "tags": [
+          "🛡️ 独立弹簧回补"
+        ]
+      },
+      {
+        "num": 22,
+        "score": 57.5,
+        "k_suppression": 2,
+        "conf_grade": "A",
+        "resonance_count": 0,
+        "tags": [
+          "🪞 激活替身(62,27)"
+        ]
+      },
+      {
+        "num": 60,
+        "score": 57.1,
+        "k_suppression": 1,
+        "conf_grade": "A",
+        "resonance_count": 0,
+        "tags": [
+          "🪞 激活替身(27)"
+        ]
+      },
+      {
+        "num": 78,
+        "score": 56.9,
+        "k_suppression": 1,
+        "conf_grade": "A",
+        "resonance_count": 0,
+        "tags": [
+          "🪞 激活替身(27)"
+        ]
+      },
+      {
+        "num": 45,
+        "score": 55.9,
+        "k_suppression": 1,
+        "conf_grade": "A",
+        "resonance_count": 2,
+        "tags": [
+          "📌 今日点位金叉",
+          "🪞 激活替身(27)"
+        ]
+      },
+      {
+        "num": 23,
+        "score": 54.2,
+        "k_suppression": 1,
+        "conf_grade": "A",
+        "resonance_count": 0,
+        "tags": [
+          "🛡️ 独立弹簧回补"
+        ]
+      },
+      {
+        "num": 46,
+        "score": 54.2,
+        "k_suppression": 1,
+        "conf_grade": "A",
+        "resonance_count": 0,
+        "tags": [
+          "🛡️ 独立弹簧回补"
+        ]
+      },
+      {
+        "num": 25,
+        "score": 53.6,
+        "k_suppression": 5,
+        "conf_grade": "A",
+        "resonance_count": 3,
+        "tags": [
+          "📌 今日点位金叉",
+          "🔮 重点点位Core5",
+          "🪞 激活替身(27)"
+        ]
+      },
+      {
+        "num": 2,
+        "score": 53.1,
+        "k_suppression": 3,
+        "conf_grade": "A",
+        "resonance_count": 0,
+        "tags": [
+          "🪞 激活替身(12)"
+        ]
+      },
+      {
+        "num": 6,
+        "score": 53.1,
+        "k_suppression": 1,
+        "conf_grade": "A",
+        "resonance_count": 0,
+        "tags": [
+          "🪞 激活替身(12)"
+        ]
+      },
+      {
+        "num": 58,
+        "score": 49.2,
+        "k_suppression": 1,
+        "conf_grade": "B",
+        "resonance_count": 3,
+        "tags": [
+          "📌 今日点位金叉",
+          "🔮 重点点位Core5"
+        ]
+      },
+      {
+        "num": 70,
+        "score": 48.2,
+        "k_suppression": 1,
+        "conf_grade": "B",
+        "resonance_count": 0,
+        "tags": [
+          "🛡️ 独立弹簧回补"
+        ]
+      },
+      {
+        "num": 18,
+        "score": 46.2,
+        "k_suppression": 1,
+        "conf_grade": "B",
+        "resonance_count": 0,
+        "tags": [
+          "🛡️ 独立弹簧回补"
+        ]
+      },
+      {
+        "num": 75,
+        "score": 44.8,
+        "k_suppression": 1,
+        "conf_grade": "B",
+        "resonance_count": 0,
+        "tags": [
+          "🪞 激活替身(27)"
+        ]
+      },
+      {
+        "num": 52,
+        "score": 43.2,
+        "k_suppression": 1,
+        "conf_grade": "B",
+        "resonance_count": 1,
+        "tags": [
+          "🎯 主系统Top12"
+        ]
+      },
+      {
+        "num": 38,
+        "score": 35.2,
+        "k_suppression": 1,
+        "conf_grade": "B",
+        "resonance_count": 2,
+        "tags": [
+          "📌 今日点位金叉"
+        ]
+      },
+      {
+        "num": 49,
+        "score": 33.0,
+        "k_suppression": 2,
+        "conf_grade": "B",
+        "resonance_count": 0,
+        "tags": [
+          "🛡️ 独立弹簧回补"
+        ]
+      },
+      {
+        "num": 50,
+        "score": 32.7,
+        "k_suppression": 1,
+        "conf_grade": "B",
+        "resonance_count": 0,
+        "tags": [
+          "🪞 激活替身(27)"
+        ]
+      }
+    ],
+    "active_main_top5": [
+      35,
+      59,
+      61,
+      74,
+      79
+    ],
+    "active_pair_nums": [
+      35,
+      59
+    ],
+    "active_spatial_core5": [
+      16,
+      20,
+      25,
+      35,
+      58
+    ]
+  },
+  "patterns_summary": {
+    "spill_stats": {
+      "total_miss": 62454,
+      "r1_hit": 27612,
+      "r2_hit": 27486,
+      "tail_hit": 54723,
+      "sym_hit": 15653
+    },
+    "total_surrogates_mapped": 80
+  }
+}
