@@ -618,7 +618,47 @@
   "2026-08-24": {
     "KillSeeker": {
       "period": "2026226",
-      "ran_at": "14:01:32",
+      "ran_at": "19:01:47",
+      "status": "ok"
+    },
+    "data": {
+      "period": "2026226",
+      "ran_at": "18:59:08",
+      "status": "ok"
+    }
+  },
+  "2026-08-25": {
+    "KillSeeker": {
+      "period": "2026227",
+      "ran_at": "19:57:41",
+      "status": "ok"
+    }
+  },
+  "2026-08-26": {
+    "KillSeeker": {
+      "period": "2026228",
+      "ran_at": "19:41:38",
+      "status": "ok"
+    }
+  },
+  "2026-08-27": {
+    "KillSeeker": {
+      "period": "2026229",
+      "ran_at": "10:59:02",
+      "status": "ok"
+    }
+  },
+  "2026-08-28": {
+    "KillSeeker": {
+      "period": "2026230",
+      "ran_at": "18:49:18",
+      "status": "ok"
+    }
+  },
+  "2026-08-29": {
+    "KillSeeker": {
+      "period": "2026231",
+      "ran_at": "18:05:50",
       "status": "ok"
     }
   }

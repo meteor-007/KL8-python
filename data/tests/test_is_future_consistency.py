@@ -1,11 +1,18 @@
-# data/tests/test_is_future_consistency.py
 # -*- coding: utf-8 -*-
 import unittest
 import unittest.mock
 import sys, os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from data.core import walk_forward_validator as wfv
+
+_PROJ_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_BACKEND_DIR = os.path.join(_PROJ_DIR, "backend")
+for _p in [_BACKEND_DIR, _PROJ_DIR]:
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+try:
+    from core import walk_forward_validator as wfv
+except ImportError:
+    from backend.core import walk_forward_validator as wfv
 
 
 class TestIsFutureConsistency(unittest.TestCase):
@@ -23,7 +30,10 @@ class TestIsFutureThreading(unittest.TestCase):
     """接线级测试：history_only 强制 False，线上透传。"""
 
     def setUp(self):
-        from data.core import feature_optimizer as fo
+        try:
+            from core import feature_optimizer as fo
+        except ImportError:
+            from backend.core import feature_optimizer as fo
         self.fo = fo
         fo.clear_data_cache()
 
