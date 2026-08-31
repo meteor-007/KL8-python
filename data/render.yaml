@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: k8-quant-terminal
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python run_server.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.8
+      - key: HOST
+        value: 0.0.0.0
+      - key: GEMINI_API_KEY
+        sync: false

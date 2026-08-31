@@ -93,12 +93,15 @@ class ServiceSafeUvicornServer(uvicorn.Server):
 
 
 def main():
-    host = "127.0.0.1"
-    port = 8000
-    url = f"http://{host}:{port}"
+    # 动态适配云端部署（如 Render / Railway / Docker 等平台）与本地开发环境
+    is_cloud = bool(os.environ.get("RENDER") or os.environ.get("PORT"))
+    default_host = "0.0.0.0" if is_cloud else "127.0.0.1"
+    host = os.environ.get("HOST", default_host)
+    port = int(os.environ.get("PORT", 8000))
+    url = f"http://{'127.0.0.1' if host == '0.0.0.0' else host}:{port}"
     
     is_daemon = "--daemon" in sys.argv
-    auto_open = "--no-browser" not in sys.argv and not is_daemon
+    auto_open = "--no-browser" not in sys.argv and not is_daemon and not is_cloud
 
     print("=" * 70)
     print("       🧬 K8-QUANT 智能量化操盘决策终端 (Web Cyber Edition)")

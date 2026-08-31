@@ -29,6 +29,9 @@ try:
 except ImportError:
     from web_app.data_service import QuantDataService
 
+from backend.api.ai_router import router as ai_router, advisor_instance, GeminiQuantAdvisor
+import backend.api.ai_router as ai_module
+
 PROJ_DIR = get_project_root()
 
 app = FastAPI(
@@ -47,6 +50,9 @@ app.add_middleware(
 )
 
 data_service = QuantDataService(PROJ_DIR)
+# 注入数据服务单例给 AI 操盘大脑
+ai_module.advisor_instance = GeminiQuantAdvisor(data_service=data_service)
+app.include_router(ai_router)
 
 # 内存任务管理器（用于异步流水线任务与实时日志）
 TASK_STORE: Dict[str, Dict[str, Any]] = {}
