@@ -253,11 +253,14 @@ def auto_sync(prefix: str = DEFAULT_PREFIX,
             if pr0.returncode == 0:
                 return {"status": "no_changes", "message": "工作区无变更，本地提交也已同步", "branch": branch}
             api0 = _push_via_api(root, branch)
-            if api0.get("ok"):
+            if api0.get("ok") and api0.get("files"):
                 return {"status": "pushed", "via": "api", "branch": branch,
                         "message": api0.get("message", "API 推送成功")}
-            return {"status": "no_changes", "branch": branch,
-                    "message": f"工作区无变更；待推送提交未能上传：{api0.get('message')}"}
+            if api0.get("ok"):
+                return {"status": "no_changes", "branch": branch,
+                        "message": "工作区无变更，且本地与远端内容一致"}
+            return {"status": "pending", "branch": branch,
+                    "message": f"工作区无变更，但仍有提交未推送：{api0.get('message')}"}
 
         stat = _run(["git", "diff", "--cached", "--shortstat"], root).stdout.strip()
         today = datetime.now().strftime("%Y-%m-%d")

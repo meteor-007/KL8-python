@@ -975,12 +975,15 @@ def task7_auto_git_sync():
     try:
         res = auto_sync(note=note)
         st = res.get('status')
+        sha = res.get('sha') or ''
         if st == 'pushed':
-            ok(f"已提交并推送 · {res.get('branch')} {res.get('sha')} · {res.get('shortstat', '')}")
+            ok(f"已推送 · {res.get('branch')} {sha} {res.get('shortstat', '')}".rstrip())
         elif st == 'committed':
             warn(f"已提交但未推送: {res.get('message')}")
+        elif st == 'pending':
+            warn(f"仍有提交未推送: {res.get('message')}")
         elif st == 'no_changes':
-            info('工作区无变更，跳过提交')
+            info(f"无需提交: {res.get('message') or '工作区干净'}")
         elif st == 'skipped':
             info(f"跳过: {res.get('message')}")
         else:
