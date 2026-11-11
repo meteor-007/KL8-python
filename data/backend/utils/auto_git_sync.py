@@ -24,6 +24,7 @@
 """
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import sys
@@ -79,12 +80,51 @@ def _gh(args: List[str], payload: Optional[Dict[str, Any]] = None, timeout: int 
     return _json.loads(r.stdout) if r.stdout.strip() else {}
 
 
-def _push_via_api(root: str, branch: str) -> Dict[str, Any]:
-    """用 GitHub Git Data API 把「本地 HEAD 相对远端的一次提交」推上去。
+def _state_path(root: str) -> str:
+    return os.path.join(root, ".git", "auto_sync_state.json")
 
-    安全性：只在**本地 HEAD 的父提交恰好等于远端分支头**（即一次 fast-forward）时执行，
-    并且在创建 commit 之前校验生成的 tree sha 必须与本地 HEAD 的 tree 完全一致，
-    不一致立即中止 —— 宁可不推，也绝不写坏远端。
+
+def _load_state(root: str) -> Dict[str, Any]:
+    try:
+        with open(_state_path(root), "r", encoding="utf-8") as f:
+            return json.load(f) or {}
+    except Exception:
+        return {}
+
+
+def _save_state(root: str, data: Dict[str, Any]) -> None:
+    try:
+        with open(_state_path(root), "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+
+
+def _has_commit(root: str, sha: str) -> bool:
+    return _run(["git", "cat-file", "-e", f"{sha}^{{commit}}"], root).returncode == 0
+
+
+def _resolve_base(root: str, remote_sha: str) -> Optional[str]:
+    """找一个本地可用的提交作为 diff 基准，它与远端头内容等价。"""
+    if _has_commit(root, remote_sha):
+        return remote_sha
+    # API 推送会在服务端生成新 sha，本地没有该对象。用上次记录的等价本地提交兜底。
+    st = _load_state(root)
+    if str(st.get("remote_sha", "")) == remote_sha:
+        local = str(st.get("local_sha", ""))
+        if local and _has_commit(root, local):
+            return local
+    return None
+
+
+def _push_via_api(root: str, branch: str) -> Dict[str, Any]:
+    """用 GitHub Git Data API 把本地领先的提交推上去。
+
+    安全性：
+      · 基准提交必须与远端头**内容等价**（对象在本地，或由上次推送记录的等价提交）；
+      · 创建 commit 之前校验服务端生成的 tree sha 必须等于本地 HEAD 的 tree，
+        不一致立即中止 —— 宁可不推，也绝不写坏远端。
+    推送成功后记录 {remote_sha, local_sha} 映射，供下次作为等价比对基准。
     """
     import base64
 
@@ -96,16 +136,23 @@ def _push_via_api(root: str, branch: str) -> Dict[str, Any]:
         ref = _gh([f"repos/{repo}/git/ref/heads/{branch}"])
         remote_sha = ref["object"]["sha"]
         local_sha = _run(["git", "rev-parse", "HEAD"], root).stdout.strip()
-        if local_sha == remote_sha:
-            return {"ok": True, "message": "远端已是最新"}
-        # 必须是快进：远端头是本地头的祖先。否则说明两边分叉，API 兜底一律不碰。
-        anc = _run(["git", "merge-base", "--is-ancestor", remote_sha, local_sha], root)
-        if anc.returncode != 0:
-            return {"ok": False,
-                    "message": f"本地与远端已分叉（远端头 {remote_sha[:7]} 不是本地祖先），"
-                               f"拒绝用 API 推送，请手工处理"}
+        local_tree = _run(["git", "rev-parse", f"{local_sha}^{{tree}}"], root).stdout.strip()
 
-        diff = subprocess.run(["git", "diff", "--name-status", "-z", remote_sha, local_sha],
+        remote_commit = _gh([f"repos/{repo}/git/commits/{remote_sha}"])
+        if remote_commit["tree"]["sha"] == local_tree:
+            _save_state(root, {"remote_sha": remote_sha, "local_sha": local_sha})
+            return {"ok": True, "message": "远端内容已与本地一致"}
+
+        base = _resolve_base(root, remote_sha)
+        if not base:
+            return {"ok": False,
+                    "message": f"本地没有可用的比对基准（远端头 {remote_sha[:7]} 本地不存在，"
+                               f"且无等价记录），拒绝用 API 推送"}
+        base_tree = _run(["git", "rev-parse", f"{base}^{{tree}}"], root).stdout.strip()
+        if base_tree != remote_commit["tree"]["sha"]:
+            return {"ok": False, "message": "本地基准与远端树不一致，拒绝推送（可能已分叉）"}
+
+        diff = subprocess.run(["git", "diff", "--name-status", "-z", base, local_sha],
                               cwd=root, capture_output=True, timeout=120)
         parts = [p for p in diff.stdout.split(b"\x00") if p]
         entries, i = [], 0
@@ -120,16 +167,12 @@ def _push_via_api(root: str, branch: str) -> Dict[str, Any]:
                                   cwd=root, capture_output=True, timeout=120).stdout
             res = _gh([f"repos/{repo}/git/blobs"],
                       {"content": base64.b64encode(blob).decode("ascii"), "encoding": "base64"})
-            # 保留可执行位
-            mode = "100755" if (os.stat(os.path.join(root, path)).st_mode & 0o111) else "100644" \
-                if os.path.exists(os.path.join(root, path)) else "100644"
+            fp = os.path.join(root, path)
+            mode = "100755" if (os.path.exists(fp) and (os.stat(fp).st_mode & 0o111)) else "100644"
             entries.append({"path": path, "mode": mode, "type": "blob", "sha": res["sha"]})
 
-        remote_commit = _gh([f"repos/{repo}/git/commits/{remote_sha}"])
         tree = _gh([f"repos/{repo}/git/trees"],
                    {"base_tree": remote_commit["tree"]["sha"], "tree": entries})
-
-        local_tree = _run(["git", "rev-parse", f"{local_sha}^{{tree}}"], root).stdout.strip()
         if tree["sha"] != local_tree:
             return {"ok": False,
                     "message": f"生成的 tree 与本地不一致（{tree['sha'][:7]} vs {local_tree[:7]}），已中止"}
@@ -140,12 +183,8 @@ def _push_via_api(root: str, branch: str) -> Dict[str, Any]:
         _gh([f"repos/{repo}/git/refs/heads/{branch}", "--method", "PATCH"],
             {"sha": commit["sha"], "force": False})
 
-        # 本地对齐到远端的新提交（内容一致，只是对象 sha 不同）。
-        # 注意：不能用 git fetch —— 那同样要连 github.com:443，正是当前不通的那条路。
-        # 直接用本地命令更新远程跟踪引用即可。
-        subprocess.run(["git", "update-ref", f"refs/remotes/origin/{branch}", commit["sha"]],
-                       cwd=root, timeout=60)
-        subprocess.run(["git", "reset", "-q", "--hard", commit["sha"]], cwd=root, timeout=120)
+        # 记录映射：远端 sha 由服务端生成，本地没有该对象，下次用它对应的本地提交作基准
+        _save_state(root, {"remote_sha": commit["sha"], "local_sha": local_sha})
         return {"ok": True, "message": f"经 GitHub API 推送成功 · {commit['sha'][:7]}",
                 "files": len(entries)}
     except Exception as e:                                        # noqa: BLE001
@@ -208,7 +247,17 @@ def auto_sync(prefix: str = DEFAULT_PREFIX,
         staged = _run(["git", "diff", "--cached", "--quiet"], root)
         has_changes = staged.returncode != 0
         if not has_changes and not allow_empty:
-            return {"status": "no_changes", "message": "工作区无变更，跳过", "branch": branch}
+            # 工作区干净，但可能仍有"提交了却没推上去"的本地提交 —— 不能直接返回，
+            # 否则 API 兜底失败时留下的待推送提交会永远卡在本地。
+            pr0 = _run(["git", "push", "origin", branch], root, timeout=120)
+            if pr0.returncode == 0:
+                return {"status": "no_changes", "message": "工作区无变更，本地提交也已同步", "branch": branch}
+            api0 = _push_via_api(root, branch)
+            if api0.get("ok"):
+                return {"status": "pushed", "via": "api", "branch": branch,
+                        "message": api0.get("message", "API 推送成功")}
+            return {"status": "no_changes", "branch": branch,
+                    "message": f"工作区无变更；待推送提交未能上传：{api0.get('message')}"}
 
         stat = _run(["git", "diff", "--cached", "--shortstat"], root).stdout.strip()
         today = datetime.now().strftime("%Y-%m-%d")
