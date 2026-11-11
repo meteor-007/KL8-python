@@ -366,5 +366,22 @@
           </div>
         </div>
       </div>
+
+      <!-- ═══ 首屏数据加载失败告警 —— 防止前端故障伪装成"数据没更新" ═══ -->
+      <div v-if="bootFailures && bootFailures.length" class="mb-3 sm:mb-4">
+        <div class="glass-panel px-3 py-2 text-xs" style="border-left: 4px solid #ef4444;">
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span class="text-base">⛔</span>
+            <span class="font-bold text-red-300">首屏数据加载失败</span>
+            <span class="text-slate-300">
+              {{ bootFailures.length }} 项没取到数据，对应区域当前为空或仍是旧值——这是加载故障，不是数据源停更
+            </span>
+            <button @click.stop="loadFirstScreen()" class="text-[11px] text-cyan-400 hover:underline">重试</button>
+          </div>
+          <div class="mt-1 text-[11px] font-mono text-red-200/80 space-y-0.5">
+            <div v-for="f in bootFailures" :key="f.label">· {{ f.label }} —— {{ f.message }}</div>
+          </div>
+        </div>
+      </div>
       
       <!-- ═══════════ TAB: 🧠 全栈统一决策主脑 (无加权 · 纯物理概率场) ═══════════ -->

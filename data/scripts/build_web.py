@@ -145,6 +145,10 @@ def build_index_html():
   <script src="/static/js/pages/error_correction.js?v={v_tag}"></script>
   <script src="/static/js/pages/genetic.js?v={v_tag}"></script>
   <script src="/static/js/pages/markov_line.js?v={v_tag}"></script>
+  <script src="/static/js/pages/dtw.js?v={v_tag}"></script>
+  <script src="/static/js/pages/transformer.js?v={v_tag}"></script>
+  <script src="/static/js/pages/matrix_profile.js?v={v_tag}"></script>
+  <script src="/static/js/pages/tda.js?v={v_tag}"></script>
   <script src="/static/js/app.js?v={v_tag}"></script>
   <!-- AI 智能操盘大脑中继助手 -->
   <script src="/static/js/ai_assistant.js?v={v_tag}"></script>

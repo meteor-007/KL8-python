@@ -901,20 +901,46 @@ const App = {
       }
     });
 
+    // 逐项兜底执行器：把每项包成 thunk 单独跑，任一模块缺失/抛错只影响它自己。
+    // 直接用 Promise.allSettled([a(), b()]) 时，参数求值阶段一旦抛错，
+    // allSettled 根本不会被调用，整组请求静默丢失。
+    // 返回失败项清单（[{label, message}]），由调用方决定如何呈现。
+    const runLoaders = async (loaders) => {
+      const settled = await Promise.allSettled(
+        loaders.map((item) => Promise.resolve().then(item.run))
+      );
+      const failures = [];
+      settled.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          const reason = result.reason;
+          failures.push({
+            label: loaders[index].label,
+            message: (reason && reason.message) || String(reason)
+          });
+        }
+      });
+      return failures;
+    };
+
     // 批量加载 / 刷新六大高维数学与AI模型
     const fetchAllAiMathModels = async (forceRefresh = false) => {
       aiMathLoading.value = true;
       try {
-        await Promise.allSettled([
-          fetchGeneticData(forceRefresh),
-          fetchLinearAlgebraData(forceRefresh),
-          fetchDTWData(forceRefresh),
-          fetchTransformerData(forceRefresh),
-          fetchMatrixProfileData(forceRefresh),
-          fetchTDAData(forceRefresh),
-          fetchAiMathConsensusReview(30, forceRefresh)
+        const failures = await runLoaders([
+          { label: '遗传算法', run: () => fetchGeneticData(forceRefresh) },
+          { label: '线性代数', run: () => fetchLinearAlgebraData(forceRefresh) },
+          { label: 'DTW', run: () => fetchDTWData(forceRefresh) },
+          { label: 'Transformer', run: () => fetchTransformerData(forceRefresh) },
+          { label: '矩阵轮廓', run: () => fetchMatrixProfileData(forceRefresh) },
+          { label: 'TDA', run: () => fetchTDAData(forceRefresh) },
+          { label: '数学共识复盘', run: () => fetchAiMathConsensusReview(30, forceRefresh) }
         ]);
-        addLog('📐 六大高维数学与AI模型最新推演数据已极速汇聚解算完成', 'success');
+        if (failures.length) {
+          addLog(`⚠️ 六大高维数学与AI模型中 ${failures.length} 项未能加载：${failures.map((f) => f.label).join('、')}`, 'warn');
+          console.warn('[AI 数学模型] 加载失败:', failures);
+        } else {
+          addLog('📐 六大高维数学与AI模型最新推演数据已极速汇聚解算完成', 'success');
+        }
       } catch (err) {
         console.error('汇聚六大AI/数学模型失败:', err);
       } finally {
@@ -3651,16 +3677,20 @@ const App = {
     const fetchAllClassicModels = async (forceRefresh = false) => {
       classicLoading.value = true;
       try {
-        await Promise.allSettled([
-          fetchDatasourceSummary(),
-          fetchGoldPick2Summary(),
-          fetchJingleSummary(),
-          fetchSuppressionSummary(),
-          fetchPsychologicalGameData(!!forceRefresh),
-          fetchPointOmissionSummary(!!forceRefresh),
-          fetchPrediction()
+        const failures = await runLoaders([
+          { label: '数据源', run: () => fetchDatasourceSummary() },
+          { label: '定胆选2', run: () => fetchGoldPick2Summary() },
+          { label: '顺口溜', run: () => fetchJingleSummary() },
+          { label: '点位抑制', run: () => fetchSuppressionSummary() },
+          { label: '心理博弈', run: () => fetchPsychologicalGameData(!!forceRefresh) },
+          { label: '点位遗漏', run: () => fetchPointOmissionSummary(!!forceRefresh) },
+          { label: '实时推荐', run: () => fetchPrediction() }
         ]);
-        addLog('⚡ 经典量化预测层摘要已汇聚完成', 'success');
+        if (failures.length) {
+          addLog(`⚠️ 经典量化预测层有 ${failures.length} 项未能汇聚：${failures.map((f) => f.label).join('、')}`, 'warn');
+        } else {
+          addLog('⚡ 经典量化预测层摘要已汇聚完成', 'success');
+        }
       } catch (err) {
         console.error('汇聚经典量化子模块失败:', err);
       } finally {
@@ -3718,6 +3748,48 @@ const App = {
       await runStep(0);
     };
 
+    // ═════════════════ 首屏数据加载（逐项兜底 · 拒绝静默装死） ═════════════════
+    // 每项包装成 thunk 逐个执行：任何一个模块缺失或抛错只影响它自己。
+    // 旧写法把 13 个调用直接塞进 Promise.allSettled([...])，参数求值阶段一旦
+    // 抛错 (如 fetchUnifiedBrain 未定义)，allSettled 根本不会被调用，其余
+    // 请求全部静默丢失，界面表现为"数据没更新"。
+    const bootFailures = ref([]);
+
+    const FIRST_SCREEN_LOADERS = [
+      { label: '开奖状态', run: () => fetchSchedulerStatus() },
+      { label: '系统状态', run: () => fetchSystemStatus() },
+      { label: '实时推荐', run: () => fetchPrediction() },
+      { label: 'AI 数学模型', run: () => fetchAllAiMathModels() },
+      { label: '统一决策主脑', run: () => fetchUnifiedBrain() },
+      { label: '实战决算', run: () => fetchMasterReview(30) },
+      { label: '元学习参数', run: () => fetchEvolutionStatus() },
+      { label: '历史开奖表', run: () => fetchHistoryTable(1) },
+      { label: '近期走势', run: () => fetchHistoryTrends() },
+      { label: '点位矩阵', run: () => fetchMatrixData() },
+      { label: '走势图', run: () => fetchLotteryTrends(100) },
+      { label: '数据新鲜度', run: () => fetchFreshness() },
+      { label: '模块注册表', run: () => fetchModuleRegistry() }
+    ];
+
+    const PREWARM_LOADERS = [
+      { label: '全模块概览', run: () => fetchAllModulesOverview() },
+      { label: '报告清单', run: () => fetchReportList() },
+      { label: '点位信息', run: () => fetchDailyPointsInfo() },
+      { label: '素数合成', run: () => fetchPrimeCompositeData() },
+      { label: '心理博弈', run: () => fetchPsychologicalGameData() },
+      { label: '空间点位矩阵', run: () => fetchSpatialPointsMatrix() }
+    ];
+
+    const loadFirstScreen = async () => {
+      bootFailures.value = await runLoaders(FIRST_SCREEN_LOADERS);
+      if (bootFailures.value.length) {
+        const labels = bootFailures.value.map((f) => f.label).join('、');
+        console.error('[首屏数据] 加载失败:', bootFailures.value);
+        addLog(`⚠️ 首屏数据有 ${bootFailures.value.length} 项加载失败：${labels}`, 'warn');
+      }
+      return bootFailures.value;
+    };
+
     onMounted(async () => {
       // 初始化当前主题
       document.documentElement.className = currentTheme.value;
@@ -3725,25 +3797,8 @@ const App = {
 
       initCharts();
       // 2. 【首屏极速性能飞跃】：仅并发加载主驾驶舱首屏核心数据，杜绝串行等待！
-      try {
-        await Promise.allSettled([
-          fetchSchedulerStatus(),   // 顶栏开奖状态与倒计时
-          fetchSystemStatus(),      // 目标研判期与信标状态
-          fetchPrediction(),        // 实时主驾驶舱核心推荐号码 (Top5 / 推荐5码)
-          fetchAllAiMathModels(),   // 六大高维数学与AI模型推演与超级共识
-          fetchUnifiedBrain(),      // 统一决策主脑综合状态
-          fetchMasterReview(30),    // 实战决算大看板
-          fetchEvolutionStatus(),   // 元学习参数
-          fetchHistoryTable(1),     // 历史开奖表格第一页
-          fetchHistoryTrends(),     // 近期走势分析
-          fetchMatrixData(),        // 点位矩阵快照
-          fetchLotteryTrends(100),  // 走势图数据
-          fetchFreshness(),         // E5 顶栏数据新鲜度横幅
-          fetchModuleRegistry()     // B包 模块投票注册表 (全站状态权威源)
-        ]);
-      } catch (err) {
-        console.warn('首屏核心数据加载提示:', err);
-      }
+      //    逐项兜底，失败项由顶部告警横幅现形，不再静默。
+      await loadFirstScreen();
 
       // 全局点击与滚动自动收起 Tab 右键快捷菜单
       window.addEventListener('click', closeTabContextMenu);
@@ -3753,15 +3808,11 @@ const App = {
       setInterval(fetchSchedulerStatus, 5000);
 
       // 4. 【后台静默预热 (Idle Prewarm)】：在首屏完全呈现 1.5 秒后，在浏览器空闲时后台静默拉取基础概览，绝不卡顿主界面
-      setTimeout(() => {
-        Promise.allSettled([
-          fetchAllModulesOverview(),
-          fetchReportList(),
-          fetchDailyPointsInfo(),
-          fetchPrimeCompositeData(),
-          fetchPsychologicalGameData(),
-          fetchSpatialPointsMatrix()
-        ]);
+      setTimeout(async () => {
+        const failures = await runLoaders(PREWARM_LOADERS);
+        if (failures.length) {
+          console.warn('[首屏预热] 加载失败:', failures);
+        }
       }, 1500);
     });
 
@@ -3773,6 +3824,8 @@ const App = {
     });
 
     return {
+      bootFailures,
+      loadFirstScreen,
       isMobile,
       isDesktop,
       isSidebarCollapsed,
