@@ -1,0 +1,1203 @@
+{
+  "target_period": "2026296",
+  "based_on_period": "2026295",
+  "total_draws": 2116,
+  "date": "2026-11-05",
+  "top3_gold": [
+    8,
+    15,
+    1
+  ],
+  "top5_assault": [
+    8,
+    15,
+    1
+  ],
+  "top12_balanced": [
+    8,
+    15,
+    1
+  ],
+  "top_cold_spring": [
+    8,
+    15,
+    41,
+    1
+  ],
+  "top_healthy_repeats": [
+    16,
+    18,
+    21,
+    24
+  ],
+  "macro_pendulum": {
+    "last_size_ratio": "13:7 (小:大)",
+    "avg_big_count": 11.2,
+    "big_small_bias": 0.4,
+    "size_trend_desc": "上期大号极度超买(7大)，大盘钟摆强烈向小号报复性回调，下期看好 11小9大 或 10:10 均衡",
+    "target_size_bias": "小号强力回补 (重兵布防 1-40)",
+    "last_odd_even_ratio": "10:10 (奇:偶)",
+    "odd_trend_desc": "奇偶比常态均衡，预计下期维持约 10:10 均势",
+    "zone_shares": [
+      20.0,
+      25.0,
+      30.0,
+      25.0
+    ],
+    "zone_weights": [
+      1.4,
+      1.0,
+      0.6,
+      1.0
+    ],
+    "zone_diagnoses": [
+      "1区 (01-20): 处于常态温水区 (20.0%)",
+      "2区 (21-40): 处于常态温水区 (25.0%)",
+      "3区 (41-60): 处于常态温水区 (30.0%)",
+      "4区 (61-80): 处于常态温水区 (25.0%)"
+    ]
+  },
+  "contrarian_cold_spring": {
+    "spring_cold_candidates": [
+      {
+        "number": 8,
+        "display": "08",
+        "omission": 13,
+        "recent_freq10": 0,
+        "spring_tension": 1.84,
+        "status": "弹性中冷 (遗漏13期，绝望点强反弹)"
+      },
+      {
+        "number": 15,
+        "display": "15",
+        "omission": 12,
+        "recent_freq10": 0,
+        "spring_tension": 1.72,
+        "status": "弹性中冷 (遗漏12期，绝望点强反弹)"
+      },
+      {
+        "number": 41,
+        "display": "41",
+        "omission": 10,
+        "recent_freq10": 0,
+        "spring_tension": 1.48,
+        "status": "弹性中冷 (遗漏10期，绝望点强反弹)"
+      },
+      {
+        "number": 1,
+        "display": "01",
+        "omission": 9,
+        "recent_freq10": 1,
+        "spring_tension": 1.36,
+        "status": "弹性中冷 (遗漏9期，绝望点强反弹)"
+      },
+      {
+        "number": 30,
+        "display": "30",
+        "omission": 9,
+        "recent_freq10": 1,
+        "spring_tension": 1.36,
+        "status": "弹性中冷 (遗漏9期，绝望点强反弹)"
+      },
+      {
+        "number": 37,
+        "display": "37",
+        "omission": 9,
+        "recent_freq10": 1,
+        "spring_tension": 1.36,
+        "status": "弹性中冷 (遗漏9期，绝望点强反弹)"
+      },
+      {
+        "number": 9,
+        "display": "09",
+        "omission": 8,
+        "recent_freq10": 2,
+        "spring_tension": 1.24,
+        "status": "弹性中冷 (遗漏8期，绝望点强反弹)"
+      },
+      {
+        "number": 55,
+        "display": "55",
+        "omission": 8,
+        "recent_freq10": 2,
+        "spring_tension": 1.24,
+        "status": "弹性中冷 (遗漏8期，绝望点强反弹)"
+      }
+    ],
+    "deep_dead_cold": [],
+    "crowd_hot_penalties": [
+      {
+        "number": 5,
+        "display": "05",
+        "recent_freq10": 5,
+        "status": "极热追涨区 (散户跟风严重，防冲顶滞涨)"
+      },
+      {
+        "number": 16,
+        "display": "16",
+        "recent_freq10": 5,
+        "status": "极热追涨区 (散户跟风严重，防冲顶滞涨)"
+      },
+      {
+        "number": 56,
+        "display": "56",
+        "recent_freq10": 5,
+        "status": "极热追涨区 (散户跟风严重，防冲顶滞涨)"
+      },
+      {
+        "number": 75,
+        "display": "75",
+        "recent_freq10": 6,
+        "status": "极热追涨区 (散户跟风严重，防冲顶滞涨)"
+      }
+    ],
+    "omissions": {
+      "1": 9,
+      "2": 3,
+      "3": 1,
+      "4": 5,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 13,
+      "9": 8,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 4,
+      "14": 7,
+      "15": 12,
+      "16": 0,
+      "17": 3,
+      "18": 0,
+      "19": 2,
+      "20": 23,
+      "21": 0,
+      "22": 3,
+      "23": 2,
+      "24": 0,
+      "25": 1,
+      "26": 3,
+      "27": 5,
+      "28": 5,
+      "29": 1,
+      "30": 9,
+      "31": 5,
+      "32": 0,
+      "33": 0,
+      "34": 2,
+      "35": 1,
+      "36": 0,
+      "37": 9,
+      "38": 0,
+      "39": 2,
+      "40": 4,
+      "41": 10,
+      "42": 2,
+      "43": 1,
+      "44": 0,
+      "45": 1,
+      "46": 21,
+      "47": 0,
+      "48": 2,
+      "49": 5,
+      "50": 3,
+      "51": 3,
+      "52": 1,
+      "53": 2,
+      "54": 2,
+      "55": 8,
+      "56": 0,
+      "57": 0,
+      "58": 1,
+      "59": 4,
+      "60": 1,
+      "61": 0,
+      "62": 2,
+      "63": 5,
+      "64": 1,
+      "65": 19,
+      "66": 4,
+      "67": 4,
+      "68": 1,
+      "69": 1,
+      "70": 3,
+      "71": 3,
+      "72": 1,
+      "73": 2,
+      "74": 2,
+      "75": 0,
+      "76": 1,
+      "77": 0,
+      "78": 2,
+      "79": 7,
+      "80": 1
+    },
+    "freq_10": {
+      "1": 1,
+      "2": 3,
+      "3": 4,
+      "4": 2,
+      "5": 5,
+      "6": 2,
+      "7": 3,
+      "8": 0,
+      "9": 2,
+      "10": 3,
+      "11": 2,
+      "12": 2,
+      "13": 1,
+      "14": 1,
+      "15": 0,
+      "16": 5,
+      "17": 3,
+      "18": 2,
+      "19": 4,
+      "20": 0,
+      "21": 3,
+      "22": 3,
+      "23": 2,
+      "24": 4,
+      "25": 5,
+      "26": 3,
+      "27": 3,
+      "28": 2,
+      "29": 2,
+      "30": 1,
+      "31": 1,
+      "32": 2,
+      "33": 4,
+      "34": 3,
+      "35": 1,
+      "36": 3,
+      "37": 1,
+      "38": 1,
+      "39": 2,
+      "40": 3,
+      "41": 0,
+      "42": 2,
+      "43": 4,
+      "44": 2,
+      "45": 3,
+      "46": 0,
+      "47": 4,
+      "48": 1,
+      "49": 1,
+      "50": 4,
+      "51": 3,
+      "52": 4,
+      "53": 2,
+      "54": 2,
+      "55": 2,
+      "56": 5,
+      "57": 3,
+      "58": 5,
+      "59": 2,
+      "60": 2,
+      "61": 3,
+      "62": 3,
+      "63": 1,
+      "64": 4,
+      "65": 0,
+      "66": 3,
+      "67": 2,
+      "68": 5,
+      "69": 3,
+      "70": 2,
+      "71": 2,
+      "72": 3,
+      "73": 4,
+      "74": 1,
+      "75": 6,
+      "76": 3,
+      "77": 3,
+      "78": 3,
+      "79": 2,
+      "80": 2
+    }
+  },
+  "healthy_repeats_and_clusters": {
+    "healthy_repeats": [
+      {
+        "number": 16,
+        "display": "16",
+        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
+        "recommend": true
+      },
+      {
+        "number": 18,
+        "display": "18",
+        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
+        "recommend": true
+      },
+      {
+        "number": 21,
+        "display": "21",
+        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
+        "recommend": true
+      },
+      {
+        "number": 24,
+        "display": "24",
+        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
+        "recommend": true
+      },
+      {
+        "number": 36,
+        "display": "36",
+        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
+        "recommend": true
+      },
+      {
+        "number": 38,
+        "display": "38",
+        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
+        "recommend": true
+      },
+      {
+        "number": 44,
+        "display": "44",
+        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
+        "recommend": true
+      },
+      {
+        "number": 47,
+        "display": "47",
+        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
+        "recommend": true
+      },
+      {
+        "number": 61,
+        "display": "61",
+        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
+        "recommend": true
+      },
+      {
+        "number": 75,
+        "display": "75",
+        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
+        "recommend": true
+      },
+      {
+        "number": 77,
+        "display": "77",
+        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
+        "recommend": true
+      }
+    ],
+    "truncated_repeats": [
+      {
+        "number": 5,
+        "display": "05",
+        "adjacent_pairs": [
+          "05-06"
+        ],
+        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
+        "recommend": false
+      },
+      {
+        "number": 6,
+        "display": "06",
+        "adjacent_pairs": [
+          "05-06",
+          "06-07"
+        ],
+        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
+        "recommend": false
+      },
+      {
+        "number": 7,
+        "display": "07",
+        "adjacent_pairs": [
+          "06-07"
+        ],
+        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
+        "recommend": false
+      },
+      {
+        "number": 11,
+        "display": "11",
+        "adjacent_pairs": [
+          "11-12"
+        ],
+        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
+        "recommend": false
+      },
+      {
+        "number": 12,
+        "display": "12",
+        "adjacent_pairs": [
+          "11-12"
+        ],
+        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
+        "recommend": false
+      },
+      {
+        "number": 32,
+        "display": "32",
+        "adjacent_pairs": [
+          "32-33"
+        ],
+        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
+        "recommend": false
+      },
+      {
+        "number": 33,
+        "display": "33",
+        "adjacent_pairs": [
+          "32-33"
+        ],
+        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
+        "recommend": false
+      },
+      {
+        "number": 56,
+        "display": "56",
+        "adjacent_pairs": [
+          "56-57"
+        ],
+        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
+        "recommend": false
+      },
+      {
+        "number": 57,
+        "display": "57",
+        "adjacent_pairs": [
+          "56-57"
+        ],
+        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
+        "recommend": false
+      }
+    ],
+    "last_consecutive_pairs": [
+      "05-06",
+      "06-07",
+      "11-12",
+      "32-33",
+      "56-57"
+    ],
+    "cluster_bias_desc": "连号活性向 1 区转移，重点伏击【 05-10 】前区连号集群回补"
+  },
+  "ball_scores": [
+    {
+      "number": 8,
+      "display": "08",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 13,
+      "freq10": 0,
+      "final_score": 0.719
+    },
+    {
+      "number": 15,
+      "display": "15",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 12,
+      "freq10": 0,
+      "final_score": 0.677
+    },
+    {
+      "number": 1,
+      "display": "01",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 9,
+      "freq10": 1,
+      "final_score": 0.551
+    },
+    {
+      "number": 9,
+      "display": "09",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 8,
+      "freq10": 2,
+      "final_score": 0.509
+    },
+    {
+      "number": 30,
+      "display": "30",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 9,
+      "freq10": 1,
+      "final_score": 0.497
+    },
+    {
+      "number": 37,
+      "display": "37",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 9,
+      "freq10": 1,
+      "final_score": 0.497
+    },
+    {
+      "number": 14,
+      "display": "14",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 7,
+      "freq10": 1,
+      "final_score": 0.467
+    },
+    {
+      "number": 41,
+      "display": "41",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 10,
+      "freq10": 0,
+      "final_score": 0.443
+    },
+    {
+      "number": 79,
+      "display": "79",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 7,
+      "freq10": 2,
+      "final_score": 0.371
+    },
+    {
+      "number": 55,
+      "display": "55",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 8,
+      "freq10": 2,
+      "final_score": 0.359
+    },
+    {
+      "number": 2,
+      "display": "02",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 3,
+      "freq10": 3,
+      "final_score": 0.237
+    },
+    {
+      "number": 3,
+      "display": "03",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 4,
+      "final_score": 0.237
+    },
+    {
+      "number": 10,
+      "display": "10",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 3,
+      "final_score": 0.237
+    },
+    {
+      "number": 17,
+      "display": "17",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 3,
+      "freq10": 3,
+      "final_score": 0.237
+    },
+    {
+      "number": 19,
+      "display": "19",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 2,
+      "freq10": 4,
+      "final_score": 0.237
+    },
+    {
+      "number": 18,
+      "display": "18",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 2,
+      "final_score": 0.195
+    },
+    {
+      "number": 22,
+      "display": "22",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 3,
+      "freq10": 3,
+      "final_score": 0.183
+    },
+    {
+      "number": 25,
+      "display": "25",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 5,
+      "final_score": 0.183
+    },
+    {
+      "number": 26,
+      "display": "26",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 3,
+      "freq10": 3,
+      "final_score": 0.183
+    },
+    {
+      "number": 27,
+      "display": "27",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 5,
+      "freq10": 3,
+      "final_score": 0.183
+    },
+    {
+      "number": 34,
+      "display": "34",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 2,
+      "freq10": 3,
+      "final_score": 0.183
+    },
+    {
+      "number": 40,
+      "display": "40",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 4,
+      "freq10": 3,
+      "final_score": 0.183
+    },
+    {
+      "number": 62,
+      "display": "62",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 2,
+      "freq10": 3,
+      "final_score": 0.142
+    },
+    {
+      "number": 64,
+      "display": "64",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 4,
+      "final_score": 0.142
+    },
+    {
+      "number": 66,
+      "display": "66",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 4,
+      "freq10": 3,
+      "final_score": 0.142
+    },
+    {
+      "number": 68,
+      "display": "68",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 5,
+      "final_score": 0.142
+    },
+    {
+      "number": 69,
+      "display": "69",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 3,
+      "final_score": 0.142
+    },
+    {
+      "number": 72,
+      "display": "72",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 3,
+      "final_score": 0.142
+    },
+    {
+      "number": 73,
+      "display": "73",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 2,
+      "freq10": 4,
+      "final_score": 0.142
+    },
+    {
+      "number": 76,
+      "display": "76",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 3,
+      "final_score": 0.142
+    },
+    {
+      "number": 78,
+      "display": "78",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 2,
+      "freq10": 3,
+      "final_score": 0.142
+    },
+    {
+      "number": 21,
+      "display": "21",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 3,
+      "final_score": 0.141
+    },
+    {
+      "number": 24,
+      "display": "24",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 4,
+      "final_score": 0.141
+    },
+    {
+      "number": 36,
+      "display": "36",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 3,
+      "final_score": 0.141
+    },
+    {
+      "number": 38,
+      "display": "38",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 1,
+      "final_score": 0.141
+    },
+    {
+      "number": 61,
+      "display": "61",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 3,
+      "final_score": 0.099
+    },
+    {
+      "number": 77,
+      "display": "77",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 3,
+      "final_score": 0.099
+    },
+    {
+      "number": 43,
+      "display": "43",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 4,
+      "final_score": 0.088
+    },
+    {
+      "number": 45,
+      "display": "45",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 3,
+      "final_score": 0.088
+    },
+    {
+      "number": 50,
+      "display": "50",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 3,
+      "freq10": 4,
+      "final_score": 0.088
+    },
+    {
+      "number": 51,
+      "display": "51",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 3,
+      "freq10": 3,
+      "final_score": 0.088
+    },
+    {
+      "number": 52,
+      "display": "52",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 4,
+      "final_score": 0.088
+    },
+    {
+      "number": 58,
+      "display": "58",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 5,
+      "final_score": 0.088
+    },
+    {
+      "number": 4,
+      "display": "04",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 5,
+      "freq10": 2,
+      "final_score": 0.075
+    },
+    {
+      "number": 13,
+      "display": "13",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 4,
+      "freq10": 1,
+      "final_score": 0.075
+    },
+    {
+      "number": 20,
+      "display": "20",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 23,
+      "freq10": 0,
+      "final_score": 0.075
+    },
+    {
+      "number": 44,
+      "display": "44",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 2,
+      "final_score": 0.045
+    },
+    {
+      "number": 47,
+      "display": "47",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 4,
+      "final_score": 0.045
+    },
+    {
+      "number": 23,
+      "display": "23",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 2,
+      "freq10": 2,
+      "final_score": 0.021
+    },
+    {
+      "number": 28,
+      "display": "28",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 5,
+      "freq10": 2,
+      "final_score": 0.021
+    },
+    {
+      "number": 29,
+      "display": "29",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 2,
+      "final_score": 0.021
+    },
+    {
+      "number": 31,
+      "display": "31",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 5,
+      "freq10": 1,
+      "final_score": 0.021
+    },
+    {
+      "number": 35,
+      "display": "35",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 1,
+      "final_score": 0.021
+    },
+    {
+      "number": 39,
+      "display": "39",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 2,
+      "freq10": 2,
+      "final_score": 0.021
+    },
+    {
+      "number": 6,
+      "display": "06",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 2,
+      "final_score": 0.005
+    },
+    {
+      "number": 7,
+      "display": "07",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 3,
+      "final_score": 0.005
+    },
+    {
+      "number": 11,
+      "display": "11",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 2,
+      "final_score": 0.005
+    },
+    {
+      "number": 12,
+      "display": "12",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 2,
+      "final_score": 0.005
+    },
+    {
+      "number": 63,
+      "display": "63",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 5,
+      "freq10": 1,
+      "final_score": -0.021
+    },
+    {
+      "number": 65,
+      "display": "65",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 19,
+      "freq10": 0,
+      "final_score": -0.021
+    },
+    {
+      "number": 67,
+      "display": "67",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 4,
+      "freq10": 2,
+      "final_score": -0.021
+    },
+    {
+      "number": 70,
+      "display": "70",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 3,
+      "freq10": 2,
+      "final_score": -0.021
+    },
+    {
+      "number": 71,
+      "display": "71",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 3,
+      "freq10": 2,
+      "final_score": -0.021
+    },
+    {
+      "number": 74,
+      "display": "74",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 2,
+      "freq10": 1,
+      "final_score": -0.021
+    },
+    {
+      "number": 80,
+      "display": "80",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 2,
+      "final_score": -0.021
+    },
+    {
+      "number": 32,
+      "display": "32",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 2,
+      "final_score": -0.049
+    },
+    {
+      "number": 33,
+      "display": "33",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 4,
+      "final_score": -0.049
+    },
+    {
+      "number": 42,
+      "display": "42",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 2,
+      "freq10": 2,
+      "final_score": -0.075
+    },
+    {
+      "number": 46,
+      "display": "46",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 21,
+      "freq10": 0,
+      "final_score": -0.075
+    },
+    {
+      "number": 48,
+      "display": "48",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 2,
+      "freq10": 1,
+      "final_score": -0.075
+    },
+    {
+      "number": 49,
+      "display": "49",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 5,
+      "freq10": 1,
+      "final_score": -0.075
+    },
+    {
+      "number": 53,
+      "display": "53",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 2,
+      "freq10": 2,
+      "final_score": -0.075
+    },
+    {
+      "number": 54,
+      "display": "54",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 2,
+      "freq10": 2,
+      "final_score": -0.075
+    },
+    {
+      "number": 59,
+      "display": "59",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 4,
+      "freq10": 2,
+      "final_score": -0.075
+    },
+    {
+      "number": 60,
+      "display": "60",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 2,
+      "final_score": -0.075
+    },
+    {
+      "number": 57,
+      "display": "57",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 3,
+      "final_score": -0.145
+    },
+    {
+      "number": 16,
+      "display": "16",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 5,
+      "final_score": -0.205
+    },
+    {
+      "number": 75,
+      "display": "75",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 6,
+      "final_score": -0.301
+    },
+    {
+      "number": 5,
+      "display": "05",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 5,
+      "final_score": -0.395
+    },
+    {
+      "number": 56,
+      "display": "56",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 5,
+      "final_score": -0.545
+    }
+  ]
+}

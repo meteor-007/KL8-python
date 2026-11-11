@@ -13,6 +13,7 @@
 使用方式:
     python trigger_review.py
 """
+from backend.utils.paths import get_reports_dir
 import os
 import sys
 if hasattr(sys.stdout, 'reconfigure'):
@@ -27,12 +28,12 @@ _PROJ = os.path.dirname(os.path.abspath(__file__))
 if _PROJ not in sys.path:
     sys.path.insert(0, _PROJ)
 
-from utils.paths import get_project_root, _ensure_project_path
+from utils.paths import get_project_root, _ensure_project_path, data_path
 _ensure_project_path()
 _ROOT = get_project_root()
 
-HISTORY_FILE = os.path.join(_ROOT, 'kl8_history_final.txt')
-REPORTS_DIR = os.path.join(_ROOT, 'reports')
+HISTORY_FILE = data_path('kl8_history_final.txt')
+REPORTS_DIR = os.path.join(get_reports_dir())
 
 
 def load_history_lines():

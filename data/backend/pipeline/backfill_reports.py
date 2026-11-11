@@ -4,6 +4,7 @@
 报告回填工具 — 补充缺失的历史日期报告
 用法: python pipeline/backfill_reports.py
 """
+from backend.utils.paths import get_cache_dir, get_reports_dir
 import os
 import sys
 
@@ -121,7 +122,7 @@ def backfill_report(report_date_str, target_period, latest_history_period):
         fusion_top5, fusion_details, s_fusion = engine.calculate_trinity_extreme_fusion(s_gauss, s_cluster, s_fourier)
         
         # 使用传入的历史日期
-        report_path = os.path.join(ENGINE_PROJ, 'reports', f"daily_analysis_report_{report_date_str}.md")
+        report_path = os.path.join(get_reports_dir(), f"daily_analysis_report_{report_date_str}.md")
         
         conf = res['strat']['conf_score']
         hedge = res['strat']['hedge']
@@ -130,7 +131,7 @@ def backfill_report(report_date_str, target_period, latest_history_period):
         yesterday_hit_str = "无"
         actual_latest = set(engine.dc.history[0]['numbers'])
         
-        memory_file = os.path.join(ENGINE_PROJ, 'cache', "self_learning_state.json")
+        memory_file = os.path.join(get_cache_dir(), "self_learning_state.json")
         yesterday_record = None
         try:
             if os.path.exists(memory_file):
@@ -343,7 +344,7 @@ def backfill_report(report_date_str, target_period, latest_history_period):
             g_warning = None
             pass_nums = []
             
-            deep_opt_cache = os.path.join(ENGINE_PROJ, 'cache', 'deep_optimization_result.json')
+            deep_opt_cache = os.path.join(get_cache_dir(), 'deep_optimization_result.json')
             cache_loaded = False
             if os.path.exists(deep_opt_cache):
                 try:
@@ -457,7 +458,7 @@ def main():
     }
     
     for date_str, (target_period, latest_history_period) in missing_reports.items():
-        report_path = os.path.join(_PROJ, 'reports', f"daily_analysis_report_{date_str}.md")
+        report_path = os.path.join(get_reports_dir(), f"daily_analysis_report_{date_str}.md")
         if os.path.exists(report_path):
             logger.info(f"报告已存在，跳过: {report_path}")
             continue

@@ -4,6 +4,7 @@ Tier 4: Real-World Workload Execution Validation (全量入口脚本与生产负
 =============================================================================
 在全量生产环境下逐一调用系统 11 个日常入口脚本，物理校验生成产物的 Schema 与非空完整性。
 """
+from backend.utils.paths import get_outputs_dir
 import os
 import sys
 import glob
@@ -21,7 +22,13 @@ class TestTier4Workloads(unittest.TestCase):
 
     def _run_script(self, script_rel_path: str, args: list = None, timeout: int = 120) -> subprocess.CompletedProcess:
         """执行脚本辅助函数"""
-        script_full_path = os.path.join(PROJ_DIR, script_rel_path)
+        from backend.utils.paths import find_module_script
+        try:
+            script_full_path = find_module_script(script_rel_path)
+            if not os.path.exists(script_full_path):
+                script_full_path = os.path.join(PROJ_DIR, script_rel_path)
+        except Exception:
+            script_full_path = os.path.join(PROJ_DIR, script_rel_path)
         cmd = [sys.executable, script_full_path] + (args or [])
         res = subprocess.run(
             cmd,
@@ -39,8 +46,8 @@ class TestTier4Workloads(unittest.TestCase):
         res = self._run_script("run_points_daily.py", ["5"])
         self.assertEqual(res.returncode, 0, f"run_points_daily failed: {res.stderr}\n{res.stdout}")
 
-        txt_path = os.path.join(PROJ_DIR, "outputs", "spatial_points", "重点点位预测.txt")
-        json_path = os.path.join(PROJ_DIR, "outputs", "spatial_points", "spatial_points_latest.json")
+        txt_path = os.path.join(get_outputs_dir(), "spatial_points", "重点点位预测.txt")
+        json_path = os.path.join(get_outputs_dir(), "spatial_points", "spatial_points_latest.json")
         self.assertTrue(os.path.exists(txt_path), f"Missing {txt_path}")
         self.assertTrue(os.path.exists(json_path), f"Missing {json_path}")
         self.assertGreater(os.path.getsize(txt_path), 50)
@@ -55,8 +62,14 @@ class TestTier4Workloads(unittest.TestCase):
         res = self._run_script("run_geminixuan2_daily.py", ["5"])
         self.assertEqual(res.returncode, 0, f"run_geminixuan2_daily failed: {res.stderr}\n{res.stdout}")
 
-        out_txts = glob.glob(os.path.join(PROJ_DIR, "gemini_pick2", "output", "gemini选2预测_*.txt"))
-        out_jsons = glob.glob(os.path.join(PROJ_DIR, "gemini_pick2", "output", "k8_quant_memory_*.json"))
+        out_txts = (
+            glob.glob(os.path.join(PROJ_DIR, "backend", "modules", "_retired", "gemini_pick2", "output", "gemini选2预测_*.txt")) +
+            glob.glob(os.path.join(PROJ_DIR, "gemini_pick2", "output", "gemini选2预测_*.txt"))
+        )
+        out_jsons = (
+            glob.glob(os.path.join(PROJ_DIR, "backend", "modules", "_retired", "gemini_pick2", "output", "k8_quant_memory_*.json")) +
+            glob.glob(os.path.join(PROJ_DIR, "gemini_pick2", "output", "k8_quant_memory_*.json"))
+        )
         self.assertGreater(len(out_txts), 0, "No gemini txt predictions generated")
         self.assertGreater(len(out_jsons), 0, "No gemini memory json generated")
 
@@ -72,7 +85,7 @@ class TestTier4Workloads(unittest.TestCase):
         res = self._run_script("run_pick2_daily.py", ["5"])
         self.assertEqual(res.returncode, 0, f"run_pick2_daily failed: {res.stderr}\n{res.stdout}")
 
-        out_txts = glob.glob(os.path.join(PROJ_DIR, "outputs", "gold_pick2", "定金选2预测_*.txt"))
+        out_txts = glob.glob(os.path.join(get_outputs_dir(), "gold_pick2", "定金选2预测_*.txt"))
         self.assertGreater(len(out_txts), 0, "No gold pick2 txt prediction generated")
         latest_txt = sorted(out_txts)[-1]
         self.assertGreater(os.path.getsize(latest_txt), 50)
@@ -87,7 +100,7 @@ class TestTier4Workloads(unittest.TestCase):
         res = self._run_script("run_follow_daily.py", ["5"])
         self.assertEqual(res.returncode, 0, f"run_follow_daily failed: {res.stderr}\n{res.stdout}")
 
-        txt_path = os.path.join(PROJ_DIR, "outputs", "follow_analysis", "跟随分析预测.txt")
+        txt_path = os.path.join(get_outputs_dir(), "follow_analysis", "跟随分析预测.txt")
         self.assertTrue(os.path.exists(txt_path), f"Missing {txt_path}")
         self.assertGreater(os.path.getsize(txt_path), 50)
 
@@ -96,8 +109,8 @@ class TestTier4Workloads(unittest.TestCase):
         res = self._run_script("run_jingle_daily.py", ["5"])
         self.assertEqual(res.returncode, 0, f"run_jingle_daily failed: {res.stderr}\n{res.stdout}")
 
-        out_txts = glob.glob(os.path.join(PROJ_DIR, "outputs", "predictions", "顺口溜预测_*.txt")) + \
-                   glob.glob(os.path.join(PROJ_DIR, "outputs", "jingle", "顺口溜预测_*.txt"))
+        out_txts = glob.glob(os.path.join(get_outputs_dir(), "predictions", "顺口溜预测_*.txt")) + \
+                   glob.glob(os.path.join(get_outputs_dir(), "jingle", "顺口溜预测_*.txt"))
         self.assertGreater(len(out_txts), 0, "No jingle prediction generated")
 
     def test_e2e_06_suppression_daily_workload(self):
@@ -105,7 +118,7 @@ class TestTier4Workloads(unittest.TestCase):
         res = self._run_script("run_suppression_daily.py", ["5"])
         self.assertEqual(res.returncode, 0, f"run_suppression_daily failed: {res.stderr}\n{res.stdout}")
 
-        txt_path = os.path.join(PROJ_DIR, "outputs", "point_suppression", "未开点位反弹预测.txt")
+        txt_path = os.path.join(get_outputs_dir(), "point_suppression", "未开点位反弹预测.txt")
         self.assertTrue(os.path.exists(txt_path), f"Missing {txt_path}")
         self.assertGreater(os.path.getsize(txt_path), 50)
 
@@ -114,7 +127,7 @@ class TestTier4Workloads(unittest.TestCase):
         res = self._run_script("run_aggregation_daily.py", ["--force"])
         self.assertEqual(res.returncode, 0, f"run_aggregation_daily failed: {res.stderr}\n{res.stdout}")
 
-        out_txts = glob.glob(os.path.join(PROJ_DIR, "outputs", "aggregation", "汇总复盘_*.txt"))
+        out_txts = glob.glob(os.path.join(get_outputs_dir(), "aggregation", "汇总复盘_*.txt"))
         self.assertGreater(len(out_txts), 0, "No aggregation summary txt generated")
 
     def test_e2e_08_lstm_daily_workload(self):
@@ -122,7 +135,7 @@ class TestTier4Workloads(unittest.TestCase):
         res = self._run_script("run_lstm_daily.py", ["2"], timeout=120)
         self.assertEqual(res.returncode, 0, f"run_lstm_daily failed: {res.stderr}\n{res.stdout}")
 
-        out_txts = glob.glob(os.path.join(PROJ_DIR, "outputs", "predictions", "prediction_*.txt"))
+        out_txts = glob.glob(os.path.join(get_outputs_dir(), "predictions", "prediction_*.txt"))
         self.assertGreater(len(out_txts), 0, "No LSTM prediction generated")
 
     def test_e2e_09_excel_hot_numbers_etl(self):
@@ -134,15 +147,6 @@ class TestTier4Workloads(unittest.TestCase):
         """E2E-10: Excel 自动化条件格式化脚本执行检验"""
         res = self._run_script("backend/format/apply_formats.py")
         self.assertEqual(res.returncode, 0, f"apply_formats failed: {res.stderr}\n{res.stdout}")
-
-    def test_e2e_11_killseeker_workload_or_diagnosis(self):
-        """E2E-11: KillSeeker 杀号推演脚本执行与已知缺陷诊断断言"""
-        res = self._run_script("run_killseeker_daily.py", ["--diagnose"])
-        if res.returncode != 0:
-            # 确认阻断原因为已知 Milestone 2 修复项 (F06: ModuleNotFoundError: kl8_stats)
-            self.assertIn("kl8_stats", res.stderr + res.stdout, f"Unexpected killseeker failure: {res.stderr}")
-        else:
-            self.assertEqual(res.returncode, 0)
 
     def test_e2e_12_full_pipeline_structure_and_tasks(self):
         """E2E-12: 一键总控 run_full_pipeline.py 任务流结构与关键函数检验"""

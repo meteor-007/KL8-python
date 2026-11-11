@@ -3,6 +3,15 @@
 自主闭环学习引擎 (Autonomous Learner)
 ======================================
 
+> ⚠️ **2026-11-10 已从每日流水线退役**
+> 日报引擎 `pipeline/full_report_engine.py` 不再加载本模块。原因：
+>   1. 其 `pending_predictions` 自 2026-05-29 起长期与当期期号对不上，每个交易日
+>      只产出一条 `[复盘] 未找到期号XXX的预测记录` 的 WARNING，没有真实学习发生；
+>   2. 自学习门控（`core.learning_gate.is_learning_enabled`）一直是冻结态
+>      （Walk-Forward 多折 CI 下界 0.9671 < 阈值 1.0），本引擎的权重从未进入打分。
+> 文件与 `main_v2.py` 的手动入口保留，仅作离线复盘/回测工具使用；
+> 若要重新接入日更，需先让门控真正解冻，并修复预测记录与复盘的期号对齐。
+
 四大核心能力:
   1. 自主复盘: 开奖后自动对比预测与实际, 逐号码溯源评分路径
   2. 自主学习: 基于复盘结果, 更新贝叶斯先验/马尔可夫转移/Loss权重
@@ -23,6 +32,7 @@
     # 每次开奖后调用: 触发闭环学习
     learner.on_new_result(period='2026133', actual_numbers=[5,12,...])
 """
+from backend.utils.paths import get_cache_dir, get_reviews_dir, get_logs_dir
 import os
 import sys
 import json
@@ -49,11 +59,11 @@ except Exception:
     DEFAULT_LIFT_THRESHOLD = 1.0
 
 
-LEARNER_STATE_FILE = os.path.join(_PROJ, 'cache', 'learner_state.json')
-LEARNER_LOG_FILE = os.path.join(_PROJ, 'logs', 'learner.log')
+LEARNER_STATE_FILE = os.path.join(get_cache_dir(), 'learner_state.json')
+LEARNER_LOG_FILE = os.path.join(get_logs_dir(), 'learner.log')
 
-os.makedirs(os.path.join(_PROJ, 'cache'), exist_ok=True)
-os.makedirs(os.path.join(_PROJ, 'logs'), exist_ok=True)
+os.makedirs(os.path.join(get_cache_dir()), exist_ok=True)
+os.makedirs(get_logs_dir(), exist_ok=True)
 
 logging.basicConfig(
     level=logging.INFO,
@@ -126,6 +136,10 @@ class AutonomousLearner:
             'number_bias_reviews': 0,
             'platt_a': 1.0,
             'platt_b': 0.0,
+            # D2 (2026-09-10): 学习状态显式化 —— 界面不再猜"到底在不在学"
+            'learning_status': 'unknown',
+            'learning_status_note': '尚未运行过 learn()',
+            'last_diagnostics': {},
             'loss_history': [],
             'review_history': [],
             'drift_alerts': [],
@@ -228,7 +242,18 @@ class AutonomousLearner:
                                   for name, scores in algo_raw_scores.items()}
         
         pending = self._state.get('pending_predictions', [])
-        pending.append(record)
+        # D5 整改: 按期号去重 (若已有该期记录则原地覆盖更新, 杜绝重复堆积)
+        updated = False
+        for idx, p_rec in enumerate(pending):
+            if str(p_rec.get('period')) == str(period):
+                pending[idx] = record
+                updated = True
+                break
+        if not updated:
+            pending.append(record)
+        # 上限保护: pending_predictions 最多保留 10 期
+        if len(pending) > 10:
+            pending = pending[-10:]
         self._state['pending_predictions'] = pending
         self._save_state()
         if algo_raw_scores:
@@ -372,7 +397,7 @@ class AutonomousLearner:
         period = ''.join(ch for ch in period if ch.isdigit())
         if not period:
             return
-        reviews_dir = os.path.join(_PROJ, 'reviews')
+        reviews_dir = os.path.join(get_reviews_dir())
         os.makedirs(reviews_dir, exist_ok=True)
         out_path = os.path.join(reviews_dir, f'review_{period}.json')
         learning_status = 'ACTIVE'
@@ -416,21 +441,43 @@ class AutonomousLearner:
     def learn(self, review_report: dict, history: list) -> dict:
         """
         基于复盘报告, 自主更新学习参数
+
+        D2 整改 (2026-09-10): 门控冻结时不再"直接返回了事"——诊断段照跑
+        (Loss 实算 + Platt 候选拟合 + 偏差候选差异), 只记录不改写,
+        并把 learning_status 显式写进 learner_state.json。
         """
         if review_report.get('status') == 'NO_PREDICTION':
             return {'status': 'SKIPPED'}
 
+        period = review_report['period']
+
+        # ── 诊断段 (无论门控冻结与否都跑; 只留证据, 不改参数) ──
+        diagnostics = self._run_diagnostics(review_report)
+
+        learning_enabled = False
+        frozen_msg = "自学习门控未就绪 (无法证明 Lift>1)"
         try:
             from core.learning_gate import is_learning_enabled, learning_frozen_message
-            if not is_learning_enabled():
-                logger.info(f"[学习] {learning_frozen_message()}")
-                return {'status': 'FROZEN', 'message': learning_frozen_message()}
+            learning_enabled = is_learning_enabled()
+            frozen_msg = learning_frozen_message()
         except Exception:
             pass
-        
-        period = review_report['period']
+
+        self._state['last_diagnostics'] = diagnostics
+
+        if not learning_enabled:
+            # D2: 冻结时也留痕 —— 状态显式, 诊断入账, 返回冻结原因
+            self._state['learning_status'] = 'frozen'
+            self._state['learning_status_note'] = frozen_msg
+            self._save_state()
+            logger.info(f"[学习] 期号{period}: {frozen_msg}; 诊断段已跑, 参数只读")
+            return {'status': 'FROZEN', 'message': frozen_msg,
+                    'learning_status': 'frozen', 'diagnostics': diagnostics}
+
+        self._state['learning_status'] = 'active'
+        self._state['learning_status_note'] = '门控开启, 参数可更新'
         logger.info(f"[学习] 期号{period}开始自主学习...")
-        
+
         changes = {}
         
         # 学习1: Loss权重更新
@@ -535,7 +582,22 @@ class AutonomousLearner:
             self._state['bayesian_params']['alpha_0'] = max(2.0,
                 self._state['bayesian_params']['alpha_0'] - 0.1)
         changes['bayesian_params'] = self._state['bayesian_params']
-        
+
+        # 学习3.5: Platt 校准 (D2 补真实现) —— platt_a/platt_b 不再是死字段
+        try:
+            _a, _b, _n_pairs = self._fit_platt()
+            if _a is not None:
+                changes['platt'] = {
+                    'old': {'a': self._state.get('platt_a'), 'b': self._state.get('platt_b')},
+                    'new': {'a': _a, 'b': _b},
+                    'n_pairs': _n_pairs,
+                }
+                self._state['platt_a'] = _a
+                self._state['platt_b'] = _b
+        except Exception as e:
+            logger.warning(f"Platt校准异常: {e}")
+
+
         # 学习4: 环境记忆
         env_memory = self._state.get('env_memory', {})
         predicted_env = review_report.get('predicted_env', 'balanced')
@@ -552,9 +614,138 @@ class AutonomousLearner:
         
         self._save_state()
         logger.info(f"[学习] 期号{period}学习完成, 变更项: {list(changes.keys())}")
-        
+
         return changes
-    
+
+    # ──────────────────────────────────────────────
+    #  D2 诊断段: 门控冻结时也照跑, 只留证据不改参数
+    # ──────────────────────────────────────────────
+
+    def _run_diagnostics(self, review_report: dict) -> dict:
+        """诊断段 (D2): Loss 实算 + Platt 候选 + 偏差候选差异。
+
+        大白话: 门控把"调参"冻结了, 但"体检"不能停——每期开奖后照样算一遍
+        各算子 Loss、拟一遍 Platt 曲线、看一眼偏差会往哪动, 全部写成证据留档,
+        只是不写回参数。这样界面能说清"系统在诊断什么", 而不是一片空白装死。
+        """
+        period = review_report.get('period')
+        actual = review_report.get('actual_numbers') or []
+        diag = {
+            'period': period,
+            'computed_at': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'losses': {},
+            'platt_candidate': None,
+            'number_bias_candidate': {'would_change': 0, 'active': False,
+                                      'note': '偏差更新需满最小复盘数后才激活'},
+        }
+
+        # 1) Loss 实算 (LossBasedWeightUpdater 内部: 冻结时只落盘 losses 不改权重)
+        try:
+            from core.loss_weight_updater import LossBasedWeightUpdater
+            updater = LossBasedWeightUpdater()
+            updater.update_with_actual(period, actual)
+            for rec in reversed(updater._loss_history):
+                if rec.get('period') == period:
+                    diag['losses'] = rec.get('losses', {})
+                    diag['loss_weights_applied'] = rec.get('weights_applied', False)
+                    diag['loss_blocked_by'] = rec.get('blocked_by')
+                    break
+        except Exception as e:
+            diag['loss_error'] = str(e)
+
+        # 2) Platt 候选 (实算但不应用)
+        try:
+            a, b, n_pairs = self._fit_platt()
+            diag['platt_candidate'] = {
+                'a': a, 'b': b, 'n_pairs': n_pairs,
+                'current': {'a': self._state.get('platt_a'), 'b': self._state.get('platt_b')},
+                'applied': False,
+            }
+        except Exception as e:
+            diag['platt_error'] = str(e)
+
+        # 3) 偏差候选差异 (看"若门控开启, 这期会动几个号")
+        try:
+            nb_cfg = self._number_bias_config()
+            reviews = self._state.get('number_bias_reviews', 0) + 1
+            if reviews >= nb_cfg.get('min_reviews', 30):
+                actual_set = set(actual)
+                pred_scores = review_report.get('prediction_scores', {})
+                if pred_scores:
+                    would = sum(1 for n in range(1, 81)
+                                if self._bias_delta(n, actual_set, pred_scores) != 0.0)
+                    diag['number_bias_candidate'] = {
+                        'would_change': would, 'active': True,
+                        'note': f'若门控开启, 本期将有 {would} 个号码的偏差被微调',
+                    }
+        except Exception as e:
+            diag['number_bias_error'] = str(e)
+
+        return diag
+
+    @staticmethod
+    def _bias_delta(n: int, actual_set: set, pred_scores: dict) -> float:
+        """复刻 learn() 偏差更新里的 delta 规则 (只算不改)。"""
+        n_str = str(n)
+        sorted_keys = sorted(pred_scores.keys(), key=lambda x: -pred_scores[x])
+        rank = sorted_keys.index(n_str) + 1 if n_str in sorted_keys else 81
+        if n in actual_set:
+            return 0.02 if rank > 20 else -0.005
+        return -0.015 if rank <= 20 else 0.0
+
+    def _fit_platt(self, lookback: int = 100, lr: float = 0.5, iters: int = 200):
+        """Platt 校准真实现 (D2): 对近 N 期 (归一化分数, 是否命中) 对做两参数逻辑回归。
+
+        模型: p(hit | s) = sigmoid(a * z(s) + b), z 为分数 z-score。
+        批量梯度下降 + 轻微 L2, 不引 sklearn。
+        返回 (a, b, n_pairs); 有效样本 < 200 对时返回 (None, None, n) 以示样本不足。
+        """
+        reviews = self._state.get('review_history', [])
+        pairs = []
+        for r in reviews[:lookback]:
+            if r.get('compacted'):
+                continue
+            scores = r.get('prediction_scores') or {}
+            actual = set(r.get('actual_numbers') or [])
+            if not scores or not actual:
+                continue
+            for n_str, s in scores.items():
+                try:
+                    n = int(n_str)
+                except Exception:
+                    continue
+                pairs.append((float(s), 1.0 if n in actual else 0.0))
+
+        n_pairs = len(pairs)
+        if n_pairs < 200:
+            return None, None, n_pairs
+
+        mean_s = sum(p[0] for p in pairs) / n_pairs
+        var_s = sum((p[0] - mean_s) ** 2 for p in pairs) / n_pairs
+        sd_s = (var_s ** 0.5) or 1e-9
+
+        def _sigmoid(x: float) -> float:
+            if x < -30:
+                return 1e-13
+            if x > 30:
+                return 1.0 - 1e-13
+            return 1.0 / (1.0 + math.exp(-x))
+
+        a, b = 1.0, 0.0
+        for _ in range(iters):
+            ga = gb = 0.0
+            for s, y in pairs:
+                z = (s - mean_s) / sd_s
+                err = _sigmoid(a * z + b) - y
+                ga += err * z
+                gb += err
+            ga = ga / n_pairs + 1e-4 * a   # 轻微 L2 防跑飞
+            gb = gb / n_pairs + 1e-4 * b
+            a -= lr * ga
+            b -= lr * gb
+
+        return round(a, 6), round(b, 6), n_pairs
+
     # ──────────────────────────────────────────────
     #  能力3: 自我调整
     # ──────────────────────────────────────────────
@@ -671,10 +862,22 @@ class AutonomousLearner:
         
         cold_count = sum(1 for n in range(1, 81) if freq.get(n, 0) == 0)
         cold_ratio = cold_count / 80
-        
-        counts_per_period = [len(h['numbers']) for h in recent_10]
-        volatility = round(float(np.std(counts_per_period) / max(np.mean(counts_per_period), 1)), 4)
-        
+
+        # 2026-10-22 死逻辑清除 (Bug#5)：原 volatility = std(len(h['numbers'])) / mean(...)。
+        # 快乐8每期恒定开 20 个号 → 该序列恒为 [20,20,...] → std ≡ 0 → volatility 恒为 0.0。
+        # 于是 `volatility > 0.25`(混沌) 永不可达，`volatility < 0.10` 永远为真，
+        # 环境漂移检测退化成「非热/非冷即 trend_accel」的假信号，drift_alerts 长期失真。
+        # 现改用「超随机聚集度」= 实际出号频率方差 ÷ 二项分布理论方差 − 1：
+        # 随机大盘下该值围绕 0 波动 (n=10, p=0.25, 80 号, SE≈0.16)，
+        # 显著为正 = 号码异常扎堆 (真趋势/混沌)，接近 0 或负 = 均匀轮转 (平衡)。
+        counts = np.array([freq.get(n, 0) for n in range(1, 81)], dtype=float)
+        var_obs = float(counts.var(ddof=1))
+        # 理论方差: 每号 10 期各开概率 p=20/80=0.25 → Binom(10, 0.25), Var = 10·p·(1−p)
+        p_ball = 20 / 80
+        var_exp = len(recent_10) * p_ball * (1 - p_ball)
+        excess_dispersion = round(var_obs / max(var_exp, 1e-9) - 1.0, 4)
+        volatility = max(0.0, excess_dispersion)  # 对外仍沿用 volatility 字段名 (非负)
+
         try:
             from config import get_config
             cfg = get_config()
@@ -690,17 +893,20 @@ class AutonomousLearner:
         elif cold_ratio > cold_threshold:
             env_type = 'cold_rebound'
             confidence = min(1.0, cold_ratio / cold_threshold)
-        elif volatility > 0.25:
+        elif excess_dispersion > 0.25:
+            # 出号显著比随机大盘更扎堆 → 结构漂移/混沌
             env_type = 'chaotic'
-            confidence = min(1.0, volatility / 0.25)
-        elif volatility < 0.10:
+            confidence = min(1.0, excess_dispersion / 0.25)
+        elif excess_dispersion < -0.25:
+            # 显著比随机更均匀 → 轮转节奏强 (可类比加速回补)
             env_type = 'trend_accel'
-            confidence = min(1.0, 0.10 / max(volatility, 0.01))
+            confidence = min(1.0, abs(excess_dispersion) / 0.25)
         else:
             env_type = 'balanced'
             confidence = 0.7
-        
-        return {'type': env_type, 'confidence': round(confidence, 2), 'volatility': volatility}
+
+        return {'type': env_type, 'confidence': round(confidence, 2),
+                'volatility': volatility, 'excess_dispersion': excess_dispersion}
     
     # ──────────────────────────────────────────────
     #  能力4: 自我优化
@@ -708,22 +914,28 @@ class AutonomousLearner:
     
     def optimize(self, history: list) -> dict:
         """
-        自我优化: 用Walk-Forward验证评估当前参数效果
+        自我优化: 用Walk-Forward验证评估当前参数效果。
+
+        分工 (整改口径: 诊断常开、调参听门控):
+          - WF 通道路诊断 + 融合报告落盘 **每天都做**, 不受门控影响 —— 证据该记就记;
+          - 权重的 ADOPTED / ROLLED_BACK 调参动作 **门控冻结时不做**。
         """
+        frozen, frozen_msg = False, ''
         try:
             from core.learning_gate import is_learning_enabled, learning_frozen_message
-            if not is_learning_enabled():
-                logger.info(f"[优化] {learning_frozen_message()}")
-                return {'status': 'FROZEN', 'message': learning_frozen_message()}
+            frozen = not is_learning_enabled()
+            frozen_msg = learning_frozen_message() if frozen else ''
+            if frozen:
+                logger.info(f"[优化] {frozen_msg} —— 调参照旧冻结, 但 WF 通道路诊断照跑")
         except Exception:
             pass
 
         logger.info("[优化] 开始Walk-Forward验证...")
-        
+
         if len(history) < 80:
             logger.info("  历史数据不足80期, 跳过优化验证")
             return {'status': 'INSUFFICIENT_DATA'}
-        
+
         try:
             from core.walk_forward_validator import WalkForwardValidator
         except Exception:
@@ -735,10 +947,11 @@ class AutonomousLearner:
             self._state.get('previous_weights') or current_weights
         )
         
-        def prediction_fn(train_data):
-            """三维轻量预测: EF(热度) + RW(遗漏Sigmoid) + FO(近窗频率) — 与日报维度对齐"""
-            scores = {}
-            weights = self._state['pentagon_weights']
+        # ── C7: 通道打分器 (同一套特征, 只是分别取用 EF / RW / FO) ──
+        # 整改前这里把 EF+RW+FO 三通道融合的结果当成唯一一份 WF 报告往
+        # cache/walk_forward_results.json 写, 标签却说不清是哪个通道, 等于挂羊头卖狗肉。
+        # 现在四个通道各跑一遍, 融合仍是门控主判决, 单通道结果另存 channels 字段备查。
+        def _channel_scores(train_data):
             window = train_data[:50] if train_data else []
             short = train_data[:15] if train_data else []
 
@@ -755,28 +968,89 @@ class AutonomousLearner:
             max_long = max(freq_long.values()) or 1
             max_short = max(freq_short.values()) or 1
 
+            ef, rw, fo = {}, {}, {}
             for n in range(1, 81):
                 gap = 0
                 for h in window:
                     if n in h.get('numbers', []):
                         break
                     gap += 1
-                rw_prob = 1.0 / (1.0 + math.exp(-0.3 * (gap - 8)))
-                ef_score = freq_long[n] / max_long
-                fo_score = freq_short[n] / max_short
-                bias = self._state['number_biases'].get(str(n), 0.0)
-                scores[n] = (
-                    ef_score * weights.get('EF', 0.4)
-                    + rw_prob * weights.get('RW', 0.3)
-                    + fo_score * weights.get('FO', 0.3)
-                    + bias * 0.05
-                )
-            return scores
-        
+                rw[n] = 1.0 / (1.0 + math.exp(-0.3 * (gap - 8)))
+                ef[n] = freq_long[n] / max_long
+                fo[n] = freq_short[n] / max_short
+            return {'EF': ef, 'RW': rw, 'FO': fo}
+
+        def prediction_fn(train_data):
+            """三通道融合: EF(热度) + RW(遗漏Sigmoid) + FO(近窗频率) — 与日报维度对齐"""
+            ch = _channel_scores(train_data)
+            bias = self._state['number_biases']
+            return {
+                n: ch['EF'][n] * current_weights.get('EF', 0.4)
+                   + ch['RW'][n] * current_weights.get('RW', 0.3)
+                   + ch['FO'][n] * current_weights.get('FO', 0.3)
+                   + bias.get(str(n), 0.0) * 0.05
+                for n in range(1, 81)
+            }
+
+        def _single_channel_fn(name):
+            def fn(train_data):
+                return _channel_scores(train_data)[name]
+            return fn
+
         validator = WalkForwardValidator(train_window=50, val_window=10, step=10, min_history=80)
         results = validator.validate(history, prediction_fn, top_k=20)
-        report = validator.report(results)
-        
+
+        channels = {}
+        for _ch in ('EF', 'RW', 'FO'):
+            try:
+                _rep = validator.report(
+                    validator.validate(history, _single_channel_fn(_ch), top_k=20), write=False)
+                channels[_ch] = {
+                    'pipeline_mode': f'{_ch.lower()}_single_channel',
+                    'primary_channels': [_ch],
+                    'status': _rep.get('status'),
+                    'n_folds': _rep.get('n_folds'),
+                    'global_avg_lift': _rep.get('global_avg_lift'),
+                    'ci_lift_lo': _rep.get('ci_lift_lo'),
+                    'ci_lift_hi': _rep.get('ci_lift_hi'),
+                    'trend': _rep.get('trend'),
+                }
+            except Exception as e:
+                channels[_ch] = {'pipeline_mode': f'{_ch.lower()}_single_channel',
+                                 'status': 'ERROR', 'error': str(e)}
+            logger.info(f"  [C7] 单通道 {_ch}: Lift={channels[_ch].get('global_avg_lift')} "
+                        f"CI下界={channels[_ch].get('ci_lift_lo')}")
+
+        # 门控主判决: 三通道融合 (口径不变, 只是标签改对)
+        report = validator.report(results, extra={
+            'pipeline_mode': 'trinity_fusion_ef_rw_fo',
+            'primary_channels': ['EF', 'RW', 'FO'],
+            'channels': channels,
+            'gate_verdict_channel': 'trinity_fusion_ef_rw_fo',
+        })
+
+        # 把门控显示态同步成刚落的这份报告 (is_learning_enabled 本身是现读文件重算的;
+        # 这一步只是让 /api/evolution/status 显示的 pipeline_mode 不再说谎)
+        try:
+            from core.learning_gate import record_wf_report
+            record_wf_report(report)
+        except Exception as e:
+            logger.warning(f"  门控状态回写失败: {e}")
+
+        self._state['last_channel_reports'] = channels
+        self._save_state()
+
+        if frozen:
+            logger.info(f"  [优化] 门控冻结: WF 通道路诊断已落盘 "
+                        f"(融合 CI下界={report.get('ci_lift_lo')}), 未做任何参数采纳/回滚")
+            return {
+                'status': 'FROZEN', 'message': frozen_msg, 'diagnostics_only': True,
+                'wf_report': {k: v for k, v in report.items() if k != 'per_fold_summary'},
+                'channels': channels,
+                'current_weights': self._state['pentagon_weights'],
+                'note': '诊断常开、调参听门控: WF 通道报告已更新, 权重未动',
+            }
+
         last_wf = self._state.get('last_wf_report')
         if last_wf and last_wf.get('status') == 'OK':
             old_lift = last_wf.get('global_avg_lift', 0)

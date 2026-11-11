@@ -1,0 +1,226 @@
+<div v-show="activeTab === 'agg_cockpit'" class="space-y-6">
+        <!-- 头部标题与快捷执行栏 -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
+          <div class="space-y-1">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">🧬</span>
+              <h2 class="text-xl font-bold bg-gradient-to-r from-amber-400 via-rose-400 to-cyan-400 bg-clip-text text-transparent">
+                子系统汇总陈列 — 多路结果对照（主推=16期中热）
+              </h2>
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                主推=16期
+              </span>
+            </div>
+            <p class="text-xs text-slate-400">
+              陈列各预测模块最新出票；宪法主推锁定 16期中热 Top5，非旧版票权熔炉。
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button @click="fetchAggCockpit" class="cyber-btn cyber-btn-slate text-xs" :disabled="aggLoading">
+              🔄 刷新大屏
+            </button>
+            <button @click="triggerAggRun" class="cyber-btn cyber-btn-gold text-xs shadow-[0_0_15px_rgba(245,158,11,0.3)]" :disabled="isRunning">
+              ⚡ 一键刷新汇总
+            </button>
+            <button @click="openModuleHistory('agg_cockpit')" class="cyber-btn text-xs flex items-center gap-1 bg-purple-500/15 text-purple-200 border border-purple-400/40 hover:border-purple-300/70">
+              <span>📜</span> 历史战报记录
+            </button>
+          </div>
+        </div>
+
+        <!-- 顶部核心 KPI 卡片阵列 -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div class="glass-card p-4 space-y-1">
+            <div class="text-[11px] text-slate-400 font-mono">🎯 目标预测期号</div>
+            <div class="text-xl font-bold font-mono text-amber-400">第 {{ aggCockpit.target_period || '---' }} 期</div>
+            <div class="text-[10px] text-slate-500">基准开奖: {{ aggCockpit.latest_period }} 期</div>
+          </div>
+          <div class="glass-card p-4 space-y-1">
+            <div class="text-[11px] text-slate-400 font-mono">📡 参与子系统路数</div>
+            <div class="text-xl font-bold font-mono text-cyan-300">{{ aggCockpit.subsystems_count || 0 }} 路大军</div>
+            <div class="text-[10px] text-slate-500">多维共振交叉比对</div>
+          </div>
+          <div class="glass-card p-4 space-y-1">
+            <div class="text-[11px] text-slate-400 font-mono">👑 精英共识定胆池</div>
+            <div class="text-xl font-bold font-mono text-emerald-400">{{ aggCockpit.consensus_dan_pool ? aggCockpit.consensus_dan_pool.length : 0 }} 码</div>
+            <div class="text-[10px] text-slate-500">票数 ≥ 2 票入选</div>
+          </div>
+          <div class="glass-card p-4 space-y-1">
+            <div class="text-[11px] text-slate-400 font-mono">🛡️ 8区空间覆盖</div>
+            <div class="text-xl font-bold font-mono" :class="aggCockpit.eight_zones_status && aggCockpit.eight_zones_status.full_coverage ? 'text-emerald-400' : 'text-amber-400'">
+              {{ aggCockpit.eight_zones_status && aggCockpit.eight_zones_status.full_coverage ? '全域覆盖 ✅' : '自适应补齐 ⚠️' }}
+            </div>
+            <div class="text-[10px] text-slate-500">网格防扎堆机制</div>
+          </div>
+          <div class="glass-card p-4 space-y-1">
+            <div class="text-[11px] text-slate-400 font-mono">📈 稳健号 WF Lift</div>
+            <div class="text-xl font-bold font-mono text-purple-300">{{ aggCockpit.walk_forward ? aggCockpit.walk_forward.stable_lift + 'x' : '---' }}</div>
+            <div class="text-[10px] text-slate-500">诚实评估 (Lift=1.00 即随机基线)</div>
+          </div>
+        </div>
+
+        <!-- 主面板：左侧共识票数榜 + 右侧定胆池与8区分布 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- 左侧：多维共振投票榜 -->
+          <div class="lg:col-span-6 space-y-4">
+            <div class="glass-panel p-6 space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                  <span class="text-base">📊</span>
+                  <h3 class="text-sm font-bold text-white">7路子系统投票热度总榜 (票数降序)</h3>
+                </div>
+                <span class="text-xs text-slate-400 font-mono">得票越高 = 置信度越强</span>
+              </div>
+
+              <div class="space-y-2 max-h-[520px] overflow-y-auto pr-1">
+                <div v-for="item in (aggCockpit.votes_rank || []).slice(0, 20)" :key="item.num"
+                     class="p-2.5 rounded-lg bg-slate-900/60 border flex items-center justify-between transition hover:border-slate-700"
+                     :class="item.votes >= 3 ? 'border-amber-500/40 bg-amber-500/5' : (item.votes >= 2 ? 'border-cyan-500/40 bg-cyan-500/5' : 'border-slate-800')">
+                  <div class="flex items-center gap-3">
+                    <span class="lottery-ball w-7 h-7 text-xs font-bold"
+                          :class="item.votes >= 3 ? 'ball-gold shadow-[0_0_8px_rgba(245,158,11,0.4)]' : (item.votes >= 2 ? 'ball-cyan' : 'bg-slate-800 text-slate-300 border border-slate-700')">
+                      {{ String(item.num).padStart(2, '0') }}
+                    </span>
+                    <div>
+                      <div class="text-xs font-bold text-slate-200">
+                        号码 {{ String(item.num).padStart(2, '0') }}
+                        <span v-if="item.votes >= 3" class="text-[10px] text-amber-400 ml-2 font-mono">★ 多维共振金胆</span>
+                        <span v-else-if="item.votes >= 2" class="text-[10px] text-cyan-400 ml-2 font-mono">✔ 精英共识</span>
+                      </div>
+                      <div class="w-36 sm:w-48 bg-slate-800 h-1.5 rounded-full overflow-hidden mt-1">
+                        <div class="h-full rounded-full transition-all duration-500"
+                             :style="{ width: (item.votes / (aggCockpit.subsystems_count || 7) * 100) + '%' }"
+                             :class="item.votes >= 3 ? 'bg-amber-400' : 'bg-cyan-400'"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-sm font-bold font-mono" :class="item.votes >= 2 ? 'text-amber-400' : 'text-slate-400'">
+                      {{ item.votes }} / {{ aggCockpit.subsystems_count != null ? aggCockpit.subsystems_count : '--' }} 路
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右侧：精英定胆池 + 20期高频 Stable Top 10 + 各子系统出票明细 -->
+          <div class="lg:col-span-6 space-y-6">
+            <!-- 主推定胆池卡片 -->
+            <div class="glass-panel p-6 space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                  <span class="text-base">🎯</span>
+                  <h3 class="text-sm font-bold text-emerald-400">主推定胆池 (共 {{ aggCockpit.consensus_dan_pool ? aggCockpit.consensus_dan_pool.length : 0 }} 码)</h3>
+                </div>
+                <span class="text-xs text-slate-400 font-mono">8区网格风控平衡</span>
+              </div>
+              
+              <div class="flex flex-wrap gap-2">
+                <span v-for="num in (aggCockpit.consensus_dan_pool || [])" :key="num"
+                      class="lottery-ball ball-gold w-8 h-8 text-xs font-bold shadow-[0_0_10px_rgba(245,158,11,0.3)]">
+                  {{ String(num).padStart(2, '0') }}
+                </span>
+              </div>
+            </div>
+
+            <!-- 20期高频 Stable Top 10 防守底牌 -->
+            <div class="glass-panel p-6 space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                  <span class="text-base">🌟</span>
+                  <h3 class="text-sm font-bold text-purple-300">20期高频稳健号 (Stable Top 10 底牌)</h3>
+                </div>
+                <span class="text-xs text-purple-400 font-mono">Lift: {{ aggCockpit.walk_forward && aggCockpit.walk_forward.stable_lift != null ? aggCockpit.walk_forward.stable_lift + 'x' : 'N/A' }}</span>
+              </div>
+              
+              <div class="flex flex-wrap gap-2">
+                <span v-for="num in (aggCockpit.stable_top10 || [])" :key="num"
+                      class="lottery-ball ball-cyan w-8 h-8 text-xs font-bold">
+                  {{ String(num).padStart(2, '0') }}
+                </span>
+              </div>
+            </div>
+
+            <!-- 各路子系统出票明细 -->
+            <div class="glass-panel p-6 space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                  <span class="text-base">📡</span>
+                  <h3 class="text-sm font-bold text-white">各路子系统出票清单</h3>
+                </div>
+              </div>
+              <div class="space-y-2 max-h-[220px] overflow-y-auto pr-1 text-xs">
+                <div v-for="(numList, sysName) in (aggCockpit.subsystems_detail || {})" :key="sysName"
+                     class="p-2 rounded bg-slate-900/60 border border-slate-800 flex items-center justify-between">
+                  <span class="font-bold text-cyan-300">{{ sysName }} ({{ numList.length }}码):</span>
+                  <span class="font-mono text-slate-300">{{ numList.map(n => String(n).padStart(2, '0')).join('-') }}</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ═════════════════ 策略汇总复盘：每日战报总库 ═════════════════ -->
+
+      <div v-show="activeTab === 'agg_reports'" class="space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
+          <div class="space-y-1">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">📑</span>
+              <h2 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-amber-300 bg-clip-text text-transparent">
+                策略汇总复盘 — 每日战报总库
+              </h2>
+            </div>
+            <p class="text-xs text-slate-400">历史每一期主推定胆、多维共识投票清单与无前视诚实回测落盘档案</p>
+          </div>
+          <button @click="fetchAggHistory" class="cyber-btn cyber-btn-cyan text-xs">
+            🔄 刷新战报列表
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- 左侧：战报文件列表 -->
+          <div class="lg:col-span-4 space-y-4">
+            <div class="glass-panel p-4">
+              <div class="text-xs font-bold text-slate-300 pb-3 border-b border-slate-800 mb-3 flex items-center justify-between">
+                <span>历史战报列表</span>
+                <span class="font-mono text-cyan-400">共 {{ aggHistory.length }} 期</span>
+              </div>
+              <div class="space-y-2 max-h-[620px] overflow-y-auto pr-1">
+                <div v-for="item in aggHistory" :key="item.filename"
+                     class="p-3 rounded-xl border transition cursor-pointer"
+                     :class="selectedAggReport && selectedAggReport.filename === item.filename ? 'bg-cyan-500/20 border-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.3)]' : 'bg-slate-900/60 border-slate-800 hover:border-slate-700'"
+                     @click="selectAggReport(item)">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-200">{{ item.title }}</span>
+                    <span class="text-[10px] px-1.5 py-0.2 rounded font-mono bg-cyan-500/20 text-cyan-300">
+                      第 {{ item.period }} 期
+                    </span>
+                  </div>
+                  <div class="text-[10px] text-slate-500 font-mono mt-1">{{ item.mtime }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右侧：战报纯文本浏览器 -->
+          <div class="lg:col-span-8 space-y-4">
+            <div class="glass-panel p-6 min-h-[650px]">
+              <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">📜</span>
+                  <h3 class="text-base font-bold text-cyan-300">
+                    {{ selectedAggReport ? selectedAggReport.title : '请选择左侧战报查看' }}
+                  </h3>
+                </div>
+                <span class="text-xs text-slate-400 font-mono" v-if="selectedAggReport">{{ selectedAggReport.mtime }}</span>
+              </div>
+
+              <pre class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 text-slate-200 text-xs font-mono leading-relaxed overflow-y-auto max-h-[580px] whitespace-pre-wrap">{{ aggReportDetail || '正在加载汇总战报内容...' }}</pre>
+            </div>
+          </div>
+        </div>
+      </div>

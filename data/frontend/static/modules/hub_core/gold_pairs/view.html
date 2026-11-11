@@ -1,0 +1,58 @@
+<div v-show="activeTab === 'gold_pairs'" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="glass-panel gold-core-panel p-6">
+            <h2 class="text-base font-bold text-amber-300 mb-4 flex items-center gap-2">
+              <span>👑</span> 今日核心金胆最优3码 (高频共振核心)
+            </h2>
+            <div class="grid grid-cols-3 gap-3 py-4 text-center">
+              <div v-for="num in (prediction.top5_gold || []).slice(0, 3)" :key="num" class="p-3 bg-slate-900/80 rounded-xl border border-amber-500/40">
+                <div class="lottery-ball ball-gold text-xl font-bold mx-auto mb-2">{{ String(num).padStart(2, '0') }}</div>
+                <div class="text-xs text-amber-300 font-mono">综合得分高</div>
+              </div>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed mt-4">
+              ✨ <strong>老派操盘大白话：</strong>今日最优3码金胆是“蹭热度(EF)”、“抓冷门(RW)”和“找周期(FO)”三大维度共同推荐的交集焦点，稳定性极佳。
+            </p>
+          </div>
+
+          <div class="glass-panel p-6">
+            <h2 class="text-base font-bold text-slate-100 mb-4 flex items-center gap-2">
+              <span>🎯</span> 今日极简选2 · 黄金搭档 (定金选2)
+            </h2>
+            <div v-if="prediction.golden_pair && prediction.golden_pair.length === 2" class="p-5 bg-slate-900 rounded-xl border border-cyan-500/30 flex items-center justify-around">
+              <div class="lottery-ball ball-gold text-2xl font-bold">{{ String(prediction.golden_pair[0]).padStart(2, '0') }}</div>
+              <span class="text-3xl font-bold text-amber-400">+</span>
+              <div class="lottery-ball ball-gold text-2xl font-bold">{{ String(prediction.golden_pair[1]).padStart(2, '0') }}</div>
+            </div>
+            <div v-else class="p-5 bg-slate-900 rounded-xl border border-amber-500/30 text-xs text-amber-400">
+              ⚠️ 数据缺失：未解析到当日研判报告的选2搭档，不做占位展示
+            </div>
+            <div class="mt-4 space-y-2 text-xs">
+              <div class="flex justify-between p-2 rounded bg-slate-900/50">
+                <span class="text-slate-400">历史协同得分:</span>
+                <span class="text-amber-400 font-mono font-bold">{{ prediction.golden_pair_score ?? '--' }}</span>
+              </div>
+              <div class="flex justify-between p-2 rounded bg-slate-900/50">
+                <span class="text-slate-400">共现增益 (Lift):</span>
+                <span class="text-cyan-400 font-mono font-bold">{{ prediction.golden_pair_lift != null ? prediction.golden_pair_lift + 'x' : '--' }}<template v-if="prediction.golden_pair_cooc != null"> (近100期同出{{ prediction.golden_pair_cooc }}次)</template></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 各子模块专有 2 码 -->
+        <div class="glass-panel p-6">
+          <h2 class="text-sm font-bold text-slate-100 mb-4">🔍 各子模块专有 2 码分布 (协同来源)</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div v-for="(item, idx) in prediction.sub_pairs" :key="idx" class="p-4 rounded-lg bg-slate-900 border border-slate-800">
+              <div class="text-xs font-bold text-cyan-300 mb-2">{{ item.name }}</div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="lottery-ball ball-cyan text-xs font-bold">{{ String(item.pair[0]).padStart(2, '0') }}</span>
+                <span class="text-slate-500">+</span>
+                <span class="lottery-ball ball-cyan text-xs font-bold">{{ String(item.pair[1]).padStart(2, '0') }}</span>
+              </div>
+              <p class="text-[11px] text-slate-400 leading-relaxed">{{ item.tag }}</p>
+            </div>
+          </div>
+        </div>
+      </div>

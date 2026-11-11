@@ -1,0 +1,84 @@
+<div v-show="activeTab === 'env_regime'" class="space-y-6">
+        <!-- 头部 Header -->
+        <div class="glass-panel p-6 border-l-4 border-indigo-400 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-[0_0_25px_rgba(99,102,241,0.15)]">
+          <div class="space-y-1">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">🧭</span>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="text-xl font-bold text-white tracking-wide">宏观大环境与变盘监控雷达</h2>
+                  <span class="cyber-badge cyber-badge-cyan font-mono font-bold">REGIME RADAR</span>
+                </div>
+                <p class="text-xs text-slate-400">
+                  大白话：识别今天是进攻态、震荡态还是防守态，用 KL 散度描述号码分布的形态变化。
+                  <span class="text-amber-500/90">⚠️ 开奖序列近似纯随机（lag-1 自相关≈0），本页仅作形态描述，不构成预测力证据。</span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <button @click="fetchEnvRegimeSummary" class="cyber-btn cyber-btn-cyan text-xs flex items-center gap-1">
+            <span>🔄 实时诊断大盘</span>
+          </button>
+        </div>
+
+        <!-- 4 项核心仪表卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="glass-panel p-4 border-l-4 border-indigo-500 space-y-1">
+            <span class="text-xs text-slate-400 font-semibold">大盘当前态势</span>
+            <div class="text-xl font-bold text-indigo-300">{{ envRegimeSummary?.environment_name || '平衡震荡期' }}</div>
+            <div class="text-[10px] text-slate-500 font-mono">Class {{ envRegimeSummary?.environment_class ?? '--' }} 态势模型</div>
+          </div>
+
+          <div class="glass-panel p-4 border-l-4 border-amber-500 space-y-1">
+            <span class="text-xs text-slate-400 font-semibold">大盘温度计评分</span>
+            <div class="text-xl font-bold text-amber-400">{{ envRegimeSummary?.temperature_score != null ? envRegimeSummary?.temperature_score : '--' }} <span class="text-xs text-slate-400">/ 100</span></div>
+            <div class="text-[10px] text-slate-500 font-mono">置信度 {{ envRegimeSummary?.confidence != null ? envRegimeSummary?.confidence : '--' }}</div>
+          </div>
+
+          <div class="glass-panel p-4 border-l-4 border-emerald-500 space-y-1">
+            <span class="text-xs text-slate-400 font-semibold">变盘漂移风险 (KL散度)</span>
+            <div class="text-base font-bold text-emerald-400">{{ envRegimeSummary?.drift_risk || '--' }}</div>
+            <div class="text-[10px] text-amber-500/90 font-mono leading-snug">
+              ⚠️ {{ envRegimeSummary?.predictive_power_note || '开奖序列近似纯随机，本项仅为形态描述，不构成预测力证据' }}
+            </div>
+          </div>
+
+          <div class="glass-panel p-4 border-l-4 border-cyan-500 space-y-1">
+            <span class="text-xs text-slate-400 font-semibold">操盘模式建议</span>
+            <div class="text-sm font-bold text-cyan-300 truncate">{{ envRegimeSummary?.strategy_advice || '--' }}</div>
+            <div class="text-[10px] text-amber-500/90 font-mono leading-snug">
+              ⚠️ {{ envRegimeSummary?.weights_source || '权重来源未标注' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- 详细策略与权重建议 -->
+        <div class="glass-panel p-6 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <span class="text-sm font-bold text-white flex items-center gap-2">
+              <span>⚙️</span> 当前大环境下的三维对冲权重（静态默认值）
+            </span>
+            <span class="cyber-badge cyber-badge-amber font-mono text-[10px]">非自学习产出</span>
+          </div>
+          <p class="text-[11px] text-amber-500/90 leading-snug">⚠️ 这组权重是静态默认值，并非由自学习/自适应算法产出（自学习门控当前冻结）。原"自适应动态微调"表述与实现不符，已更正。</p>
+          <p class="text-xs text-slate-400">{{ envRegimeSummary?.description || '各区间分布均匀，无明显趋势突变' }}</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <div class="p-4 rounded-xl bg-slate-900/80 border border-amber-500/30 text-center space-y-1">
+              <span class="text-xs text-amber-400 font-bold block">EF (蹭热度 / 能量场)</span>
+              <div class="text-2xl font-bold font-mono text-amber-300">{{ envRegimeSummary?.recommended_weights?.EF ?? '--' }}</div>
+              <span class="text-[10px] text-slate-500">捕捉近期高频释能点</span>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/80 border border-cyan-500/30 text-center space-y-1">
+              <span class="text-xs text-cyan-400 font-bold block">RW (抓冷门 / 遗漏回补)</span>
+              <div class="text-2xl font-bold font-mono text-cyan-300">{{ envRegimeSummary?.recommended_weights?.RW ?? '--' }}</div>
+              <span class="text-[10px] text-slate-500">守株待兔极限冷号反弹</span>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/80 border border-purple-500/30 text-center space-y-1">
+              <span class="text-xs text-purple-400 font-bold block">FO (找周期 / 傅里叶相干)</span>
+              <div class="text-2xl font-bold font-mono text-purple-300">{{ envRegimeSummary?.recommended_weights?.FO ?? '--' }}</div>
+              <span class="text-[10px] text-slate-500">锁定稳健周期振荡号</span>
+            </div>
+          </div>
+        </div>
+      </div>

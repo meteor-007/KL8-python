@@ -18,6 +18,9 @@ if PROJ not in sys.path:
     sys.path.insert(0, PROJ)
 os.environ["PYTHONPATH"] = PROJ + os.pathsep + os.environ.get("PYTHONPATH", "")
 
+from backend.utils.paths import _ensure_project_path
+_ensure_project_path()
+
 import pytest
 import numpy as np
 import torch
@@ -100,13 +103,18 @@ def test_fast_training_and_prediction():
 
 
 def test_lstm_service_full():
-    """测试 LSTMService 门面接口"""
+    """测试 LSTMService 门面接口
+
+    2026-10-22 说明：LSTM 在注册表已判 retired，生产入口 (`run_daily_pipeline`)
+    会按策略层拒绝产出当期票面。但本用例验证的是**引擎本身**的推理能力，
+    故显式 `respect_retirement=False` 绕过出号策略门控 —— 策略与引擎分离测试。
+    """
     pc = LSTMService.precheck()
     assert pc is not None
     assert "latest_period" in pc
     assert "target" in pc
 
-    pred = LSTMService.train_and_predict(epochs=2)
+    pred = LSTMService.train_and_predict(epochs=2, respect_retirement=False)
     assert pred is not None
     assert "gold" in pred
     assert "silver" in pred
@@ -114,6 +122,18 @@ def test_lstm_service_full():
     assert len(pred["top10"]) == 10
     assert len(pred["top20"]) == 20
     assert 0.0 <= pred["consistency"] <= 1.0
+
+
+def test_lstm_retirement_gate_blocks_production():
+    """退役门控：生产默认调用必须被拦截（策略层生效）。
+
+    与上一条用例配对：引擎可测，但生产入口不得产票。
+    """
+    assert LSTMService._is_retired() is True
+    assert LSTMService.train_and_predict(epochs=1) is None
+    res = LSTMService.run_daily_pipeline(backfill_n=0, verbose=False)
+    assert res.get("skipped") == "retired"
+    assert res.get("report_path") is None
 
 
 if __name__ == "__main__":

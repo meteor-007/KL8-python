@@ -1,0 +1,671 @@
+<div v-show="activeTab === 'sixteen_cockpit'" class="space-y-6 pt-2 border-t border-slate-800/80">
+        
+        <!-- 并入块：原「16期频次全景」探盘区（已去掉与驾驶舱重复的精选桶） -->
+        <div class="glass-panel p-5 space-y-4">
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2.5">
+                <span class="text-xl">🔮</span>
+                <h2 class="text-base font-bold text-slate-100">
+                  频次全景探盘 · 跃迁梯队与 80 码矩阵
+                </h2>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-800 text-slate-400 border border-slate-700">
+                  已并入中热推演
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">
+                留窗升频 / 出窗降频物理层；精选出号请回看上方「中热主推 / 频次桶」。
+              </p>
+            </div>
+            <button @click="scrollToSixteenMatrixReview" class="cyber-btn text-xs flex items-center gap-1 bg-emerald-500/15 text-emerald-200 border border-emerald-400/40">
+              <span>📊</span> 滚动复盘
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 lg:grid-cols-3 gap-3" v-if="sixteenSummary">
+            <div class="glass-card p-3 space-y-1 border border-emerald-500/25">
+              <div class="text-[11px] font-mono text-slate-400">🚀 待升频 (留窗)</div>
+              <div class="text-lg font-bold font-mono text-emerald-300">
+                {{ sixteenSummary.transition_analysis?.summary?.in_window_count ?? '--' }} 码
+              </div>
+            </div>
+            <div class="glass-card p-3 space-y-1 border border-rose-500/25">
+              <div class="text-[11px] font-mono text-slate-400">🔻 待降频 (出窗)</div>
+              <div class="text-lg font-bold font-mono text-rose-300">
+                {{ sixteenSummary.transition_analysis?.summary?.outgoing_count ?? '--' }} 码
+              </div>
+            </div>
+            <div class="glass-card p-3 space-y-1 border border-amber-500/25">
+              <div class="text-[11px] font-mono text-slate-400">📋 出窗基准期</div>
+              <div class="text-lg font-bold font-mono text-amber-300">第 {{ sixteenSummary.outgoing_period }} 期</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═════════ 五大频次跃迁核心梯队全景看板 ═════════ -->
+        <div class="glass-panel p-6 space-y-4" v-if="sixteenSummary && sixteenSummary.transition_analysis">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">⚡</span>
+              <h3 class="text-base font-bold" style="color: var(--text-main);">下一期五大频次跃迁核心梯队 (按跃迁动量精排)</h3>
+            </div>
+            <span class="text-xs font-mono font-bold" style="color: var(--theme-accent);">均值回归 + 动量共振双因子赋能</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <!-- 梯队 1: 破冰反弹 -->
+            <div class="ladder-card ladder-card-ice space-y-3">
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-sky-500/20 text-sky-500 dark:text-sky-300 border border-sky-500/30">
+                    🧊 破冰跃迁
+                  </span>
+                  <span class="text-xs font-mono text-sky-600 dark:text-sky-400 font-bold">0➔1 / 1➔2</span>
+                </div>
+                <h4 class="text-xs font-bold" style="color: var(--text-main);">破冰反弹梯队</h4>
+                <p class="text-[11px] leading-relaxed" style="color: var(--text-muted);">
+                  极冷死号/低频冷号触底反弹，均值回归动能最强，防冷号突袭。
+                </p>
+              </div>
+
+              <div class="space-y-2 pt-2 border-t" style="border-color: var(--border-subtle);">
+                <span class="text-[10px] block font-medium" style="color: var(--text-muted);">推荐主攻号 (点击看详情):</span>
+                <div class="flex flex-wrap gap-1.5 min-h-[30px] items-center">
+                  <span v-for="num in (sixteenSummary.transition_analysis.ladders?.ladder_ice_break?.top_picks || [])" :key="num"
+                        class="lottery-ball ball-sky w-7 h-7 text-xs font-bold font-mono cursor-pointer hover:scale-110 transition shadow-sm"
+                        @click="openBallDetail({number: num})">
+                    {{ String(num).padStart(2, '0') }}
+                  </span>
+                </div>
+                <button @click="setSixteenMatrixFilter('ICE_BREAK')" class="ladder-btn ladder-btn-ice">
+                  🎯 筛选此梯队 ({{ sixteenSummary.transition_analysis.ladders?.ladder_ice_break?.count ?? '--' }}码)
+                </button>
+              </div>
+            </div>
+
+            <!-- 梯队 2: 温号苏醒 -->
+            <div class="ladder-card ladder-card-warm space-y-3">
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/30">
+                    🌿 温号苏醒
+                  </span>
+                  <span class="text-xs font-mono text-amber-600 dark:text-amber-400 font-bold">2➔3 次</span>
+                </div>
+                <h4 class="text-xs font-bold" style="color: var(--text-main);">温号苏醒梯队</h4>
+                <p class="text-[11px] leading-relaxed" style="color: var(--text-muted);">
+                  温冷号蓄势结束，启动向中热黄金区间突破，出号赔率极佳。
+                </p>
+              </div>
+
+              <div class="space-y-2 pt-2 border-t" style="border-color: var(--border-subtle);">
+                <span class="text-[10px] block font-medium" style="color: var(--text-muted);">推荐主攻号 (点击看详情):</span>
+                <div class="flex flex-wrap gap-1.5 min-h-[30px] items-center">
+                  <span v-for="num in (sixteenSummary.transition_analysis.ladders?.ladder_warm_wake?.top_picks || [])" :key="num"
+                        class="lottery-ball ball-amber w-7 h-7 text-xs font-bold font-mono cursor-pointer hover:scale-110 transition shadow-sm"
+                        @click="openBallDetail({number: num})">
+                    {{ String(num).padStart(2, '0') }}
+                  </span>
+                </div>
+                <button @click="setSixteenMatrixFilter('WARM_WAKE')" class="ladder-btn ladder-btn-warm">
+                  🎯 筛选此梯队 ({{ sixteenSummary.transition_analysis.ladders?.ladder_warm_wake?.count ?? '--' }}码)
+                </button>
+              </div>
+            </div>
+
+            <!-- 梯队 3: 黄金冲刺 (核心主攻) -->
+            <div class="ladder-card ladder-card-gold space-y-3">
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-amber-500 text-slate-950 shadow-sm">
+                    👑 核心主攻
+                  </span>
+                  <span class="text-xs font-mono text-amber-600 dark:text-amber-300 font-bold">3➔4 黄金冲刺</span>
+                </div>
+                <h4 class="text-xs font-bold text-amber-600 dark:text-amber-300">黄金中热冲刺梯队</h4>
+                <p class="text-[11px] leading-relaxed font-medium" style="color: var(--text-main);">
+                  大盘最厚实的粮仓，3次中温号跨入4次黄金中热甜区，单期产出主力！
+                </p>
+              </div>
+
+              <div class="space-y-2 pt-2 border-t" style="border-color: rgba(245,158,11,0.3);">
+                <span class="text-[10px] text-amber-700 dark:text-amber-200 font-bold block">推荐主攻号 (核心主力):</span>
+                <div class="flex flex-wrap gap-1.5 min-h-[30px] items-center">
+                  <span v-for="num in (sixteenSummary.transition_analysis.ladders?.ladder_gold_rush?.top_picks || [])" :key="num"
+                        class="lottery-ball ball-gold w-7 h-7 text-xs font-bold font-mono cursor-pointer hover:scale-110 transition shadow-[0_0_8px_rgba(245,158,11,0.5)]"
+                        @click="openBallDetail({number: num})">
+                    {{ String(num).padStart(2, '0') }}
+                  </span>
+                </div>
+                <button @click="setSixteenMatrixFilter('GOLD_RUSH')" class="ladder-btn ladder-btn-gold">
+                  ⚡ 筛选冲刺主力 ({{ sixteenSummary.transition_analysis.ladders?.ladder_gold_rush?.count ?? '--' }}码)
+                </button>
+              </div>
+            </div>
+
+            <!-- 梯队 4: 动量延续 -->
+            <div class="ladder-card ladder-card-momentum space-y-3">
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30">
+                    🚀 动量延续
+                  </span>
+                  <span class="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-bold">4➔5 / 5➔6</span>
+                </div>
+                <h4 class="text-xs font-bold" style="color: var(--text-main);">黄金动量延续梯队</h4>
+                <p class="text-[11px] leading-relaxed" style="color: var(--text-muted);">
+                  强势中热号持续高频输出，动能连击突破强热，防踏空。
+                </p>
+              </div>
+
+              <div class="space-y-2 pt-2 border-t" style="border-color: var(--border-subtle);">
+                <span class="text-[10px] block font-medium" style="color: var(--text-muted);">推荐主攻号 (点击看详情):</span>
+                <div class="flex flex-wrap gap-1.5 min-h-[30px] items-center">
+                  <span v-for="num in (sixteenSummary.transition_analysis.ladders?.ladder_hot_momentum?.top_picks || [])" :key="num"
+                        class="lottery-ball ball-emerald w-7 h-7 text-xs font-bold font-mono cursor-pointer hover:scale-110 transition shadow-sm"
+                        @click="openBallDetail({number: num})">
+                    {{ String(num).padStart(2, '0') }}
+                  </span>
+                </div>
+                <button @click="setSixteenMatrixFilter('HOT_MOMENTUM')" class="ladder-btn ladder-btn-momentum">
+                  🎯 筛选此梯队 ({{ sixteenSummary.transition_analysis.ladders?.ladder_hot_momentum?.count ?? '--' }}码)
+                </button>
+              </div>
+            </div>
+
+            <!-- 梯队 5: 出窗降频避坑 -->
+            <div class="ladder-card ladder-card-cool space-y-3">
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/30">
+                    🛡️ 出窗降温
+                  </span>
+                  <span class="text-xs font-mono text-rose-600 dark:text-rose-400 font-bold">8➔7 / 7➔6</span>
+                </div>
+                <h4 class="text-xs font-bold" style="color: var(--text-main);">出窗自然降温避坑</h4>
+                <p class="text-[11px] leading-relaxed" style="color: var(--text-muted);">
+                  16期前开出且高位透支号，大概率轮空自然降温卸压，防追高避坑。
+                </p>
+              </div>
+
+              <div class="space-y-2 pt-2 border-t" style="border-color: var(--border-subtle);">
+                <span class="text-[10px] block font-medium" style="color: var(--text-muted);">防守避坑号码:</span>
+                <div class="flex flex-wrap gap-1.5 min-h-[30px] items-center">
+                  <span v-for="num in (sixteenSummary.transition_analysis.ladders?.ladder_outgoing_cool?.avoid_picks || [])" :key="num"
+                        class="lottery-ball ball-crimson w-7 h-7 text-xs font-bold font-mono cursor-pointer hover:scale-110 transition shadow-sm opacity-90"
+                        @click="openBallDetail({number: num})">
+                    {{ String(num).padStart(2, '0') }}
+                  </span>
+                </div>
+                <button @click="setSixteenMatrixFilter('OUTGOING_COOL')" class="ladder-btn ladder-btn-cool">
+                  🛡️ 筛选避坑号 ({{ sixteenSummary.transition_analysis.ladders?.ladder_outgoing_cool?.count ?? '--' }}码)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═════════ 跨梯队跃迁黄金搭档 (选2 / 选3 精配) ═════════ -->
+        <div class="glass-panel p-5 space-y-3" v-if="sixteenSummary && sixteenSummary.transition_analysis?.transition_pairs">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">💎</span>
+              <h3 class="text-sm font-bold" style="color: var(--text-main);">跨梯队跃迁黄金搭档 (Top 5 选2跨阶联动组合)</h3>
+            </div>
+            <span class="text-[11px] font-mono font-bold" style="color: var(--theme-accent);">破冰 × 冲刺 × 动量双核配对</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+            <div v-for="(p, idx) in sixteenSummary.transition_analysis.transition_pairs" :key="p.pair_str"
+                 class="p-3 rounded-lg transition space-y-1.5 border"
+                 style="background: var(--bg-card-inner); border-color: var(--border-subtle);"
+                 :class="'hover:border-amber-400'">
+              <div class="flex items-center justify-between text-xs font-mono">
+                <span class="text-amber-500 dark:text-amber-400 font-bold">Top {{ idx + 1 }} · {{ p.tag }}</span>
+                <span class="text-cyan-600 dark:text-cyan-400 font-bold">{{ p.score }}分</span>
+              </div>
+              <div class="flex items-center justify-center gap-2 py-1.5 rounded border"
+                   style="background: var(--bg-card); border-color: var(--border-subtle);">
+                <span class="lottery-ball ball-gold w-6 h-6 text-xs font-bold font-mono">{{ String(p.pair[0]).padStart(2, '0') }}</span>
+                <span class="text-amber-500 font-bold text-sm">+</span>
+                <span class="lottery-ball ball-gold w-6 h-6 text-xs font-bold font-mono">{{ String(p.pair[1]).padStart(2, '0') }}</span>
+              </div>
+              <div class="text-[10px] truncate" style="color: var(--text-muted);">{{ p.desc }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═════════ 窗口滚动复盘 Walk-Forward（严格屏蔽未来数据） ═════════ -->
+        <div id="module-review-sixteen-matrix" class="space-y-4">
+          <div class="glass-panel p-5 border border-emerald-500/30">
+            <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+              <div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="text-xl">📊</span>
+                  <h3 class="text-sm font-bold text-emerald-300">跃迁梯队 / 选2 · 窗口滚动复盘（严格屏蔽未来数据）</h3>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-mono">
+                    近 {{ sixteenReviewPeriods }} 期 · 无未来
+                  </span>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-1.5 leading-relaxed max-w-3xl">
+                  对目标期 <b class="text-slate-300">T</b>：只用截止 <b class="text-slate-300">T-1</b> 的 16 期滑动窗推演五大梯队与跨梯队选2，
+                  再与 <b class="text-slate-300">T</b> 真实开奖对账。
+                  {{ sixteenReview?.evidence_note || '' }}
+                </p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-[11px] text-slate-500 font-mono">窗口:</span>
+                <button v-for="n in [15, 30, 50]" :key="'16_wf_'+n"
+                        @click="fetchSixteenReview(n)"
+                        class="px-2.5 py-1 rounded text-xs font-mono transition border"
+                        :class="sixteenReviewPeriods === n ? 'bg-emerald-500/25 text-emerald-200 border-emerald-400/50 font-bold' : 'bg-slate-900 text-slate-400 border-slate-700 hover:border-slate-600'">
+                  {{ n }}期
+                </button>
+                <button @click="fetchSixteenReview(sixteenReviewPeriods)" :disabled="sixteenLoading"
+                        class="cyber-btn cyber-btn-cyan text-xs">
+                  {{ sixteenLoading ? '计算中...' : '🔄 刷新复盘' }}
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4" v-if="sixteenReview && sixteenReview.stats">
+              <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800">
+                <div class="text-[11px] text-slate-400">金胆命中率</div>
+                <div class="text-2xl font-bold font-mono text-amber-400 mt-0.5">
+                  {{ sixteenReview.stats.gold_hit_rate }}%
+                </div>
+                <div class="text-[10px] font-mono mt-0.5" :class="sixteenReview.stats.gold_lift >= 1 ? 'text-emerald-400' : 'text-slate-500'">
+                  Lift {{ sixteenReview.stats.gold_lift }}x · 基线 25%
+                </div>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800">
+                <div class="text-[11px] text-slate-400">跃迁 Top5 均命中</div>
+                <div class="text-2xl font-bold font-mono text-emerald-400 mt-0.5">
+                  {{ sixteenReview.stats.transition_top5_avg_hits ?? sixteenReview.stats.top5_avg_hits }}
+                  <span class="text-xs text-slate-500">码/期</span>
+                </div>
+                <div class="text-[10px] font-mono mt-0.5" :class="(sixteenReview.stats.transition_top5_lift ?? sixteenReview.stats.top5_lift) >= 1 ? 'text-emerald-400' : 'text-slate-500'">
+                  Lift {{ sixteenReview.stats.transition_top5_lift ?? sixteenReview.stats.top5_lift }}x · 基线 1.25
+                </div>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800">
+                <div class="text-[11px] text-slate-400">跨梯队选2 全中率</div>
+                <div class="text-2xl font-bold font-mono text-cyan-300 mt-0.5">
+                  {{ sixteenReview.stats.transition_pair_both_rate != null ? sixteenReview.stats.transition_pair_both_rate + '%' : (sixteenReview.stats.top1_both_rate != null ? sixteenReview.stats.top1_both_rate + '%' : '--') }}
+                </div>
+                <div class="text-[10px] font-mono mt-0.5 text-slate-500">
+                  Lift {{ sixteenReview.stats.transition_pair_both_lift ?? sixteenReview.stats.top1_both_lift ?? '--' }}x · 基线 6.01%
+                </div>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800">
+                <div class="text-[11px] text-slate-400">黄金冲刺单码命中</div>
+                <div class="text-2xl font-bold font-mono text-amber-300 mt-0.5">
+                  {{ sixteenReview.stats.gold_rush_pick_hit_rate != null ? sixteenReview.stats.gold_rush_pick_hit_rate + '%' : '--' }}
+                </div>
+                <div class="text-[10px] text-slate-500 font-mono mt-0.5">
+                  破冰 {{ sixteenReview.stats.ice_pick_hit_rate != null ? sixteenReview.stats.ice_pick_hit_rate + '%' : '--' }} · 基线 25%
+                </div>
+              </div>
+            </div>
+
+            <!-- 操盘简报 ops_pts 样本外指标 -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-3" v-if="sixteenReview && sixteenReview.stats">
+              <div class="p-3 rounded-lg bg-violet-950/40 border border-violet-500/30">
+                <div class="text-[11px] text-violet-300/80">操盘 Top5 均命中</div>
+                <div class="text-2xl font-bold font-mono text-violet-200 mt-0.5">
+                  {{ sixteenReview.stats.ops_top5_avg_hits ?? '--' }}
+                  <span class="text-xs text-slate-500">码/期</span>
+                </div>
+                <div class="text-[10px] font-mono mt-0.5" :class="(sixteenReview.stats.ops_top5_lift ?? 0) >= 1 ? 'text-emerald-400' : 'text-slate-500'">
+                  Lift {{ sixteenReview.stats.ops_top5_lift ?? '--' }}x · 基线 1.25
+                </div>
+              </div>
+              <div class="p-3 rounded-lg bg-violet-950/40 border border-violet-500/30">
+                <div class="text-[11px] text-violet-300/80">操盘 Top12 均命中</div>
+                <div class="text-2xl font-bold font-mono text-violet-200 mt-0.5">
+                  {{ sixteenReview.stats.ops_top12_avg_hits ?? '--' }}
+                  <span class="text-xs text-slate-500">码/期</span>
+                </div>
+                <div class="text-[10px] font-mono mt-0.5" :class="(sixteenReview.stats.ops_top12_lift ?? 0) >= 1 ? 'text-emerald-400' : 'text-slate-500'">
+                  Lift {{ sixteenReview.stats.ops_top12_lift ?? '--' }}x · 基线 3.0
+                </div>
+              </div>
+              <div class="p-3 rounded-lg bg-violet-950/40 border border-violet-500/30">
+                <div class="text-[11px] text-violet-300/80">尖刀 tip3 均命中</div>
+                <div class="text-2xl font-bold font-mono text-violet-200 mt-0.5">
+                  {{ sixteenReview.stats.ops_tip3_avg_hits ?? '--' }}
+                  <span class="text-xs text-slate-500">码/期</span>
+                </div>
+                <div class="text-[10px] font-mono mt-0.5" :class="(sixteenReview.stats.ops_tip3_lift ?? 0) >= 1 ? 'text-emerald-400' : 'text-slate-500'">
+                  Lift {{ sixteenReview.stats.ops_tip3_lift ?? '--' }}x · 基线 0.75
+                </div>
+              </div>
+              <div class="p-3 rounded-lg bg-violet-950/40 border border-violet-500/30">
+                <div class="text-[11px] text-violet-300/80">中热 raw Top5</div>
+                <div class="text-2xl font-bold font-mono text-slate-200 mt-0.5">
+                  {{ sixteenReview.stats.top5_avg_hits ?? '--' }}
+                  <span class="text-xs text-slate-500">码/期</span>
+                </div>
+                <div class="text-[10px] font-mono mt-0.5 text-slate-500">
+                  Lift {{ sixteenReview.stats.top5_lift ?? '--' }}x · 对照操盘轨
+                </div>
+              </div>
+            </div>
+
+            <!-- 频4双轨：出窗同源 vs 动量精选 -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-3" v-if="sixteenReview && sixteenReview.stats">
+              <div class="p-3 rounded-lg bg-orange-950/35 border border-orange-500/30">
+                <div class="text-[11px] text-orange-300/80">频4出窗同源均命中</div>
+                <div class="text-2xl font-bold font-mono text-orange-200 mt-0.5">
+                  {{ sixteenReview.stats.freq4_edge_avg_hits ?? '--' }}
+                  <span class="text-xs text-slate-500">码/期</span>
+                </div>
+                <div class="text-[10px] font-mono mt-0.5 text-slate-500">
+                  命中率 {{ sixteenReview.stats.freq4_edge_hit_rate ?? '--' }}%
+                </div>
+              </div>
+              <div class="p-3 rounded-lg bg-cyan-950/35 border border-cyan-500/30">
+                <div class="text-[11px] text-cyan-300/80">频4动量精选均命中</div>
+                <div class="text-2xl font-bold font-mono text-cyan-200 mt-0.5">
+                  {{ sixteenReview.stats.freq4_midhot_avg_hits ?? '--' }}
+                  <span class="text-xs text-slate-500">码/期</span>
+                </div>
+                <div class="text-[10px] font-mono mt-0.5 text-slate-500">
+                  命中率 {{ sixteenReview.stats.freq4_midhot_hit_rate ?? '--' }}%
+                </div>
+              </div>
+              <div class="p-3 rounded-lg bg-orange-950/35 border border-orange-500/30">
+                <div class="text-[11px] text-orange-300/80">同源≥5 时均命中</div>
+                <div class="text-2xl font-bold font-mono text-orange-200 mt-0.5">
+                  {{ sixteenReview.stats.freq4_edge_conc_avg_hits ?? '--' }}
+                  <span class="text-xs text-slate-500">码/期</span>
+                </div>
+                <div class="text-[10px] font-mono mt-0.5 text-slate-500">
+                  {{ sixteenReview.stats.freq4_edge_conc_periods ?? 0 }} 期 · 命中率 {{ sixteenReview.stats.freq4_edge_conc_hit_rate ?? '--' }}%
+                </div>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-700/80">
+                <div class="text-[11px] text-slate-400">双轨结论</div>
+                <div class="text-[11px] text-slate-300 mt-1.5 leading-relaxed">
+                  同源作结构旁证；主精选仍用动量分。同源≥5 时命中率更有参考价值。
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-panel p-5">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <h4 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                <span>📋</span> 逐期样本外对账明细
+                <span class="text-[10px] text-slate-500 font-mono font-normal">
+                  共 {{ sixteenReview?.rows?.length ?? '--' }} 期 · 绿框=实开命中
+                </span>
+              </h4>
+              <span class="text-[10px] text-slate-500">跃迁 / 操盘 / 频4双轨</span>
+            </div>
+
+            <div v-if="sixteenLoading" class="py-8 text-center text-slate-400 text-sm">正在计算 Walk-Forward 流水（屏蔽未来）...</div>
+            <div v-else-if="!sixteenReview || !sixteenReview.rows || !sixteenReview.rows.length"
+                 class="py-8 text-center text-slate-500 text-sm">
+              暂无复盘数据，请点击「刷新复盘」
+            </div>
+            <div v-else class="overflow-x-auto max-h-[420px] overflow-y-auto">
+              <table class="w-full text-xs font-mono">
+                <thead class="sticky top-0 bg-slate-950 z-10">
+                  <tr class="text-slate-400 border-b border-slate-800 text-left">
+                    <th class="py-2.5 px-3">目标期 T</th>
+                    <th class="py-2.5 px-3">锚定期</th>
+                    <th class="py-2.5 px-3">金胆</th>
+                    <th class="py-2.5 px-3">跃迁 Top5</th>
+                    <th class="py-2.5 px-3">跃迁命中</th>
+                    <th class="py-2.5 px-3">操盘 Top5</th>
+                    <th class="py-2.5 px-3">操盘命中</th>
+                    <th class="py-2.5 px-3">同源4</th>
+                    <th class="py-2.5 px-3">动量4</th>
+                    <th class="py-2.5 px-3">跨梯队选2</th>
+                    <th class="py-2.5 px-3">组合</th>
+                    <th class="py-2.5 px-3">实开节选</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                  <tr v-for="row in sixteenReview.rows" :key="'16wf_'+row.period"
+                      class="hover:bg-slate-800/40 transition">
+                    <td class="py-2.5 px-3 font-bold text-amber-300">{{ row.target_period || row.period }}</td>
+                    <td class="py-2.5 px-3 text-slate-400">{{ row.anchor_period || '--' }}</td>
+                    <td class="py-2.5 px-3">
+                      <span class="px-1.5 py-0.5 rounded font-bold"
+                            :class="row.gold_hit ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-slate-800 text-slate-400'">
+                        {{ String(row.gold).padStart(2, '0') }}
+                      </span>
+                    </td>
+                    <td class="py-2.5 px-3">
+                      <div class="flex flex-wrap gap-1">
+                        <span v-for="b in (row.transition_top5 || row.top5 || [])" :key="row.period+'_t_'+b"
+                              class="px-1.5 py-0.5 rounded text-[11px] font-bold"
+                              :class="(row.actual_nums || []).includes(b) ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-slate-800 text-slate-400'">
+                          {{ String(b).padStart(2, '0') }}
+                        </span>
+                      </div>
+                    </td>
+                    <td class="py-2.5 px-3">
+                      <span class="px-2 py-0.5 rounded text-xs font-bold"
+                            :class="(row.transition_top5_hits ?? row.top5_hits ?? 0) >= 2 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-slate-800 text-slate-300'">
+                        {{ row.transition_top5_hits ?? row.top5_hits ?? 0 }} / 5
+                      </span>
+                    </td>
+                    <td class="py-2.5 px-3">
+                      <div class="flex flex-wrap gap-1">
+                        <span v-for="b in (row.ops_top5 || [])" :key="row.period+'_ops_'+b"
+                              class="px-1.5 py-0.5 rounded text-[11px] font-bold"
+                              :class="(row.actual_nums || []).includes(b) ? 'bg-violet-500/25 text-violet-200 border border-violet-400/40' : 'bg-slate-800 text-slate-400'">
+                          {{ String(b).padStart(2, '0') }}
+                        </span>
+                      </div>
+                    </td>
+                    <td class="py-2.5 px-3">
+                      <span class="px-2 py-0.5 rounded text-xs font-bold"
+                            :class="(row.ops_top5_hits ?? 0) >= 2 ? 'bg-violet-500/25 text-violet-200 border border-violet-400/40' : 'bg-slate-800 text-slate-300'">
+                        {{ row.ops_top5_hits ?? 0 }} / 5
+                      </span>
+                    </td>
+                    <td class="py-2.5 px-3">
+                      <span class="px-2 py-0.5 rounded text-xs font-bold"
+                            :class="(row.freq4_edge_hits ?? 0) >= 2 ? 'bg-orange-500/20 text-orange-200 border border-orange-400/40' : 'bg-slate-800 text-slate-300'">
+                        {{ row.freq4_edge_hits ?? 0 }}/{{ row.freq4_edge_n ?? 0 }}
+                      </span>
+                    </td>
+                    <td class="py-2.5 px-3">
+                      <span class="px-2 py-0.5 rounded text-xs font-bold"
+                            :class="(row.freq4_midhot_hits ?? 0) >= 2 ? 'bg-cyan-500/20 text-cyan-200 border border-cyan-400/40' : 'bg-slate-800 text-slate-300'">
+                        {{ row.freq4_midhot_hits ?? 0 }}/{{ row.freq4_midhot_n ?? 0 }}
+                      </span>
+                    </td>
+                    <td class="py-2.5 px-3 text-cyan-300">{{ row.transition_pair_str || row.top1_str || '—' }}</td>
+                    <td class="py-2.5 px-3">
+                      <span class="px-2 py-0.5 rounded text-[10px] font-bold"
+                            :class="(row.transition_pair_both || row.top1_both) ? 'bg-amber-500 text-slate-950' : ((row.transition_pair_one || row.top1_one) ? 'bg-cyan-500/20 text-cyan-300' : 'bg-slate-800 text-slate-500')">
+                        {{ (row.transition_pair_both || row.top1_both) ? '中2' : ((row.transition_pair_one || row.top1_one) ? '中1' : '—') }}
+                      </span>
+                    </td>
+                    <td class="py-2.5 px-3 text-slate-500">
+                      {{ (row.actual_nums || []).slice(0, 8).map(x => String(x).padStart(2, '0')).join(' ') }}…
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═════════ 80 码 16 期频次全景态势矩阵 (带交互筛选) ═════════ -->
+        <div class="glass-panel p-6 space-y-4">
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🌐</span>
+                <h3 class="text-base font-bold text-slate-100">80 码 16 期频次演变矩阵 (10 列 × 8 行)</h3>
+              </div>
+              <p class="text-xs text-slate-400 mt-0.5">
+                支持按跃迁方向与梯队一键筛选，每个号码卡片清晰展示当前频次、遗漏期数与明晚演变推演。
+              </p>
+            </div>
+
+            <!-- 色彩图例 -->
+            <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
+              <span class="sixteen-legend-badge sixteen-legend-cold">
+                <span class="w-2.5 h-2.5 rounded-full bg-sky-500 inline-block shadow-sm"></span>
+                <span>冷温 (0-2次)</span>
+              </span>
+              <span class="sixteen-legend-badge sixteen-legend-warm">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block shadow-sm"></span>
+                <span>中温 (3次)</span>
+              </span>
+              <span class="sixteen-legend-badge sixteen-legend-gold">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block shadow-sm"></span>
+                <span>中热黄金 (4-5次)</span>
+              </span>
+              <span class="sixteen-legend-badge sixteen-legend-hot">
+                <span class="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block shadow-sm"></span>
+                <span>强热 (6次)</span>
+              </span>
+              <span class="sixteen-legend-badge sixteen-legend-superhot">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block shadow-sm"></span>
+                <span>超热极值 (7-8+次)</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- 一键分类筛选器按钮栏 -->
+          <div class="flex flex-wrap items-center gap-2 pt-1 font-mono text-xs">
+            <span class="text-xs font-bold mr-1" style="color: var(--text-muted);">快捷筛选:</span>
+            <button @click="setSixteenMatrixFilter('ALL')"
+                    class="px-3 py-1.5 rounded-lg transition border text-xs"
+                    :style="sixteenMatrixFilter !== 'ALL' ? 'background: var(--bg-card-inner); border-color: var(--border-subtle); color: var(--text-sub);' : ''"
+                    :class="sixteenMatrixFilter === 'ALL' ? 'bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 border-cyan-500 font-bold shadow-[0_0_8px_rgba(6,182,212,0.3)]' : 'hover:border-slate-400'">
+              全部 80 码
+            </button>
+            <button @click="setSixteenMatrixFilter('PROMO')"
+                    class="px-3 py-1.5 rounded-lg transition border text-xs"
+                    :style="sixteenMatrixFilter !== 'PROMO' ? 'background: var(--bg-card-inner); border-color: var(--border-subtle); color: var(--text-sub);' : ''"
+                    :class="sixteenMatrixFilter === 'PROMO' ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border-emerald-500 font-bold shadow-[0_0_8px_rgba(16,185,129,0.3)]' : 'hover:border-slate-400'">
+              🚀 待升频号 (留窗60码)
+            </button>
+            <button @click="setSixteenMatrixFilter('DEMO')"
+                    class="px-3 py-1.5 rounded-lg transition border text-xs"
+                    :style="sixteenMatrixFilter !== 'DEMO' ? 'background: var(--bg-card-inner); border-color: var(--border-subtle); color: var(--text-sub);' : ''"
+                    :class="sixteenMatrixFilter === 'DEMO' ? 'bg-rose-500/20 text-rose-600 dark:text-rose-300 border-rose-500 font-bold shadow-[0_0_8px_rgba(244,63,94,0.3)]' : 'hover:border-slate-400'">
+              🔻 待降频号 (出窗20码)
+            </button>
+            <button @click="setSixteenMatrixFilter('GOLD_RUSH')"
+                    class="px-3 py-1.5 rounded-lg transition border text-xs"
+                    :style="sixteenMatrixFilter !== 'GOLD_RUSH' ? 'background: var(--bg-card-inner); border-color: var(--border-subtle); color: var(--text-sub);' : ''"
+                    :class="sixteenMatrixFilter === 'GOLD_RUSH' ? 'bg-amber-500/20 text-amber-600 dark:text-amber-300 border-amber-500 font-bold shadow-[0_0_8px_rgba(245,158,11,0.3)]' : 'hover:border-slate-400'">
+              👑 黄金冲刺 (3➔4次)
+            </button>
+            <button @click="setSixteenMatrixFilter('ICE_BREAK')"
+                    class="px-3 py-1.5 rounded-lg transition border text-xs"
+                    :style="sixteenMatrixFilter !== 'ICE_BREAK' ? 'background: var(--bg-card-inner); border-color: var(--border-subtle); color: var(--text-sub);' : ''"
+                    :class="sixteenMatrixFilter === 'ICE_BREAK' ? 'bg-sky-500/20 text-sky-600 dark:text-sky-300 border-sky-500 font-bold shadow-[0_0_8px_rgba(56,189,248,0.3)]' : 'hover:border-slate-400'">
+              🧊 破冰跃迁 (0➔1 & 1➔2)
+            </button>
+            <button @click="setSixteenMatrixFilter('WARM_WAKE')"
+                    class="px-3 py-1.5 rounded-lg transition border text-xs"
+                    :style="sixteenMatrixFilter !== 'WARM_WAKE' ? 'background: var(--bg-card-inner); border-color: var(--border-subtle); color: var(--text-sub);' : ''"
+                    :class="sixteenMatrixFilter === 'WARM_WAKE' ? 'bg-amber-500/20 text-amber-600 dark:text-amber-300 border-amber-500 font-bold' : 'hover:border-slate-400'">
+              🌿 温号苏醒 (2➔3次)
+            </button>
+            <button @click="setSixteenMatrixFilter('HOT_MOMENTUM')"
+                    class="px-3 py-1.5 rounded-lg transition border text-xs"
+                    :style="sixteenMatrixFilter !== 'HOT_MOMENTUM' ? 'background: var(--bg-card-inner); border-color: var(--border-subtle); color: var(--text-sub);' : ''"
+                    :class="sixteenMatrixFilter === 'HOT_MOMENTUM' ? 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border-emerald-500 font-bold' : 'hover:border-slate-400'">
+              🚀 动量延续 (4➔5 / 5➔6)
+            </button>
+            <button @click="setSixteenMatrixFilter('OUTGOING_COOL')"
+                    class="px-3 py-1.5 rounded-lg transition border text-xs"
+                    :style="sixteenMatrixFilter !== 'OUTGOING_COOL' ? 'background: var(--bg-card-inner); border-color: var(--border-subtle); color: var(--text-sub);' : ''"
+                    :class="sixteenMatrixFilter === 'OUTGOING_COOL' ? 'bg-rose-500/20 text-rose-600 dark:text-rose-300 border-rose-500 font-bold' : 'hover:border-slate-400'">
+              🛡️ 出窗降温 (高热避坑)
+            </button>
+            <button @click="setSixteenMatrixFilter('GOLD_CORE')"
+                    class="px-3 py-1.5 rounded-lg transition border text-xs"
+                    :style="sixteenMatrixFilter !== 'GOLD_CORE' ? 'background: var(--bg-card-inner); border-color: var(--border-subtle); color: var(--text-sub);' : ''"
+                    :class="sixteenMatrixFilter === 'GOLD_CORE' ? 'bg-amber-500 text-slate-950 font-bold border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.5)]' : 'hover:border-amber-400'">
+              ⭐ 核心胆+中热+桶精选
+            </button>
+            <button @click="setSixteenMatrixFilter('BUCKET_PICKS')"
+                    class="px-3 py-1.5 rounded-lg transition border text-xs"
+                    :style="sixteenMatrixFilter !== 'BUCKET_PICKS' ? 'background: var(--bg-card-inner); border-color: var(--border-subtle); color: var(--text-sub);' : ''"
+                    :class="sixteenMatrixFilter === 'BUCKET_PICKS' ? 'bg-fuchsia-500 text-slate-950 font-bold border-fuchsia-400 shadow-[0_0_10px_rgba(217,70,239,0.45)]' : 'hover:border-fuchsia-400'">
+              📊 仅频次桶精选
+            </button>
+          </div>
+
+          <!-- 80 码色块网格 (10列 x 8行) -->
+          <div class="sixteen-matrix-grid" v-if="sixteenSummary">
+            <div v-for="cell in filteredSixteenMatrix" :key="cell.number"
+                 class="sixteen-matrix-card relative overflow-hidden transition transform hover:scale-105"
+                 :class="{
+                   'sixteen-tier-cold': cell.freq_16 <= 2,
+                   'sixteen-tier-warm': cell.freq_16 === 3,
+                   'sixteen-tier-gold': cell.freq_16 === 4 || cell.freq_16 === 5,
+                   'sixteen-tier-hot': cell.freq_16 === 6,
+                   'sixteen-tier-superhot': cell.freq_16 >= 7,
+                   'border-2 border-amber-400 shadow-[0_0_12px_rgba(245,158,11,0.5)]': cell.number === sixteenSummary.gold_dan,
+                   'border-2 border-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.4)]': cell.number === sixteenSummary.silver_dan,
+                   'border-2 border-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.4)]': cell.number === sixteenSummary.bronze_dan
+                 }"
+                 @click="openBallDetail({number: cell.number})">
+              
+              <!-- 顶部行: 球号 + 跃迁/出窗徽章 -->
+              <div class="sixteen-card-top">
+                <span class="sixteen-card-ball-num">{{ cell.display }}</span>
+                <span v-if="cell.is_outgoing" class="sixteen-card-outgoing-badge" title="16期前开出过，若下期不开则频次减1">
+                  出窗-1
+                </span>
+                <span v-else-if="cell.freq_16 === 3" class="px-1 py-0.2 rounded text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30" title="若开出升为4次黄金中热">
+                  ▲冲4
+                </span>
+                <span v-else-if="cell.freq_16 === 0 || cell.freq_16 === 1" class="px-1 py-0.2 rounded text-[9px] font-mono font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30" title="若开出破冰升级">
+                  ▲破冰
+                </span>
+                <span v-else-if="cell.freq_16 === 2" class="px-1 py-0.2 rounded text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300" title="若开出苏醒升3次">
+                  ▲苏醒
+                </span>
+                <span v-else class="px-1 py-0.2 rounded text-[9px] font-mono text-emerald-300/80">
+                  ▲升{{ cell.next_freq_if_draw }}
+                </span>
+              </div>
+
+              <!-- 中间行: 频次 + 遗漏 -->
+              <div class="flex items-center justify-between px-1 py-0.5">
+                <span class="sixteen-card-freq-val text-sm font-bold font-mono">
+                  {{ cell.freq_16 }} 次
+                </span>
+                <span class="text-[10px] font-mono"
+                      :style="cell.omission < 8 ? 'color: var(--text-muted);' : ''"
+                      :class="{'text-amber-600 dark:text-amber-300 font-bold': cell.omission >= 8}">
+                  漏{{ cell.omission }}期
+                </span>
+              </div>
+
+              <!-- 特殊胆码徽章 -->
+              <div v-if="cell.recommend_tag && cell.recommend_tag !== '⚪'" class="text-[9px] font-mono font-bold text-center py-0.5 rounded border border-black/5 dark:border-white/10"
+                   :style="'background: var(--bg-card);'"
+                   :class="{
+                     'text-amber-600 dark:text-amber-300': cell.number === sixteenSummary.gold_dan,
+                     'text-cyan-600 dark:text-cyan-300': cell.number === sixteenSummary.silver_dan,
+                     'text-purple-600 dark:text-purple-300': cell.number === sixteenSummary.bronze_dan,
+                     'text-emerald-600 dark:text-emerald-300': cell.recommend_tag === '⚡ 跃迁主推',
+                     'text-rose-600 dark:text-rose-300': cell.recommend_tag === '🛡️ 降温防守'
+                   }">
+                {{ cell.recommend_tag }}
+              </div>
+
+              <!-- 底部行: 状态推演 -->
+              <div class="sixteen-card-bottom">
+                不出→{{ cell.next_freq_if_nodraw }} | 开→{{ cell.next_freq_if_draw }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>

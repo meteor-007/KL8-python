@@ -14,6 +14,7 @@ v2.1 修复:
   - plan15 裸except → except Exception + 日志输出
   - plan16 对冲A方案过于简单 → 改用遗漏+频次驱动选择
 """
+from backend.utils.paths import get_cache_dir
 import os, json, collections, math, random, logging
 
 logger = logging.getLogger(__name__)
@@ -25,7 +26,7 @@ from utils.paths import get_project_root, data_path, _ensure_project_path
 _ensure_project_path()
 _PROJ = get_project_root()
 HISTORY_FILE = os.path.join(_PROJ, 'kl8_history_final.txt')
-SELF_LEARNING_FILE = os.path.join(_PROJ, 'cache', 'self_learning_state.json')
+SELF_LEARNING_FILE = os.path.join(get_cache_dir(), 'self_learning_state.json')
 ZONE_RANGES = [(i*10+1, (i+1)*10) for i in range(8)]
 THEORY_DENSITY = 20.0/80.0
 

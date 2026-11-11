@@ -5,6 +5,7 @@
 ============================================
 从 legacy_daily_report_engine_v2.1 回迁，供 auto_generate_daily_report 主报告调用。
 """
+from backend.utils.paths import get_cache_dir, get_reports_dir
 import os
 import sys
 
@@ -12,7 +13,7 @@ import sys
 import os, sys
 if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils.paths import get_project_root, data_path, _ensure_project_path
+from utils.paths import get_project_root, data_path, get_logs_dir, _ensure_project_path
 _ensure_project_path()
 _PROJ = get_project_root()
 
@@ -31,7 +32,7 @@ from audit.collinearity_detector import CollinearityDetector
 import collections
 import numpy as np
 
-# 配置结构化日志 → 写到项目根目录
+# 配置结构化日志 → storage/logs
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
@@ -40,7 +41,7 @@ logging.basicConfig(
     format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler(os.path.join(_PROJ, 'logs', 'engine_runtime.log'), encoding='utf-8')
+        logging.FileHandler(os.path.join(get_logs_dir(), 'engine_runtime.log'), encoding='utf-8')
     ]
 )
 logger = logging.getLogger("LotteryEngine")
@@ -52,13 +53,17 @@ class FullReportEngine:
         self.dc = dc or DataCenter()
         if not self.dc.initialized:
             self.dc.initialize()
+        # 2026-11-10 退役 AutonomousLearner（原因见 run_pipeline 内的说明）。
+        # 这里只读取"自学习门控"的真实状态供研报如实展示，不再加载学习引擎。
         self.learner = None
+        self._learning_enabled = False
+        self._learning_ci = None
         try:
-            from learning.autonomous_learner import AutonomousLearner
-            self.learner = AutonomousLearner()
-            logger.info("闭环学习引擎已加载")
+            from core.learning_gate import is_learning_enabled, get_wf_ci_lift_lower
+            self._learning_enabled = bool(is_learning_enabled())
+            self._learning_ci = get_wf_ci_lift_lower()
         except Exception as e:
-            logger.warning(f"闭环学习引擎加载失败: {e}")
+            logger.warning(f"自学习门控状态读取失败: {e}")
 
     def run_pipeline(self) -> Dict[str, Any]:
         results = {}
@@ -256,21 +261,35 @@ class FullReportEngine:
 
             # 环境识别
             try:
-                from recognition.simplified_env_recognition import recognize_environment
+                from recognition.simplified_env_recognition import recognize_environment, ENV_NAME_TO_KEY
                 env_class, env_name, env_confidence, strategy_config = recognize_environment(self.dc.history)
                 trinity_weights = strategy_config['weights']
+                env_key = ENV_NAME_TO_KEY.get(env_name, 'balanced')
             except Exception as e:
                 env_class = 2; env_name = "平衡震荡期"; env_confidence = 0.5
-                trinity_weights = {'EF': 0.42, 'RW': 0.29, 'FO': 0.29}
+                trinity_weights = {'EF': 0.40, 'RW': 0.30, 'FO': 0.30}
+                env_key = 'balanced'
                 strategy_config = {'weights': trinity_weights, 'top5_count': 5, 'top12_count': 12}
 
             from audit.v3_trinity_audit import dynamic_meta_fusion
-            trinity_scores, current_weights = dynamic_meta_fusion(self.dc.history)
+            # 2026-10-22 一致性修复 (Bug#4)：把识别到的环境键真正传进打分管线
+            trinity_scores, current_weights = dynamic_meta_fusion(self.dc.history, environment=env_key)
             top5_count = strategy_config.get('top5_count', 5)
             top12_count = strategy_config.get('top12_count', 12)
             trinity_sorted = sorted(trinity_scores.items(), key=lambda x: (-x[1], x[0]))
             trinity_top5 = [n for n, s in trinity_sorted[:top5_count]]
             trinity_top12 = [n for n, s in trinity_sorted[:top12_count]]
+            # 2026-10-21 缺陷修复 (Bug#2 前视/账本污染)：
+            # 下方 KL 熔断与 Level 3 降级会把 trinity_top5/top12 置空，但那两处都发生在
+            # 所有 f.write() 之后 —— 置空对报表展示**毫无作用**，只会把「真实推荐」从
+            # self_learning_state.json 审计记忆中抹掉 (实测 50 条记录中 46 条 top5 为空)，
+            # 进而使 task2_review 报出假的 Lift=0.00x、master_review 整块丢失 Trinity、
+            # 昨推对账与点位交叉验证静默失效。
+            # 因此：推荐值按真实值入账，熔断改为显式布尔标志由下游自行决策。
+            trinity_top5_recorded = list(trinity_top5)
+            trinity_top12_recorded = list(trinity_top12)
+            prediction_suspended = False
+            suspend_reason = ""
 
             # [v4.2] 高阶三元规律模块已移除: 连续多期Lift=0.80(低于随机), 过于复杂且无贡献
 
@@ -278,7 +297,7 @@ class FullReportEngine:
             today = os.environ.get("KL8_REPORT_DATE") or datetime.datetime.now().strftime("%Y%m%d")
             latest_issue = self.dc.latest_issue
             target_issue = str(int(latest_issue) + 1)
-            report_path = os.path.join(_PROJ, 'reports', f"daily_analysis_report_{today}.md")
+            report_path = os.path.join(get_reports_dir(), f"daily_analysis_report_{today}.md")
 
             conf = res['strat']['conf_score']
             hedge = res['strat']['hedge']
@@ -287,7 +306,7 @@ class FullReportEngine:
             yesterday_hit_str = "无"
             actual_latest = set(self.dc.history[0]['numbers'])
 
-            memory_file = os.path.join(_PROJ, 'cache', "self_learning_state.json")
+            memory_file = os.path.join(get_cache_dir(), "self_learning_state.json")
             yesterday_record = None
             try:
                 if os.path.exists(memory_file):
@@ -430,101 +449,11 @@ class FullReportEngine:
                 w_str = " ".join([f"{k}:{v:.2f}" for k, v in y_weights.items()])
                 yesterday_hit_str = f"`Top5 命中 {hit5}/5, Top12 命中 {hit12}/12 (调参: {w_str})`"
 
-            # ── 触发闭环学习: 复盘昨日 + 学习 + 调整 + 优化 ──
+            # 2026-11-10 退役 AutonomousLearner：该引擎自 2026-05-29 起再无有效学习结果
+            # （pending_predictions 长期对不上期号，每个交易日只贡献一条 WARNING），
+            # 且自学习门控一直是冻结态（WF 多折 CI 下界 < 1.0），其权重从未进入打分。
+            # 原「闭环学习 / 预测记录 / 状态展示」三段一并移除，改为如实暴露门控状态。
             loop_report = None
-            if self.learner and len(self.dc.history) > 0:
-                try:
-                    last_period = self.dc.history[0]['issue']
-                    last_actual = self.dc.history[0]['numbers']
-
-                    # 尝试完整闭环
-                    loop_report = self.learner.on_new_result(
-                        last_period, last_actual, self.dc.history
-                    )
-
-                    # 如果没有预测记录(NO_PREDICTION)，手动触发学习和调整
-                    if loop_report.get('status') == 'NO_PREDICTION':
-                        logger.info(f"无预测记录，执行无预测闭环学习...")
-                        # 手动构造review_report用于学习
-                        manual_review = {
-                            'period': last_period,
-                            'hit_stats': {
-                                'top5_hits': 0, 'top5_rate': 0.0, 'top5_lift': 0.0,
-                                'top12_hits': 0, 'top12_rate': 0.0, 'top12_lift': 0.0,
-                                'top20_hits': 0, 'top20_rate': 0.0, 'top20_lift': 0.0,
-                            },
-                            'actual_numbers': sorted(last_actual),
-                            'algo_contribution': {},
-                            'predicted_env': 'balanced',
-                        }
-                        learn_changes = self.learner.learn(manual_review, self.dc.history)
-                        adapt_adjustments = self.learner.adapt(self.dc.history)
-                        optimize_report = {}
-                        if len(self.dc.history) >= 80:
-                            optimize_report = self.learner.optimize(self.dc.history)
-
-                        current_state = self.learner.get_current_state()
-                        loop_report = {
-                            'period': last_period,
-                            'review_summary': {'top5_hits': 0, 'top5_lift': 0, 'top12_hits': 0, 'top12_lift': 0},
-                            'learning_changes': list(learn_changes.keys()) if isinstance(learn_changes, dict) else [],
-                            'adjustments': adapt_adjustments,
-                            'optimization_decision': optimize_report.get('decision', 'NO_PREDICTION_SKIP_REVIEW'),
-                            'current_weights': current_state['pentagon_weights'],
-                            'strategy_mode': current_state['strategy_mode'],
-                        }
-
-                    logger.info(f"闭环学习完成: {last_period}期, 决策={loop_report.get('optimization_decision', 'N/A')}")
-                except Exception as e:
-                    logger.warning(f"闭环学习执行异常: {e}")
-                    loop_report = {'optimization_decision': 'ERROR', 'error': str(e)}
-
-            # ── 记录本次预测到学习引擎 ──
-            if self.learner:
-                try:
-                    all_scores = {n: s for n, s in trinity_scores.items()}
-                    from core.energy_field import calc_energy_field, calc_omission_sigmoid
-                    from core.feature_optimizer import get_all_layer_a_scores
-                    ef_res = calc_energy_field(self.dc.history)
-                    rw_res = calc_omission_sigmoid(self.dc.history)
-                    try:
-                        fo_res = get_all_layer_a_scores(self.dc.history) or {}
-                    except Exception:
-                        fo_res = {n: 0.0 for n in range(1, 81)}
-                    algo_raw_scores = {
-                        'EF': ef_res,
-                        'RW': rw_res,
-                        'FO': fo_res
-                    }
-                    self.learner.record_prediction(
-                        period=target_issue,
-                        prediction_scores=all_scores,
-                        top5=trinity_top5,
-                        top12=trinity_top12,
-                        top20=[n for n, s in trinity_sorted[:20]],
-                        algo_raw_scores=algo_raw_scores,
-                        environment=env_name,
-                        volatility=0.15,
-                    )
-                    logger.info(f"预测已记录到学习引擎: 期号{target_issue} (含原始分量)")
-                except Exception as e:
-                    logger.warning(f"预测记录异常: {e}")
-
-            # ── 获取学习引擎当前状态 ──
-            learner_state_str = ""
-            if self.learner:
-                try:
-                    state = self.learner.get_current_state()
-                    w = state['pentagon_weights']
-                    learner_state_str = (
-                        f"EF={w.get('EF', 0):.2f}/"
-                        f"RW={w.get('RW', 0):.2f}/FO={w.get('FO', 0):.2f}"
-                        f" | 策略={state['strategy_mode']} | "
-                        f"复盘={state.get('recent_performance', {}).get('n_periods', 0)}期 | "
-                        f"avgLift={state.get('recent_performance', {}).get('avg_top5_lift', 0):.2f}"
-                    )
-                except Exception:
-                    pass
 
             # ── 提前计算纯净池与深层关联，供选2收敛引擎使用 ──
             pure_pool_scored = []
@@ -583,6 +512,26 @@ class FullReportEngine:
             except Exception as pe:
                 logger.warning(f"选2专属决策收敛引擎运行异常: {pe}")
 
+            # ── 方案 1: Meta-Gold 金胆超级共识熔炉 ──
+            meta_gold_dict = {}
+            try:
+                from core.aggregation.consensus_engine import ConsensusEngine
+                agg_engine = ConsensusEngine()
+                agg_picks = agg_engine.collect_subsystem_picks(int(target_issue))
+                meta_gold_dict = agg_engine.extract_meta_gold(int(target_issue), agg_picks)
+            except Exception as me:
+                logger.warning(f"Meta-Gold 金胆超级共识熔炉计算异常: {me}")
+                # 2026-09-10 整改：异常时不再编造金胆/得分/来源/5码兜底 (原为 27 / 2.5 / "三维融合主推" / [27,47,33,70,78])
+                meta_gold_dict = {
+                    "supreme_gold": None,
+                    "supreme_gold_missing": True,
+                    "supreme_gold_score": 0.0,
+                    "supreme_gold_sources": [],
+                    "meta_gold_top5": [],
+                    "meta_gold_top5_padded": False,
+                    "error": f"Meta-Gold 计算异常: {me}",
+                }
+
             # ── 写报告 ──
             with open(report_path, 'w', encoding='utf-8') as f:
                 f.write(f"# 快乐8 核心研判与审计报告 (工业级深度融合版)\n")
@@ -601,6 +550,12 @@ class FullReportEngine:
                     f.write(f"    - 闭环学习决策：`{loop_report.get('optimization_decision', 'N/A')}`\n")
                     f.write(f"    - 策略模式：`{loop_report.get('strategy_mode', 'N/A')}`\n")
                     f.write(f"    - 权重变更：`{loop_report.get('current_weights', {})}`\n")
+                else:
+                    _ci_txt = f"{self._learning_ci:.4f}" if isinstance(self._learning_ci, (int, float)) else "N/A"
+                    _st = "启用" if self._learning_enabled else "冻结"
+                    f.write(f"    - 自学习状态：`{_st}`（WF 多折 CI 下界={_ci_txt}，阈值 1.0）\n")
+                    if not self._learning_enabled:
+                        f.write(f"    - 权重来源：对环境下自适应档位（学习权重不参与打分）\n")
                 f.write("\n")
                 f.write(f"## 二、{target_issue}期 核心推荐 (Target Numbers)\n")
                 f.write(f"### 0. 🎯 今日极简选2 · 黄金搭档（全场最优唯一推荐）\n\n")
@@ -608,12 +563,27 @@ class FullReportEngine:
                 f.write(f"- **👑 黄金搭档**：`{opt_p[0]:02d} - {opt_p[1]:02d}` (综合协同分: `{champ.get('score', 0):.2f}`)\n")
                 f.write(f"- **📈 历史共现增益 (Lift)**：`{champ.get('lift_100', 1.0)}x` (近100期同出 `{champ.get('count_100', 0)}` 次 / 历史同出 `{champ.get('count_total', 0)}` 次)\n")
                 f.write(f"- **💡 核心推荐理由**：{champ.get('reason', '')}\n")
-                f.write(f"- **🛡️ 安全过滤状态**：已通过 KillSeeker 杀号一票否决与相克互斥检测（非排斥组合）\n\n")
+                f.write(f"- **🛡️ 安全过滤状态**：已通过相克互斥检测（非排斥组合）\n\n")
                 if pick2_result.get('module_pairs'):
                     f.write(f"#### 🔍 各子模块专有 2 码分布（协同来源）：\n\n")
                     for mp in pick2_result.get('module_pairs', []):
                         f.write(f"- **【{mp['label']}】**（{mp['module']}）：`{mp['pair'][0]:02d} - {mp['pair'][1]:02d}` → {mp['reason']}\n")
                     f.write("\n")
+
+                f.write(f"### 0.5. 👑 Meta-Gold 金胆超级共识熔炉 (至尊金胆)\n\n")
+                f.write(f"> **口径提示**：投票权重为 module_gate 注册表 live 经验权重，未经样本外显著性检验（整改清单 A2/C1）。"
+                        f"原表述“全系统胜率最高（Lift>1.4x）的王牌引擎”无实测出处且包含已因负贡献退役的模块，已更正。\n\n")
+                # 2026-09-10 数据诚信整改：无投票时不再兜底编造金胆 27，改为显式缺失
+                sup_g = meta_gold_dict.get('supreme_gold')
+                sup_sc = meta_gold_dict.get('supreme_gold_score', 0)
+                sup_src = meta_gold_dict.get('supreme_gold_sources', [])
+                mg_t5 = meta_gold_dict.get('meta_gold_top5', [])
+                if sup_g is None:
+                    f.write(f"- **👑 全场至尊核心金胆**：`数据缺失（无有效投票，未编造兜底号码）`\n")
+                else:
+                    f.write(f"- **👑 全场至尊核心金胆**：`{sup_g:02d}` (综合共识评分: `{sup_sc}`)\n")
+                f.write(f"- **🌟 共振金牌来源**：`{' + '.join(sup_src) if sup_src else '数据缺失'}`\n")
+                f.write(f"- **💎 Meta-Gold 五维金胆梯队**：`{'-'.join(f'{x:02d}' for x in mg_t5) if mg_t5 else '数据缺失'}`\n\n")
 
                 f.write(f"### 1. 三维融合 极秘推荐 (Trinity Fusion)\n")
                 w_curr_str = " ".join([f"{k}:{v:.2f}" for k, v in current_weights.items()])
@@ -634,27 +604,42 @@ class FullReportEngine:
                     f.write(f"- **mRMR Top 12**：`{res['entropy'].get('optimized_top12', [])}`\n\n")
 
                 # ── 双层LSTM 深度学习研判 ──
+                # 2026-10-21 P1 缺陷修复 (Bug#9 断源)：LSTM 已于 2026-09-10 判 retired
+                # (vote_weight=0、无出号表决权)，但这里每天仍在为**目标期**重训并重写
+                # storage/outputs/predictions/prediction_{期号}.txt，
+                # 使退役模块的"当期票面"持续存在并被收割器/看板误当现役产物消费。
+                # 现按注册表状态守门：退役即不再训练、不再落盘当期票面。
+                # （与 aggregation/consensus_engine.py:117 的 `!= "retired"` 守卫同一口径。）
+                _lstm_status = "votable"
                 try:
-                    from models.lstm.lstm_service import LSTMService
-                    from models.lstm.predictor import review_recent
-                    from models.lstm.data_loader import load_history as load_lstm_hist
-                    lstm_draws = load_lstm_hist()
-                    lstm_info = LSTMService.train_and_predict(draws=lstm_draws, target_period=target_issue, epochs=8)
-                    if lstm_info:
-                        lstm_review_rows = review_recent(lstm_draws, n=10)
-                        tot_h = sum(r['hit'] for r in lstm_review_rows) if lstm_review_rows else 0
-                        avg_h = tot_h / len(lstm_review_rows) if lstm_review_rows else 2.5
-                        lift_lstm = avg_h / 2.5
-                        gld_cnt = sum(1 for r in lstm_review_rows if r['gold_hit']) if lstm_review_rows else 0
-                        f.write(f"### 4.5. 🧠 双层LSTM 深度学习研判 (AI时序建模 · 少数服从多数海选)\n\n")
-                        f.write(f"> **老派操盘手大白话提示**：让AI海选团通过看过去30期的连续出号惯性，预测下一期的球号、分区分布和尾数偏好。\n\n")
-                        f.write(f"- **💎 核心金胆**：`{lstm_info['gold']:02d}` | **🥈 核心银胆**：`{lstm_info['silver']:02d}` | **🥉 核心铜胆**：`{lstm_info['bronze']:02d}`\n")
-                        f.write(f"- **🚀 Top10 核心梯队**：`{'-'.join(f'{x:02d}' for x in lstm_info['top10'])}`\n")
-                        f.write(f"- **📋 Top20 扩充大名单**：`{'-'.join(f'{x:02d}' for x in lstm_info['top20'])}`\n")
-                        f.write(f"- **📊 时序指标质量**：一致性评分 `{lstm_info['consistency']:.2f}` | 验证Loss `{lstm_info['val_loss']:.6f}` | 概率极差 `{lstm_info['prob_range']:.4f}`\n")
-                        f.write(f"- **📈 实盘复盘对账**：近{len(lstm_review_rows)}期Top10均中 `{avg_h:.2f}/10` (Lift=`{lift_lstm:.2f}x`) | 金胆命中率 `{gld_cnt}/{len(lstm_review_rows)}`\n\n")
-                except Exception as le:
-                    logger.warning(f"双层LSTM 模块报告输出异常: {le}")
+                    from core.module_gate import ModuleGate
+                    _lstm_status = ModuleGate().status_of("lstm")
+                except Exception as _gse:
+                    logger.warning(f"LSTM 注册表状态读取失败，按退役处理: {_gse}")
+                    _lstm_status = "retired"
+                if _lstm_status != "retired":
+                    try:
+                        from models.lstm.lstm_service import LSTMService
+                        from models.lstm.predictor import review_recent
+                        from models.lstm.data_loader import load_history as load_lstm_hist
+                        lstm_draws = load_lstm_hist()
+                        lstm_info = LSTMService.train_and_predict(draws=lstm_draws, target_period=target_issue, epochs=8)
+                        if lstm_info:
+                            lstm_review_rows = review_recent(lstm_draws, n=10)
+                            tot_h = sum(r['hit'] for r in lstm_review_rows) if lstm_review_rows else 0
+                            avg_h = tot_h / len(lstm_review_rows) if lstm_review_rows else 2.5
+                            lift_lstm = avg_h / 2.5
+                            gld_cnt = sum(1 for r in lstm_review_rows if r['gold_hit']) if lstm_review_rows else 0
+                            f.write(f"### 4.5. 📦 【已退役·历史档案】双层LSTM 时序模型概率输出\n\n")
+                            f.write(f"> **大白话**：双层LSTM 经 30期实测 Top10 Lift≈0.98x（负贡献）、418项挖掘未找到任何优势，已于 **2026-09-10 正式退役**：不投票、不进海选池、不参与任何决议（注册表 module_vote_registry.json 可查）。此处仅作历史档案留档观察，**不作为下注依据**。\n\n")
+                            f.write(f"- **📊 宏观时序概率 Top 10**：`{'-'.join(f'{x:02d}' for x in lstm_info['top10'])}`\n")
+                            f.write(f"- **📊 时序指标质量**：一致性评分 `{lstm_info['consistency']:.2f}` | 验证Loss `{lstm_info['val_loss']:.6f}` | 概率极差 `{lstm_info['prob_range']:.4f}`\n\n")
+                    except Exception as le:
+                        logger.warning(f"双层LSTM 模块报告输出异常: {le}")
+                else:
+                    f.write(f"### 4.5. 📦 【已退役·停算】双层LSTM 时序模型\n\n")
+                    f.write(f"> 注册表 status=`retired`（无出号表决权），本期**不再重训、不再产出当期票面文件**，"
+                            f"历史档案见 archive/。停止产票是为了避免退役模块的当期产物被收割器与看板误当现役推荐消费。\n\n")
 
                 # 4.6 顺口溜口诀研判 (组合带出 · 两号齐出/单号带出)
                 try:
@@ -699,58 +684,13 @@ class FullReportEngine:
                         
                         if j_cross.get('clash_numbers'):
                             c_str = ' '.join(f'`{x:02d}`' for x in j_cross['clash_numbers'])
-                            f.write(f"- **⚠️ 杀号冲突警示**：号码 {c_str} 与 KillSeeker 高置信杀号冲突，需降低权重！\n")
+                            f.write(f"- **⚠️ 杀号冲突警示**：号码 {c_str} 与外部杀号池重叠，需降低权重！\n")
                         if j_cross.get('all_resonance'):
                             r_str = ' '.join(f'`{x:02d}`' for x in j_cross['all_resonance'])
-                            f.write(f"- **🌟 多系统共振金码**：号码 {r_str} 获得定金选2/LSTM深度时序共同共识推荐！\n")
+                            f.write(f"- **🌟 多系统共振金码**：号码 {r_str} 获多模块共同共识推荐！\n")
                         f.write("\n")
                 except Exception as je:
                     logger.warning(f"顺口溜口诀 模块报告输出异常: {je}")
-
-                # ── 4.7 跟随分析 (重复号追踪与多窗条件跟随) ──
-                try:
-                    from core.follow_analysis import daily_follow_picks, walk_forward_evaluate, cross_validate_follow_picks
-                    f_draws = []
-                    for h in reversed(self.dc.history):
-                        nums = sorted(list(h['numbers']))
-                        if len(nums) == 20:
-                            f_draws.append({
-                                'period': int(h['issue']),
-                                'date': h.get('date', ''),
-                                'nums': set(nums),
-                                'num_list': nums
-                            })
-                    if f_draws:
-                        f_picks = daily_follow_picks(f_draws)
-                        f_eval = walk_forward_evaluate(f_draws, n_periods=20)
-                        f_cross = cross_validate_follow_picks(_PROJ, f_picks)
-                        
-                        f.write(f"### 4.7. 🔗 跟随分析 (重复号追踪与多窗条件跟随)\n")
-                        f.write(f"> 基于老派量化操盘手无未来函数 (Walk-Forward) 样本外检验与大白话执行协议。\n\n")
-                        
-                        rep = f_picks.get('repeat', {})
-                        inf = f_picks.get('inference', {})
-                        cf = f_picks.get('conditional', {})
-                        
-                        rep_str = ' '.join(f'`{x:02d}`' for x in rep.get('top5', []))
-                        inf_str = ' '.join(f'`{x:02d}`' for x in inf.get('top6', []))
-                        cf_str = ' '.join(f'`{x:02d}`' for x in cf.get('top8', []))
-                        inter_str = ' '.join(f'`{x:02d}`' for x in f_picks.get('resonance_intersection', [])) or '无'
-                        
-                        f.write(f"- **🔁 重复号 Top 5 (主候选·连庄追踪)**：{rep_str} | 全史平均连庄 `{rep.get('hist_avg_repeat', 5.0)}` 个/期 (近20期Lift=`{f_eval.get('rep_lift', 1.0):.2f}x`)\n")
-                        f.write(f"- **🧮 综合推演 Top 6 (搭档跟随·排除上期)**：{inf_str} (近20期Lift=`{f_eval.get('inf_lift', 1.0):.2f}x`)\n")
-                        f.write(f"- **🌐 条件跟随 Top 8 (多窗软融合)**：{cf_str} (近20期Lift=`{f_eval.get('cf_lift', 1.0):.2f}x`)\n")
-                        f.write(f"- **⭐ 黄金共振双重交集**：`{inter_str}`\n")
-                        
-                        if f_cross.get('resonance_numbers'):
-                            r_str = ' '.join(f'`{x:02d}`' for x in f_cross['resonance_numbers'])
-                            f.write(f"- **🌟 多系统共振号**：号码 {r_str} 获多模块共振确认！\n")
-                        if f_cross.get('kill_conflicts'):
-                            k_str = ' '.join(f'`{x:02d}`' for x in f_cross['kill_conflicts'])
-                            f.write(f"- **⚠️ 杀号冲突警示**：号码 {k_str} 触碰杀号池，建议防守防偏！\n")
-                        f.write("\n")
-                except Exception as fe:
-                    logger.warning(f"跟随分析 模块报告输出异常: {fe}")
 
                 f.write(f"### 5. 首席战略官特供 · Hidden Energy 5\n")
                 f.write(f"- **共振逻辑**：`{b3_info['logic']}`\n")
@@ -776,22 +716,31 @@ class FullReportEngine:
                 f.write(f"- **对冲方案 A**：`{hedge.get('hedge_a', [])[:10]}...`\n")
                 f.write(f"- **对冲方案 B**：`{hedge.get('hedge_b', [])[:10]}...`\n\n")
 
-                if learner_state_str:
-                    f.write(f"### 7. 闭环学习引擎状态\n")
-                    f.write(f"- **当前参数**：`{learner_state_str}`\n\n")
-
-                # ── 第九模块：纯净池定胆 ──
-                f.write(pure_pool_report)
-
-                # [v4.2] 高阶三元规律报告段已移除
+                # 2026-11-10：原「### 7. 闭环学习引擎状态」段随 AutonomousLearner 一并退役。
+                # 这里曾引用已删除的 learner_state_str，导致日报写到第 6 节后 NameError 中断。
 
                 # ── 物理熔断面板 ──
                 f.write(f"### 9. ⚖️ 物理熔断面板 (Physics Breaker)\n")
                 f.write(f"- **KL 散度监控 (结构性突变)**：`{kl_status['msg']}`\n\n")
 
                 # ── 方案2：深层关联分析（替换原始大块号码输出）──
-                f.write(f"### 10. 方案2：数据1×数据2 深层关联分析\n\n")
+                f.write(f"### 10. 方案2：数据1×数据2 深层关联分析 (DataSource Deep Predictor)\n\n")
                 f.write(deep_report_text)
+                f.write("\n")
+
+                # ── 方案 5: 全链路三级漏斗流水线 ──
+                # B1/B2 (2026-09-10 整改): 双层LSTM(0.98x负贡献)与深层关联选号侧(0.96x负贡献)
+                # 均已退役, 号码不再进 Tier1 海选池 (原: trinity_top12 + lstm_t10 + deep_picks + mg_t5);
+                # 深层关联的杀号侧(deep_kills)方向正确, 保留在 Tier2 铁血过滤。
+                tier1_pool = sorted(list(set(trinity_top12 + mg_t5)))[:25]
+                tier2_kills = sorted(list(set(deep_kills)))[:6]
+                tier2_pool = [n for n in tier1_pool if n not in tier2_kills][:18]
+                f.write(f"### 10.5. ⚡ 全链路三级漏斗流水线 (3-Tier Funnel Pipeline)\n\n")
+                f.write(f"> **老派操盘手大白话提示**：标准量化流水线——大盘海选(25码) ➔ 铁血杀号缩水(18码纯净池) ➔ 至尊金胆与极简选2配对。\n\n")
+                f.write(f"- **【Tier 1: 大盘海选池 ({len(tier1_pool)}码)】**：`{'-'.join(f'{x:02d}' for x in tier1_pool)}`\n")
+                sup_g_str = f"`{sup_g:02d}`" if sup_g is not None else "`待定/无有效投票`"
+                opt_p_str = f"`[{opt_p[0]:02d} - {opt_p[1]:02d}]`" if (opt_p and len(opt_p) >= 2) else "`待定`"
+                f.write(f"- **【Tier 3: 终审定胆精选】**：👑 至尊金胆 {sup_g_str} | 🎯 黄金选2 {opt_p_str} | 🛡️ 精选5码防线 `[{'-'.join(f'{x:02d}' for x in tier2_pool[:5])}]`\n\n")
 
                 f.write(f"### 11. 风险提示与统计信标审计 (Risk Audit)\n")
                 warnings_found = False
@@ -807,9 +756,9 @@ class FullReportEngine:
 
                 if kl_status['triggered']:
                     f.write(f"- **🚨 物理熔断警告**：系统检测到连续 KL 散度突变，摇奖机发生结构性偏移，强烈建议清空陈旧数据！\n")
-                    f.write(f"- **⛔ 强制截断**：触发物理熔断，系统取消本期强力推荐！\n")
-                    trinity_top5 = []
-                    trinity_top12 = []
+                    f.write(f"- **⛔ 强制截断**：触发物理熔断，系统本期**停止强预测**（推荐号码仍如实入账以供复盘对账，但不得作为下注依据）。\n")
+                    prediction_suspended = True
+                    suspend_reason = "KL物理熔断"
                     warnings_found = True
 
                 # ═══════════════════════════════════════════════════════
@@ -820,7 +769,7 @@ class FullReportEngine:
                 pass_nums = []
 
                 # 优先从 deep_optimization_result.json 缓存读取
-                deep_opt_cache = os.path.join(_PROJ, 'cache', 'deep_optimization_result.json')
+                deep_opt_cache = os.path.join(get_cache_dir(), 'deep_optimization_result.json')
                 cache_loaded = False
                 if os.path.exists(deep_opt_cache):
                     try:
@@ -923,8 +872,9 @@ class FullReportEngine:
                 # Level 3 强制熔断 
                 if g_level == 3:
                     f.write(f"- **🛑 Level 3 停止预测警告**：系统当前无统计显著信号，触发 Level 3 四级降级，已停止强预测。\n")
-                    trinity_top5 = []
-                    trinity_top12 = []
+                    f.write(f"    （推荐号码仍如实入账以供复盘对账；`prediction_suspended=True`，本期结果仅供参考，不得作为下注依据。）\n")
+                    prediction_suspended = True
+                    suspend_reason = suspend_reason or "零信标 Level 3 降级"
                     warnings_found = True
                 
                 if not warnings_found:
@@ -977,8 +927,16 @@ class FullReportEngine:
                     f.write("◎ 精选5码\n")
                     f.write(", ".join(f"{n:02d}" for n in _copy_top5) + "\n\n")
                     f.write("◎ 回避5码\n")
-                    f.write(", ".join(f"{n:02d}" for n in _copy_avoid5) + "\n")
-                    logger.info("可复制精选纯文本已追加到报告")
+                    f.write(", ".join(f"{n:02d}" for n in _copy_avoid5) + "\n\n")
+
+                    # ── 🔖 G4 整改: 研报口径版本与度量衡依据页脚 ──
+                    f.write("---\n\n")
+                    f.write("### 🔖 研报度量衡与口径声明 (Caliber Standard)\n\n")
+                    f.write("- **口径版本**: `v3.0 诚实实战口径`（全模块严格对照随机基线、零编造数字、注册表动态准入门禁）\n")
+                    f.write(f"- **生成时间**: `{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}`\n")
+                    f.write("- **度量衡依据**: `master_review_ledger.json` (100期收缩复盘天梯榜 + BH-FDR 显著性校准)\n")
+                    f.write("- **门控状态**: 自学习参数由 `learning_gate` 独立门控（CI下界<1.0时锁定调参，只跑体检诊断）\n")
+                    logger.info("可复制精选纯文本与口径声明已追加到报告")
                 except Exception as _exc_err:
                     logger.warning(f"Excel深层关联挖掘执行失败(不影响主报告): {_exc_err}")
 
@@ -1023,8 +981,10 @@ class FullReportEngine:
             logger.info(f"工业级主报告生成完毕: {report_path}")
             self.save_memory(
                 target_issue, env_name, current_weights,
-                sorted(trinity_top5), sorted(trinity_top12), yesterday_hit_str,
+                sorted(trinity_top5_recorded), sorted(trinity_top12_recorded), yesterday_hit_str,
                 optimal_pick2=list(opt_p),
+                prediction_suspended=prediction_suspended,
+                suspend_reason=suspend_reason,
                 pure_pool_top=pure_pool_top,
                 pure_pool_old_rule=pure_pool_old_rule,
                 pure_pool_lr=pure_pool_lr,
@@ -1049,8 +1009,9 @@ class FullReportEngine:
                     pure_pool_top=None, pure_pool_old_rule=None, pure_pool_lr=None,
                     pure_pool_all=None, conf_top5=None, conf_top12=None, 
                     b3_final5=None, mrmr_top12=None, deep_picks=None, deep_kills=None,
-                    deep_consensus=None, kl_msg=None):
-        memory_file = os.path.join(_PROJ, 'cache', "self_learning_state.json")
+                    deep_consensus=None, kl_msg=None,
+                    prediction_suspended=False, suspend_reason=""):
+        memory_file = os.path.join(get_cache_dir(), "self_learning_state.json")
         # v2.2修复: 使用可重入的 json_file_lock 替代有缺陷的 msvcrt 锁
         from utils.json_file_lock import json_file_lock
         try:
@@ -1060,11 +1021,29 @@ class FullReportEngine:
                         state = json.load(f)
                 except Exception:
                     state = {"history": []}
+                # D2 (2026-09-10): 权重来源与学习状态显式落盘 —— 界面不再猜"在不在学"
+                try:
+                    from audit.v3_trinity_audit import weights_source_of
+                    _wsrc = weights_source_of(weights)
+                except Exception:
+                    _wsrc = {"weights_source": "unknown", "weights_note": ""}
+                _learn_status = "unknown"
+                try:
+                    from core.learning_gate import is_learning_enabled
+                    _learn_status = "active" if is_learning_enabled() else "frozen"
+                except Exception:
+                    pass
                 record = {
                     "run_time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     "target_issue": target_issue, "latest_issue": self.dc.latest_issue,
-                    "environment": env, "trinity_weights": weights,
-                    "top5": top5, "top12": top12, "yesterday_feedback": yesterday_hit_str
+                    "environment": env, "trinity_weights": dict(weights) if weights else weights,
+                    "trinity_weights_source": _wsrc["weights_source"],
+                    "trinity_weights_note": _wsrc["weights_note"],
+                    "learning_status": _learn_status,
+                    "top5": top5, "top12": top12, "yesterday_feedback": yesterday_hit_str,
+                    # 熔断不再抹掉真实推荐号码，改为显式标志落盘 (2026-10-21 Bug#2 修复)
+                    "prediction_suspended": bool(prediction_suspended),
+                    "suspend_reason": suspend_reason or "",
                 }
                 if optimal_pick2:
                     record["optimal_pick2"] = optimal_pick2
@@ -1102,6 +1081,13 @@ class FullReportEngine:
                 if kl_msg:
                     record["kl_msg"] = kl_msg
 
+                # 2026-10-21 统计诚信修复 (Bug#4 根因)：同一目标期重复跑全流程会往
+                # history 里追加多条同 target_issue 的记录，复盘对账与命中率均值
+                # 会把同一期算两遍。以目标期为主键，写入前剔除同靶期旧记录。
+                state["history"] = [
+                    r for r in state.get("history", [])
+                    if str(r.get("target_issue", "")) != str(target_issue)
+                ]
                 state["history"].insert(0, record)
                 state["history"] = state["history"][:50]
                 with open(memory_file, 'w', encoding='utf-8') as f:

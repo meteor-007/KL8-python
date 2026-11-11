@@ -1,0 +1,148 @@
+<div v-show="activeTab === 'matrix_80'" class="space-y-6">
+        <!-- 探盘合页：截面矩阵 ↔ 012路账本 -->
+        <div class="probe-studio-tabs">
+          <button type="button" class="probe-studio-tab is-active" @click="openTab('matrix_80')">
+            🌐 80码热力截面
+          </button>
+          <button type="button" class="probe-studio-tab" @click="openTab('tail_entropy')">
+            📊 012路·尾数账本
+          </button>
+          <span class="probe-studio-hint">同一探盘：左看当前 80 码态势，右看 012 路历史命中账</span>
+        </div>
+
+        <div class="glass-panel p-6">
+          <div class="flex flex-col gap-3 mb-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                  <span>🔮</span> 80 码全态势超大矩阵大屏
+                </h2>
+                <p class="text-[11px] text-slate-500 mt-1">
+                  角标叠加多属性 · 池筛选可多选 · 点图例可叠形态筛选（路/质合/区）
+                </p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <div class="matrix-filter-group">
+                  <button @click="toggleMatrixFilter('all')" class="filter-tag-btn" :class="{'active-all': isMatrixFilterActive('all')}">全部 ({{ matrixFilterCounts.all != null ? matrixFilterCounts.all : '--' }})</button>
+                  <button @click="toggleMatrixFilter('top5')" class="filter-tag-btn" :class="{'active-top5': isMatrixFilterActive('top5')}">👑 金胆 ({{ matrixFilterCounts.top5 }})</button>
+                  <button @click="toggleMatrixFilter('top12')" class="filter-tag-btn" :class="{'active-top12': isMatrixFilterActive('top12')}">🎯 重点候选 ({{ matrixFilterCounts.top12 }})</button>
+                  <button @click="toggleMatrixFilter('cold')" class="filter-tag-btn" :class="{'active-cold': isMatrixFilterActive('cold')}">❄️ 极冷号 ({{ matrixFilterCounts.cold }})</button>
+                  <button @click="toggleMatrixFilter('hot')" class="filter-tag-btn" :class="{'active-hot': isMatrixFilterActive('hot')}">🔥 极热码 ({{ matrixFilterCounts.hot }})</button>
+                </div>
+                <div class="matrix-filter-mode" v-if="(activeFilters || []).length > 1">
+                  <button type="button" class="filter-tag-btn" :class="{'active-all': matrixFilterMode === 'or'}" @click="matrixFilterMode = 'or'">任一</button>
+                  <button type="button" class="filter-tag-btn" :class="{'active-top5': matrixFilterMode === 'and'}" @click="matrixFilterMode = 'and'">同时</button>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-[10px] text-slate-500 font-mono uppercase tracking-wide">分组视图</span>
+              <button @click="setMatrixDimOverlay('zone')" class="filter-tag-btn" :class="{'active-all': matrixDimOverlay === 'zone'}">分区</button>
+              <button @click="setMatrixDimOverlay('road012')" class="filter-tag-btn" :class="{'active-top12': matrixDimOverlay === 'road012'}">012路</button>
+              <button @click="setMatrixDimOverlay('prime')" class="filter-tag-btn" :class="{'active-top5': matrixDimOverlay === 'prime'}">质合</button>
+              <button v-if="matrixDimOverlay !== 'none'" @click="matrixDimOverlay = 'none'" class="filter-tag-btn text-slate-400">恢复全号</button>
+            </div>
+            <div class="matrix-attr-legend" aria-label="角标图例（点击叠加筛选）">
+              <span class="matrix-attr-legend-title">叠加角标·点选筛选</span>
+              <span class="matrix-cell-tag tag-gold" :class="{ 'tag-active': isMatrixFilterActive('top5') }" @click="toggleMatrixFilter('top5')" title="金胆">金</span>
+              <span class="matrix-cell-tag tag-focus" :class="{ 'tag-active': isMatrixFilterActive('top12') }" @click="toggleMatrixFilter('top12')" title="重点候选">重</span>
+              <span class="matrix-cell-tag tag-cold" :class="{ 'tag-active': isMatrixFilterActive('cold') }" @click="toggleMatrixFilter('cold')" title="极冷号">冷</span>
+              <span class="matrix-cell-tag tag-hot" :class="{ 'tag-active': isMatrixFilterActive('hot') }" @click="toggleMatrixFilter('hot')" title="极热码">热</span>
+              <span class="matrix-attr-legend-sep">|</span>
+              <span class="matrix-cell-tag tag-road-0" :class="{ 'tag-active': isMatrixMorphActive('road', 0) }" @click="toggleMatrixMorph('road', 0)" title="0路">0路</span>
+              <span class="matrix-cell-tag tag-road-1" :class="{ 'tag-active': isMatrixMorphActive('road', 1) }" @click="toggleMatrixMorph('road', 1)" title="1路">1路</span>
+              <span class="matrix-cell-tag tag-road-2" :class="{ 'tag-active': isMatrixMorphActive('road', 2) }" @click="toggleMatrixMorph('road', 2)" title="2路">2路</span>
+              <span class="matrix-cell-tag tag-prime-prime" :class="{ 'tag-active': isMatrixMorphActive('prime', 'prime') }" @click="toggleMatrixMorph('prime', 'prime')" title="质数">质</span>
+              <span class="matrix-cell-tag tag-prime-composite" :class="{ 'tag-active': isMatrixMorphActive('prime', 'composite') }" @click="toggleMatrixMorph('prime', 'composite')" title="合数">合</span>
+              <span class="matrix-cell-tag tag-zone-1" :class="{ 'tag-active': isMatrixMorphActive('zone', 1) }" @click="toggleMatrixMorph('zone', 1)" title="一区">区1</span>
+              <span class="matrix-cell-tag tag-zone-2" :class="{ 'tag-active': isMatrixMorphActive('zone', 2) }" @click="toggleMatrixMorph('zone', 2)" title="二区">区2</span>
+              <span class="matrix-cell-tag tag-zone-3" :class="{ 'tag-active': isMatrixMorphActive('zone', 3) }" @click="toggleMatrixMorph('zone', 3)" title="三区">区3</span>
+              <span class="matrix-cell-tag tag-zone-4" :class="{ 'tag-active': isMatrixMorphActive('zone', 4) }" @click="toggleMatrixMorph('zone', 4)" title="四区">区4</span>
+              <button v-if="hasMatrixFilter" type="button" class="text-[10px] text-slate-400 underline ml-1" @click="toggleMatrixFilter('all'); clearMatrixMorphFilters()">清空筛选</button>
+            </div>
+          </div>
+
+          <!-- 默认：全号 10 列矩阵 -->
+          <div v-if="!matrixDimGroups" class="grid grid-cols-10 gap-2 p-4 bg-slate-950/80 rounded-xl border border-slate-800">
+            <div v-for="cell in matrixData" :key="cell.number"
+                 class="matrix-cell"
+                 :class="[
+                   {
+                     'cell-top5': cell.is_top5,
+                     'cell-top12': cell.is_top12 && !cell.is_top5,
+                     'cell-pair': cell.category === 'golden_pair',
+                     'cell-hidden': cell.category === 'hidden_energy',
+                     'cell-cold': cell.category === 'cold_rebound',
+                     'cell-hot': cell.category === 'hot_energy',
+                     'opacity-20': hasMatrixFilter && !isMatrixFilterMatch(cell)
+                   }
+                 ]"
+                 @click="openBallDetail(cell)">
+              <div class="matrix-cell-tags" v-if="(matrixAttrTagMap[cell.number] || []).length">
+                <span v-for="tag in matrixAttrTagMap[cell.number]" :key="cell.number + '-' + tag.key"
+                      class="matrix-cell-tag" :class="tag.tone" :title="tag.title">{{ tag.label }}</span>
+              </div>
+              <span class="matrix-cell-num"
+                    :class="cell.is_top5 || cell.category === 'golden_pair' ? 'num-top5' : (cell.is_top12 ? 'num-top12' : (cell.category === 'cold_rebound' ? 'num-cold' : (cell.category === 'hot_energy' ? 'num-hot' : 'num-normal')))">
+                {{ cell.display }}
+              </span>
+              <span class="matrix-cell-strip" aria-label="遗漏、近30期频次、能级">
+                <span class="mcs-omiss">遗{{ cell.omission }}</span>
+                <span class="mcs-sep">·</span>
+                <span class="mcs-freq">{{ cell.freq_30 }}次</span>
+                <span class="mcs-sep">·</span>
+                <span class="mcs-energy">E{{ cell.energy != null ? cell.energy : '--' }}</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- 分组：分区 / 012路 / 质合 分别成块展示；角标叠加其余维度 -->
+          <div v-else class="space-y-4">
+            <div v-for="group in matrixDimGroups" :key="group.key"
+                 class="matrix-dim-group"
+                 :class="group.tone">
+              <div class="matrix-dim-group-head">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="matrix-dim-group-title">{{ group.title }}</span>
+                  <span class="matrix-dim-group-sub">{{ group.subtitle }}</span>
+                </div>
+                <span class="matrix-dim-group-count font-mono">
+                  <template v-if="hasMatrixFilter">亮 {{ group.matched }} / </template>{{ group.total }} 码
+                </span>
+              </div>
+              <div class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2">
+                <div v-for="cell in group.cells" :key="cell.number"
+                     class="matrix-cell"
+                     :class="[
+                       {
+                         'cell-top5': cell.is_top5,
+                         'cell-top12': cell.is_top12 && !cell.is_top5,
+                         'cell-pair': cell.category === 'golden_pair',
+                         'cell-hidden': cell.category === 'hidden_energy',
+                         'cell-cold': cell.category === 'cold_rebound',
+                         'cell-hot': cell.category === 'hot_energy',
+                         'opacity-20': hasMatrixFilter && !isMatrixFilterMatch(cell)
+                       }
+                     ]"
+                     @click="openBallDetail(cell)">
+                  <div class="matrix-cell-tags" v-if="(matrixAttrTagMap[cell.number] || []).length">
+                    <span v-for="tag in matrixAttrTagMap[cell.number]" :key="group.key + '-' + cell.number + '-' + tag.key"
+                          class="matrix-cell-tag" :class="tag.tone" :title="tag.title">{{ tag.label }}</span>
+                  </div>
+                  <span class="matrix-cell-num"
+                        :class="cell.is_top5 || cell.category === 'golden_pair' ? 'num-top5' : (cell.is_top12 ? 'num-top12' : (cell.category === 'cold_rebound' ? 'num-cold' : (cell.category === 'hot_energy' ? 'num-hot' : 'num-normal')))">
+                    {{ cell.display }}
+                  </span>
+                  <span class="matrix-cell-strip" aria-label="遗漏、近30期频次、能级">
+                    <span class="mcs-omiss">遗{{ cell.omission }}</span>
+                    <span class="mcs-sep">·</span>
+                    <span class="mcs-freq">{{ cell.freq_30 }}次</span>
+                    <span class="mcs-sep">·</span>
+                    <span class="mcs-energy">E{{ cell.energy != null ? cell.energy : '--' }}</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>

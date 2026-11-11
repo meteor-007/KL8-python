@@ -1,0 +1,224 @@
+<div v-show="activeTab === 'funnel_cockpit'" class="space-y-6">
+        <!-- 头部 Header -->
+        <div class="glass-panel p-6 border-l-4 border-cyan-400 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-[0_0_25px_rgba(6,182,212,0.15)]">
+          <div class="space-y-1">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">🌪️</span>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="text-xl font-bold text-white tracking-wide">三级漏斗全链路清洗流水线</h2>
+                  <span class="cyber-badge cyber-badge-cyan font-mono font-bold">第 {{ funnelSummary?.target_period || systemStatus.target_period }} 期</span>
+                </div>
+                <p class="text-xs text-slate-400">
+                  大白话：80 码全盘 ➔ Level 1 宽门海选(25码) ➔ Level 2 铁血排雷(18码纯净池) ➔ Level 3 终极金胆与黄金配对(5码+选2)
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <button @click="fetchFunnelSummary" class="cyber-btn cyber-btn-cyan text-xs flex items-center gap-1">
+              <span>🔄 刷新漏斗流水</span>
+            </button>
+            <button @click="runPipeline" :disabled="isRunning" class="cyber-btn cyber-btn-amber text-xs flex items-center gap-1">
+              <span>⚡ 一键全流程重推</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 三级漏斗流程步骤 -->
+        <div class="space-y-6">
+          <!-- Level 1: 大盘海选宽门池 -->
+          <div class="glass-panel p-6 border-l-4 border-purple-500 space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-xs">1</span>
+                <h3 class="text-base font-bold text-purple-300">{{ funnelSummary?.level1_wide_pool?.name || 'Level 1: 大盘海选宽门池 (25码)' }}</h3>
+              </div>
+              <span class="cyber-badge cyber-badge-purple font-mono">{{ funnelSummary?.level1_wide_pool?.count != null ? funnelSummary?.level1_wide_pool?.count : '--' }} 码大名单</span>
+            </div>
+            <p class="text-xs text-slate-400">{{ funnelSummary?.level1_wide_pool?.desc || '汇聚三维融合、深层关联做多、Meta-Gold与隐能量场的多路做多宽门阵列' }}</p>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <span v-for="b in (funnelSummary?.level1_wide_pool?.numbers || [])" :key="b"
+                    class="lottery-ball ball-purple w-8 h-8 text-xs font-mono font-bold">{{ String(b).padStart(2, '0') }}</span>
+            </div>
+          </div>
+
+          <!-- 漏斗过渡箭头 -->
+          <div class="flex justify-center items-center text-slate-500 text-lg font-bold">
+            <span>⬇️ 经票权引擎加权共识提纯（杀号排雷已退役） ⬇️</span>
+          </div>
+
+          <!-- Level 2: 共识提纯底仓 -->
+          <div class="glass-panel p-6 border-l-4 border-emerald-500 space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">2</span>
+                <h3 class="text-base font-bold text-emerald-300">{{ funnelSummary?.level2_pure_pool?.name || 'Level 2: 共识提纯底仓' }}</h3>
+              </div>
+              <span class="cyber-badge cyber-badge-emerald font-mono">{{ funnelSummary?.level2_pure_pool?.count != null ? funnelSummary?.level2_pure_pool?.count : '--' }} 码底仓</span>
+            </div>
+            <p class="text-xs text-slate-400">{{ funnelSummary?.level2_pure_pool?.desc || '经票权引擎加权共识提纯后的做多底仓（杀号过滤已退役）' }}</p>
+            <div class="flex flex-wrap gap-2 pt-1">
+              <span v-for="b in (funnelSummary?.level2_pure_pool?.numbers || [])" :key="b"
+                    class="lottery-ball ball-emerald w-8 h-8 text-xs font-mono font-bold">{{ String(b).padStart(2, '0') }}</span>
+            </div>
+          </div>
+
+          <!-- 漏斗过渡箭头 -->
+          <div class="flex justify-center items-center text-slate-500 text-lg font-bold">
+            <span>⬇️ 提取具备票权引擎的加权共识金胆与黄金连体婴选2 ⬇️</span>
+          </div>
+
+          <!-- Level 3: 至尊金胆与极简选2终极配对 -->
+          <div class="glass-panel p-6 border-l-4 border-amber-400 space-y-4 bg-gradient-to-r from-slate-900 via-amber-950/20 to-slate-900">
+            <div class="flex items-center justify-between border-b border-amber-500/30 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs">3</span>
+                <h3 class="text-base font-bold text-amber-300">{{ funnelSummary?.level3_supreme?.name || 'Level 3: 至尊金胆与极简选2终极配对' }}</h3>
+              </div>
+              <span class="cyber-badge cyber-badge-amber font-mono">ULTIMATE COMBINATION</span>
+            </div>
+            <p class="text-xs text-slate-400">{{ funnelSummary?.level3_supreme?.desc || '只由具备票权 (module_gate) 的引擎加权背书的终极出击组合' }}</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+              <!-- 至尊金胆最优3码 -->
+              <div class="p-4 rounded-xl bg-slate-950/80 border border-amber-500/30 space-y-2">
+                <span class="text-xs font-bold text-amber-400 block">👑 至尊金胆最优3码:</span>
+                <div class="flex flex-wrap gap-2">
+                  <span v-for="b in (funnelSummary?.level3_supreme?.meta_top5 || []).slice(0, 3)" :key="b"
+                        class="lottery-ball ball-gold w-9 h-9 text-sm font-mono font-bold">{{ String(b).padStart(2, '0') }}</span>
+                </div>
+              </div>
+
+              <!-- 极简选2黄金搭档 -->
+              <div class="p-4 rounded-xl bg-slate-950/80 border border-cyan-500/30 space-y-2">
+                <span class="text-xs font-bold text-cyan-300 block">👑 极简选 2 · 黄金连体搭档:</span>
+                <div class="flex items-center gap-3 pt-1">
+                  <span v-for="b in (funnelSummary?.level3_supreme?.golden_pair || [])" :key="b"
+                        class="lottery-ball ball-cyan w-10 h-10 text-base font-mono font-bold">{{ String(b).padStart(2, '0') }}</span>
+                  <span class="text-xs font-mono text-slate-400 ml-2">双核黄金共振组合</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 三级漏斗全链路逐期复盘总账本 -->
+        <div class="glass-panel p-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-base">🌪️</span>
+              <h3 class="text-sm font-bold text-white">三级漏斗全链路 · 逐期样本外清洗与命中实战对账</h3>
+              <span class="cyber-badge cyber-badge-cyan text-[10px] font-mono">PIPELINE AUDIT</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <select v-model="funnelReviewPeriods" @change="fetchFunnelReview(funnelReviewPeriods)"
+                      class="bg-slate-900 border border-slate-700 text-xs text-cyan-300 rounded px-2.5 py-1">
+                <option :value="15">近 15 期对账</option>
+                <option :value="30">近 30 期对账</option>
+                <option :value="50">近 50 期对账</option>
+              </select>
+              <button @click="fetchFunnelReview(funnelReviewPeriods)" class="cyber-btn cyber-btn-cyan text-xs px-2.5 py-1">
+                <span>🔄 刷新对账</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 项三级漏斗核心 KPI 卡片 -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 font-mono">
+            <div class="p-3 rounded-lg bg-slate-900/80 border border-purple-500/30 space-y-0.5">
+              <span class="text-[10px] text-slate-400 font-sans">Level 1 宽门平均命中</span>
+              <div class="text-lg font-black text-purple-300">{{ funnelReview?.summary?.avg_l1_hits !== undefined ? funnelReview.summary.avg_l1_hits : '--' }} <span class="text-xs text-slate-400">/ 25码</span></div>
+              <div class="text-[9px] text-slate-500">大盘宽门命中率 {{ funnelReview?.summary?.l1_hit_rate !== undefined ? ((funnelReview.summary.l1_hit_rate) * 100).toFixed(1) + '%' : '--' }}</div>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-900/80 border border-emerald-500/30 space-y-0.5">
+              <span class="text-[10px] text-slate-400 font-sans">Level 2 纯净安全池均中</span>
+              <div class="text-lg font-black text-emerald-400">{{ funnelReview?.summary?.avg_l2_hits !== undefined ? funnelReview.summary.avg_l2_hits : '--' }} <span class="text-xs text-slate-400">/ 18码</span></div>
+              <div class="text-[9px] text-slate-500">排雷过滤效率 {{ funnelReview?.summary?.l2_hit_rate !== undefined ? ((funnelReview.summary.l2_hit_rate) * 100).toFixed(1) + '%' : '--' }}</div>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-900/80 border border-amber-500/30 space-y-0.5">
+              <span class="text-[10px] text-slate-400 font-sans">Level 3 攻坚Top5均中</span>
+              <div class="text-lg font-black text-amber-300">{{ funnelReview?.summary?.avg_l3_hits !== undefined ? funnelReview.summary.avg_l3_hits : '--' }} <span class="text-xs text-slate-400">/ 5码</span></div>
+              <div class="text-[9px] text-slate-500">提升度 {{ funnelReview?.summary?.l3_lift !== undefined ? funnelReview.summary.l3_lift.toFixed(2) + 'x' : '--' }} (胜率{{ funnelReview?.summary?.l3_win_rate !== undefined ? ((funnelReview.summary.l3_win_rate) * 100).toFixed(1) + '%' : '--' }})</div>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-900/80 border border-cyan-500/30 space-y-0.5">
+              <span class="text-[10px] text-slate-400 font-sans">极简选 2 · 双全中次数</span>
+              <div class="text-lg font-black text-cyan-300">{{ funnelReview?.summary?.pair_both_count !== undefined ? funnelReview.summary.pair_both_count : '--' }} <span class="text-xs text-slate-400">次双全中</span></div>
+              <div class="text-[9px] text-slate-500">对账期数: {{ funnelReview?.summary?.total_periods || funnelReviewPeriods }} 期</div>
+            </div>
+          </div>
+
+          <!-- 逐期三级漏斗对账明细表格 -->
+          <div class="overflow-x-auto max-h-[500px] overflow-y-auto">
+            <table class="cyber-table w-full text-left text-xs font-mono">
+              <thead class="sticky top-0 bg-slate-900/95 backdrop-blur z-10">
+                <tr class="text-slate-400 border-b border-slate-800">
+                  <th class="py-2.5 px-3">开奖期号</th>
+                  <th class="py-2.5 px-3">Level 1 海选(25码)</th>
+                  <th class="py-2.5 px-3">Level 2 纯净(18码)</th>
+                  <th class="py-2.5 px-3">Level 3 攻坚Top5 (命中高亮)</th>
+                  <th class="py-2.5 px-3">👑 极简选 2 搭档</th>
+                  <th class="py-2.5 px-3">全链路清洗结论</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60">
+                <tr v-if="(funnelReview?.rows || []).length === 0">
+                  <td colspan="6" class="text-center py-10 text-slate-500">
+                    <div class="space-y-2">
+                      <span class="text-2xl">⏳</span>
+                      <div class="text-xs text-slate-400">暂未加载到漏斗复盘对账明细（若后台刚更新代码，请执行一键重启 Web 服务后刷新页面）</div>
+                    </div>
+                  </td>
+                </tr>
+                <tr v-for="r in (funnelReview?.rows || [])" :key="r.period" class="hover:bg-slate-800/40">
+                  <td class="py-2.5 px-3 font-bold text-cyan-400">第 {{ r.period }} 期</td>
+                  <td class="py-2.5 px-3 text-purple-300 font-bold">
+                    {{ r.level1_hit_count }} / 25
+                    <span class="text-[10px] text-slate-500 font-normal">({{ ((r.level1_hit_count / 25) * 100).toFixed(0) }}% · 基线 6.25)</span>
+                  </td>
+                  <td class="py-2.5 px-3 text-emerald-400 font-bold">
+                    {{ r.level2_hit_count }} / 18
+                    <span class="text-[10px] text-slate-500 font-normal">({{ ((r.level2_hit_count / 18) * 100).toFixed(0) }}% · 基线 4.50)</span>
+                  </td>
+                  <td class="py-2.5 px-3">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      <span v-for="b in r.level3_top5" :key="b"
+                            class="lottery-ball w-6 h-6 text-[11px] font-bold inline-flex items-center justify-center"
+                            :class="r.actual_numbers?.includes(b) ? 'ball-gold shadow-[0_0_8px_rgba(245,158,11,0.6)] ring-1 ring-amber-300' : 'ball-slate opacity-40'">
+                        {{ String(b).padStart(2, '0') }}
+                      </span>
+                      <span class="text-xs font-bold ml-1" :class="r.level3_hit_count >= 2 ? 'text-amber-300' : 'text-slate-400'"
+                            title="5 码随机期望命中 1.25 码；单期数字不构成显著性证据。">
+                        ({{ r.level3_hit_count }}/5 · 基线 1.25)
+                      </span>
+                    </div>
+                  </td>
+                  <td class="py-2.5 px-3">
+                    <div class="flex items-center gap-1.5">
+                      <span v-for="b in r.golden_pair" :key="b"
+                            class="lottery-ball w-6 h-6 text-[11px] font-bold inline-flex items-center justify-center"
+                            :class="r.actual_numbers?.includes(b) ? 'ball-cyan shadow-[0_0_8px_rgba(6,182,212,0.6)]' : 'ball-slate opacity-40'">
+                        {{ String(b).padStart(2, '0') }}
+                      </span>
+                      <span v-if="r.pair_both" class="text-xs text-amber-400 font-bold">🎉 双全中!</span>
+                      <span v-else-if="r.pair_hits === 1" class="text-xs text-cyan-300 font-semibold">中 1 码</span>
+                      <span v-else class="text-[10px] text-slate-500">未中</span>
+                    </div>
+                  </td>
+                  <td class="py-2.5 px-3">
+                    <span v-if="r.verdict.includes('全打通')" class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] font-bold">
+                      {{ r.verdict }}
+                    </span>
+                    <span v-else-if="r.verdict.includes('稳健')" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[11px]">
+                      {{ r.verdict }}
+                    </span>
+                    <span v-else class="px-2 py-0.5 rounded bg-slate-800 text-slate-500 border border-slate-700 text-[11px]">
+                      {{ r.verdict }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>

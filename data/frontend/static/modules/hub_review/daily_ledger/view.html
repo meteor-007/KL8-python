@@ -1,0 +1,145 @@
+<div v-show="activeTab === 'daily_reviews_ledger'" class="space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
+          <div class="space-y-1">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">📋</span>
+              <h2 class="text-lg font-bold text-white tracking-wide">每日自学习自动复盘总账本 (Autonomous Review Ledger)</h2>
+              <span class="cyber-badge cyber-badge-cyan font-mono">已沉淀 {{ reviewsLedgerData?.total_count != null ? reviewsLedgerData?.total_count : '--' }} 期记录</span>
+            </div>
+            <p class="text-xs text-slate-400">
+              全量记录每期开奖后系统的自动复盘对账、命中率Lift、EF/RW/FO算法正负贡献及参数自适应优化决策
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button @click="fetchReviewsLedger(20)" :class="{'cyber-btn-cyan': reviewsLedgerLimit === 20, 'cyber-btn-slate': reviewsLedgerLimit !== 20}" class="cyber-btn text-xs py-1 px-3">近20期</button>
+            <button @click="fetchReviewsLedger(50)" :class="{'cyber-btn-cyan': reviewsLedgerLimit === 50, 'cyber-btn-slate': reviewsLedgerLimit !== 50}" class="cyber-btn text-xs py-1 px-3">近50期</button>
+            <button @click="fetchReviewsLedger(100)" :class="{'cyber-btn-cyan': reviewsLedgerLimit === 100, 'cyber-btn-slate': reviewsLedgerLimit !== 100}" class="cyber-btn text-xs py-1 px-3">全量</button>
+          </div>
+        </div>
+
+        <!-- 全局自学习核心统计卡片 -->
+        <div v-if="reviewsLedgerData && reviewsLedgerData.metrics" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div class="glass-panel p-4 space-y-1">
+            <span class="text-xs text-slate-400">累计已复盘期数</span>
+            <div class="text-2xl font-bold font-mono text-cyan-400">{{ reviewsLedgerData.metrics.total_reviewed_periods }} 期</div>
+            <span class="text-[10px] text-slate-500">最新: {{ reviewsLedgerData.metrics.latest_period }} 期</span>
+          </div>
+          <div class="glass-panel p-4 space-y-1">
+            <span class="text-xs text-slate-400">三维融合最优3码均命中</span>
+            <div class="text-2xl font-bold font-mono text-emerald-400">
+              {{ reviewsLedgerData.metrics.avg_top5_hits }} <span class="text-xs text-slate-400">/3</span>
+            </div>
+            <span class="text-[10px] text-emerald-400 font-mono font-bold">Lift: {{ reviewsLedgerData.metrics.avg_top5_lift }}x (稳健)</span>
+          </div>
+          <div class="glass-panel p-4 space-y-1">
+            <span class="text-xs text-slate-400">自主闭环学习状态</span>
+            <div class="text-lg font-bold font-mono text-cyan-300 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+              {{ reviewsLedgerData.metrics.latest_learning_status }}
+            </div>
+            <span class="text-[10px] text-slate-400">当前权重: EF:{{ reviewsLedgerData.metrics.latest_weights?.EF }} RW:{{ reviewsLedgerData.metrics.latest_weights?.RW }} FO:{{ reviewsLedgerData.metrics.latest_weights?.FO }}</span>
+          </div>
+        </div>
+
+        <!-- 三大算法贡献度仪表条 -->
+        <div v-if="reviewsLedgerData && reviewsLedgerData.metrics" class="glass-panel p-5 space-y-3">
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-white flex items-center gap-2">
+              <span>🧭</span> 核心三大算法历史正向贡献率 (Positive Contribution Rate)
+            </span>
+            <span class="text-slate-400 font-mono">基于 {{ reviewsLedgerData.metrics.total_reviewed_periods }} 期真实对账</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+            <div class="p-3 rounded bg-slate-900/80 border border-slate-800 space-y-1.5">
+              <div class="flex justify-between">
+                <span class="text-cyan-400 font-bold">EF (能量场 / 蹭热度)</span>
+                <span class="text-white">{{ reviewsLedgerData.metrics.ef_positive_rate }}%</span>
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                <div class="bg-cyan-400 h-2 rounded-full" :style="{ width: reviewsLedgerData.metrics.ef_positive_rate + '%' }"></div>
+              </div>
+            </div>
+            <div class="p-3 rounded bg-slate-900/80 border border-slate-800 space-y-1.5">
+              <div class="flex justify-between">
+                <span class="text-purple-400 font-bold">RW (遗漏回补 / 抓冷门)</span>
+                <span class="text-white">{{ reviewsLedgerData.metrics.rw_positive_rate }}%</span>
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                <div class="bg-purple-400 h-2 rounded-full" :style="{ width: reviewsLedgerData.metrics.rw_positive_rate + '%' }"></div>
+              </div>
+            </div>
+            <div class="p-3 rounded bg-slate-900/80 border border-slate-800 space-y-1.5">
+              <div class="flex justify-between">
+                <span class="text-amber-400 font-bold">FO (周期相干 / 找周期)</span>
+                <span class="text-white">{{ reviewsLedgerData.metrics.fo_positive_rate }}%</span>
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                <div class="bg-amber-400 h-2 rounded-full" :style="{ width: reviewsLedgerData.metrics.fo_positive_rate + '%' }"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 历史复盘流水对账大表格 -->
+        <div class="glass-panel p-6 space-y-4">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <span>📜</span> 历史各期自动复盘流水台账 (点击期号查看单期完整JSON)
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="cyber-table w-full text-left text-xs">
+              <thead>
+                <tr>
+                  <th class="py-3 px-3">期号</th>
+                  <th class="py-3 px-3">开奖时间</th>
+                  <th class="py-3 px-3">开奖号码 (20码)</th>
+                  <th class="py-3 px-3">最优3码命中</th>
+                  <th class="py-3 px-3">算法正负贡献 (EF/RW/FO)</th>
+                  <th class="py-3 px-3">使用权重</th>
+                  <th class="py-3 px-3">优化决策</th>
+                  <th class="py-3 px-3 text-right">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="rec in (reviewsLedgerData?.records || [])" :key="rec.period" class="hover:bg-slate-800/40">
+                  <td class="py-2.5 px-3 font-mono font-bold text-cyan-400">{{ rec.period }}</td>
+                  <td class="py-2.5 px-3 font-mono text-slate-400">{{ rec.timestamp ? rec.timestamp.split(' ')[0] : 'N/A' }}</td>
+                  <td class="py-2.5 px-3">
+                    <div class="flex flex-wrap gap-1 max-w-[320px]">
+                      <span v-for="num in rec.actual_numbers" :key="num"
+                            class="px-1 py-0.2 rounded bg-slate-900 border border-slate-800 font-mono text-[10px] text-slate-300 font-bold">
+                        {{ String(num).padStart(2, '0') }}
+                      </span>
+                    </div>
+                  </td>
+                  <td class="py-2.5 px-3 font-mono">
+                    <span :class="rec.top5_hits >= 2 ? 'text-emerald-400 font-bold' : (rec.top5_hits === 1 ? 'text-cyan-400' : 'text-slate-500')">
+                      {{ Math.min(rec.top5_hits, 3) }}/3
+                    </span>
+                    <span class="text-[10px] text-slate-500 ml-1">({{ rec.top5_lift }}x)</span>
+                  </td>
+                  <td class="py-2.5 px-3 font-mono text-[11px]">
+                    <span :class="rec.algo_contribution?.EF === 'POSITIVE' ? 'text-emerald-400 font-bold' : 'text-slate-500'">EF:{{ rec.algo_contribution?.EF === 'POSITIVE' ? '+1' : '-1' }}</span>
+                    <span class="mx-1">|</span>
+                    <span :class="rec.algo_contribution?.RW === 'POSITIVE' ? 'text-emerald-400 font-bold' : 'text-slate-500'">RW:{{ rec.algo_contribution?.RW === 'POSITIVE' ? '+1' : '-1' }}</span>
+                    <span class="mx-1">|</span>
+                    <span :class="rec.algo_contribution?.FO === 'POSITIVE' ? 'text-emerald-400 font-bold' : 'text-slate-500'">FO:{{ rec.algo_contribution?.FO === 'POSITIVE' ? '+1' : '-1' }}</span>
+                  </td>
+                  <td class="py-2.5 px-3 font-mono text-[11px] text-slate-400">
+                    {{ rec.weights_used?.EF }}/{{ rec.weights_used?.RW }}/{{ rec.weights_used?.FO }}
+                  </td>
+                  <td class="py-2.5 px-3 font-mono text-xs">
+                    <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300">
+                      {{ rec.optimization_decision || 'N/A' }}
+                    </span>
+                  </td>
+                  <td class="py-2.5 px-3 text-right">
+                    <button @click="openReviewDetailModal(rec.period)" class="text-xs text-cyan-400 hover:underline">
+                      查看JSON →
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>

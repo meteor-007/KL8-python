@@ -1,0 +1,137 @@
+<div v-show="activeTab === 'point_road_cockpit'" class="space-y-6">
+  <div class="glass-panel p-6 space-y-6 border border-cyan-500/30">
+    <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-400/40 flex items-center justify-center text-xl">🧭</div>
+        <div>
+          <h3 class="text-base font-bold flex items-center gap-2" style="color: var(--text-main);">
+            <span>点位012偏态压缩器驾驶舱</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/15 text-cyan-300 font-mono border border-cyan-500/30">
+              PointRoadCompressor v1.0
+            </span>
+          </h3>
+          <p class="text-xs mt-0.5" style="color: var(--text-muted);">
+            目标第 <span class="text-cyan-300 font-mono font-bold">{{ pointRoadData?.target_period || '---' }}</span> 期
+            · 输入点位 <span class="font-mono">{{ pointRoadData?.input_points_count ?? 0 }}</span> 码
+            · 展开保留 <span class="font-mono text-emerald-300">{{ pointRoadData?.retained_candidates_count ?? 0 }}</span> 码
+            · 剪枝剔除 <span class="font-mono text-rose-300">{{ pointRoadData?.pruned_candidates_count ?? 0 }}</span> 码
+            <span v-if="pointRoadLoading" class="animate-spin ml-1">⚙️</span>
+          </p>
+        </div>
+      </div>
+      <button @click="fetchPointRoadData" :disabled="pointRoadLoading"
+              class="cyber-btn cyber-btn-dark text-xs !py-1.5 !px-3 flex items-center gap-1.5">
+        <span :class="{'animate-spin': pointRoadLoading}">🔄</span> 刷新压缩票面
+      </button>
+    </div>
+
+    <!-- 核心票面: 金胆 / 最优3 / 精选5 / 十全防线 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="glass-panel p-4 border border-amber-500/40">
+        <div class="text-xs font-bold text-amber-600 dark:text-amber-300 flex items-center gap-1.5">👑 至尊压缩金胆 · 最优 3 码锋线</div>
+        <div class="mt-3 flex items-center gap-2 flex-wrap">
+          <span v-for="(n, i) in (pointRoadData?.top3_gold || [])" :key="'pr-t3-'+n"
+                @click="openBallDetail({number: n})"
+                class="px-2.5 py-1 rounded-lg border font-mono font-bold text-sm cursor-pointer hover:scale-105 transition"
+                :class="i === 0 ? 'border-amber-500/70 bg-amber-500/20 text-amber-700 dark:text-amber-200 text-lg' : 'border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-200'">
+            {{ String(n).padStart(2, '0') }}
+          </span>
+        </div>
+        <div class="text-xs font-bold mt-3 mb-1.5 text-cyan-600 dark:text-cyan-300">🎯 精选 5 码突击</div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span v-for="n in (pointRoadData?.top5_picks || [])" :key="'pr-t5-'+n"
+                @click="openBallDetail({number: n})"
+                class="px-2 py-0.5 rounded border border-cyan-500/40 bg-cyan-500/10 text-cyan-700 dark:text-cyan-200 font-mono font-bold text-xs cursor-pointer hover:scale-105 transition">
+            {{ String(n).padStart(2, '0') }}
+          </span>
+        </div>
+      </div>
+
+      <div class="glass-panel p-4 border border-emerald-500/40">
+        <div class="text-xs font-bold text-emerald-600 dark:text-emerald-300 flex items-center gap-1.5">🛡️ 十全防线大底</div>
+        <div class="mt-3 flex items-center gap-2 flex-wrap">
+          <span v-for="n in (pointRoadData?.top10_defense || [])" :key="'pr-d10-'+n"
+                @click="openBallDetail({number: n})"
+                class="px-2 py-0.5 rounded border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-200 font-mono font-bold text-xs cursor-pointer hover:scale-105 transition">
+            {{ String(n).padStart(2, '0') }}
+          </span>
+        </div>
+        <div class="text-xs font-bold mt-3 mb-1.5 text-purple-600 dark:text-purple-300">💎 012 跨路对冲选2搭档</div>
+        <div class="flex items-center gap-2 flex-wrap text-xs font-mono">
+          <span v-for="(p, i) in (pointRoadData?.gold_pairs || [])" :key="'pr-pair-'+i"
+                class="px-2 py-1 rounded-lg border border-purple-500/40 bg-purple-500/10 text-purple-700 dark:text-purple-200">
+            [{{ String(p[0]).padStart(2, '0') }}-{{ String(p[1]).padStart(2, '0') }}]
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 012 大盘偏态雷达 -->
+    <div class="glass-panel p-4 border border-slate-700/50">
+      <div class="text-xs font-bold mb-2" style="color: var(--text-main);">⚖️ 012 路大盘偏态水位（压缩依据）</div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div v-for="(v, k) in (pointRoadData?.macro_road_skew || {})" :key="'pr-skew-'+k"
+             class="p-3 rounded-xl border text-center" style="background: var(--bg-card-inner); border-color: var(--border-subtle);">
+          <div class="text-xs font-mono" style="color: var(--text-muted);">{{ v.road }} 路</div>
+          <div class="text-lg font-black font-mono mt-1"
+               :class="v.status === 'OVERHEAT' ? 'text-rose-400' : (v.status === 'COLD' ? 'text-sky-400' : 'text-emerald-400')">
+            {{ v.actual_ratio != null ? (v.actual_ratio * 100).toFixed(1) + '%' : '—' }}
+          </div>
+          <div class="text-[10px] font-mono" style="color: var(--text-muted);">
+            期望 {{ v.expected_ratio != null ? (v.expected_ratio * 100).toFixed(1) + '%' : '—' }}
+            · 差 <span :class="(v.diff||0) > 0 ? 'text-rose-400' : 'text-sky-400'">{{ v.diff != null && v.diff > 0 ? '+' : '' }}{{ v.diff != null ? (v.diff * 100).toFixed(1) : '—' }}%</span>
+          </div>
+          <div class="text-[10px] mt-1 px-1.5 py-0.5 rounded inline-block font-mono"
+               :class="v.action === 'CUT' ? 'bg-rose-500/15 text-rose-300' : (v.action === 'BOOST' ? 'bg-emerald-500/15 text-emerald-300' : 'bg-slate-700/40 text-slate-400')">
+            {{ v.status || '—' }} → {{ v.action || 'NEUTRAL' }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 剪枝明细 -->
+    <div class="glass-panel p-4 border border-rose-500/30">
+      <div class="text-xs font-bold text-rose-500 dark:text-rose-300 flex items-center gap-1.5 mb-2">
+        ✂️ 偏态剪枝剔除明细（避险样本 · 共 {{ pointRoadData?.pruned_candidates_count ?? 0 }} 码）
+      </div>
+      <div class="flex flex-wrap gap-1.5 max-h-[150px] overflow-y-auto cyber-scrollbar pr-1">
+        <span v-for="p in (pointRoadData?.pruned_candidates || [])" :key="'pr-prune-'+p.number"
+              class="px-1.5 py-0.5 rounded border border-rose-500/30 bg-rose-500/5 text-rose-400/90 font-mono text-[11px]">
+          {{ String(p.number).padStart(2, '0') }}({{ p.road }}路)
+        </span>
+      </div>
+    </div>
+
+    <!-- 样本外复盘 -->
+    <div class="glass-panel p-5 border border-cyan-500/40 space-y-4">
+      <div class="pb-2 border-b border-slate-800">
+        <h4 class="text-sm font-bold" style="color: var(--text-main);">样本外滚动对账（严格无未来信息 · 逐期现算）</h4>
+        <p class="text-[11px]" style="color: var(--text-muted);">{{ pointRoadReviewData?.note || '逐期仅用当日前历史压缩点位并对照实开。' }}</p>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+        <div class="p-3 rounded-xl border border-cyan-500/40" style="background: var(--bg-card-inner);">
+          <div class="text-xs" style="color: var(--text-muted);">最优3码均中</div>
+          <div class="text-xl font-black font-mono text-cyan-600 dark:text-cyan-300 mt-1">{{ pointRoadReviewData?.avg_top3_hits ?? '--' }}</div>
+          <div class="text-[10px] font-mono" style="color: var(--text-muted);">Lift {{ pointRoadReviewData?.lift_top3 ?? '--' }}x</div>
+        </div>
+        <div class="p-3 rounded-xl border border-amber-500/40" style="background: var(--bg-card-inner);">
+          <div class="text-xs" style="color: var(--text-muted);">精选5码均中</div>
+          <div class="text-xl font-black font-mono text-amber-600 dark:text-amber-300 mt-1">{{ pointRoadReviewData?.avg_top5_hits ?? '--' }}</div>
+          <div class="text-[10px] font-mono" style="color: var(--text-muted);">Lift {{ pointRoadReviewData?.lift_top5 ?? '--' }}x</div>
+        </div>
+        <div class="p-3 rounded-xl border border-emerald-500/40" style="background: var(--bg-card-inner);">
+          <div class="text-xs" style="color: var(--text-muted);">剪枝回避率</div>
+          <div class="text-xl font-black font-mono text-emerald-600 dark:text-emerald-300 mt-1">{{ pointRoadReviewData?.pruning_avoidance_rate ?? '--' }}%</div>
+          <div class="text-[10px] font-mono" style="color: var(--text-muted);">被剪码确实未开的比例</div>
+        </div>
+        <div class="p-3 rounded-xl border" style="background: var(--bg-card-inner); border-color: var(--border-subtle);">
+          <div class="text-xs" style="color: var(--text-muted);">对账期数</div>
+          <div class="text-xl font-black font-mono mt-1" style="color: var(--text-main);">{{ pointRoadReviewData?.tested_periods ?? '--' }}</div>
+        </div>
+      </div>
+      <p class="text-[10px] leading-relaxed" style="color: var(--text-muted);">
+        ⚖️ 本模块前瞻账 Lift 未过 BH-FDR 显著门槛前，票面仅供研究参考，不作为加注依据。
+      </p>
+    </div>
+  </div>
+</div>

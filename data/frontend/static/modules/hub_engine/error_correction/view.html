@@ -1,0 +1,197 @@
+<div v-show="activeTab === 'error_correction_cockpit'" class="space-y-6">
+  <div class="glass-panel p-6 space-y-6 border border-violet-500/30">
+    <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-violet-500/15 border border-violet-400/40 flex items-center justify-center text-xl">🌳</div>
+        <div>
+          <h3 class="text-base font-bold flex items-center gap-2" style="color: var(--text-main);">
+            <span>残差改错 · GBDT 驾驶舱</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-violet-500/15 text-violet-600 dark:text-violet-300 font-mono border border-violet-500/30">
+              LightGBM · Top3
+            </span>
+          </h3>
+          <p class="text-xs mt-0.5" style="color: var(--text-muted);">
+            目标第 <span class="text-violet-600 dark:text-violet-300 font-mono font-bold">{{ errorCorrectionData?.target_issue || '---' }}</span> 期
+            · 近 <span class="font-mono text-cyan-600 dark:text-cyan-300">{{ errorCorrectionData?.history_used || 0 }}</span>/<span class="font-mono">{{ errorCorrectionData?.train_window || 100 }}</span> 期
+            · λ=<span class="font-mono">{{ errorCorrectionData?.correction_lambda ?? 0.35 }}</span>
+            · 模式 <span class="font-mono text-violet-500">{{ errorCorrectionData?.prediction_mode || 'residual_boosting_gbdt' }}</span>
+          </p>
+        </div>
+      </div>
+      <button @click="triggerErrorCorrectionRun"
+              :disabled="isErrorCorrectionRunning"
+              class="cyber-btn cyber-btn-primary text-xs !py-1.5 !px-3 flex items-center gap-1.5">
+        <span :class="{'animate-spin': isErrorCorrectionRunning}">🔄</span>
+        <span>{{ isErrorCorrectionRunning ? '改错树训练中...' : '重新执行残差改错推演' }}</span>
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="glass-panel p-4 border border-amber-500/40">
+        <div class="text-xs font-bold text-amber-600 dark:text-amber-300 flex items-center gap-1.5">
+          <span>👑</span> 纠偏金胆 Top 3
+        </div>
+        <div class="mt-3 flex items-center gap-2 flex-wrap">
+          <span v-for="num in (errorCorrectionData?.top3_gold || errorCorrectionData?.top5_gold || [])" :key="'ec-t3-'+num"
+                @click="openBallDetail({number: num})"
+                class="px-2.5 py-1 rounded-lg border border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-200 font-mono font-bold text-sm cursor-pointer hover:scale-105 transition">
+            {{ String(num).padStart(2, '0') }}
+          </span>
+        </div>
+      </div>
+
+      <div class="glass-panel p-4 border border-cyan-500/40" v-if="(errorCorrectionData?.gold_pairs || []).length">
+        <div class="text-xs font-bold text-cyan-600 dark:text-cyan-300 flex items-center gap-1.5">
+          <span>💎</span> 改错黄金选2
+        </div>
+        <div class="mt-3 space-y-2">
+          <div v-for="(gp, idx) in (errorCorrectionData?.gold_pairs || []).slice(0, 2)" :key="'ec-pair-'+idx"
+               class="flex flex-wrap items-center gap-2 text-xs">
+            <span class="font-mono font-bold text-cyan-600 dark:text-cyan-300">{{ gp.pair }}</span>
+            <span class="font-mono" style="color: var(--text-muted);">亲和 {{ gp.co_score }}</span>
+            <span style="color: var(--text-muted);">{{ gp.desc }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="glass-panel p-4 border border-rose-500/30">
+        <div class="text-xs font-bold text-rose-500 dark:text-rose-300 flex items-center gap-1.5 mb-2">
+          <span>🚨</span> 拔除虚火诱多（抓内鬼）
+        </div>
+        <div class="space-y-2 max-h-[220px] overflow-y-auto cyber-scrollbar pr-1" v-if="(errorCorrectionData?.traps_avoided || []).length">
+          <div v-for="t in (errorCorrectionData?.traps_avoided || []).slice(0, 6)" :key="'ec-trap-'+t.ball"
+               class="p-2 rounded-lg border text-[11px]" style="background: var(--bg-card-inner); border-color: var(--border-subtle);">
+            <div class="flex items-center gap-2 font-mono">
+              <span class="font-bold text-rose-500 cursor-pointer" @click="openBallDetail({number: t.ball})">{{ t.ball_str || String(t.ball).padStart(2,'0') }}</span>
+              <span style="color: var(--text-muted);">基准 {{ t.base_score }}</span>
+              <span class="text-rose-400">{{ t.residual_penalty }}</span>
+              <span class="text-amber-500">→ {{ t.final_score }}</span>
+            </div>
+            <p class="mt-1" style="color: var(--text-muted);">{{ t.reason }}</p>
+          </div>
+        </div>
+        <p v-else class="text-[11px]" style="color: var(--text-muted);">暂无显著虚火诱多信号</p>
+      </div>
+
+      <div class="glass-panel p-4 border border-emerald-500/30">
+        <div class="text-xs font-bold text-emerald-600 dark:text-emerald-300 flex items-center gap-1.5 mb-2">
+          <span>🚀</span> 提拔极限回补（提黑马）
+        </div>
+        <div class="space-y-2 max-h-[220px] overflow-y-auto cyber-scrollbar pr-1" v-if="(errorCorrectionData?.rebounds_promoted || []).length">
+          <div v-for="r in (errorCorrectionData?.rebounds_promoted || []).slice(0, 6)" :key="'ec-reb-'+r.ball"
+               class="p-2 rounded-lg border text-[11px]" style="background: var(--bg-card-inner); border-color: var(--border-subtle);">
+            <div class="flex items-center gap-2 font-mono">
+              <span class="font-bold text-emerald-500 cursor-pointer" @click="openBallDetail({number: r.ball})">{{ r.ball_str || String(r.ball).padStart(2,'0') }}</span>
+              <span style="color: var(--text-muted);">基准 {{ r.base_score }}</span>
+              <span class="text-emerald-400">+{{ r.residual_bonus ?? r.residual_correction }}</span>
+              <span class="text-amber-500">→ {{ r.final_score }}</span>
+            </div>
+            <p class="mt-1" style="color: var(--text-muted);">{{ r.reason }}</p>
+          </div>
+        </div>
+        <p v-else class="text-[11px]" style="color: var(--text-muted);">暂无极端回补黑马信号</p>
+      </div>
+    </div>
+
+    <div class="glass-panel p-4 border border-slate-700/50" v-if="(errorCorrectionData?.ball_proba_top20 || []).length">
+      <div class="text-xs font-bold mb-2" style="color: var(--text-main);">纠偏综合分 Top20</div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs font-mono">
+          <thead>
+            <tr style="color: var(--text-muted);">
+              <th class="text-left py-1">排名</th>
+              <th class="text-left">号码</th>
+              <th class="text-right">基准分</th>
+              <th class="text-right">残差修正</th>
+              <th class="text-right">综合分</th>
+              <th class="text-left pl-3">标签</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(row, idx) in (errorCorrectionData?.ball_proba_top20 || [])" :key="'ec-row-'+row.ball"
+                class="border-t" style="border-color: var(--border-subtle);">
+              <td class="py-1" style="color: var(--text-muted);">{{ idx + 1 }}</td>
+              <td class="font-bold cursor-pointer text-cyan-600 dark:text-cyan-300" @click="openBallDetail({number: row.ball})">
+                {{ String(row.ball).padStart(2, '0') }}
+              </td>
+              <td class="text-right">{{ row.base_score }}</td>
+              <td class="text-right" :class="(row.residual_correction || 0) >= 0 ? 'text-emerald-500' : 'text-rose-400'">
+                {{ row.residual_correction }}
+              </td>
+              <td class="text-right text-amber-600 dark:text-amber-300 font-bold">{{ row.final_score }}</td>
+              <td class="pl-3" style="color: var(--text-muted);">{{ row.tag || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="glass-panel p-4 border border-slate-700/50" v-if="errorCorrectionData?.feature_importance">
+      <div class="text-xs font-bold mb-2" style="color: var(--text-main);">🌲 GBDT 特征重要性 Top</div>
+      <div class="flex flex-wrap gap-2">
+        <span v-for="(v, k) in errorCorrectionData.feature_importance" :key="'ec-imp-'+k"
+              class="px-2 py-1 rounded border text-[11px] font-mono"
+              style="background: var(--bg-card-inner); border-color: var(--border-subtle); color: var(--text-sub);">
+          {{ k }} <b class="text-violet-600 dark:text-violet-300">{{ v }}%</b>
+        </span>
+      </div>
+      <p class="text-[10px] mt-2 font-mono" style="color: var(--text-muted);">
+        训练样本 {{ errorCorrectionData?.engine_meta?.n_train_rows || errorCorrectionData?.history_used || 0 }}
+        · fallback={{ errorCorrectionData?.engine_meta?.fallback ? '是' : '否' }}
+      </p>
+    </div>
+
+    <div id="module-review-error-correction" class="glass-panel p-5 border border-violet-500/40 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800">
+        <div>
+          <h4 class="text-sm font-bold" style="color: var(--text-main);">样本外滚动复盘（严格无未来）</h4>
+          <p class="text-[11px]" style="color: var(--text-muted);">
+            近 {{ errorCorrectionReviewData?.n_periods || 30 }} 期 · buffer={{ errorCorrectionReviewData?.history_buffer || 100 }}
+            · 主推最优 3 码
+          </p>
+        </div>
+        <button class="cyber-btn cyber-btn-dark text-xs" @click="fetchErrorCorrectionReview(30, true)">强制重算复盘</button>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+        <div class="p-3 rounded-xl border border-cyan-500/40" style="background: var(--bg-card-inner);">
+          <div class="text-xs" style="color: var(--text-muted);">Top3 均中</div>
+          <div class="text-xl font-black font-mono text-cyan-600 dark:text-cyan-300 mt-1">
+            {{ errorCorrectionReviewData?.stats?.avg_top3_hit ?? '--' }}
+          </div>
+        </div>
+        <div class="p-3 rounded-xl border border-amber-500/40" style="background: var(--bg-card-inner);">
+          <div class="text-xs" style="color: var(--text-muted);">金胆命中</div>
+          <div class="text-xl font-black font-mono text-amber-600 dark:text-amber-300 mt-1">
+            {{ errorCorrectionReviewData?.stats?.gold_hit_rate ?? '--' }}%
+          </div>
+        </div>
+        <div class="p-3 rounded-xl border" style="background: var(--bg-card-inner); border-color: var(--border-subtle);">
+          <div class="text-xs" style="color: var(--text-muted);">复盘期数</div>
+          <div class="text-xl font-black font-mono mt-1" style="color: var(--text-main);">
+            {{ errorCorrectionReviewData?.stats?.total_periods ?? '--' }}
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-2 max-h-[420px] overflow-y-auto cyber-scrollbar pr-1">
+        <div v-for="rec in (errorCorrectionReviewData?.records || [])" :key="'ec-wf-'+rec.period"
+             class="p-3 rounded-xl border space-y-2" style="background: var(--bg-card-inner); border-color: var(--border-subtle);">
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <span class="font-mono font-bold text-cyan-600 dark:text-cyan-300">第 {{ rec.period }} 期</span>
+            <span v-if="rec.gold_hit" class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-600 dark:text-amber-300 font-mono border border-amber-500/40">金胆命中</span>
+            <span class="font-mono" style="color: var(--text-muted);">Top3 {{ (rec.top3_hits ?? rec.top5_hits) }}/3</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <span v-for="num in (rec.top3 || rec.top5 || [])" :key="'ec3-'+rec.period+'-'+num"
+                  class="px-1.5 py-0.5 rounded border text-[11px] font-mono font-bold"
+                  :class="(rec.actual_draw||[]).includes(num) ? 'border-amber-400 text-amber-600 dark:text-amber-200 bg-amber-500/15' : ''"
+                  style="border-color: var(--border-subtle);">{{ String(num).padStart(2,'0') }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

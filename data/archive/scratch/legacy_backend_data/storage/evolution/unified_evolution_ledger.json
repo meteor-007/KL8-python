@@ -1,0 +1,15 @@
+[
+  {
+    "generation": 2,
+    "target_period": 2026234,
+    "prev_period_evaluated": 2026233,
+    "focal_loss": 156.3202,
+    "sigma": 2.45,
+    "lambda_decay": 0.95,
+    "rationales": [
+      "🌌 上期号码高度局部聚集 (平均间距 3.3 < 3.8)，空间高斯核宽自适应收紧: 2.5 ➔ 2.45",
+      "⏱️ 上期重号 4 个符合常态，时序衰减率维持: 0.95"
+    ],
+    "calibrated_at": "2026-09-02T11:25:26.429854"
+  }
+]

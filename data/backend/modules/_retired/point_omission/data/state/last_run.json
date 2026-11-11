@@ -1,0 +1,14 @@
+{
+  "command": "analyze",
+  "target_period": 2026242,
+  "target_date": "2026-09-09",
+  "latest_draw": 2026242,
+  "pairable": 277,
+  "dirty": [
+    2026000
+  ],
+  "insufficient_modules": [],
+  "shared_history_periods": 2063,
+  "shared_points_periods": 278,
+  "written_at": "2026-09-10T17:56:34"
+}

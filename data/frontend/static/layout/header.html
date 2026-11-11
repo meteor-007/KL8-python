@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>K8-QUANT 智能量化操盘决策终端</title>
+  <!-- TailwindCSS Warning Suppress -->
+  <script>
+    (function() {
+      var origWarn = console.warn;
+      console.warn = function() {
+        if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].indexOf('cdn.tailwindcss.com should not be used in production') !== -1) {
+          return;
+        }
+        origWarn.apply(console, arguments);
+      };
+    })();
+  </script>
+  <!-- TailwindCSS (本地托管，避免第三方 CDN 依赖/首屏等待) -->
+  <script src="/static/vendor/tailwind.browser.js"></script>
+  <!-- Vue 3 -->
+  <script src="/static/vendor/vue.global.prod.js"></script>
+  <!-- Axios -->
+  <script src="/static/vendor/axios.min.js"></script>
+  <!-- ECharts 5 -->
+  <script src="/static/vendor/echarts.min.js"></script>
+  <!-- Marked for Markdown -->
+  <script src="/static/vendor/marked.min.js"></script>
+  <!-- Custom Cyber Theme -->
+  <link rel="stylesheet" href="/static/css/cyber_theme.css?v=20260905_1835">
+  <style>
+    [v-cloak] { display: none; }
+  </style>
+</head>
+<body id="app" v-cloak>
+
+  <!-- 移动端抽屉侧边栏遮罩层 (<=1024px 时显示，点击关闭抽屉) -->
+  <div class="cyber-sidebar-backdrop" :class="{'show': isMobileSidebarOpen}" @click="toggleMobileSidebar()"></div>
+
+  <!-- ═════════════════ 1. 左侧多级导航侧边栏 ═════════════════ -->
+  <aside class="cyber-sidebar" :class="{'collapsed': !isMobile && isSidebarCollapsed, 'mobile-open': isMobileSidebarOpen}">
+    <!-- Logo 区域 -->
+    <div class="sidebar-logo">
+      <div class="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center text-lg shadow-[0_0_12px_rgba(6,182,212,0.4)] flex-shrink-0">
+        🧬
+      </div>
+      <div v-show="isMobile || !isSidebarCollapsed" class="overflow-hidden whitespace-nowrap">
+        <h1 class="text-sm font-bold tracking-wider bg-gradient-to-r from-cyan-400 to-amber-300 bg-clip-text text-transparent">
+          K8-QUANT
+        </h1>
+        <p class="text-[10px] text-slate-500 font-mono">QUANT TERMINAL V5.0</p>
+      </div>
+      <!-- 移动端专属关闭按钮 -->
+      <button v-if="isMobile" @click="toggleMobileSidebar(false)" class="mobile-sidebar-close-btn" title="关闭侧边栏">✕</button>
+    </div>
+
+    <!-- 菜单树容器 -->
+    <div class="sidebar-menu-wrapper">
+      <div v-for="group in menuGroups" :key="group.id" class="menu-group-block">
+        <!-- 分组标题 (折叠/展开) -->
+        <div v-show="isMobile || !isSidebarCollapsed"
+             class="menu-item-head"
+             :class="{'active-parent': isGroupActive(group)}"
+             @click="toggleGroup(group)">
+          <span class="flex items-center gap-2 min-w-0">
+            <span class="text-base leading-none flex-shrink-0">{{ group.icon }}</span>
+            <span class="font-bold text-xs leading-tight truncate">{{ group.name }}</span>
+          </span>
+          <span class="text-[10px] text-slate-600 transition-transform duration-200 flex-shrink-0" :class="{'rotate-90': group.opened}">▶</span>
+        </div>
+
+        <!-- 子菜单项列表 -->
+        <div v-show="group.opened || (!isMobile && isSidebarCollapsed)" class="sub-menu-list" :class="{'!ml-1 !pl-1': !isMobile && isSidebarCollapsed}">
+          <div v-for="sub in group.children" :key="sub.key"
+               class="sub-menu-item"
+               :class="{'active': activeTab === sub.key}"
+               @click="openTab(sub.key, sub.title, sub.icon)"
+               :title="sub.title">
+            <span class="flex items-center gap-2 truncate min-w-0">
+              <span class="text-sm flex-shrink-0">{{ sub.icon }}</span>
+              <span v-show="isMobile || !isSidebarCollapsed" class="truncate">{{ sub.shortTitle || sub.title }}</span>
+            </span>
+            <span v-if="sub.badge && (isMobile || !isSidebarCollapsed)"
+                  class="text-[9px] px-1.5 py-0.2 rounded font-mono font-bold flex-shrink-0"
+                  :class="sub.badge === 'HOT' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : (sub.badge === 'LIVE' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : (sub.badge === '主推' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-cyan-500/20 text-cyan-300'))">
+              {{ sub.badge }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 侧边栏底部折叠开关 & 主题指示 -->
+    <div class="sidebar-footer p-3 flex flex-col gap-2 text-xs">
+      <div class="flex items-center justify-between gap-2">
+        <button @click="handleSidebarToggle()" class="flex items-center gap-1.5 text-slate-400 hover:text-cyan-400 transition flex-1 text-left">
+          <span>{{ isMobile ? '👈' : (isSidebarCollapsed ? '👉' : '👈') }}</span>
+          <span v-show="isMobile || !isSidebarCollapsed">{{ isMobile ? '收起侧边栏' : (isSidebarCollapsed ? '展开菜单' : '收起侧边栏') }}</span>
+        </button>
+        <button v-show="isMobile || !isSidebarCollapsed" 
+                @click="toggleAllGroups()" 
+                class="px-1.5 py-0.5 rounded text-[10px] text-slate-400 hover:text-cyan-300 hover:bg-slate-800/60 border border-slate-700/50 transition"
+                title="一键展开或折叠全部菜单分组">
+          {{ menuGroups.every(g => g.opened) ? '折叠全部' : '展开全部' }}
+        </button>
+      </div>
+      <div v-show="isMobile || !isSidebarCollapsed" class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-800/60">
+        <span>视觉风格:</span>
+        <span class="font-mono font-bold flex items-center gap-1.5" :style="{ color: currentThemeObj?.dotColor || '#00f0ff' }">
+          <span class="w-2 h-2 rounded-full inline-block" :style="{ backgroundColor: currentThemeObj?.dotColor || '#00f0ff' }"></span>
+          {{ currentThemeObj?.name || '深邃赛博' }}
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═════════════════ 2. 右侧主工作区 (顶栏 + 标签栏 + 视口) ═════════════════ -->
+  <div class="cyber-main-layout">
+
+    <!-- 顶部状态栏 -->
+    <header class="cyber-topbar">
+      <div class="flex items-center gap-2 sm:gap-4 min-w-0">
+        <!-- 移动端抽屉菜单汉堡按钮 (<=1024px 时显示) -->
+        <button @click="toggleMobileSidebar()" class="mobile-menu-btn" title="打开导航菜单">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+        <!-- 快速期号状态 -->
+        <div class="flex items-center gap-1.5 sm:gap-3 text-xs font-mono min-w-0">
+          <div class="hidden md:flex px-2 py-1 rounded bg-slate-900 border border-slate-800 items-center gap-1.5 shrink-0">
+            <span class="text-slate-500">最新:</span>
+            <span class="text-cyan-400 font-bold">{{ systemStatus.latest_draw_period }}期</span>
+          </div>
+          <div class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded bg-amber-500/15 border border-amber-500/40 flex items-center gap-1 shrink-0">
+            <span class="text-slate-400 text-[11px] sm:text-xs">目标:</span>
+            <span class="text-amber-400 font-bold text-xs">{{ systemStatus.target_period }}期</span>
+          </div>
+          <div class="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 shrink-0">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>信标正常</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧快捷指令与主题选择器 -->
+      <div class="flex items-center gap-1 sm:gap-2.5 shrink-0">
+        <!-- 每日点位快捷录入按钮 (移动端折叠，桌面端展示) -->
+          <button @click="openTab('points_input')"
+                class="hidden md:flex px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold items-center gap-1 transition shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+          <span class="text-sm">📝</span>
+          <span>录入点位</span>
+        </button>
+
+        <!-- 主题切换下拉选择器 -->
+        <div class="theme-selector-dropdown">
+          <button @click="showThemeDropdown = !showThemeDropdown" class="theme-selector-btn" title="点击切换系统主题界面样式">
+            <span class="theme-color-dot" :style="{ backgroundColor: currentThemeObj?.dotColor || '#00f0ff', color: currentThemeObj?.dotColor || '#00f0ff' }"></span>
+            <span class="hidden sm:inline">{{ currentThemeObj?.icon || '🌌' }} {{ currentThemeObj?.name || '深邃赛博' }}</span>
+            <span class="text-[9px] text-slate-400 transition-transform" :class="{'rotate-180': showThemeDropdown}">▼</span>
+          </button>
+
+          <!-- 遮罩层：手机与桌面通用，点击空白处立即收起 -->
+          <div v-show="showThemeDropdown" class="theme-dropdown-backdrop" @click="showThemeDropdown = false"></div>
+
+          <div v-show="showThemeDropdown" class="theme-dropdown-menu">
+            <div class="text-[11px] font-bold text-slate-400 px-2 py-1 mb-1 border-b border-slate-700/50 flex items-center justify-between">
+              <span>🎨 系统界面主题</span>
+              <span class="text-[10px] font-mono text-cyan-400">6 款精选</span>
+            </div>
+            <div v-for="thm in themes" :key="thm.id"
+                 class="theme-option-item"
+                 :class="{'active': currentTheme === thm.id}"
+                 @click="setTheme(thm.id); showThemeDropdown = false">
+              <div class="flex items-center gap-2.5">
+                <span class="theme-color-dot" :style="{ backgroundColor: thm.dotColor, color: thm.dotColor }"></span>
+                <div>
+                  <div class="text-xs font-bold flex items-center gap-1.5">
+                    <span>{{ thm.icon }}</span>
+                    <span>{{ thm.name }}</span>
+                  </div>
+                  <div class="text-[10px] text-slate-400">{{ thm.desc }}</div>
+                </div>
+              </div>
+              <span v-if="currentTheme === thm.id" class="text-xs text-amber-400 font-bold">✓</span>
+            </div>
+          </div>
+        </div>
+
+        <button @click="runPipeline" :disabled="isRunning" class="cyber-btn cyber-btn-gold text-xs px-2 py-1 sm:px-3 sm:py-1.5">
+          <span v-if="isRunning" class="animate-spin">⚙️</span>
+          <span v-else>⚡</span>
+          <span class="hidden sm:inline">{{ isRunning ? '全量计算中...' : '一键量化研判' }}</span>
+          <span class="sm:hidden">{{ isRunning ? '计算中' : '研判' }}</span>
+        </button>
+        <button @click="syncData" :disabled="isRunning" class="cyber-btn cyber-btn-cyan text-xs px-2 py-1 sm:px-2.5 sm:py-1.5" title="同步最新开奖；完成后自动打开开奖流水线">
+          <span>🔄</span>
+          <span class="hidden sm:inline">同步</span>
+        </button>
+        <button @click="openTab('nightly_scheduler')" class="cyber-btn text-xs px-2 py-1 sm:px-2.5 sm:py-1.5 bg-amber-500/15 text-amber-200 border border-amber-400/40 hover:border-amber-300/70" title="开奖后自动流水线（非点位）">
+          <span>⏰</span>
+          <span class="hidden lg:inline">流水线</span>
+        </button>
+        <a href="/logout" title="退出登录" class="px-2 py-1 rounded text-xs text-slate-400 hover:text-rose-300 hover:bg-rose-500/10 border border-slate-700/60 transition">退出</a>
+      </div>
+    </header>
+
+    <!-- 动态 Tab 标签栏容器 -->
+    <nav class="cyber-tabbar">
+      <!-- 可滚动的 Tab 标签列表 -->
+      <div class="cyber-tabbar-scroll">
+        <div v-for="tab in tabs" :key="tab.key"
+             class="cyber-tab"
+             :class="{'active': activeTab === tab.key}"
+             @click="switchTab(tab.key)"
+             @contextmenu.prevent="openTabContextMenu($event, tab)"
+             :title="tab.title + (tab.closable ? ' (右键更多操作)' : '')">
+          <span class="cyber-tab-icon">{{ tab.icon }}</span>
+          <span class="cyber-tab-title">{{ tab.shortTitle || tab.title }}</span>
+          <span v-if="tab.closable" @click.stop="closeTab(tab.key)" class="cyber-tab-close" title="关闭标签页">✕</span>
+        </div>
+      </div>
+
+      <!-- Tab 快捷固定操作区 (固定最右侧防遮挡) -->
+      <div class="cyber-tabbar-actions">
+        <button @click="closeAllTabs"
+                class="cyber-tabbar-action-btn cyber-tabbar-action-danger"
+                title="一键关闭全部已打开的标签页并返回主全景">
+          <span class="text-xs">🧹</span>
+          <span class="text-[11px] font-medium hidden sm:inline">一键关闭全部</span>
+        </button>
+        <button @click="closeOtherTabs(activeTab)"
+                class="cyber-tabbar-action-btn"
+                title="关闭除当前激活标签外的其他标签页">
+          <span class="text-xs">🚫</span>
+          <span class="text-[11px] hidden md:inline">关闭其他</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Tab 标签页右键上下文快捷菜单 -->
+    <div v-if="tabContextMenu.visible"
+         :style="{ top: tabContextMenu.y + 'px', left: tabContextMenu.x + 'px' }"
+         class="cyber-tab-context-menu"
+         @click.stop>
+      <div class="cyber-tab-menu-header" v-if="tabContextMenu.tab">
+        <span class="text-sm">{{ tabContextMenu.tab.icon }}</span>
+        <span class="font-bold truncate max-w-[130px]">{{ tabContextMenu.tab.title }}</span>
+      </div>
+      <div class="cyber-tab-menu-divider"></div>
+      <div class="cyber-tab-menu-item" @click="refreshCurrentTab(tabContextMenu.tab?.key)">
+        <span>🔄</span>
+        <span>刷新本页数据</span>
+      </div>
+      <div v-if="tabContextMenu.tab && tabContextMenu.tab.closable"
+           class="cyber-tab-menu-item"
+           @click="closeTab(tabContextMenu.tab.key)">
+        <span>✕</span>
+        <span>关闭当前标签</span>
+      </div>
+      <div class="cyber-tab-menu-item" @click="closeOtherTabs(tabContextMenu.tab?.key)">
+        <span>🚫</span>
+        <span>关闭其他标签</span>
+      </div>
+      <div class="cyber-tab-menu-item" @click="closeRightTabs(tabContextMenu.tab?.key)">
+        <span>➡️</span>
+        <span>关闭右侧标签</span>
+      </div>
+      <div class="cyber-tab-menu-item" @click="closeLeftTabs(tabContextMenu.tab?.key)">
+        <span>⬅️</span>
+        <span>关闭左侧标签</span>
+      </div>
+      <div class="cyber-tab-menu-divider"></div>
+      <div class="cyber-tab-menu-item cyber-tab-menu-danger" @click="closeAllTabs">
+        <span>🧹</span>
+        <span class="font-semibold">一键关闭全部</span>
+      </div>
+    </div>
+
+    <!-- ═════════════════ 全局量化操盘工作流（固定在标签栏下方，不随各页内容滚动） ═════════════════ -->
+    <div class="quant-workflow-bar glass-panel rounded-none border-x-0 border-t-0 px-2.5 sm:px-4 py-2 sm:py-2.5 flex flex-col xl:flex-row xl:items-center justify-between gap-2 sm:gap-3">
+      <div class="flex items-center justify-between gap-2 text-xs font-bold shrink-0">
+        <div class="flex items-center gap-1.5">
+          <span class="text-base sm:text-lg">🧬</span>
+          <span class="font-bold tracking-wide text-xs sm:text-sm" style="color: var(--theme-accent);">量化操盘工作流:</span>
+        </div>
+        <span class="text-[10px] text-slate-400 font-mono sm:hidden">👈 滑动4步 👉</span>
+        <span class="text-[11px] text-slate-400 hidden 2xl:inline font-mono">从数据同步到一键解算（复盘见各模块页内）</span>
+      </div>
+      <div class="stepper-workflow-grid grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5 w-full text-xs font-mono">
+        <button @click="syncData" :disabled="isRunning"
+                class="p-2 sm:p-2.5 rounded-lg border transition flex items-center justify-center gap-2 font-medium hover:border-cyan-400"
+                style="background: var(--bg-card-inner); border-color: var(--border-subtle); color: var(--text-main);">
+          <span class="w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold" style="background: rgba(6, 182, 212, 0.2); color: #00f0ff;">1</span>
+          <span class="truncate font-sans font-semibold">🔄 同步开奖</span>
+        </button>
+        <button @click="openTab('genetic_cockpit')"
+                class="p-2 sm:p-2.5 rounded-lg border transition flex items-center justify-center gap-2 font-medium hover:border-amber-400"
+                :class="{'workflow-step-active': ['genetic_cockpit','linear_algebra_cockpit','random_forest_cockpit','error_correction_cockpit'].includes(activeTab)}"
+                style="background: var(--bg-card-inner); border-color: var(--border-subtle); color: var(--text-main);">
+          <span class="w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">2</span>
+          <span class="truncate font-sans font-semibold">📐 高维数学&AI推演</span>
+        </button>
+        <button @click="openTab('classic_overview')"
+                class="p-2 sm:p-2.5 rounded-lg border transition flex items-center justify-center gap-2 font-medium hover:border-fuchsia-400"
+                :class="{'workflow-step-active': ['classic_overview','gold_pick2_cockpit','gold_pairs','hidden_energy','jingle_cockpit','suppression_cockpit','datasource_cockpit','psychological_game','point_omission_cockpit'].includes(activeTab)}"
+                style="background: var(--bg-card-inner); border-color: var(--border-subtle); color: var(--text-main);">
+          <span class="w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">3</span>
+          <span class="truncate font-sans font-semibold">⚡ 经典量化推演</span>
+        </button>
+        <button @click="runPipeline" :disabled="isRunning"
+                class="p-2 sm:p-2.5 rounded-lg border transition flex items-center justify-center gap-2 font-medium hover:border-emerald-400"
+                style="background: var(--bg-card-inner); border-color: var(--border-subtle); color: var(--text-main);">
+          <span class="w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">4</span>
+          <span class="truncate font-sans font-semibold">⚡ 一键全流程解算</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 主视口内容区（仅模块内容滚动，工作流不随页切换重绘感） -->
+    <main class="cyber-content-viewport">
+
+      <!-- ═══ E5: 数据新鲜度横幅 —— 停更数据在界面上现形, 不再装新鲜 ═══ -->
+      <div v-if="freshness" class="mb-3 sm:mb-4">
+        <div class="glass-panel px-3 py-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs cursor-pointer select-none"
+             :style="freshnessBadCount > 0 ? 'border-left: 4px solid #fbbf24;' : 'border-left: 4px solid #10b981;'"
+             @click="freshnessExpanded = !freshnessExpanded">
+          <span class="text-base">{{ freshnessBadCount > 0 ? '⚠️' : '✅' }}</span>
+          <span class="font-bold" :class="freshnessBadCount > 0 ? 'text-amber-300' : 'text-emerald-300'">数据新鲜度</span>
+          <span class="text-slate-400">最新开奖 <b class="text-white font-mono">{{ freshness.latest_draw_period || '-' }}</b></span>
+          <span :class="freshnessBadCount > 0 ? 'text-amber-200' : 'text-slate-400'">{{ freshness.verdict }}</span>
+          <span v-if="freshnessLoading" class="text-slate-500">刷新中…</span>
+          <button @click.stop="fetchFreshness()" class="text-[11px] text-cyan-400 hover:underline">重扫</button>
+          <span class="ml-auto text-[10px] text-slate-500">{{ freshnessExpanded ? '收起明细 ▲' : '展开明细 ▼' }}</span>
+        </div>
+
+        <div v-if="freshnessExpanded" class="glass-panel mt-1 p-3 space-y-2 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-4 gap-y-1.5 font-mono">
+            <div v-for="it in freshness.items" :key="it.key" class="flex items-center gap-2 min-w-0">
+              <span>{{ freshnessMark(it.state) }}</span>
+              <span class="text-slate-300 truncate">{{ it.label }}</span>
+              <span class="text-slate-500 shrink-0">{{ it.latest_period || '无期号' }}</span>
+              <span class="shrink-0" :class="it.state === 'fresh' ? 'text-emerald-400' : 'text-amber-300'">
+                {{ freshnessLagText(it) }}
+              </span>
+            </div>
+          </div>
+
+          <!-- 人为退役 ≠ 故障停更 (E3): 这两件事必须在界面上分开说 -->
+          <div v-if="freshness.retired_outputs && freshness.retired_outputs.length"
+               class="border-t border-slate-800 pt-2 space-y-0.5">
+            <div class="text-slate-400">⏹ 已人为退役的产出 (停更是判决, 不是故障):</div>
+            <div v-for="r in freshness.retired_outputs" :key="r.key" class="text-slate-500 font-mono pl-3">
+              · {{ r.label }} —— {{ r.note }}
+            </div>
+          </div>
+
+          <div v-if="freshness.bogus_files && freshness.bogus_files.length"
+               class="border-t border-slate-800 pt-2 text-amber-300 font-mono">
+            ❗ 文件名期号异常(疑似手滑): {{ freshness.bogus_files.join(', ') }}
+          </div>
+
+          <div class="border-t border-slate-800 pt-2 text-[11px] text-slate-500 leading-relaxed">
+            · 落后 0 期 = 本期开奖已落稿；落后 -1 期 = 下一期稿子已备好（这是常态，不是异常）。
+            · 只有落后 &gt; 1 期才算真停更，会标 ⚠️ 并计入上方告警数。
+          </div>
+        </div>
+      </div>
+      
+      <!-- ═══════════ TAB: 🧠 全栈统一决策主脑 (无加权 · 纯物理概率场) ═══════════ -->

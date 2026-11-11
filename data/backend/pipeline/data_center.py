@@ -118,7 +118,7 @@ class DataCenter:
     def _ensure_follow_covers_target(self):
         """硬门禁：跟随最新期必须覆盖目标预测期(history最新+1)。"""
         from utils.data_validator import _get_excel_跟随统计_issues, _get_hot_dir_issues, _parse_txt_history
-        history = _parse_txt_history(os.path.join(_PROJ, 'kl8_history_final.txt'))
+        history = _parse_txt_history(data_path('kl8_history_final.txt'))
         if not history:
             return
         target = str(int(history[0]['issue']) + 1)
@@ -162,12 +162,22 @@ class DataCenter:
             return True
 
     def _run_garbage_collection(self):
-        script_path = os.path.join(_PROJ, 'utils', 'garbage_collector.py')
-        if os.path.exists(script_path):
-            subprocess.run(
-                [sys.executable, script_path],
-                capture_output=True, text=True, encoding='utf-8', errors='replace', cwd=_PROJ,
-            )
+        candidates = [
+            os.path.join(_PROJ, 'backend', 'utils', 'garbage_collector.py'),
+            os.path.join(_PROJ, 'utils', 'garbage_collector.py'),
+        ]
+        script_path = next((p for p in candidates if os.path.exists(p)), None)
+        if not script_path:
+            try:
+                from utils.garbage_collector import run_garbage_collection
+                run_garbage_collection()
+            except Exception as e:
+                logger.warning(f"垃圾回收跳过: {e}")
+            return
+        subprocess.run(
+            [sys.executable, script_path],
+            capture_output=True, text=True, encoding='utf-8', errors='replace', cwd=_PROJ,
+        )
 
     def initialize(self):
         if self.initialized:

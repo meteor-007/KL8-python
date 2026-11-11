@@ -20,7 +20,7 @@ if hasattr(sys.stdout, 'reconfigure'):
 import os, sys
 if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils.paths import get_project_root, data_path, _ensure_project_path
+from utils.paths import get_project_root, data_path, get_logs_dir, _ensure_project_path
 _ensure_project_path()
 _PROJ = get_project_root()
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] GC: %(message)s')
@@ -32,6 +32,15 @@ BACKUP_HOT_DIR = data_path('backup', 'hot_numbers')
 # 时间阈值 (秒)
 HOT_EXPIRE_SECONDS = 7 * 24 * 3600  # 7天
 BAK_EXPIRE_SECONDS = 3 * 24 * 3600  # 3天
+
+# 根目录误生成物（正式活数据在 storage/）
+ROOT_CLUTTER_NAMES = (
+    'output',
+    'outputs',
+    'reports',
+    'kl8_012_roads_summary.csv',
+    'kl8_prime_composite_summary.csv',
+)
 
 
 def _ensure_dir(path):
@@ -103,6 +112,101 @@ def clean_old_bak_files():
     return cleaned
 
 
+def clean_root_clutter():
+    """清扫根目录误生成的 output/outputs/reports 与汇总 CSV，归入 storage。"""
+    from utils.paths import get_stats_dir, get_outputs_dir, get_reports_dir
+
+    logger.info("开始清扫根目录误生成物...")
+    cleaned = 0
+    stats_dir = get_stats_dir()
+    outputs_dir = get_outputs_dir()
+    reports_dir = get_reports_dir()
+
+    def _merge_tree(src: str, dst: str):
+        nonlocal cleaned
+        if not os.path.exists(src):
+            return
+        os.makedirs(dst, exist_ok=True)
+        for name in os.listdir(src):
+            s = os.path.join(src, name)
+            d = os.path.join(dst, name)
+            try:
+                if os.path.isdir(s):
+                    _merge_tree(s, d)
+                    if os.path.isdir(s) and not os.listdir(s):
+                        os.rmdir(s)
+                else:
+                    if (not os.path.exists(d)) or (os.path.getmtime(s) >= os.path.getmtime(d)):
+                        shutil.copy2(s, d)
+                    os.remove(s)
+                    cleaned += 1
+            except OSError as e:
+                logger.warning(f"  [跳过] {s}: {e}")
+
+    # CSV → storage/stats
+    for name in ('kl8_012_roads_summary.csv', 'kl8_prime_composite_summary.csv'):
+        src = os.path.join(_PROJ, name)
+        if not os.path.exists(src):
+            continue
+        dst = os.path.join(stats_dir, name)
+        try:
+            shutil.copy2(src, dst)
+            os.remove(src)
+            cleaned += 1
+            logger.info(f"  [归位] {name} -> storage/stats/")
+        except OSError as e:
+            # 被 WPS 等占用时写入 .latest，根文件留给下次再删
+            try:
+                latest = dst + '.latest'
+                shutil.copy2(src, latest)
+                logger.warning(f"  [占用] {name} 无法删除，已备份到 {os.path.basename(latest)}: {e}")
+            except OSError as e2:
+                logger.warning(f"  [失败] {name}: {e2}")
+
+    mapping = {
+        'output': os.path.join(outputs_dir, 'point_omission'),
+        'outputs': outputs_dir,
+        'reports': reports_dir,
+    }
+    for name, dest in mapping.items():
+        src = os.path.join(_PROJ, name)
+        if not os.path.exists(src):
+            continue
+        _merge_tree(src, dest)
+        try:
+            if os.path.isdir(src) and not os.listdir(src):
+                os.rmdir(src)
+                logger.info(f"  [移除] 空目录 {name}/")
+            elif os.path.isdir(src):
+                shutil.rmtree(src, ignore_errors=True)
+                if not os.path.exists(src):
+                    logger.info(f"  [移除] {name}/")
+        except OSError as e:
+            logger.warning(f"  [失败] 无法移除 {name}/: {e}")
+
+    # 根 logs 内容迁到 storage/logs（目录本身可保留为空，gitignore 已忽略）
+    root_logs = os.path.join(_PROJ, 'logs')
+    storage_logs = get_logs_dir()
+    if os.path.isdir(root_logs):
+        for name in os.listdir(root_logs):
+            s = os.path.join(root_logs, name)
+            if not os.path.isfile(s):
+                continue
+            d = os.path.join(storage_logs, name)
+            try:
+                if (not os.path.exists(d)) or (os.path.getmtime(s) >= os.path.getmtime(d)):
+                    shutil.copy2(s, d)
+                os.remove(s)
+                cleaned += 1
+                logger.info(f"  [归位] logs/{name} -> storage/logs/")
+            except OSError as e:
+                logger.warning(f"  [跳过] logs/{name}: {e}")
+
+    if cleaned == 0:
+        logger.info("  根目录无误生成物需要清扫。")
+    return cleaned
+
+
 def run_garbage_collection():
     print("=" * 60)
     print(" 🗑️ 启动全局垃圾回收管线 (Garbage Collector)")
@@ -111,9 +215,13 @@ def run_garbage_collection():
     c1 = clean_excel_locks()
     c2 = clean_old_bak_files()
     c3 = archive_old_hot_numbers()
+    c4 = clean_root_clutter()
     
     print("-" * 60)
-    logger.info(f"执行完毕! 共删除锁 {c1} 个, 删除过期备份 {c2} 个, 归档冷热码 {c3} 份。")
+    logger.info(
+        f"执行完毕! 共删除锁 {c1} 个, 删除过期备份 {c2} 个, "
+        f"归档冷热码 {c3} 份, 根目录归位 {c4} 项。"
+    )
     print("=" * 60)
 
 

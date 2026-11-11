@@ -14,10 +14,14 @@ import yaml
 import os, sys
 if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils.paths import get_project_root, data_path, _ensure_project_path
+from utils.paths import get_project_root, get_config_dir, data_path, _ensure_project_path
 _ensure_project_path()
 _PROJ = get_project_root()
-CONFIG_FILE = os.path.join(_PROJ, 'config', 'scoring_config.yaml')
+# 2026-10-22 配置路径缺陷修复：原硬编码 `<root>/config/scoring_config.yaml`，
+# 但实体文件在 `<root>/backend/config/`，导致每次加载都告警「配置文件不存在」并
+# 静默回退到 _defaults() —— 真实 YAML 调参从未生效。改走 paths.get_config_dir()
+# （优先 backend/config，回退 root/config），与全库路径中枢保持一致。
+CONFIG_FILE = os.path.join(get_config_dir(), 'scoring_config.yaml')
 
 _instance = None
 
@@ -61,11 +65,26 @@ class ConfigLoader:
 
     @staticmethod
     def _defaults() -> dict:
-        """当YAML文件不存在时的最小默认配置"""
+        """当YAML文件不存在时的最小默认配置
+
+        2026-10-22 一致性修复：原默认值仍带 v3.x 的 MK/EO 两个维度 (已随 v4.0 退役)。
+        ScoreComposer 按 `weights.get(dim)` 取 EF/RW/FO 三键、却按 `sum(weights.values())`
+        归一化 —— MK(0.30)+EO(0.15) 这两个不参与打分的键会白占 45% 权重份额，
+        把三维实际比例稀释成 EF 0.455 / RW 0.182 / FO 0.364。
+        现默认值与 YAML、v4.0 三维架构严格一致 (EF 0.40 / RW 0.30 / FO 0.30)。
+        """
         return {
             'pentagon': {
-                'default_weights': {'MK': 0.30, 'EF': 0.25, 'RW': 0.10, 'FO': 0.20, 'EO': 0.15},
-                'scale_factors': {'MK': 10.0, 'EF': 1.0, 'RW': 10.0, 'FO': 0.5, 'EO': 10.0},
+                'default_weights': {'EF': 0.40, 'RW': 0.30, 'FO': 0.30},
+                'scale_factors': {'EF': 1.0, 'RW': 10.0, 'FO': 0.5},
+                'environment_overrides': {
+                    'hot_burst': {'EF': 0.50, 'RW': 0.20, 'FO': 0.30},
+                    'cold_rebound': {'EF': 0.55, 'RW': 0.25, 'FO': 0.20},
+                    'balanced': {'EF': 0.40, 'RW': 0.30, 'FO': 0.30},
+                    'trend_accel': {'EF': 0.35, 'RW': 0.30, 'FO': 0.35},
+                    'chaotic': {'EF': 0.30, 'RW': 0.45, 'FO': 0.25},
+                },
+                'volatility_thresholds': {'high': 0.25, 'low': 0.10},
             },
             'markov': {'lookback': 3, 'min_observations': 3, 'prior_strength': 1.0, 'default_prob': 0.25},
             'bayesian': {'prior_alpha': 5.0, 'prior_beta': 15.0, 'likelihood_window': 20, 'decay_factor': 0.7},

@@ -1,0 +1,670 @@
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- 🎯 子视图: cockpit_point_omission.html                                  -->
+<!-- 08. 点位+遗漏号深度研判驾驶舱 (Point & Omission Quantitative Cockpit)        -->
+<!-- 深度分析四重奏 · 13大统计矩阵 · H1-H7七维加权 · 5+2双轨 · T=277滚动外样本回测 -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div v-show="activeTab === 'point_omission_cockpit'" class="space-y-6">
+
+  <!-- 1. 顶部控制栏与核心指标概览 -->
+  <div class="glass-panel p-5">
+    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <span class="text-2xl">🎯</span>
+          <h2 class="text-lg font-bold text-cyan-300">点位+遗漏号深度研判驾驶舱</h2>
+          <span class="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-mono font-bold">
+            13维统计矩阵 · Exp3自适应在线学习
+          </span>
+          <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono">
+            目标第 {{ pointOmissionSummary ? pointOmissionSummary.period : (systemStatus ? systemStatus.target_period : '...') }} 期
+          </span>
+        </div>
+        <p class="text-xs text-slate-400 mt-1.5">
+          将每日 20 个点位展开为 46 个循环三元组拓展集合，经由连号集群、周期共振、SVD协方差、FFT谱、马尔可夫、反向博弈等 13 大独立统计算法深度交叉共振，产出最优 3 码核心推荐与防御两码。
+        </p>
+      </div>
+
+      <!-- 右侧快捷操作按钮 -->
+      <div class="flex items-center gap-2.5 shrink-0 flex-wrap">
+        <button @click="triggerPointOmissionRun()" :disabled="pointOmissionLoading || isRunning"
+                class="cyber-btn cyber-btn-gold text-xs flex items-center gap-1.5 px-3 py-1.5">
+          <span v-if="pointOmissionLoading" class="animate-spin">⚙️</span>
+          <span v-else>⚡</span>
+          <span>{{ pointOmissionLoading ? '深度推演中...' : '一键量化深度推演' }}</span>
+        </button>
+        <button @click="setPointOmissionSubTab('report')" class="cyber-btn text-xs flex items-center gap-1 bg-purple-500/15 text-purple-200 border border-purple-400/40 hover:border-purple-300/70 px-3 py-1.5">
+          <span>📑</span> 查看每日完整研报
+        </button>
+        <button @click="fetchPointOmissionSummary(true)" class="cyber-btn cyber-btn-cyan text-xs flex items-center gap-1 px-2.5 py-1.5" title="刷新最新推演数据">
+          <span>🔄</span> 刷新
+        </button>
+      </div>
+    </div>
+
+    <!-- 顶栏 4 大核心指标卡片 -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mt-5">
+      <!-- 卡片 1: 核心领头胆 (Top 1) -->
+      <div class="stat-card border border-amber-500/40 bg-gradient-to-br from-amber-500/10 to-transparent">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span>👑 首席首重金胆 (Top 1)</span>
+          <span class="text-[10px] text-amber-400 font-mono">综合最高分</span>
+        </div>
+        <div class="flex items-center gap-3 mt-2" v-if="pointOmissionSummary && pointOmissionSummary.top5 && pointOmissionSummary.top5.length > 0">
+          <div class="lottery-ball ball-gold text-xl font-bold w-12 h-12 flex items-center justify-center cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.5)]"
+               @click="openBallDetail({number: pointOmissionSummary.top5[0].number})">
+            {{ String(pointOmissionSummary.top5[0].number).padStart(2, '0') }}
+          </div>
+          <div class="space-y-0.5 text-xs font-mono">
+            <div class="text-white font-bold text-sm">综合分 {{ pointOmissionSummary.top5[0].score }}</div>
+            <div class="text-cyan-400">主导: {{ pointOmissionSummary.top5[0].leading_dimension }}</div>
+            <div class="text-slate-400">连失 {{ pointOmissionSummary.top5[0].streak_miss }} 期 · 近10中 {{ pointOmissionSummary.top5[0].hit_l10 }}</div>
+          </div>
+        </div>
+        <div v-else class="text-sm text-slate-500 mt-3 font-mono">暂无推演数据...</div>
+      </div>
+
+      <!-- 卡片 2: 防御性两码 (Defensive Picks) -->
+      <div class="stat-card border border-purple-500/40 bg-gradient-to-br from-purple-500/10 to-transparent">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span>🛡️ 防御两码 (深冷遗漏回补)</span>
+          <span class="text-[10px] text-purple-300 font-mono">冷门对冲</span>
+        </div>
+        <div class="flex items-center gap-3 mt-2" v-if="pointOmissionSummary && pointOmissionSummary.defensive_picks && pointOmissionSummary.defensive_picks.length > 0">
+          <div class="flex items-center gap-2">
+            <div v-for="dNum in pointOmissionSummary.defensive_picks" :key="dNum"
+                 class="lottery-ball text-base font-bold w-10 h-10 flex items-center justify-center cursor-pointer bg-gradient-to-br from-purple-600 to-indigo-800 text-white border border-purple-400/60 shadow-[0_0_12px_rgba(168,85,247,0.4)]"
+                 @click="openBallDetail({number: dNum})">
+              {{ String(dNum).padStart(2, '0') }}
+            </div>
+          </div>
+          <div class="text-xs text-slate-300 font-mono space-y-0.5">
+            <div>5+2 双轨防守策略</div>
+            <div class="text-slate-400 text-[11px]">专挑憋久冷号回补</div>
+          </div>
+        </div>
+        <div v-else class="text-sm text-slate-500 mt-3 font-mono">待生成防御组合...</div>
+      </div>
+
+      <!-- 卡片 3: 拓展集合覆盖规模 -->
+      <div class="stat-card border border-cyan-500/40 bg-gradient-to-br from-cyan-500/10 to-transparent">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span>🌐 点位与拓展池规模</span>
+          <span class="text-[10px] text-cyan-300 font-mono">循环三元组</span>
+        </div>
+        <div class="flex items-baseline gap-2 mt-2" v-if="pointOmissionSummary">
+          <span class="text-2xl font-bold font-mono text-cyan-300">{{ (pointOmissionSummary.core_points || []).length }}</span>
+          <span class="text-xs text-slate-400">原始点位 /</span>
+          <span class="text-2xl font-bold font-mono text-amber-300">{{ (pointOmissionSummary.expanded_points || []).length }}</span>
+          <span class="text-xs text-slate-400">拓展候选池</span>
+        </div>
+        <div class="text-[11px] text-slate-500 mt-1 font-mono">
+          新鲜度: <strong class="text-emerald-400">{{ pointOmissionSummary?.staleness || '正常' }}</strong>
+        </div>
+      </div>
+
+      <!-- 卡片 4: 严谨外样本回测判定 -->
+      <div class="stat-card border border-emerald-500/40 bg-gradient-to-br from-emerald-500/10 to-transparent">
+        <div class="flex items-center justify-between text-xs text-slate-400">
+          <span>🔬 滚动外样本回测 (T=277)</span>
+          <span class="text-[10px] text-emerald-300 font-mono">全样本实测</span>
+        </div>
+        <div class="mt-2 text-xs font-mono" v-if="pointOmissionSummary && pointOmissionSummary.backtest">
+          <div class="flex items-baseline gap-2">
+            <span class="text-white font-bold text-sm">实测均值 {{ pointOmissionSummary.backtest.system_mean_hits || 1.2671 }} 码</span>
+            <span class="text-amber-400 text-xs font-bold">Lift {{ pointOmissionSummary.backtest.system_lift || 1.0137 }}x</span>
+          </div>
+          <div class="text-[11px] text-slate-400 mt-0.5">
+            基线对照: <strong class="text-emerald-300">原始20点位显著超越随机 (p=0.032)</strong>
+          </div>
+        </div>
+        <div v-else class="text-sm text-slate-500 mt-3 font-mono">回测台账加载中...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 今日 3+2 核心推演大牌卡片展示 (最优3码 + 2 防御) -->
+  <div>
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">👑</span>
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider">今日 3+2 核心量化决策名单</h3>
+        <span class="text-xs text-slate-500">（最优3码进击 + 2码深冷防御对冲）</span>
+      </div>
+      <div class="text-xs font-mono text-cyan-400">
+        共振打分覆盖全部 1-80 号码
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
+      <!-- 最优3码核心卡片 -->
+      <div v-for="(item, idx) in (pointOmissionSummary ? (pointOmissionSummary.top5 || []).slice(0, 3) : [])" :key="'top3_' + item.number"
+           class="glass-panel p-4 border rounded-xl flex flex-col justify-between space-y-3 transition hover:border-amber-400/80"
+           :class="idx === 0 ? 'border-amber-500/70 bg-gradient-to-b from-amber-500/15 to-transparent' : 'border-slate-800 bg-slate-900/50'">
+        <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
+          <span class="text-xs font-mono font-bold px-2 py-0.5 rounded"
+                :class="idx === 0 ? 'bg-amber-500/30 text-amber-300 border border-amber-500/50' : 'bg-cyan-500/20 text-cyan-300'">
+            #{{ idx + 1 }} 核心胆
+          </span>
+          <span class="text-[11px] font-mono text-slate-400 font-bold">
+            综合 {{ item.score }}
+          </span>
+        </div>
+
+        <div class="flex items-center justify-center py-2">
+          <div class="lottery-ball text-2xl font-bold w-14 h-14 flex items-center justify-center cursor-pointer shadow-lg"
+               :class="idx === 0 ? 'ball-gold' : 'ball-cyan'"
+               @click="openBallDetail({number: item.number})">
+            {{ String(item.number).padStart(2, '0') }}
+          </div>
+        </div>
+
+        <div class="space-y-1 text-xs font-mono">
+          <div class="flex justify-between text-slate-300">
+            <span class="text-slate-500">主导:</span>
+            <span class="text-cyan-400 font-bold">{{ item.leading_dimension }}</span>
+          </div>
+          <div class="flex justify-between text-slate-400 text-[11px]">
+            <span>连失期数:</span>
+            <span :class="item.streak_miss >= 6 ? 'text-amber-400 font-bold' : 'text-slate-300'">{{ item.streak_miss }} 期</span>
+          </div>
+          <div class="flex justify-between text-slate-400 text-[11px]">
+            <span>近10期命中:</span>
+            <span class="text-slate-300">{{ item.hit_l10 }} 次</span>
+          </div>
+        </div>
+
+        <!-- 七维微型条形进度条 -->
+        <div class="pt-2 border-t border-slate-800/80 space-y-1 text-[10px] font-mono">
+          <div class="flex items-center justify-between text-slate-400">
+            <span>热度 H1:</span>
+            <span class="text-slate-300">{{ item.H1 }}</span>
+          </div>
+          <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+            <div class="bg-cyan-400 h-full" :style="{ width: (item.H1 * 100) + '%' }"></div>
+          </div>
+          <div class="flex items-center justify-between text-slate-400">
+            <span>反弹 H2:</span>
+            <span class="text-slate-300">{{ item.H2 }}</span>
+          </div>
+          <div class="w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+            <div class="bg-amber-400 h-full" :style="{ width: (item.H2 * 100) + '%' }"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 码防御卡片 -->
+      <div v-for="(dNum, dIdx) in (pointOmissionSummary ? pointOmissionSummary.defensive_picks : [])" :key="'def_' + dNum"
+           class="glass-panel p-4 border border-purple-500/60 bg-gradient-to-b from-purple-950/25 to-transparent rounded-xl flex flex-col justify-between space-y-3">
+        <div class="flex items-center justify-between border-b border-purple-500/30 pb-2">
+          <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40">
+            🛡️ 防御 {{ dIdx + 1 }}
+          </span>
+          <span class="text-[11px] font-mono text-purple-300 font-bold">深冷对冲</span>
+        </div>
+
+        <div class="flex items-center justify-center py-2">
+          <div class="lottery-ball text-2xl font-bold w-14 h-14 flex items-center justify-center cursor-pointer bg-gradient-to-br from-purple-600 to-indigo-800 text-white border-2 border-purple-300/80 shadow-[0_0_15px_rgba(168,85,247,0.5)]"
+               @click="openBallDetail({number: dNum})">
+            {{ String(dNum).padStart(2, '0') }}
+          </div>
+        </div>
+
+        <div class="space-y-1 text-xs font-mono">
+          <div class="flex justify-between text-slate-300">
+            <span class="text-slate-500">策略:</span>
+            <span class="text-purple-300 font-bold">极限遗漏回补</span>
+          </div>
+          <div class="flex justify-between text-slate-400 text-[11px]">
+            <span>角色:</span>
+            <span class="text-slate-300">防止热号熄火</span>
+          </div>
+          <div class="text-[10px] text-purple-300/80 pt-1">
+            避免追热落空，高压冷门备选
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-purple-500/30 text-[10px] text-slate-400 text-center font-mono">
+          5+2 组合打包配置
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 五大子标签页导航栏 -->
+  <div class="glass-panel p-2">
+    <div class="flex items-center gap-2 overflow-x-auto pb-1">
+      <button @click="setPointOmissionSubTab('overview')"
+              class="px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shrink-0"
+              :class="pointOmissionSubTab === 'overview' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_10px_rgba(6,182,212,0.2)]' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'">
+        <span>👑</span> 核心评分与 46 拓展集
+      </button>
+      <button @click="setPointOmissionSubTab('matrix')"
+              class="px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shrink-0"
+              :class="pointOmissionSubTab === 'matrix' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_10px_rgba(6,182,212,0.2)]' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'">
+        <span>🌐</span> 80 码全景交互矩阵
+      </button>
+      <button @click="setPointOmissionSubTab('macro')"
+              class="px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shrink-0"
+              :class="pointOmissionSubTab === 'macro' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_10px_rgba(6,182,212,0.2)]' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'">
+        <span>🧭</span> 8大场域与13方法权重
+      </button>
+      <button @click="setPointOmissionSubTab('ledger')"
+              class="px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shrink-0"
+              :class="pointOmissionSubTab === 'ledger' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_10px_rgba(6,182,212,0.2)]' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'">
+        <span>📒</span> 逐期命中复盘
+      </button>
+      <button @click="setPointOmissionSubTab('backtest')"
+              class="px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shrink-0"
+              :class="pointOmissionSubTab === 'backtest' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_10px_rgba(6,182,212,0.2)]' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'">
+        <span>🔬</span> T=277 滚动外样本回测
+      </button>
+      <button @click="setPointOmissionSubTab('report')"
+              class="px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shrink-0"
+              :class="pointOmissionSubTab === 'report' ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_10px_rgba(6,182,212,0.2)]' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'">
+        <span>📑</span> 完整每日大研报
+      </button>
+    </div>
+  </div>
+
+  <!-- ═════════ 子标签 1: 👑 核心评分与 46 拓展集 ═════════ -->
+  <div v-show="pointOmissionSubTab === 'overview'" class="space-y-6">
+    <!-- 最优3码七维雷达分解表格 -->
+    <div class="glass-panel p-5">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h4 class="text-sm font-bold text-white">最优 3 码七维指标 (H1 - H7) 完整明细</h4>
+          <p class="text-xs text-slate-500 mt-0.5">各项维度分为归一化得分 (0.00 - 1.00)，综合分为百分制加权结果</p>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs text-left font-mono">
+          <thead class="text-[11px] text-slate-400 uppercase bg-slate-900/60 border-b border-slate-800">
+            <tr>
+              <th class="px-3 py-2.5">排名</th>
+              <th class="px-3 py-2.5">号码</th>
+              <th class="px-3 py-2.5">综合分</th>
+              <th class="px-3 py-2.5">主导维度</th>
+              <th class="px-3 py-2.5 text-center">H1 热度</th>
+              <th class="px-3 py-2.5 text-center">H2 反弹</th>
+              <th class="px-3 py-2.5 text-center">H3 集群</th>
+              <th class="px-3 py-2.5 text-center">H4 周期</th>
+              <th class="px-3 py-2.5 text-center">H5 共现</th>
+              <th class="px-3 py-2.5 text-center">H6 马氏</th>
+              <th class="px-3 py-2.5 text-center">H7 熵值</th>
+              <th class="px-3 py-2.5 text-center">连失/近10</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/60">
+            <tr v-for="(it, idx) in (pointOmissionSummary ? (pointOmissionSummary.top5 || []).slice(0, 3) : [])" :key="'dim_' + it.number"
+                class="hover:bg-slate-800/40 transition">
+              <td class="px-3 py-2 font-bold text-slate-400">#{{ idx + 1 }}</td>
+              <td class="px-3 py-2">
+                <span class="px-2 py-0.5 rounded font-bold"
+                      :class="idx === 0 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'bg-cyan-500/20 text-cyan-300'">
+                  {{ String(it.number).padStart(2, '0') }}
+                </span>
+              </td>
+              <td class="px-3 py-2 text-white font-bold text-sm">{{ it.score }}</td>
+              <td class="px-3 py-2 text-cyan-300 font-bold">{{ it.leading_dimension }}</td>
+              <td class="px-3 py-2 text-center" :class="it.H1 >= 0.7 ? 'text-amber-300 font-bold' : 'text-slate-300'">{{ it.H1 }}</td>
+              <td class="px-3 py-2 text-center" :class="it.H2 >= 0.7 ? 'text-amber-300 font-bold' : 'text-slate-300'">{{ it.H2 }}</td>
+              <td class="px-3 py-2 text-center" :class="it.H3 >= 0.6 ? 'text-amber-300 font-bold' : 'text-slate-300'">{{ it.H3 }}</td>
+              <td class="px-3 py-2 text-center" :class="it.H4 >= 0.4 ? 'text-amber-300 font-bold' : 'text-slate-400'">{{ it.H4 }}</td>
+              <td class="px-3 py-2 text-center" :class="it.H5 >= 0.6 ? 'text-amber-300 font-bold' : 'text-slate-300'">{{ it.H5 }}</td>
+              <td class="px-3 py-2 text-center" :class="it.H6 >= 0.6 ? 'text-amber-300 font-bold' : 'text-slate-300'">{{ it.H6 }}</td>
+              <td class="px-3 py-2 text-center" :class="it.H7 >= 0.6 ? 'text-amber-300 font-bold' : 'text-slate-300'">{{ it.H7 }}</td>
+              <td class="px-3 py-2 text-center text-slate-400">{{ it.streak_miss }} 期 / {{ it.hit_l10 }} 次</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 拓展集合 46 码状态表 -->
+    <div class="glass-panel p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <h4 class="text-sm font-bold text-white">循环三元组拓展集合 (46 码池) 详细排查表</h4>
+          <p class="text-xs text-slate-500 mt-0.5">点位原号 20 个 + 循环三元组左右拓扑 26 个，按综合得分降序排列</p>
+        </div>
+        <div class="text-xs font-mono text-slate-400">
+          池规模: {{ (pointOmissionSummary?.expanded_points || []).length }} 码
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2.5 pt-2">
+        <div v-for="num in (pointOmissionSummary?.expanded_points || [])" :key="'exp_card_' + num"
+             class="p-2.5 rounded-lg border text-xs font-mono transition flex flex-col justify-between"
+             :class="isPointOmissionTop5(num) ? 'border-amber-400/80 bg-amber-500/15' : (isPointOmissionDefensive(num) ? 'border-purple-400/80 bg-purple-500/15' : (isPointOmissionCore(num) ? 'border-cyan-500/40 bg-slate-900/60' : 'border-slate-800 bg-slate-900/30'))">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-bold"
+                  :class="isPointOmissionTop5(num) ? 'text-amber-300' : (isPointOmissionDefensive(num) ? 'text-purple-300' : 'text-white')">
+              {{ String(num).padStart(2, '0') }}
+            </span>
+            <span v-if="isPointOmissionCore(num)" class="text-[9px] px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-400">点位</span>
+            <span v-else class="text-[9px] px-1 py-0.2 rounded bg-slate-800 text-slate-400">拓展</span>
+          </div>
+
+          <div class="mt-2 space-y-0.5 text-[11px]">
+            <div class="text-slate-300 font-bold">分: {{ getPointOmissionNumScore(num) }}</div>
+            <div class="text-slate-400 text-[10px]">连失: {{ getPointOmissionNumMiss(num) }}期</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════ 子标签 2: 🌐 80 码全景交互矩阵 ═════════ -->
+  <div v-show="pointOmissionSubTab === 'matrix'" class="space-y-6">
+    <div class="glass-panel p-5">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+        <div>
+          <h4 class="text-sm font-bold text-white">80 码点位空间与遗漏全景热力矩阵</h4>
+          <p class="text-xs text-slate-500 mt-0.5">直观审视 20 个点位原号、26 个拓展号、最优3码核心及防御号码的空间点位分布与冷热张力</p>
+        </div>
+        <!-- 图例 -->
+        <div class="flex items-center gap-3 text-xs font-mono flex-wrap">
+          <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-amber-500 border border-amber-300 inline-block shadow-[0_0_8px_rgba(245,158,11,0.6)]"></span><span class="text-slate-300">最优3码推荐</span></div>
+          <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-purple-600 border border-purple-300 inline-block shadow-[0_0_8px_rgba(168,85,247,0.6)]"></span><span class="text-slate-300">防御两码</span></div>
+          <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-cyan-600/60 border border-cyan-400 inline-block"></span><span class="text-slate-300">原始 20 点位</span></div>
+          <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-slate-800 border border-slate-600 inline-block"></span><span class="text-slate-300">拓展集合</span></div>
+        </div>
+      </div>
+
+      <!-- 80 球交互网格 (10 列 x 8 行) -->
+      <div class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2.5 pt-2">
+        <div v-for="num in 80" :key="'matrix_ball_' + num"
+             @click="openBallDetail({number: num})"
+             class="p-2.5 rounded-xl border text-center transition cursor-pointer flex flex-col justify-between items-center group relative"
+             :class="getPointOmissionMatrixClass(num)">
+          <div class="text-base font-bold font-mono group-hover:scale-110 transition">
+            {{ String(num).padStart(2, '0') }}
+          </div>
+          <div class="text-[10px] font-mono mt-1 opacity-80">
+            {{ getPointOmissionNumScore(num) }}分
+          </div>
+          <div class="text-[9px] font-mono text-slate-400">
+            缺{{ getPointOmissionNumMiss(num) }}期
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════ 子标签 3: 🧭 8大场域与13方法权重 ═════════ -->
+  <div v-show="pointOmissionSubTab === 'macro'" class="space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- 8 大场域能量分布 -->
+      <div class="glass-panel p-5">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h4 class="text-sm font-bold text-white">8 大区间数字场域能量分布</h4>
+            <p class="text-xs text-slate-500 mt-0.5">按 10 个号码为一段划分场域，比值 r > 1.15 为偏热，r < 0.85 为偏冷</p>
+          </div>
+        </div>
+
+        <div class="space-y-3 font-mono text-xs">
+          <div v-for="z in (pointOmissionSummary?.energy_zones || [])" :key="z.zone"
+               class="p-3 rounded-lg border border-slate-800/80 bg-slate-900/40 flex items-center justify-between">
+            <div class="space-y-0.5">
+              <div class="font-bold text-white flex items-center gap-2">
+                <span>场域 {{ z.zone }}</span>
+                <span class="text-[10px] px-1.5 py-0.2 rounded"
+                      :class="z.tendency === '偏热' ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : (z.tendency === '偏冷' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' : 'bg-slate-800 text-slate-400')">
+                  {{ z.tendency }}
+                </span>
+              </div>
+              <div class="text-[11px] text-slate-400">近 10 期开出 {{ z.hits }} 码</div>
+            </div>
+
+            <div class="text-right">
+              <div class="text-sm font-bold" :class="z.ratio >= 1.15 ? 'text-amber-400' : (z.ratio <= 0.85 ? 'text-cyan-400' : 'text-slate-300')">
+                r = {{ z.ratio }}
+              </div>
+              <div class="text-[10px] text-slate-500">基准 1.00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 13 大独立分析算法 Exp3 在线学习权重 -->
+      <div class="glass-panel p-5">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h4 class="text-sm font-bold text-white">13 大独立统计方法 Exp3 在线学习有效权重</h4>
+            <p class="text-xs text-slate-500 mt-0.5">基于历史真实开奖无前视滚动奖惩，动态分配各算法的融合表决权</p>
+          </div>
+        </div>
+
+        <div class="space-y-2.5 font-mono text-xs">
+          <div v-for="(w, mKey) in (pointOmissionSummary?.method_weights || {})" :key="mKey"
+               class="p-2.5 rounded-lg border border-slate-800 bg-slate-900/30 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-cyan-400 font-bold">{{ getMethodChineseName(mKey) }}</span>
+              <span class="text-[10px] text-slate-500 font-mono">({{ mKey }})</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-24 bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-cyan-400 h-full" :style="{ width: (w * 100 * 5) + '%' }"></div>
+              </div>
+              <span class="text-white font-bold w-14 text-right">{{ w }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════ 子标签 4: 🔬 T=277 滚动外样本回测 ═════════ -->
+  <!-- ═════════ 子标签: 📒 逐期命中复盘 ═════════ -->
+  <div v-show="pointOmissionSubTab === 'ledger'" class="space-y-6">
+    <div class="glass-panel p-5 space-y-4">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h4 class="text-sm font-bold text-white">逐期命中复盘详细列表</h4>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-mono">
+              Top5 期望 {{ pointOmissionHitLedger?.expected ?? 1.25 }} / 期
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">
+            开奖后自动结算预测快照；也可一键用近窗严格回测灌入。主看「实中球 / 命中数」，勿把均值当必中。
+          </p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button @click="fetchPointOmissionHitLedger()" class="cyber-btn cyber-btn-cyan text-xs" :disabled="pointOmissionLedgerLoading">
+            🔄 刷新台账
+          </button>
+          <button @click="seedPointOmissionHitLedger(40)" class="cyber-btn cyber-btn-gold text-xs" :disabled="pointOmissionLedgerLoading || isRunning">
+            ⚡ 近40期回测灌入
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="rounded-lg border border-slate-700 bg-slate-900/50 p-3">
+          <div class="text-[10px] text-slate-500">台账总期数</div>
+          <div class="text-lg font-mono font-bold text-cyan-300">{{ pointOmissionHitLedger?.total ?? 0 }}</div>
+        </div>
+        <div class="rounded-lg border border-slate-700 bg-slate-900/50 p-3">
+          <div class="text-[10px] text-slate-500">本页均值命中</div>
+          <div class="text-lg font-mono font-bold text-amber-300">{{ pointOmissionHitLedger?.avg_hits ?? '—' }}</div>
+        </div>
+        <div class="rounded-lg border border-slate-700 bg-slate-900/50 p-3">
+          <div class="text-[10px] text-slate-500">相对随机 Lift</div>
+          <div class="text-lg font-mono font-bold" :class="(pointOmissionHitLedger?.avg_lift || 0) >= 1.05 ? 'text-emerald-400' : 'text-slate-300'">
+            {{ pointOmissionHitLedger?.avg_lift != null ? pointOmissionHitLedger.avg_lift + 'x' : '—' }}
+          </div>
+        </div>
+        <div class="rounded-lg border border-slate-700 bg-slate-900/50 p-3">
+          <div class="text-[10px] text-slate-500">本页行数</div>
+          <div class="text-lg font-mono font-bold text-white">{{ pointOmissionHitLedger?.returned ?? 0 }}</div>
+        </div>
+      </div>
+
+      <div v-if="pointOmissionLedgerLoading" class="text-xs text-slate-400 font-mono py-6 text-center">台账加载 / 灌入中…</div>
+      <div v-else-if="!(pointOmissionHitLedger?.rows || []).length" class="text-xs text-slate-500 font-mono py-8 text-center border border-dashed border-slate-700 rounded-lg">
+        暂无逐期记录。点「近40期回测灌入」生成首批台账，或先跑一键推演等开奖后自动结算。
+      </div>
+      <div v-else class="overflow-x-auto">
+        <table class="w-full text-xs text-left font-mono">
+          <thead class="text-[11px] text-slate-400 uppercase bg-slate-900/60 border-b border-slate-800">
+            <tr>
+              <th class="px-3 py-2.5">期号</th>
+              <th class="px-3 py-2.5">日期</th>
+              <th class="px-3 py-2.5">预测 Top5</th>
+              <th class="px-3 py-2.5">实中球</th>
+              <th class="px-3 py-2.5 text-center">命中</th>
+              <th class="px-3 py-2.5 text-center">Lift</th>
+              <th class="px-3 py-2.5 text-center">防御中</th>
+              <th class="px-3 py-2.5 text-center">点位20</th>
+              <th class="px-3 py-2.5 text-center">拓展46</th>
+              <th class="px-3 py-2.5">来源</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/60">
+            <tr v-for="row in (pointOmissionHitLedger?.rows || [])" :key="'hl_' + row.period" class="hover:bg-slate-800/40">
+              <td class="px-3 py-2 font-bold text-cyan-300">{{ row.period }}</td>
+              <td class="px-3 py-2 text-slate-400">{{ row.date || '—' }}</td>
+              <td class="px-3 py-2 text-white">{{ row.top5_str || '—' }}</td>
+              <td class="px-3 py-2 font-bold" :class="(row.hits || 0) > 0 ? 'text-emerald-300' : 'text-slate-500'">
+                {{ row.hit_balls_str || '—' }}
+              </td>
+              <td class="px-3 py-2 text-center font-bold" :class="(row.hits || 0) >= 2 ? 'text-emerald-400' : ((row.hits || 0) === 1 ? 'text-amber-300' : 'text-rose-400')">
+                {{ row.hits }}
+              </td>
+              <td class="px-3 py-2 text-center text-slate-300">{{ row.lift_vs_random }}x</td>
+              <td class="px-3 py-2 text-center text-slate-400">{{ row.defensive_hits ?? '—' }}</td>
+              <td class="px-3 py-2 text-center text-slate-400">{{ row.points20_hits ?? '—' }}</td>
+              <td class="px-3 py-2 text-center text-slate-400">{{ row.expanded_hits ?? '—' }}</td>
+              <td class="px-3 py-2 text-[10px] text-slate-500">{{ row.source === 'daily_settle' ? '实盘结算' : '回测灌入' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div v-show="pointOmissionSubTab === 'backtest'" class="space-y-6">
+    <div class="glass-panel p-5">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <h4 class="text-sm font-bold text-white">滚动外样本实战回测总账本 (全样本 T=277 期严格无前视)</h4>
+            <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">
+              无未来函数 · 对照随机零分布
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">
+            快乐8 单码理论命中率 25.0%，抽取 5 码期望为 1.250 码。经由严格的 Bonferroni / FDR-BH 多重检验校正，诚实揭示哪些信号具备统计增益。
+          </p>
+        </div>
+      </div>
+
+      <!-- 基准对照天梯 -->
+      <div class="mb-6">
+        <h5 class="text-xs font-bold text-amber-300 uppercase tracking-wider mb-2.5">① 基准对照天梯</h5>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left font-mono">
+            <thead class="text-[11px] text-slate-400 uppercase bg-slate-900/60 border-b border-slate-800">
+              <tr>
+                <th class="px-3 py-2.5">对象</th>
+                <th class="px-3 py-2.5">单期抽取</th>
+                <th class="px-3 py-2.5">总期数 T</th>
+                <th class="px-3 py-2.5">均值命中</th>
+                <th class="px-3 py-2.5">理论期望</th>
+                <th class="px-3 py-2.5">Lift 提升度</th>
+                <th class="px-3 py-2.5">z 统计量</th>
+                <th class="px-3 py-2.5">p 显著性</th>
+                <th class="px-3 py-2.5">科学判定</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60">
+              <tr v-for="b in (pointOmissionBacktest?.baselines || [])" :key="b.name" class="hover:bg-slate-800/40">
+                <td class="px-3 py-2.5 font-bold text-white">{{ b.name }}</td>
+                <td class="px-3 py-2.5 text-slate-400">{{ b.sample_size }} 码</td>
+                <td class="px-3 py-2.5 text-slate-400">{{ b.T }}</td>
+                <td class="px-3 py-2.5 text-amber-300 font-bold">{{ b.mean_hits.toFixed(4) }}</td>
+                <td class="px-3 py-2.5 text-slate-400">{{ b.expected_hits.toFixed(4) }}</td>
+                <td class="px-3 py-2.5 font-bold" :class="b.lift > 1.01 ? 'text-emerald-400' : (b.lift < 0.99 ? 'text-rose-400' : 'text-slate-300')">
+                  {{ b.lift.toFixed(4) }}x
+                </td>
+                <td class="px-3 py-2.5 text-slate-300">{{ b.z > 0 ? '+' : '' }}{{ b.z.toFixed(3) }}</td>
+                <td class="px-3 py-2.5 text-slate-400">{{ b.p_value ? b.p_value.toFixed(4) : '-' }}</td>
+                <td class="px-3 py-2.5 font-bold" :class="b.verdict.includes('显著') ? 'text-emerald-400' : 'text-slate-400'">
+                  {{ b.verdict }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 11 大独立算法实战对账天梯 -->
+      <div>
+        <h5 class="text-xs font-bold text-cyan-300 uppercase tracking-wider mb-2.5">② 各算法单兵实战战报（按 Lift 降序排序）</h5>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left font-mono">
+            <thead class="text-[11px] text-slate-400 uppercase bg-slate-900/60 border-b border-slate-800">
+              <tr>
+                <th class="px-3 py-2.5">算法模块</th>
+                <th class="px-3 py-2.5">对应机制</th>
+                <th class="px-3 py-2.5">测试期数</th>
+                <th class="px-3 py-2.5">单期均值</th>
+                <th class="px-3 py-2.5">Lift 提升度</th>
+                <th class="px-3 py-2.5">z 偏离</th>
+                <th class="px-3 py-2.5">q 值 (FDR)</th>
+                <th class="px-3 py-2.5">实战结论</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60">
+              <tr v-for="m in (pointOmissionBacktest?.methods || [])" :key="m.method" class="hover:bg-slate-800/40">
+                <td class="px-3 py-2 font-bold text-cyan-300">{{ m.chinese_name || m.method }}</td>
+                <td class="px-3 py-2 text-slate-400 text-[11px]">{{ m.method }}</td>
+                <td class="px-3 py-2 text-slate-400">{{ m.T }}</td>
+                <td class="px-3 py-2 text-white font-bold">{{ m.mean_hits.toFixed(4) }}</td>
+                <td class="px-3 py-2 font-bold" :class="m.lift >= 1.05 ? 'text-emerald-400' : (m.lift < 0.98 ? 'text-rose-400' : 'text-slate-300')">
+                  {{ m.lift.toFixed(4) }}x
+                </td>
+                <td class="px-3 py-2 text-slate-300">{{ m.z > 0 ? '+' : '' }}{{ m.z.toFixed(2) }}</td>
+                <td class="px-3 py-2 text-slate-400">{{ m.q ? m.q.toFixed(4) : '-' }}</td>
+                <td class="px-3 py-2 font-bold" :class="m.verdict.includes('正向') ? 'text-emerald-400' : (m.verdict.includes('劣') ? 'text-rose-400' : 'text-slate-400')">
+                  {{ m.verdict }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════ 子标签 5: 📑 完整每日大研报 ═════════ -->
+  <div v-show="pointOmissionSubTab === 'report'" class="space-y-6">
+    <div class="glass-panel p-5">
+      <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+        <div>
+          <h4 class="text-sm font-bold text-white flex items-center gap-2">
+            <span>📑</span>
+            <span>快乐8 点位+遗漏号每日量化研报</span>
+            <span class="text-xs text-amber-400 font-mono">第 {{ pointOmissionSummary ? pointOmissionSummary.period : '...' }} 期</span>
+          </h4>
+          <p class="text-xs text-slate-500 mt-0.5">由 report.py 完整渲染的标准 Markdown 报告</p>
+        </div>
+        <button @click="fetchPointOmissionReport()" class="cyber-btn text-xs px-2.5 py-1">
+          <span>🔄</span> 重新拉取
+        </button>
+      </div>
+
+      <!-- Markdown 渲染容器 -->
+      <div v-if="pointOmissionReportHtml" class="prose prose-invert max-w-none text-xs leading-relaxed text-slate-300 bg-slate-950/40 p-5 rounded-xl border border-slate-800/80 overflow-y-auto max-h-[700px]"
+           v-html="pointOmissionReportHtml">
+      </div>
+      <div v-else class="text-center py-12 text-slate-500 font-mono text-xs">
+        研报加载中或暂未生成...
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,190 @@
+<div v-show="activeTab === 'datasource_cockpit'" class="space-y-6">
+        <!-- B 类整改: 做多侧模块已退役, 页面必须说真话 -->
+        <div class="glass-panel p-4 border-l-4 border-rose-500 text-xs space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">⏹</span>
+            <span class="font-bold text-rose-300">做多侧已退役 (2026-09-10)</span>
+            <span class="cyber-badge font-mono" style="background: rgba(244,63,94,0.15); color: #fda4af; border: 1px solid rgba(244,63,94,0.4);">爆发最优3码 · 只存档</span>
+          </div>
+          <p class="text-slate-400 leading-relaxed">
+            大白话：本页的<b>做多侧</b>（精选爆发最优3码 / 跨规则共识金胆 / 黄金连体婴选2）在 module_gate
+            注册表里已是 <code>retired</code>，投票权归零，<b>不再进入主推荐</b>。
+            2026-09-10 全历史审计（153 有效期，BH-FDR 校正）结论是：做多侧 4 条规则的 Lift 落在
+            0.95~1.06，<b class="text-rose-300">无一显著</b>。
+          </p>
+          <p class="text-slate-500">
+            本页仅保留<b>精选爆发最优3码</b>历史存档供对账，号码不是当前推荐依据；模块杀号产品已退役。
+            审计全文：outputs/ds2_deep_analysis/数据源2深度分析报告.md
+          </p>
+        </div>
+
+        <!-- 头部概览条 -->
+        <div class="glass-panel p-5">
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🧬</span>
+                <h2 class="text-lg font-bold text-cyan-300">数据源1×数据源2 深层关联决策驾驶舱 (DataSource Deep Predictor)</h2>
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono border border-emerald-500/30">
+                  微观状态跃迁 · 跨规则共识 · 爆发最优3码存档
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">
+                深度解构《跟随+点位+开奖数据.xlsx》数据源1与数据源2交叉分布，融合蓄力反弹(B010/B001)、B1极热连庄、B0极寒静默与黄金连体婴，仅展示做多最优3码历史存档。
+              </p>
+            </div>
+            <div class="flex items-center gap-3">
+              <button @click="triggerDatasourceRun" :disabled="isRunning" class="cyber-btn cyber-btn-emerald text-xs">
+                <span>⚡</span>
+                <span>{{ isRunning ? '推演中...' : '一键深层关联推演' }}</span>
+              </button>
+              <button @click="openModuleHistory('datasource_cockpit')" class="cyber-btn text-xs flex items-center gap-1 bg-purple-500/15 text-purple-200 border border-purple-400/40 hover:border-purple-300/70">
+                <span>📜</span> 样本外对账流水
+              </button>
+              <button @click="fetchDatasourceSummary" class="cyber-btn cyber-btn-cyan text-xs">
+                🔄 刷新数据
+              </button>
+            </div>
+          </div>
+
+          <!-- 2 大核心指标卡片 -->
+          <div class="grid grid-cols-2 md:grid-cols-2 gap-4 mt-5" v-if="datasourceSummary">
+            <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800">
+              <div class="text-[11px] text-slate-400">目标研判期号</div>
+              <div class="text-xl font-bold font-mono text-amber-300 mt-0.5">第 {{ datasourceSummary.target_period || systemStatus.target_period }} 期</div>
+              <div class="text-[10px] text-slate-500 font-mono mt-0.5">基于第 {{ datasourceSummary.latest_period || systemStatus.latest_draw_period }} 期历史</div>
+            </div>
+
+            <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800">
+              <div class="text-[11px] text-slate-400">做多单码爆发期望</div>
+              <div class="text-xl font-bold font-mono text-emerald-400 mt-0.5">23.9%~26.5%</div>
+              <div class="text-[10px] text-slate-500 font-mono mt-0.5">审计实测, 4 条做多规则; 随机基线 25%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 研判阵地看板 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6" v-if="datasourceSummary">
+          
+          <!-- 阵地 1: 做多进攻主力 (精选爆发最优3码 & 跨规则共识金胆) -->
+          <div class="lg:col-span-12 glass-panel p-5 space-y-4 border-t-2 border-emerald-500">
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">🔥</span>
+                <h3 class="text-sm font-bold text-emerald-300">做多进攻主力阵列 (做多爆发 & 跨规则金胆)</h3>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">精选爆发最优3码</span>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-emerald-500/30 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs text-slate-300 font-semibold">🌟 精选爆发单码最优3码:</span>
+                <span class="text-[10px] text-emerald-400 font-mono">样本外 Lift: 1.02x</span>
+              </div>
+              <div class="flex flex-wrap gap-2.5">
+                <span v-for="(num, idx) in (datasourceSummary.top_hot_numbers || [])" :key="num"
+                      class="lottery-ball w-9 h-9 text-sm font-mono font-bold cursor-pointer hover:scale-110 transition shadow-lg"
+                      :class="idx === 0 ? 'ball-gold' : (idx === 1 ? 'ball-cyan' : 'ball-emerald')"
+                      @click="openBallDetail({number: num})">
+                  {{ String(num).padStart(2, '0') }}
+                </span>
+              </div>
+              <div class="text-[11px] text-slate-400 font-mono pt-1">
+                核心逻辑：蓄力反弹规则(B010/B001)与B1连庄规则多重投票加权精选，爆发力极强。
+              </div>
+            </div>
+
+            <!-- 黄金连体婴选2 & 跨规则共识 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div class="p-3 rounded-lg bg-slate-950/80 border border-amber-500/40 space-y-1.5">
+                <div class="flex items-center justify-between text-xs font-bold text-amber-400">
+                  <span>👑 黄金连体婴选2</span>
+                  <span class="text-[10px] font-mono text-slate-400">搭档共现</span>
+                </div>
+                <div class="flex items-center gap-2 pt-1">
+                  <span v-for="num in (datasourceSummary.gold_pair || [])" :key="num"
+                        class="lottery-ball ball-gold w-8 h-8 text-xs font-mono font-bold cursor-pointer"
+                        @click="openBallDetail({number: num})">
+                    {{ String(num).padStart(2, '0') }}
+                  </span>
+                  <span class="text-xs text-amber-300 font-mono font-bold">[{{ (datasourceSummary.gold_pair || []).map(x => String(x).padStart(2, '0')).join(' + ') }}]</span>
+                </div>
+              </div>
+
+              <div class="p-3 rounded-lg bg-slate-950/80 border border-cyan-500/40 space-y-1.5">
+                <div class="flex items-center justify-between text-xs font-bold text-cyan-400">
+                  <span>⭐ 跨规则共识金胆</span>
+                  <span class="text-[10px] font-mono text-slate-400">多路并举</span>
+                </div>
+                <div class="flex items-center gap-1.5 pt-1">
+                  <span v-for="num in (datasourceSummary.consensus_numbers || [])" :key="num"
+                        class="lottery-ball ball-cyan w-8 h-8 text-xs font-mono font-bold cursor-pointer"
+                        @click="openBallDetail({number: num})">
+                    {{ String(num).padStart(2, '0') }}
+                  </span>
+                  <span v-if="!datasourceSummary.consensus_numbers?.length" class="text-xs text-slate-500 font-mono">暂无多重共振号</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 阵地 2: 4 大做多微观状态跃迁规则触发明细 -->
+          <div class="lg:col-span-12 glass-panel p-5 space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">🔬</span>
+                <h3 class="text-sm font-bold text-cyan-300">4 大做多微观状态跃迁规则实时触发明细</h3>
+              </div>
+              <span class="text-xs text-slate-400 font-mono">审计实测: 做多 23.9%~26.5% (基线25%), 不显著</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <div class="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 space-y-1">
+                <div class="font-bold text-emerald-400 flex items-center justify-between">
+                  <span>蓄力反弹</span>
+                  <span class="text-[10px] px-1 bg-emerald-500/20 rounded">做多</span>
+                </div>
+                <div class="text-[11px] text-slate-300 font-mono truncate">
+                  命中: {{ (datasourceSummary.rules_detail?.rule_hot_rebound || []).map(n => String(n).padStart(2,'0')).join(' ') || '--' }}
+                </div>
+                <div class="text-[10px] text-slate-500">D1 点位未开 → 反弹</div>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 space-y-1">
+                <div class="font-bold text-cyan-400 flex items-center justify-between">
+                  <span>B1 极热连庄</span>
+                  <span class="text-[10px] px-1 bg-cyan-500/20 rounded">做多</span>
+                </div>
+                <div class="text-[11px] text-slate-300 font-mono truncate">
+                  命中: {{ (datasourceSummary.rules_detail?.rule_hot_b1_streak || []).map(n => String(n).padStart(2,'0')).join(' ') || '--' }}
+                </div>
+                <div class="text-[10px] text-slate-500">Block1 连庄延续</div>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 space-y-1">
+                <div class="font-bold text-purple-400 flex items-center justify-between">
+                  <span>B0 极寒静默</span>
+                  <span class="text-[10px] px-1 bg-purple-500/20 rounded">做多</span>
+                </div>
+                <div class="text-[11px] text-slate-300 font-mono truncate">
+                  命中: {{ (datasourceSummary.rules_detail?.rule_hot_b0_silent || []).map(n => String(n).padStart(2,'0')).join(' ') || '--' }}
+                </div>
+                <div class="text-[10px] text-slate-500">Block0 静默反弹</div>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 space-y-1">
+                <div class="font-bold text-amber-400 flex items-center justify-between">
+                  <span>连体婴共现</span>
+                  <span class="text-[10px] px-1 bg-amber-500/20 rounded">选2</span>
+                </div>
+                <div class="text-[11px] text-slate-300 font-mono truncate">
+                  组合: [{{ (datasourceSummary.gold_pair || []).map(x => String(x).padStart(2,'0')).join(' - ') || '--' }}]
+                  · {{ datasourceSummary.gold_pair_cooccur_100 ?? '--' }}/100期
+                </div>
+                <div class="text-[10px] text-slate-500">数据源1×2双核共振</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>

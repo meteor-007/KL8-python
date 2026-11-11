@@ -24,6 +24,7 @@ class TestK8QuantWebSystem(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.client = TestClient(app)
+        cls.client.post("/login", data={"passcode": "k8quant@2026"})
         cls.service = QuantDataService(PROJ_DIR)
 
     def test_01_system_status(self):
@@ -45,8 +46,14 @@ class TestK8QuantWebSystem(unittest.TestCase):
         self.assertIn("top12_pool", data)
         self.assertIn("golden_pair", data)
         self.assertIn("weights", data)
-        self.assertEqual(len(data["golden_pair"]), 2)
-        print(f"[PASS] 02_latest_prediction: Top5 {data['top5_gold']}, GoldenPair {data['golden_pair']}")
+        # 数据诚信约束: 要么无搭档(空), 要么恰好 2 码; 绝不允许 0 占位凑数
+        pair = data["golden_pair"]
+        self.assertIn(len(pair), (0, 2))
+        self.assertNotIn(0, pair)
+        self.assertTrue(all(1 <= n <= 80 for n in pair))
+        if not pair:
+            self.assertTrue(data.get("golden_pair_reason"))
+        print(f"[PASS] 02_latest_prediction: Top5 {data['top5_gold']}, GoldenPair {pair}")
 
     def test_03_matrix_80_stats(self):
         """测试 80 码全景态势数据接口"""
@@ -243,6 +250,93 @@ class TestK8QuantWebSystem(unittest.TestCase):
         self.assertIn("task_id", data_run)
         self.assertEqual(data_run["status"], "QUEUED")
         print(f"[PASS] 13_pipeline_run_sixteen: task created {data_run['task_id']}")
+
+    def test_14_datasource_endpoints(self):
+        """测试数据源1×2深层关联与极高命中相关 API 接口"""
+        # 1. /api/datasource/summary
+        res_sum = self.client.get("/api/datasource/summary")
+        self.assertEqual(res_sum.status_code, 200)
+        data_sum = res_sum.json()
+        self.assertEqual(data_sum["status"], "ok")
+        self.assertIn("data", data_sum)
+        ds_data = data_sum["data"]
+        self.assertIn("top_hot_numbers", ds_data)
+        self.assertIn("top3_gold", ds_data)
+        self.assertNotIn("top_cold_numbers", ds_data)
+        self.assertNotIn("non_d2_kills", ds_data)
+        self.assertLessEqual(len(ds_data["top_hot_numbers"]), 3)
+
+        # 2. /api/datasource/review
+        res_rev = self.client.get("/api/datasource/review?n=20")
+        self.assertEqual(res_rev.status_code, 200)
+        data_rev = res_rev.json()
+        self.assertEqual(data_rev["status"], "ok")
+        rev_data = data_rev["data"]
+        self.assertIn("hot_top5_mean_hits", rev_data)
+        self.assertIn("non_d2_kill_accuracy", rev_data)
+        self.assertGreater(rev_data["non_d2_kill_accuracy"], 0.70)
+        print("[PASS] 14_datasource_endpoints: summary and review APIs validated (non_d2_kill_acc > 70%)")
+
+    def test_15_advanced_assets_endpoints(self):
+        """测试 5 大新增量化资产 API (Meta-Gold / 三级漏斗 / 宏观环境 / FDR审计 / 模拟盘)"""
+        # 1. Meta-Gold
+        r1 = self.client.get("/api/quant/meta-gold")
+        self.assertEqual(r1.status_code, 200)
+        d1 = r1.json()
+        self.assertEqual(d1["status"], "ok")
+        self.assertIn("supreme_gold", d1["data"])
+        self.assertIn("meta_gold_top5", d1["data"])
+
+        # 2. Funnel Pipeline
+        r2 = self.client.get("/api/quant/funnel-pipeline")
+        self.assertEqual(r2.status_code, 200)
+        d2 = r2.json()
+        self.assertEqual(d2["status"], "ok")
+        self.assertIn("level1_wide_pool", d2)
+        self.assertIn("level2_pure_pool", d2)
+        self.assertIn("level3_supreme", d2)
+
+        # 3. Environment Regime
+        r3 = self.client.get("/api/quant/environment-regime")
+        self.assertEqual(r3.status_code, 200)
+        d3 = r3.json()
+        self.assertEqual(d3["status"], "ok")
+        self.assertIn("environment_name", d3)
+        self.assertIn("temperature_score", d3)
+
+        # 4. FDR Audit
+        r4 = self.client.get("/api/quant/fdr-audit?n=30")
+        self.assertEqual(r4.status_code, 200)
+        d4 = r4.json()
+        self.assertIn("modules", d4)
+
+        # 5. Paper Trading
+        r5 = self.client.get("/api/quant/paper-trading?rolling=30")
+        self.assertEqual(r5.status_code, 200)
+        d5 = r5.json()
+        self.assertEqual(d5["status"], "ok")
+        # 数据诚信约束: 台账只记录命中数与 Lift, 未记录实际下注组合,
+        # 因此不得输出资金净值/曲线 (原"臆造公式"已移除), 且须显式说明不可结算现金盈亏。
+        self.assertNotIn("latest_capital", d5)
+        self.assertNotIn("capital_curve", d5)
+        self.assertFalse(d5.get("can_settle_cash"))
+        self.assertTrue(d5.get("can_settle_cash_reason"))
+        print("[PASS] 15_advanced_assets_endpoints: Meta-Gold, Funnel, Regime, FDR Audit, and Paper Trading APIs validated")
+
+    def test_16_unified_brain_contract(self):
+        """测试全栈统一决策主脑接口契约与数据结构"""
+        res = self.client.get("/api/quant/unified-brain")
+        self.assertEqual(res.status_code, 200)
+        data = res.json()
+        self.assertIn("status", data)
+        self.assertEqual(data["status"], "ok")
+        self.assertIn("data", data)
+        payload = data["data"]
+        self.assertIn("gold_single", payload)
+        self.assertIn("gold_pair", payload)
+        self.assertIn("top5", payload)
+        self.assertIn("top12_balanced", payload)
+        print("[PASS] 16_unified_brain_contract: Unified Decision Brain API contract validated")
 
 if __name__ == "__main__":
     unittest.main()

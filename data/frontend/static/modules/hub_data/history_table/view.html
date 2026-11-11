@@ -1,0 +1,92 @@
+﻿<div v-show="activeTab === 'history_table'" class="space-y-4">
+        <div class="glass-panel p-5">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div class="flex items-center gap-3">
+              <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                <span>📋</span> 历史开奖总库 (共 {{ historyTable.total }} 期)
+              </h2>
+            </div>
+            <!-- 右侧快捷切换与搜索框 -->
+            <div class="flex items-center gap-3">
+              <button @click="openTab('draw_trend_chart')" class="cyber-btn cyber-btn-cyan text-xs !py-1.5">
+                📈 切换到 80码走势图模式
+              </button>
+              <div class="flex items-center gap-2">
+                <input type="text" v-model="historyTable.q" @keyup.enter="fetchHistoryTable(1)" placeholder="搜索期号或日期 (如 2026229)" class="px-3 py-1.5 rounded bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400 w-56">
+                <button @click="fetchHistoryTable(1)" class="cyber-btn cyber-btn-dark text-xs">查询</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 表格 -->
+          <div class="overflow-x-auto rounded-lg border border-slate-800">
+            <table class="cyber-table w-full">
+              <thead>
+                <tr>
+                  <th style="width: 100px;">开奖期号</th>
+                  <th style="width: 100px;">开奖日期</th>
+                  <th>开奖 20 个号码 <span class="text-[9px] font-normal text-slate-500 ml-1">(球色=012路)</span></th>
+                  <th style="width: 130px;" title="0路:1路:2路（号码÷3余数）">012路</th>
+                  <th style="width: 120px;" title="质数个数:合数个数（1既非质也非合）">质合</th>
+                  <th style="width: 70px;">和值</th>
+                  <th style="width: 80px;">奇偶比</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in historyTable.items" :key="row.period">
+                  <td class="font-mono font-bold text-cyan-400">{{ row.period }}</td>
+                  <td class="font-mono text-slate-400">{{ row.date }}</td>
+                  <td>
+                    <div class="flex flex-wrap gap-1 py-1">
+                      <span
+                        v-for="num in row.numbers"
+                        :key="num"
+                        class="lottery-ball !w-6 !h-6 !text-[10px] !border"
+                        :class="histBallRoadClass(num)"
+                        :title="histBallTip(num)"
+                      >
+                        {{ String(num).padStart(2, '0') }}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-slate-900/50 border border-slate-700/60">
+                      <span class="font-mono text-[12px] font-bold tracking-wide">
+                        <span class="text-rose-400">{{ histRoad(row).r0 }}</span><span class="text-slate-500">:</span><span class="text-amber-400">{{ histRoad(row).r1 }}</span><span class="text-slate-500">:</span><span class="text-emerald-400">{{ histRoad(row).r2 }}</span>
+                      </span>
+                    </div>
+                    <div class="flex gap-1 mt-1 text-[9px] text-slate-500">
+                      <span class="text-rose-400/80">0路</span>
+                      <span class="text-amber-400/80">1路</span>
+                      <span class="text-emerald-400/80">2路</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-slate-900/50 border border-slate-700/60">
+                      <span class="font-mono text-[12px] font-bold">
+                        <span class="text-violet-400">{{ histPrime(row).p }}</span><span class="text-slate-500">:</span><span class="text-sky-400">{{ histPrime(row).c }}</span>
+                      </span>
+                      <span v-if="histPrime(row).has01" class="text-[9px] px-1 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">含01</span>
+                    </div>
+                    <div class="flex gap-1 mt-1 text-[9px] text-slate-500">
+                      <span class="text-violet-400/80">质</span>
+                      <span class="text-sky-400/80">合</span>
+                    </div>
+                  </td>
+                  <td class="font-mono text-amber-300 font-bold">{{ row.sum }}</td>
+                  <td class="font-mono text-slate-300">{{ row.odd_count }}:{{ row.even_count }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 分页器 -->
+          <div class="flex items-center justify-between mt-4 text-xs text-slate-400">
+            <div>当前第 {{ historyTable.page }} / {{ historyTable.total_pages }} 页</div>
+            <div class="flex items-center gap-2">
+              <button @click="fetchHistoryTable(historyTable.page - 1)" :disabled="historyTable.page <= 1" class="cyber-btn cyber-btn-dark text-xs !py-1 !px-3 disabled:opacity-30">上一页</button>
+              <button @click="fetchHistoryTable(historyTable.page + 1)" :disabled="historyTable.page >= historyTable.total_pages" class="cyber-btn cyber-btn-dark text-xs !py-1 !px-3 disabled:opacity-30">下一页</button>
+            </div>
+          </div>
+        </div>
+      </div>

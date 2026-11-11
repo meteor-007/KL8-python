@@ -1,0 +1,734 @@
+{
+  "module_code": "matrix_profile",
+  "module_name": "13. 矩阵轮廓极速查重引擎 (V2.0 深度优化版)",
+  "target_issue": "2026274",
+  "latest_issue": "2026273",
+  "latest_numbers": [
+    9,
+    10,
+    12,
+    14,
+    23,
+    24,
+    27,
+    31,
+    35,
+    38,
+    49,
+    51,
+    52,
+    54,
+    55,
+    58,
+    61,
+    63,
+    65,
+    76
+  ],
+  "total_historical_draws": 2094,
+  "multi_windows_used": [
+    4,
+    6,
+    8,
+    10
+  ],
+  "top3_gold": [
+    6,
+    80,
+    18
+  ],
+  "top5_gold": [
+    6,
+    80,
+    18
+  ],
+  "top12_elite": [
+    6,
+    80,
+    18
+  ],
+  "gold_pairs": [
+    {
+      "pair": "06-80",
+      "affinity_score": 91.4
+    },
+    {
+      "pair": "06-18",
+      "affinity_score": 91.1
+    },
+    {
+      "pair": "06-07",
+      "affinity_score": 91.1
+    },
+    {
+      "pair": "18-80",
+      "affinity_score": 82.5
+    },
+    {
+      "pair": "07-80",
+      "affinity_score": 82.5
+    }
+  ],
+  "top_motifs": [
+    {
+      "window_size": 4,
+      "sub_idx": 522,
+      "period_range": "2022107 ~ 2022110 期",
+      "target_issue": "2022111",
+      "next_numbers": [
+        4,
+        6,
+        7,
+        15,
+        18,
+        26,
+        29,
+        36,
+        43,
+        45,
+        46,
+        50,
+        62,
+        64,
+        66,
+        68,
+        70,
+        74,
+        76,
+        78
+      ],
+      "euc_dist": 1.278019300773944,
+      "similarity_pct": 9.63,
+      "ensemble_weight": 38.07,
+      "overlap_with_top12": [
+        6,
+        18
+      ],
+      "overlap_count": 2
+    },
+    {
+      "window_size": 6,
+      "sub_idx": 282,
+      "period_range": "2021218 ~ 2021223 期",
+      "target_issue": "2021224",
+      "next_numbers": [
+        6,
+        7,
+        13,
+        19,
+        22,
+        25,
+        27,
+        29,
+        31,
+        39,
+        45,
+        49,
+        52,
+        57,
+        60,
+        64,
+        68,
+        69,
+        78,
+        80
+      ],
+      "euc_dist": 1.2995725792485449,
+      "similarity_pct": 8.11,
+      "ensemble_weight": 35.62,
+      "overlap_with_top12": [
+        6,
+        80
+      ],
+      "overlap_count": 2
+    },
+    {
+      "window_size": 4,
+      "sub_idx": 540,
+      "period_range": "2022125 ~ 2022128 期",
+      "target_issue": "2022129",
+      "next_numbers": [
+        5,
+        8,
+        10,
+        11,
+        17,
+        18,
+        23,
+        24,
+        31,
+        32,
+        36,
+        41,
+        48,
+        49,
+        65,
+        66,
+        71,
+        74,
+        77,
+        79
+      ],
+      "euc_dist": 1.3038404809676427,
+      "similarity_pct": 7.8,
+      "ensemble_weight": 30.96,
+      "overlap_with_top12": [
+        18
+      ],
+      "overlap_count": 1
+    },
+    {
+      "window_size": 4,
+      "sub_idx": 1207,
+      "period_range": "2024090 ~ 2024093 期",
+      "target_issue": "2024094",
+      "next_numbers": [
+        3,
+        6,
+        7,
+        17,
+        19,
+        20,
+        21,
+        27,
+        30,
+        37,
+        42,
+        43,
+        51,
+        54,
+        55,
+        63,
+        65,
+        70,
+        72,
+        74
+      ],
+      "euc_dist": 1.3038404809676427,
+      "similarity_pct": 7.8,
+      "ensemble_weight": 30.96,
+      "overlap_with_top12": [
+        6
+      ],
+      "overlap_count": 1
+    },
+    {
+      "window_size": 6,
+      "sub_idx": 172,
+      "period_range": "2021108 ~ 2021113 期",
+      "target_issue": "2021114",
+      "next_numbers": [
+        2,
+        8,
+        10,
+        17,
+        18,
+        20,
+        29,
+        31,
+        35,
+        37,
+        40,
+        43,
+        45,
+        51,
+        55,
+        58,
+        67,
+        73,
+        77,
+        79
+      ],
+      "euc_dist": 1.308094457963533,
+      "similarity_pct": 7.5,
+      "ensemble_weight": 33.28,
+      "overlap_with_top12": [
+        18
+      ],
+      "overlap_count": 1
+    }
+  ],
+  "ball_details": [
+    {
+      "ball": 6,
+      "ball_str": "06",
+      "mp_score": 100.0,
+      "is_recent_open": false
+    },
+    {
+      "ball": 80,
+      "ball_str": "80",
+      "mp_score": 82.84,
+      "is_recent_open": false
+    },
+    {
+      "ball": 18,
+      "ball_str": "18",
+      "mp_score": 82.16,
+      "is_recent_open": false
+    },
+    {
+      "ball": 7,
+      "ball_str": "07",
+      "mp_score": 82.12,
+      "is_recent_open": false
+    },
+    {
+      "ball": 43,
+      "ball_str": "43",
+      "mp_score": 81.8,
+      "is_recent_open": false
+    },
+    {
+      "ball": 8,
+      "ball_str": "08",
+      "mp_score": 80.01,
+      "is_recent_open": false
+    },
+    {
+      "ball": 23,
+      "ball_str": "23",
+      "mp_score": 79.38,
+      "is_recent_open": true
+    },
+    {
+      "ball": 3,
+      "ball_str": "03",
+      "mp_score": 78.95,
+      "is_recent_open": false
+    },
+    {
+      "ball": 37,
+      "ball_str": "37",
+      "mp_score": 78.81,
+      "is_recent_open": false
+    },
+    {
+      "ball": 77,
+      "ball_str": "77",
+      "mp_score": 77.6,
+      "is_recent_open": false
+    },
+    {
+      "ball": 29,
+      "ball_str": "29",
+      "mp_score": 68.56,
+      "is_recent_open": false
+    },
+    {
+      "ball": 45,
+      "ball_str": "45",
+      "mp_score": 67.74,
+      "is_recent_open": false
+    },
+    {
+      "ball": 4,
+      "ball_str": "04",
+      "mp_score": 67.71,
+      "is_recent_open": false
+    },
+    {
+      "ball": 68,
+      "ball_str": "68",
+      "mp_score": 66.69,
+      "is_recent_open": false
+    },
+    {
+      "ball": 49,
+      "ball_str": "49",
+      "mp_score": 66.47,
+      "is_recent_open": true
+    },
+    {
+      "ball": 74,
+      "ball_str": "74",
+      "mp_score": 65.96,
+      "is_recent_open": false
+    },
+    {
+      "ball": 57,
+      "ball_str": "57",
+      "mp_score": 65.36,
+      "is_recent_open": false
+    },
+    {
+      "ball": 19,
+      "ball_str": "19",
+      "mp_score": 65.26,
+      "is_recent_open": false
+    },
+    {
+      "ball": 66,
+      "ball_str": "66",
+      "mp_score": 64.43,
+      "is_recent_open": false
+    },
+    {
+      "ball": 33,
+      "ball_str": "33",
+      "mp_score": 63.98,
+      "is_recent_open": false
+    },
+    {
+      "ball": 12,
+      "ball_str": "12",
+      "mp_score": 63.94,
+      "is_recent_open": true
+    },
+    {
+      "ball": 51,
+      "ball_str": "51",
+      "mp_score": 63.74,
+      "is_recent_open": true
+    },
+    {
+      "ball": 55,
+      "ball_str": "55",
+      "mp_score": 63.74,
+      "is_recent_open": true
+    },
+    {
+      "ball": 20,
+      "ball_str": "20",
+      "mp_score": 63.7,
+      "is_recent_open": false
+    },
+    {
+      "ball": 59,
+      "ball_str": "59",
+      "mp_score": 63.55,
+      "is_recent_open": false
+    },
+    {
+      "ball": 67,
+      "ball_str": "67",
+      "mp_score": 63.41,
+      "is_recent_open": false
+    },
+    {
+      "ball": 54,
+      "ball_str": "54",
+      "mp_score": 61.89,
+      "is_recent_open": true
+    },
+    {
+      "ball": 17,
+      "ball_str": "17",
+      "mp_score": 61.65,
+      "is_recent_open": false
+    },
+    {
+      "ball": 65,
+      "ball_str": "65",
+      "mp_score": 61.41,
+      "is_recent_open": true
+    },
+    {
+      "ball": 76,
+      "ball_str": "76",
+      "mp_score": 51.82,
+      "is_recent_open": true
+    },
+    {
+      "ball": 78,
+      "ball_str": "78",
+      "mp_score": 51.22,
+      "is_recent_open": false
+    },
+    {
+      "ball": 60,
+      "ball_str": "60",
+      "mp_score": 50.64,
+      "is_recent_open": false
+    },
+    {
+      "ball": 15,
+      "ball_str": "15",
+      "mp_score": 49.84,
+      "is_recent_open": false
+    },
+    {
+      "ball": 28,
+      "ball_str": "28",
+      "mp_score": 49.69,
+      "is_recent_open": false
+    },
+    {
+      "ball": 26,
+      "ball_str": "26",
+      "mp_score": 49.42,
+      "is_recent_open": false
+    },
+    {
+      "ball": 36,
+      "ball_str": "36",
+      "mp_score": 48.97,
+      "is_recent_open": false
+    },
+    {
+      "ball": 70,
+      "ball_str": "70",
+      "mp_score": 48.54,
+      "is_recent_open": false
+    },
+    {
+      "ball": 14,
+      "ball_str": "14",
+      "mp_score": 48.48,
+      "is_recent_open": true
+    },
+    {
+      "ball": 31,
+      "ball_str": "31",
+      "mp_score": 48.41,
+      "is_recent_open": true
+    },
+    {
+      "ball": 41,
+      "ball_str": "41",
+      "mp_score": 48.38,
+      "is_recent_open": false
+    },
+    {
+      "ball": 69,
+      "ball_str": "69",
+      "mp_score": 48.27,
+      "is_recent_open": false
+    },
+    {
+      "ball": 56,
+      "ball_str": "56",
+      "mp_score": 48.09,
+      "is_recent_open": false
+    },
+    {
+      "ball": 10,
+      "ball_str": "10",
+      "mp_score": 47.85,
+      "is_recent_open": true
+    },
+    {
+      "ball": 27,
+      "ball_str": "27",
+      "mp_score": 47.78,
+      "is_recent_open": true
+    },
+    {
+      "ball": 21,
+      "ball_str": "21",
+      "mp_score": 47.6,
+      "is_recent_open": false
+    },
+    {
+      "ball": 32,
+      "ball_str": "32",
+      "mp_score": 47.6,
+      "is_recent_open": false
+    },
+    {
+      "ball": 34,
+      "ball_str": "34",
+      "mp_score": 47.28,
+      "is_recent_open": false
+    },
+    {
+      "ball": 35,
+      "ball_str": "35",
+      "mp_score": 47.13,
+      "is_recent_open": true
+    },
+    {
+      "ball": 73,
+      "ball_str": "73",
+      "mp_score": 47.09,
+      "is_recent_open": false
+    },
+    {
+      "ball": 30,
+      "ball_str": "30",
+      "mp_score": 46.4,
+      "is_recent_open": false
+    },
+    {
+      "ball": 63,
+      "ball_str": "63",
+      "mp_score": 46.4,
+      "is_recent_open": true
+    },
+    {
+      "ball": 42,
+      "ball_str": "42",
+      "mp_score": 45.97,
+      "is_recent_open": false
+    },
+    {
+      "ball": 48,
+      "ball_str": "48",
+      "mp_score": 45.59,
+      "is_recent_open": false
+    },
+    {
+      "ball": 46,
+      "ball_str": "46",
+      "mp_score": 35.94,
+      "is_recent_open": false
+    },
+    {
+      "ball": 50,
+      "ball_str": "50",
+      "mp_score": 35.94,
+      "is_recent_open": false
+    },
+    {
+      "ball": 64,
+      "ball_str": "64",
+      "mp_score": 35.73,
+      "is_recent_open": false
+    },
+    {
+      "ball": 22,
+      "ball_str": "22",
+      "mp_score": 33.98,
+      "is_recent_open": false
+    },
+    {
+      "ball": 52,
+      "ball_str": "52",
+      "mp_score": 33.98,
+      "is_recent_open": true
+    },
+    {
+      "ball": 25,
+      "ball_str": "25",
+      "mp_score": 32.35,
+      "is_recent_open": false
+    },
+    {
+      "ball": 2,
+      "ball_str": "02",
+      "mp_score": 32.02,
+      "is_recent_open": false
+    },
+    {
+      "ball": 61,
+      "ball_str": "61",
+      "mp_score": 31.77,
+      "is_recent_open": true
+    },
+    {
+      "ball": 58,
+      "ball_str": "58",
+      "mp_score": 31.63,
+      "is_recent_open": true
+    },
+    {
+      "ball": 1,
+      "ball_str": "01",
+      "mp_score": 31.39,
+      "is_recent_open": false
+    },
+    {
+      "ball": 53,
+      "ball_str": "53",
+      "mp_score": 31.39,
+      "is_recent_open": false
+    },
+    {
+      "ball": 79,
+      "ball_str": "79",
+      "mp_score": 31.14,
+      "is_recent_open": false
+    },
+    {
+      "ball": 9,
+      "ball_str": "09",
+      "mp_score": 31.0,
+      "is_recent_open": true
+    },
+    {
+      "ball": 71,
+      "ball_str": "71",
+      "mp_score": 30.51,
+      "is_recent_open": false
+    },
+    {
+      "ball": 72,
+      "ball_str": "72",
+      "mp_score": 30.51,
+      "is_recent_open": false
+    },
+    {
+      "ball": 11,
+      "ball_str": "11",
+      "mp_score": 30.09,
+      "is_recent_open": false
+    },
+    {
+      "ball": 62,
+      "ball_str": "62",
+      "mp_score": 18.46,
+      "is_recent_open": false
+    },
+    {
+      "ball": 38,
+      "ball_str": "38",
+      "mp_score": 17.48,
+      "is_recent_open": true
+    },
+    {
+      "ball": 13,
+      "ball_str": "13",
+      "mp_score": 17.27,
+      "is_recent_open": false
+    },
+    {
+      "ball": 39,
+      "ball_str": "39",
+      "mp_score": 17.27,
+      "is_recent_open": false
+    },
+    {
+      "ball": 40,
+      "ball_str": "40",
+      "mp_score": 16.13,
+      "is_recent_open": false
+    },
+    {
+      "ball": 16,
+      "ball_str": "16",
+      "mp_score": 15.89,
+      "is_recent_open": false
+    },
+    {
+      "ball": 75,
+      "ball_str": "75",
+      "mp_score": 15.08,
+      "is_recent_open": false
+    },
+    {
+      "ball": 5,
+      "ball_str": "05",
+      "mp_score": 15.01,
+      "is_recent_open": false
+    },
+    {
+      "ball": 24,
+      "ball_str": "24",
+      "mp_score": 15.01,
+      "is_recent_open": true
+    },
+    {
+      "ball": 44,
+      "ball_str": "44",
+      "mp_score": 0.0,
+      "is_recent_open": false
+    },
+    {
+      "ball": 47,
+      "ball_str": "47",
+      "mp_score": 0.0,
+      "is_recent_open": false
+    }
+  ],
+  "generated_at": "2026-10-15 14:02:00"
+}

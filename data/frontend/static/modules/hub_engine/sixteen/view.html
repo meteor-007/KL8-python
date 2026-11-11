@@ -1,0 +1,824 @@
+<div v-show="activeTab === 'sixteen_cockpit'" class="space-y-6">
+        <!-- 头部标题与操作栏 -->
+        <div class="glass-panel p-6">
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">🔥</span>
+                <h2 class="text-xl font-bold bg-gradient-to-r from-amber-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+                  16期中热频次动态推演与组合决策驾驶舱
+                </h2>
+                <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  主推 · 含频次全景
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">
+                中热主推 = 频次 3~6 最优3码；回补胆 = 遗漏甜区金/银/铜（勿混用）。下方并入原「16期频次全景」跃迁梯队与 80 码矩阵。
+              </p>
+            </div>
+            <div class="flex items-center gap-3">
+              <button @click="fetchSixteenSummary(true)" class="cyber-btn cyber-btn-slate text-xs" :disabled="sixteenLoading">
+                🔄 刷新大屏
+              </button>
+              <button @click="triggerSixteenRun" class="cyber-btn cyber-btn-gold text-xs shadow-[0_0_15px_rgba(245,158,11,0.3)]" :disabled="isRunning">
+                ⚡ 一键量化推演
+              </button>
+              <button @click="openModuleHistory('sixteen_cockpit')" class="cyber-btn text-xs flex items-center gap-1 bg-purple-500/15 text-purple-200 border border-purple-400/40 hover:border-purple-300/70">
+                <span>📜</span> 历史复盘记录
+              </button>
+            </div>
+          </div>
+
+          <!-- 顶部 KPI 卡片阵列 -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-5" v-if="sixteenSummary">
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono">🎯 目标研判期号</div>
+              <div class="text-xl font-bold font-mono text-amber-400">第 {{ sixteenSummary.target_period }} 期</div>
+              <div class="text-[10px] text-slate-500">基准开奖: 第 {{ sixteenSummary.latest_period }} 期 ({{ sixteenSummary.latest_date }})</div>
+            </div>
+
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono">🛡️ 操盘尖刀</div>
+              <div class="text-xl font-bold font-mono text-emerald-400 tracking-wider">
+                {{ sixteenTip3Text }}
+              </div>
+              <div class="text-[10px] text-slate-500">最优3码（点位加权后）</div>
+            </div>
+
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono">♨️ 16期中热 (3-6次)</div>
+              <div class="text-xl font-bold font-mono text-emerald-400">{{ sixteenSummary.medium_hot_total_count || 0 }} 码</div>
+              <div class="text-[10px] text-slate-500">大盘主力出号底仓</div>
+            </div>
+
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono">📋 出窗基准期</div>
+              <div class="text-xl font-bold font-mono text-cyan-300">第 {{ sixteenSummary.outgoing_period }} 期</div>
+              <div class="text-[10px] text-slate-500">该期20码若不开将扣减1次</div>
+            </div>
+
+            <div class="glass-card p-4 space-y-1">
+              <div class="text-[11px] text-slate-400 font-mono">👑 回补胆（操盘口径）</div>
+              <div class="text-xl font-bold font-mono text-amber-300">
+                {{ sixteenDisplayRebound?.gold != null ? String(sixteenDisplayRebound.gold).padStart(2, '0') : (sixteenSummary.gold_dan ? String(sixteenSummary.gold_dan).padStart(2, '0') : '--') }}
+              </div>
+              <div class="text-[10px] text-slate-500">
+                银{{ sixteenDisplayRebound?.silver != null ? String(sixteenDisplayRebound.silver).padStart(2, '0') : String(sixteenSummary.silver_dan || 0).padStart(2, '0') }}
+                / 铜{{ sixteenDisplayRebound?.bronze != null ? String(sixteenDisplayRebound.bronze).padStart(2, '0') : String(sixteenSummary.bronze_dan || 0).padStart(2, '0') }}
+                · 风险过滤
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ 每日完整操盘简报（分桶原文 + 点位加权） ═══════════ -->
+        <div class="glass-panel p-5 space-y-4 border border-dashed border-amber-500/30" v-if="sixteenSummary && !sixteenSummary.daily_ops_brief">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="text-sm font-bold text-amber-300">📌 每日操盘简报尚未生成</h3>
+              <p class="text-[11px] text-slate-400 mt-1">点「刷新大屏」强制重算，或「一键量化推演」跑完整流程（开奖16窗+点位）。</p>
+            </div>
+            <div class="flex gap-2">
+              <button type="button" class="cyber-btn cyber-btn-slate text-xs" @click="fetchSixteenSummary(true)" :disabled="sixteenLoading">强制重算简报</button>
+              <button type="button" class="cyber-btn cyber-btn-gold text-xs" @click="triggerSixteenRun" :disabled="isRunning">一键推演</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-panel p-5 space-y-5 border border-amber-500/40" v-if="sixteenSummary?.daily_ops_brief">
+          <div class="flex flex-col md:flex-row md:items-start justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xl">📌</span>
+                <h3 class="text-base font-bold text-amber-300">每日完整操盘简报</h3>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/15 text-amber-200 border border-amber-500/30 font-mono">
+                  第 {{ sixteenSummary.daily_ops_brief.target_period }} 期
+                </span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">
+                  {{ sixteenSummary.daily_ops_brief.generated_at }}
+                </span>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                {{ sixteenSummary.daily_ops_brief.rule_note }}
+                自动读取开奖 16 窗 + 目标期点位。
+              </p>
+            </div>
+            <button type="button" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2"
+                    @click="copySixteenWechatBrief"
+                    :disabled="!sixteenSummary.daily_ops_brief.wechat_text">
+              复制分桶原文
+            </button>
+          </div>
+
+          <!-- 微信分桶原文 -->
+          <div class="rounded-xl border border-fuchsia-500/35 bg-fuchsia-950/15 p-3 space-y-2">
+            <div class="text-xs font-bold text-fuchsia-300">📊 频次桶精选 / 剩余（微信同款原文）</div>
+            <pre class="text-[11px] font-mono text-slate-200 whitespace-pre-wrap leading-relaxed m-0">{{ sixteenSummary.daily_ops_brief.wechat_text }}</pre>
+          </div>
+
+          <!-- 每日分桶维度看板 -->
+          <div class="rounded-xl border border-amber-500/35 bg-amber-950/10 p-3 space-y-3"
+               v-if="sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="text-xs font-bold text-amber-300">📐 每日分桶维度看板（开奖后自动重算）</div>
+              <span class="text-[10px] font-mono text-slate-500">
+                出窗基准期 {{ (sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).outgoing_period }}
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-300 leading-relaxed m-0">
+              {{ (sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).verdict }}
+            </p>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-2">
+              <div class="rounded-lg bg-slate-900/70 border border-slate-700/80 p-2">
+                <div class="text-[10px] text-slate-400">频3池</div>
+                <div class="text-lg font-mono font-bold text-amber-300">
+                  {{ (sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).freq3?.count ?? '--' }}
+                </div>
+                <div class="text-[10px] text-slate-500 font-mono">
+                  近21均 {{ (sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).freq3?.avg_last21 ?? '--' }}
+                  · ≥20连 {{ (sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).freq3?.streak_high ?? '--' }}
+                </div>
+              </div>
+              <div class="rounded-lg bg-slate-900/70 border border-slate-700/80 p-2">
+                <div class="text-[10px] text-slate-400">频4出窗同源</div>
+                <div class="text-lg font-mono font-bold text-orange-300">
+                  {{ (sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).freq4_edge_cohort?.count ?? '--' }}
+                </div>
+                <div class="text-[10px] text-slate-500 font-mono truncate">
+                  重叠动量精选 {{ ((sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).freq4_edge_cohort?.overlap_with_midhot || []).length }}
+                </div>
+              </div>
+              <div class="rounded-lg bg-slate-900/70 border border-slate-700/80 p-2 col-span-2">
+                <div class="text-[10px] text-slate-400 mb-1">频4出窗同源号</div>
+                <div class="flex flex-wrap gap-1">
+                  <span v-for="n in ((sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).freq4_edge_cohort?.nums || [])"
+                        :key="'f4e'+n"
+                        class="px-1.5 py-0.5 rounded border border-orange-500/40 text-orange-200 text-[11px] font-mono cursor-pointer"
+                        @click="openBallDetail({number: n})">{{ String(n).padStart(2,'0') }}</span>
+                  <span v-if="!((sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).freq4_edge_cohort?.nums || []).length"
+                        class="text-[10px] text-slate-500">本期无集中出窗同源</span>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-1" v-if="((sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).alerts || []).length">
+              <div v-for="(a, ai) in (sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).alerts"
+                   :key="'al'+ai"
+                   class="text-[11px] leading-relaxed rounded px-2 py-1.5 border"
+                   :class="a.level === 'warn' ? 'border-amber-500/40 bg-amber-500/10 text-amber-100' : 'border-slate-600 bg-slate-900/50 text-slate-300'">
+                {{ a.msg }}
+              </div>
+            </div>
+
+            <!-- 昨夜双轨对账 -->
+            <div class="rounded-lg border border-emerald-500/30 bg-emerald-950/15 p-2.5 space-y-2"
+                 v-if="(sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).settled_audit">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="text-[11px] font-bold text-emerald-300">
+                  ✅ 昨夜实开对账 · 第 {{ (sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).settled_audit.settled_period }} 期
+                </div>
+                <span class="text-[10px] font-mono text-slate-500">出窗同源 vs 动量精选</span>
+              </div>
+              <p class="text-[11px] text-slate-300 m-0 leading-relaxed">
+                {{ (sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).settled_audit.note }}
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] font-mono">
+                <div>
+                  <div class="text-orange-300/90 mb-1">
+                    出窗同源命中 {{ (sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).settled_audit.edge_hit_n }}/{{ (sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).settled_audit.edge_count }}
+                  </div>
+                  <div class="flex flex-wrap gap-1">
+                    <span v-for="n in ((sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).settled_audit.edge_nums || [])"
+                          :key="'se'+n"
+                          class="px-1.5 py-0.5 rounded border text-[11px]"
+                          :class="((sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).settled_audit.edge_hits || []).includes(n) ? 'border-emerald-400/50 bg-emerald-500/20 text-emerald-200' : 'border-slate-600 text-slate-400'">
+                      {{ String(n).padStart(2,'0') }}
+                    </span>
+                  </div>
+                  <div class="text-[10px] text-slate-500 mt-1">
+                    未开掉3：{{ ((sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).settled_audit.edge_miss_drop_to3 || []).map(x => String(x).padStart(2,'0')).join(' ') || '—' }}
+                  </div>
+                </div>
+                <div>
+                  <div class="text-cyan-300/90 mb-1">
+                    动量精选命中 {{ (sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).settled_audit.midhot_hit_n }}/{{ ((sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).settled_audit.midhot_picks || []).length }}
+                  </div>
+                  <div class="flex flex-wrap gap-1">
+                    <span v-for="n in ((sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).settled_audit.midhot_picks || [])"
+                          :key="'sm'+n"
+                          class="px-1.5 py-0.5 rounded border text-[11px]"
+                          :class="((sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).settled_audit.midhot_hits || []).includes(n) ? 'border-emerald-400/50 bg-emerald-500/20 text-emerald-200' : 'border-slate-600 text-slate-400'">
+                      {{ String(n).padStart(2,'0') }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="text-[10px] text-slate-500 leading-relaxed"
+                   v-if="(sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).freq4_edge_cohort?.evidence_note">
+                {{ (sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).freq4_edge_cohort.evidence_note }}
+              </div>
+            </div>
+
+            <div class="overflow-x-auto" v-if="((sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).transition_bounds || []).length">
+              <table class="w-full text-[11px] font-mono">
+                <thead>
+                  <tr class="text-slate-500 text-left border-b border-slate-800">
+                    <th class="py-1 pr-2">频桶</th>
+                    <th class="py-1 pr-2">池</th>
+                    <th class="py-1 pr-2">出窗</th>
+                    <th class="py-1 pr-2">全未开→约剩</th>
+                    <th class="py-1">全开→约留</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="tb in (sixteenSummary.daily_ops_brief.bucket_dimension_board || sixteenSummary.bucket_dimension_board).transition_bounds"
+                      :key="'tb'+tb.bucket" class="border-b border-slate-800/50 text-slate-300">
+                    <td class="py-1 pr-2 text-amber-200">{{ tb.bucket }}</td>
+                    <td class="py-1 pr-2">{{ tb.pool_size }}</td>
+                    <td class="py-1 pr-2">{{ tb.edge_n }}</td>
+                    <td class="py-1 pr-2">{{ tb.if_all_edge_miss }}</td>
+                    <td class="py-1">{{ tb.if_all_edge_hit }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 点位 -->
+          <div class="rounded-xl border p-3 space-y-2"
+               :class="sixteenSummary.daily_ops_brief.points?.matched
+                 ? 'border-cyan-500/35 bg-cyan-950/15'
+                 : 'border-amber-500/50 bg-amber-950/25'">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold"
+                    :class="sixteenSummary.daily_ops_brief.points?.matched ? 'text-cyan-300' : 'text-amber-300'">
+                📍 目标期点位
+              </span>
+              <span class="text-[10px] font-mono"
+                    :class="sixteenSummary.daily_ops_brief.points?.matched ? 'text-emerald-400' : 'text-amber-300'">
+                {{ sixteenSummary.daily_ops_brief.points?.matched
+                     ? '已对齐·参与加权×1.15'
+                     : (sixteenSummary.daily_ops_brief.points?.note || '未对齐·不加权') }}
+              </span>
+            </div>
+            <div v-if="!sixteenSummary.daily_ops_brief.points?.matched"
+                 class="text-[11px] text-amber-200/90 leading-relaxed rounded border border-amber-500/30 bg-amber-500/10 px-2 py-1.5">
+              目标期 {{ sixteenSummary.daily_ops_brief.target_period }} 尚未录入点位。
+              主推已回落到<strong class="text-amber-100">纯动量排序</strong>；下方号码若有，仅为上期回落展示，不参与加权。
+              录入本期点位后点「强制刷新」即可重算最优3码。
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <span v-for="n in (sixteenSummary.daily_ops_brief.points?.points || [])" :key="'pt'+n"
+                    class="px-1.5 py-0.5 rounded border text-[11px] font-mono font-bold cursor-pointer"
+                    :class="sixteenSummary.daily_ops_brief.points?.matched
+                      ? 'border-cyan-500/40 bg-cyan-500/10 text-cyan-200'
+                      : 'border-slate-600 bg-slate-800/60 text-slate-400'"
+                    @click="openBallDetail({number: n})">{{ String(n).padStart(2,'0') }}</span>
+              <span v-if="!(sixteenSummary.daily_ops_brief.points?.points || []).length" class="text-[10px] text-slate-500">暂无点位，请先录入</span>
+            </div>
+          </div>
+
+          <!-- 票面收口 -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
+            <div class="rounded-xl border border-emerald-500/40 bg-emerald-950/20 p-3 space-y-2">
+              <div class="text-xs font-bold text-emerald-300">🗡️ 最优 3 码</div>
+              <div class="flex flex-wrap gap-2">
+                <span v-for="n in (sixteenSummary.daily_ops_brief.tip3 || [])" :key="'tip'+n"
+                      class="lottery-ball bg-gradient-to-b from-emerald-600 to-teal-900 text-white text-sm font-bold border border-emerald-400 cursor-pointer"
+                      @click="openBallDetail({number: n})">{{ String(n).padStart(2,'0') }}</span>
+              </div>
+            </div>
+            <div class="rounded-xl border border-amber-500/40 bg-amber-950/20 p-3 space-y-2">
+              <div class="text-xs font-bold text-amber-300">👑 回补胆 金 / 银 / 铜</div>
+              <div class="flex items-center gap-3 pt-1">
+                <span class="text-amber-300 font-mono font-bold cursor-pointer" @click="openBallDetail({number: sixteenSummary.daily_ops_brief.rebound?.gold})">
+                  金 {{ sixteenSummary.daily_ops_brief.rebound?.gold != null ? String(sixteenSummary.daily_ops_brief.rebound.gold).padStart(2,'0') : '--' }}
+                </span>
+                <span class="text-cyan-300 font-mono cursor-pointer" @click="openBallDetail({number: sixteenSummary.daily_ops_brief.rebound?.silver})">
+                  银 {{ sixteenSummary.daily_ops_brief.rebound?.silver != null ? String(sixteenSummary.daily_ops_brief.rebound.silver).padStart(2,'0') : '--' }}
+                </span>
+                <span class="text-purple-300 font-mono cursor-pointer" @click="openBallDetail({number: sixteenSummary.daily_ops_brief.rebound?.bronze})">
+                  铜 {{ sixteenSummary.daily_ops_brief.rebound?.bronze != null ? String(sixteenSummary.daily_ops_brief.rebound.bronze).padStart(2,'0') : '--' }}
+                </span>
+              </div>
+            </div>
+            <div class="rounded-xl border border-indigo-500/40 bg-indigo-950/20 p-3 space-y-2">
+              <div class="text-xs font-bold text-indigo-300">💎 选2（冷热对冲）</div>
+              <div class="space-y-1.5">
+                <div v-for="p in (sixteenSummary.daily_ops_brief.pairs || [])" :key="'op'+p.pair_str"
+                     class="flex items-center justify-between gap-2 text-[11px] font-mono rounded-lg border border-slate-800 bg-slate-950/60 px-2 py-1.5">
+                  <span class="text-indigo-200 font-bold">{{ p.pair_str }}</span>
+                  <span class="text-slate-500 truncate">{{ p.kind }} · {{ p.desc }}</span>
+                </div>
+                <div v-if="!(sixteenSummary.daily_ops_brief.pairs || []).length" class="text-[10px] text-slate-500">暂无</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-lg border border-slate-800 bg-slate-950/50 px-3 py-2 text-[11px] text-slate-300 font-mono leading-relaxed">
+            {{ sixteenSummary.daily_ops_brief.playbook }}
+          </div>
+
+          <!-- 降权 / 冷对冲 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="rounded-xl border border-rose-500/30 bg-rose-950/10 p-3 space-y-2">
+              <div class="text-xs font-bold text-rose-300">⚠️ 降权名单（高杀/中杀/刚开）</div>
+              <div class="flex flex-wrap gap-1.5">
+                <span v-for="row in (sixteenSummary.daily_ops_brief.demoted || []).slice(0, 16)" :key="'dm'+row.number"
+                      class="px-1.5 py-0.5 rounded border text-[10px] font-mono cursor-pointer"
+                      :class="row.kill_level === 'high'
+                        ? 'border-rose-500/50 text-rose-300 line-through'
+                        : (row.just_opened ? 'border-amber-500/40 text-amber-300' : 'border-orange-500/40 text-orange-300')"
+                      @click="openBallDetail({number: row.number})">
+                  {{ String(row.number).padStart(2,'0') }}
+                  <template v-if="row.kill_level === 'high'">高杀</template>
+                  <template v-else-if="row.kill_level === 'mid'">中杀</template>
+                  <template v-if="row.just_opened">刚开</template>
+                </span>
+                <span v-if="!(sixteenSummary.daily_ops_brief.demoted || []).length" class="text-[10px] text-slate-500">本期无额外降权</span>
+              </div>
+            </div>
+            <div class="rounded-xl border border-slate-600/40 bg-slate-950/40 p-3 space-y-2">
+              <div class="text-xs font-bold text-slate-300">❄️ 冷号对冲池（7/8+ 剩余，非主推）</div>
+              <div class="flex flex-wrap gap-1.5">
+                <span v-for="n in (sixteenSummary.daily_ops_brief.cold_hedge || [])" :key="'ch'+n"
+                      class="px-1.5 py-0.5 rounded border border-slate-600 text-slate-400 text-[10px] font-mono cursor-pointer"
+                      @click="openBallDetail({number: n})">{{ String(n).padStart(2,'0') }}</span>
+                <span v-if="!(sixteenSummary.daily_ops_brief.cold_hedge || []).length" class="text-[10px] text-slate-500">—</span>
+              </div>
+              <p class="text-[10px] text-slate-500">只作选2冷腿，不进中热主核。</p>
+            </div>
+          </div>
+
+          <!-- 动量排序明细 -->
+          <div class="overflow-x-auto max-h-72 overflow-y-auto cyber-scrollbar">
+            <table class="w-full text-[11px] font-mono">
+              <thead class="sticky top-0 bg-slate-950">
+                <tr class="text-slate-500 text-left border-b border-slate-800">
+                  <th class="py-1 pr-2">#</th>
+                  <th class="py-1 pr-2">号码</th>
+                  <th class="py-1 pr-2">频</th>
+                  <th class="py-1 pr-2">遗漏</th>
+                  <th class="py-1 pr-2">近8</th>
+                  <th class="py-1 pr-2">动量</th>
+                  <th class="py-1 pr-2">综合</th>
+                  <th class="py-1">标签</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(row, idx) in (sixteenSummary.daily_ops_brief.ranking || [])" :key="'rk'+row.number"
+                    class="border-t border-slate-800/80"
+                    :class="row.kill_level === 'high' ? 'text-rose-400/80' : 'text-slate-300'">
+                  <td class="py-1 pr-2 text-slate-600">{{ idx + 1 }}</td>
+                  <td class="py-1 pr-2 font-bold text-cyan-300 cursor-pointer" @click="openBallDetail({number: row.number})">
+                    {{ String(row.number).padStart(2,'0') }}
+                  </td>
+                  <td class="py-1 pr-2">{{ row.freq_16 }}</td>
+                  <td class="py-1 pr-2">{{ row.omission }}</td>
+                  <td class="py-1 pr-2">{{ row.recent_8 }}</td>
+                  <td class="py-1 pr-2">{{ row.midhot_score }}</td>
+                  <td class="py-1 pr-2 text-amber-300 font-bold">{{ row.adj_score }}</td>
+                  <td class="py-1">
+                    <span v-for="t in (row.tags || [])" :key="row.number+t"
+                          class="inline-block mr-1 px-1 rounded border text-[10px]"
+                          :class="{
+                            'border-emerald-500/40 text-emerald-300': t==='精选',
+                            'border-slate-600 text-slate-400': t==='剩余',
+                            'border-cyan-500/40 text-cyan-300': t==='点位',
+                            'border-amber-500/40 text-amber-300': t==='刚开',
+                            'border-rose-500/50 text-rose-300': t==='高杀',
+                            'border-orange-500/40 text-orange-300': t==='中杀'
+                          }">{{ t }}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 频次桶「精选 / 剩余」两列（民间分桶精选，与回补胆/中热主推并排保留） -->
+        <div class="glass-panel p-5 space-y-4 border border-fuchsia-500/30" v-if="sixteenSummary?.freq_bucket_picks">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-lg">📊</span>
+              <h3 class="text-base font-bold text-fuchsia-300">频次桶精选 / 剩余</h3>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-mono">
+                系统默认可直接用
+              </span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-fuchsia-500/15 text-fuchsia-300 border border-fuchsia-500/30 font-mono">
+                {{ sixteenSummary.freq_bucket_picks.config?.sort_by || 'midhot_score' }} · 精选 {{ sixteenSummary.freq_bucket_picks.all_picks_count || 0 }} 码
+              </span>
+              <span v-if="sixteenSummary.freq_bucket_picks.has_actual"
+                    class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-mono">
+                精选命中 {{ sixteenSummary.freq_bucket_picks.all_pick_hit_count || 0 }}/{{ sixteenSummary.freq_bucket_picks.all_picks_count || 0 }}
+              </span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button type="button" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2"
+                      @click="fetchSixteenBucketLookback(1)"
+                      :disabled="sixteenLoading || isRunning">回看上期命中</button>
+              <button type="button" class="cyber-btn cyber-btn-cyan text-[11px] !py-1 !px-2"
+                      @click="fetchSixteenBucketSortCompare(20)"
+                      :disabled="sixteenLoading || isRunning">哪种更好？</button>
+              <button type="button" class="text-[11px] text-slate-400 hover:text-slate-200 underline"
+                      @click="sixteenBucketAdvanced = !sixteenBucketAdvanced">
+                {{ sixteenBucketAdvanced ? '收起高级' : '高级设置' }}
+              </button>
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            下面绿框就是默认精选，日常不用改。高级设置只给对照民间表 / 试其它摘法；真正主推仍看下方「最优3码」。
+          </p>
+
+          <div v-show="sixteenBucketAdvanced" class="flex flex-wrap items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/50 p-2.5">
+            <label class="text-[10px] text-slate-500 font-mono">桶内排序</label>
+            <select class="bg-slate-900 border border-slate-700 text-xs text-slate-200 rounded px-2 py-1 font-mono"
+                    :value="sixteenSummary.freq_bucket_picks.config?.sort_by || 'midhot_score'"
+                    @change="applySixteenBucketConfig({ sort_by: $event.target.value })"
+                    :disabled="sixteenLoading || isRunning">
+              <option v-for="opt in (sixteenSummary.freq_bucket_picks.config?.sort_options || ['midhot_score','omission_asc','omission_desc','recent_8','recent_3','number_asc'])"
+                      :key="opt" :value="opt">{{ opt }}</option>
+            </select>
+            <label class="text-[10px] text-slate-500 font-mono">模式</label>
+            <select class="bg-slate-900 border border-slate-700 text-xs text-slate-200 rounded px-2 py-1 font-mono"
+                    :value="sixteenSummary.freq_bucket_picks.config?.mode || 'quota'"
+                    @change="applySixteenBucketConfig({ mode: $event.target.value })"
+                    :disabled="sixteenLoading || isRunning">
+              <option value="quota">quota 定额</option>
+              <option value="ratio">ratio 比例</option>
+            </select>
+          </div>
+
+          <div v-if="sixteenBucketSortCompare?.ranking"
+               class="rounded-xl border border-cyan-500/40 bg-cyan-950/20 p-3 space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="text-xs font-bold text-cyan-300">
+                近 {{ sixteenBucketSortCompare.n_periods }} 期排序对比
+                <span class="text-emerald-300 font-mono">最优 {{ sixteenBucketSortCompare.best_sort_by }}</span>
+                <span class="text-slate-500 font-mono">· 当前 {{ sixteenBucketSortCompare.current_sort_by }}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button v-if="!sixteenBucketSortCompare.best_is_current"
+                        type="button" class="cyber-btn cyber-btn-gold text-[11px] !py-1 !px-2"
+                        @click="applyBestBucketSort"
+                        :disabled="sixteenLoading || isRunning">一键切到最优</button>
+                <button type="button" class="text-[10px] text-slate-400 underline"
+                        @click="sixteenBucketSortCompare = null">关闭</button>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-[11px] font-mono">
+                <thead>
+                  <tr class="text-slate-500 text-left border-b border-slate-800">
+                    <th class="py-1 pr-3">排序</th>
+                    <th class="py-1 pr-3">均命中</th>
+                    <th class="py-1 pr-3">命中率</th>
+                    <th class="py-1">总命中/总精选</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="row in sixteenBucketSortCompare.ranking" :key="row.sort_by"
+                      :class="row.sort_by === sixteenBucketSortCompare.best_sort_by ? 'text-emerald-300' : 'text-slate-300'">
+                    <td class="py-1 pr-3">{{ row.sort_by }}<span v-if="row.sort_by === sixteenBucketSortCompare.best_sort_by"> ★</span></td>
+                    <td class="py-1 pr-3">{{ row.avg_pick_hits }}</td>
+                    <td class="py-1 pr-3">{{ (row.hit_rate * 100).toFixed(1) }}%</td>
+                    <td class="py-1">{{ row.total_hits }}/{{ row.total_picks }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-[10px] text-slate-500">{{ sixteenBucketSortCompare.note }}</p>
+          </div>
+
+          <!-- 已开目标期回看（不影响当前推演缓存） -->
+          <div v-if="sixteenBucketLookback?.freq_bucket_picks"
+               class="rounded-xl border border-amber-500/40 bg-amber-950/20 p-3 space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="text-xs font-bold text-amber-300 font-mono">
+                回看第 {{ sixteenBucketLookback.target_period }} 期 · 精选命中
+                {{ sixteenBucketLookback.freq_bucket_picks.all_pick_hit_count || 0 }}/{{ sixteenBucketLookback.freq_bucket_picks.all_picks_count || 0 }}
+              </div>
+              <button type="button" class="text-[10px] text-slate-400 hover:text-slate-200 underline"
+                      @click="clearSixteenBucketLookback">关闭回看</button>
+            </div>
+            <div class="space-y-2 max-h-72 overflow-y-auto pr-1">
+              <div v-for="bk in (sixteenBucketLookback.freq_bucket_picks.buckets || [])" :key="'lb'+bk.bucket"
+                   class="rounded-lg border border-slate-800 bg-slate-950/50 p-2"
+                   v-show="bk.pool_size > 0">
+                <div class="text-[10px] font-mono text-amber-200 mb-1">{{ bk.freq_label }} · 精选中{{ bk.pick_hit_count || 0 }}/{{ bk.pick_count }}</div>
+                <div class="flex flex-wrap gap-1">
+                  <span v-for="n in (bk.picks || [])" :key="'lbp'+bk.bucket+n"
+                        class="px-1.5 py-0.5 rounded text-[11px] font-mono font-bold cursor-pointer"
+                        :class="isSixteenBucketHit(bk.pick_hits, n) ? 'bg-fuchsia-500/25 border border-fuchsia-300 text-fuchsia-100' : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-200'"
+                        @click="openBallDetail({number: n})">{{ String(n).padStart(2,'0') }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-[10px] text-slate-500 flex flex-wrap gap-2 pb-1">
+            <span class="text-emerald-300">■ 尖刀/命中</span>
+            <span class="text-cyan-300">■ 点位</span>
+            <span class="text-rose-300">■ 高杀</span>
+            <span class="text-orange-300">■ 中杀</span>
+          </div>
+          <div class="space-y-2.5">
+            <div v-for="bk in (sixteenSummary.freq_bucket_picks.buckets || [])" :key="bk.bucket"
+                 class="rounded-xl border border-slate-800 bg-slate-950/60 p-3 space-y-2"
+                 v-show="bk.pool_size > 0">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="text-xs font-bold font-mono text-amber-300">{{ bk.freq_label }} · 池 {{ bk.pool_size }}</span>
+                <span class="text-[10px] text-slate-500 font-mono">
+                  精选 {{ bk.pick_count }}<template v-if="sixteenSummary.freq_bucket_picks.has_actual">·中{{ bk.pick_hit_count || 0 }}</template>
+                  / 剩余 {{ bk.rest_count }}<template v-if="sixteenSummary.freq_bucket_picks.has_actual">·中{{ bk.rest_hit_count || 0 }}</template>
+                </span>
+              </div>
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                <div>
+                  <div class="text-[10px] text-emerald-400 font-bold mb-1.5">精选 {{ bk.pick_count }} 个</div>
+                  <div class="flex flex-wrap gap-1.5 min-h-[28px]">
+                    <span v-for="n in (bk.picks || [])" :key="'p'+bk.bucket+n"
+                          class="px-2 py-0.5 rounded text-xs font-mono font-bold cursor-pointer"
+                          :class="sixteenBallChipClass(n, isSixteenBucketHit(bk.pick_hits, n))
+                            || 'bg-emerald-500/15 border border-emerald-400/40 text-emerald-200 hover:border-emerald-300'"
+                          @click="openBallDetail({number: n})">{{ String(n).padStart(2,'0') }}</span>
+                    <span v-if="!(bk.picks || []).length" class="text-[10px] text-slate-600">—</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="text-[10px] text-slate-400 font-bold mb-1.5">剩余 {{ bk.rest_count }} 个</div>
+                  <div class="flex flex-wrap gap-1.5 min-h-[28px]">
+                    <span v-for="n in (bk.rests || [])" :key="'r'+bk.bucket+n"
+                          class="px-2 py-0.5 rounded text-xs font-mono cursor-pointer"
+                          :class="sixteenBallChipClass(n, isSixteenBucketHit(bk.rest_hits, n))
+                            || 'bg-slate-900 border border-slate-700 text-slate-400 hover:border-slate-500'"
+                          @click="openBallDetail({number: n})">{{ String(n).padStart(2,'0') }}</span>
+                    <span v-if="!(bk.rests || []).length" class="text-[10px] text-slate-600">—</span>
+                  </div>
+                </div>
+              </div>
+              <div class="text-[10px] text-slate-600 font-mono break-all pt-1 border-t border-slate-800/80">{{ bk.line }}</div>
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-slate-800 flex flex-wrap items-center gap-2" v-if="(sixteenSummary.freq_bucket_picks.all_picks || []).length">
+            <span class="text-[10px] text-fuchsia-300 font-bold">全部精选汇总:</span>
+            <span v-for="n in sixteenSummary.freq_bucket_picks.all_picks" :key="'ap'+n"
+                  class="px-1.5 py-0.5 rounded text-[11px] font-mono font-bold cursor-pointer"
+                  :class="isSixteenBucketHit(sixteenSummary.freq_bucket_picks.all_pick_hits, n)
+                    ? 'bg-fuchsia-500/25 border-2 border-fuchsia-300 text-fuchsia-100'
+                    : 'bg-fuchsia-500/10 border border-fuchsia-500/30 text-fuchsia-200'"
+                  @click="openBallDetail({number: n})">{{ String(n).padStart(2,'0') }}</span>
+          </div>
+        </div>
+
+        <!-- 核心推荐四象限分层 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6" v-if="sixteenSummary">
+          <!-- 左侧 6 列：回补胆 + 中热主推 -->
+          <div class="lg:col-span-6 space-y-6">
+            <div class="glass-panel p-5 border border-amber-500/40 bg-gradient-to-b from-amber-950/20 to-slate-950/80 space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">👑</span>
+                  <h3 class="text-base font-bold text-amber-300">回补胆 金 / 银 / 铜（风险过滤 · 点位优先）</h3>
+                </div>
+                <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">
+                  操盘简报口径
+                </span>
+              </div>
+              <div class="flex items-center justify-around py-3">
+                <div class="flex flex-col items-center gap-1 cursor-pointer hover:scale-110 transition" @click="openBallDetail({number: sixteenDisplayRebound.gold})">
+                  <div class="lottery-ball ball-gold text-lg font-black shadow-[0_0_15px_rgba(245,158,11,0.6)]">
+                    {{ sixteenDisplayRebound.gold != null ? String(sixteenDisplayRebound.gold).padStart(2, '0') : '--' }}
+                  </div>
+                  <span class="text-xs text-amber-300 font-bold font-mono">回补金胆</span>
+                </div>
+                <div class="flex flex-col items-center gap-1 cursor-pointer hover:scale-110 transition" @click="openBallDetail({number: sixteenDisplayRebound.silver})">
+                  <div class="lottery-ball ball-cyan text-base font-bold shadow-[0_0_10px_rgba(6,182,212,0.4)]">
+                    {{ sixteenDisplayRebound.silver != null ? String(sixteenDisplayRebound.silver).padStart(2, '0') : '--' }}
+                  </div>
+                  <span class="text-xs text-cyan-300 font-bold font-mono">回补银胆</span>
+                </div>
+                <div class="flex flex-col items-center gap-1 cursor-pointer hover:scale-110 transition" @click="openBallDetail({number: sixteenDisplayRebound.bronze})">
+                  <div class="lottery-ball bg-gradient-to-b from-purple-600 to-indigo-900 text-white text-base font-bold border border-purple-400 shadow-[0_0_10px_rgba(192,132,252,0.3)]">
+                    {{ sixteenDisplayRebound.bronze != null ? String(sixteenDisplayRebound.bronze).padStart(2, '0') : '--' }}
+                  </div>
+                  <span class="text-xs text-purple-300 font-bold font-mono">回补铜胆</span>
+                </div>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                💡 遗漏甜区回补，已自动风险过滤；有点位的甜区号优先。原始未交叉值仍保留在研报中。
+              </p>
+            </div>
+
+            <!-- 🛡️ 最优3码（与简报一致） -->
+            <div class="glass-panel p-5 space-y-4 border border-emerald-500/40">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">🛡️</span>
+                  <h3 class="text-sm font-bold text-emerald-300">最优 3 码（与简报一致）</h3>
+                </div>
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">
+                  与上方简报一致
+                </span>
+              </div>
+              <div class="flex flex-wrap gap-2.5 py-1">
+                <span v-for="n in sixteenDisplayTop5" :key="'disp5-'+n"
+                      class="lottery-ball bg-gradient-to-b from-emerald-600 to-teal-900 text-white text-sm font-bold border border-emerald-400 cursor-pointer hover:scale-110 transition"
+                      @click="openBallDetail({number: n})">
+                  {{ String(n).padStart(2, '0') }}
+                </span>
+              </div>
+            </div>
+
+            <!-- 主系统多维交叉风控 -->
+            <div class="glass-panel p-4 space-y-2 border border-slate-800" v-if="sixteenSummary.cross_validation">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                  <span>🛡️</span> 主系统多维交叉风控校验
+                </span>
+                <span class="text-xs font-bold font-mono text-emerald-400">
+                  {{ sixteenSummary.cross_validation.safety_audit }}
+                </span>
+              </div>
+              <p class="text-[11px] text-slate-400">
+                回补金胆 {{ sixteenDisplayRebound.gold != null ? String(sixteenDisplayRebound.gold).padStart(2, '0') : '--' }}
+                · 主推冲突校验
+                <span class="font-mono text-rose-300">{{ formatSixteenKillHits(sixteenSummary.cross_validation.top5_high_killed) }}</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- 右侧 6 列：选2（优先操盘简报） -->
+          <div class="lg:col-span-6 space-y-6">
+            <!-- 💎 选2 -->
+            <div class="glass-panel p-5 space-y-4 border border-cyan-500/40 bg-gradient-to-b from-cyan-950/20 to-slate-950/80">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">💎</span>
+                  <h3 class="text-base font-bold text-cyan-300">选2 推荐（冷热对冲优先）</h3>
+                </div>
+                <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono">
+                  简报优先
+                </span>
+              </div>
+              <p class="text-xs text-slate-400">
+                优先展示操盘简报的中热×回补 / 双中热对；若无则回落引擎共现 Top5。
+              </p>
+
+              <div class="space-y-2.5 pt-1">
+                <div v-for="(p, idx) in sixteenDisplayPairs" :key="'disp-pair-'+(p.pair_str || idx)"
+                     class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between hover:border-cyan-400/50 transition">
+                  <div class="flex items-center gap-3">
+                    <span class="text-xs font-mono font-bold px-2 py-1 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                      Top {{ idx + 1 }}
+                    </span>
+                    <div class="flex items-center gap-2">
+                      <span class="lottery-ball ball-gold text-sm font-bold">{{ String((p.pair || [])[0] || 0).padStart(2, '0') }}</span>
+                      <span class="text-slate-500">+</span>
+                      <span class="lottery-ball ball-cyan text-sm font-bold">{{ String((p.pair || [])[1] || 0).padStart(2, '0') }}</span>
+                    </div>
+                  </div>
+                  <div class="text-right text-[10px] text-slate-400 font-mono max-w-[45%]">
+                    <div class="text-cyan-300/90">{{ p.kind || p.desc || '' }}</div>
+                    <div>{{ p.desc || '' }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- keep triples block below by closing only the pairs panel replacement carefully -->
+            <div class="glass-panel p-5 space-y-4 border border-violet-500/30" v-if="(sixteenSummary.top5_triples || []).length">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">🔮</span>
+                <h3 class="text-base font-bold text-violet-300">选3（引擎共现）</h3>
+              </div>
+              <div class="space-y-2">
+                <div v-for="(t, idx) in (sixteenSummary.top5_triples || [])" :key="t.triple_str"
+                     class="p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 flex items-center justify-between text-xs font-mono">
+                  <span class="text-violet-300">Top {{ idx + 1 }} · {{ t.triple_str }}</span>
+                  <span class="text-slate-500">{{ t.score }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 16期冷热光谱速览条 -->
+        <div class="glass-panel p-4 space-y-3" v-if="sixteenSummary?.distribution_counts">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+              <span>📊</span> 16期大盘频次光谱速览
+            </span>
+            <span class="text-[11px] font-mono text-slate-400">共 80 码</span>
+          </div>
+          <div class="grid grid-cols-8 gap-2 text-center font-mono">
+            <div class="spectrum-freq-box freq-box-sky">
+              <div class="freq-box-label">1次</div>
+              <div class="freq-box-val">{{ sixteenSummary.distribution_counts['1'] || 0 }}</div>
+            </div>
+            <div class="spectrum-freq-box freq-box-sky">
+              <div class="freq-box-label">2次</div>
+              <div class="freq-box-val">{{ sixteenSummary.distribution_counts['2'] || 0 }}</div>
+            </div>
+            <div class="spectrum-freq-box freq-box-amber">
+              <div class="freq-box-label">3次</div>
+              <div class="freq-box-val">{{ sixteenSummary.distribution_counts['3'] || 0 }}</div>
+            </div>
+            <div class="spectrum-freq-box freq-box-emerald">
+              <div class="freq-box-label">4次</div>
+              <div class="freq-box-val">{{ sixteenSummary.distribution_counts['4'] || 0 }}</div>
+            </div>
+            <div class="spectrum-freq-box freq-box-emerald">
+              <div class="freq-box-label">5次</div>
+              <div class="freq-box-val">{{ sixteenSummary.distribution_counts['5'] || 0 }}</div>
+            </div>
+            <div class="spectrum-freq-box freq-box-orange">
+              <div class="freq-box-label">6次</div>
+              <div class="freq-box-val">{{ sixteenSummary.distribution_counts['6'] || 0 }}</div>
+            </div>
+            <div class="spectrum-freq-box freq-box-rose">
+              <div class="freq-box-label">7次</div>
+              <div class="freq-box-val">{{ sixteenSummary.distribution_counts['7'] || 0 }}</div>
+            </div>
+            <div class="spectrum-freq-box freq-box-rose">
+              <div class="freq-box-label">8+次</div>
+              <div class="freq-box-val">{{ sixteenSummary.distribution_counts['8+'] || 0 }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═════════════════ 16期中热频次动态推演：1~8+频次分桶大盘光谱 ═════════════════ -->
+
+      <div v-show="activeTab === 'sixteen_dist'" class="space-y-6">
+        <!-- 头部说明与柱状图 -->
+        <div class="glass-panel p-6 space-y-4">
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xl">📊</span>
+                <h2 class="text-lg font-bold text-cyan-300">1~8+ 频次分桶大盘光谱态势图 (对齐 Excel 分桶分布)</h2>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">
+                统计 1-80 号码在过去 16 期窗口内的出现频次分布，揭示大盘中热聚集区间（3~6次）与极值过载区间（8+次）。
+              </p>
+            </div>
+            <button @click="fetchSixteenSummary" class="cyber-btn cyber-btn-cyan text-xs">
+              🔄 刷新光谱
+            </button>
+          </div>
+
+          <!-- ECharts 图表容器 -->
+          <div class="p-4 bg-slate-950/80 rounded-xl border border-slate-800">
+            <div id="sixteenDistChart" style="width: 100%; height: 320px;"></div>
+          </div>
+        </div>
+
+        <!-- 历史各期 1~8+ 频次分布与当期中热命中数明细数据表 (对齐 Image 2) -->
+        <div class="glass-panel p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">📋</span>
+              <h3 class="text-sm font-bold text-slate-100">历史各期 16 期窗口频次分布表 (对齐 Image 2 CD~CL 列)</h3>
+            </div>
+            <span class="text-xs text-slate-400 font-mono">近 30 期滑动窗口光谱</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="cyber-table w-full text-center text-xs">
+              <thead>
+                <tr>
+                  <th class="text-left">期号</th>
+                  <th>开奖日期</th>
+                  <th class="text-sky-400">1次(CD)</th>
+                  <th class="text-sky-300">2次(CE)</th>
+                  <th class="text-amber-300">3次(CF)</th>
+                  <th class="text-emerald-400">4次(CG)</th>
+                  <th class="text-emerald-300">5次(CH)</th>
+                  <th class="text-orange-400">6次(CI)</th>
+                  <th class="text-rose-400">7次(CJ)</th>
+                  <th class="text-rose-300">8+次(CK)</th>
+                  <th class="text-emerald-400 font-bold">中热池(3-6)</th>
+                  <th class="text-amber-400 font-bold">当期中热命中(CL)</th>
+                </tr>
+              </thead>
+              <tbody v-if="sixteenSummary && sixteenSummary.distribution_history">
+                <tr v-for="row in sixteenSummary.distribution_history" :key="row.period">
+                  <td class="font-mono font-bold text-cyan-400 text-left">{{ row.period }}</td>
+                  <td class="font-mono text-slate-400">{{ row.date }}</td>
+                  <td class="font-mono text-sky-300 bg-sky-950/20">{{ row.count_1 }}</td>
+                  <td class="font-mono text-sky-200 bg-sky-950/20">{{ row.count_2 }}</td>
+                  <td class="font-mono text-amber-300 bg-amber-950/20 font-bold">{{ row.count_3 }}</td>
+                  <td class="font-mono text-emerald-300 bg-emerald-950/30 font-bold">{{ row.count_4 }}</td>
+                  <td class="font-mono text-emerald-200 bg-emerald-950/30 font-bold">{{ row.count_5 }}</td>
+                  <td class="font-mono text-orange-300 bg-orange-950/20 font-bold">{{ row.count_6 }}</td>
+                  <td class="font-mono text-rose-300 bg-rose-950/20">{{ row.count_7 }}</td>
+                  <td class="font-mono text-rose-400 bg-rose-950/20 font-bold">{{ row.count_8plus }}</td>
+                  <td class="font-mono text-emerald-400 font-bold bg-emerald-950/40">{{ row.medium_hot_pool_size }} 码</td>
+                  <td class="font-mono text-amber-300 font-black bg-amber-950/40 text-sm">{{ row.medium_hot_draw_hits }} 码</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>

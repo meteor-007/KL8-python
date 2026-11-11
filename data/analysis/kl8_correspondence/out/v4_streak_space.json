@@ -1,0 +1,266 @@
+{
+ "real": {
+  "tag": "real",
+  "n_periods": 2101,
+  "r012": {
+   "n_rules": 3240,
+   "base_rate": 0.3325,
+   "ge9": {
+    "mean": 0.152,
+    "median": 0,
+    "max": 3,
+    "pct_periods_nonzero": 0.141,
+    "pct_ge2": 0.01
+   },
+   "ge14": {
+    "mean": 0.002,
+    "median": 0,
+    "max": 1,
+    "pct_periods_nonzero": 0.0017,
+    "pct_ge2": 0.0
+   },
+   "max_streak_available": {
+    "median": 7,
+    "p90": 9,
+    "max": 14
+   }
+  },
+  "tailsize": {
+   "n_rules": 3240,
+   "base_rate": 0.499,
+   "ge9": {
+    "mean": 6.349,
+    "median": 6,
+    "max": 17,
+    "pct_periods_nonzero": 0.9983,
+    "pct_ge2": 0.985
+   },
+   "ge14": {
+    "mean": 0.227,
+    "median": 0,
+    "max": 3,
+    "pct_periods_nonzero": 0.2016,
+    "pct_ge2": 0.0244
+   },
+   "max_streak_available": {
+    "median": 12,
+    "p90": 15,
+    "max": 22
+   }
+  }
+ },
+ "random": [
+  {
+   "tag": "random0",
+   "n_periods": 2101,
+   "r012": {
+    "n_rules": 3240,
+    "base_rate": 0.3332,
+    "ge9": {
+     "mean": 0.193,
+     "median": 0,
+     "max": 2,
+     "pct_periods_nonzero": 0.1727,
+     "pct_ge2": 0.02
+    },
+    "ge14": {
+     "mean": 0.001,
+     "median": 0,
+     "max": 1,
+     "pct_periods_nonzero": 0.0006,
+     "pct_ge2": 0.0
+    },
+    "max_streak_available": {
+     "median": 7,
+     "p90": 9,
+     "max": 14
+    }
+   },
+   "tailsize": {
+    "n_rules": 3240,
+    "base_rate": 0.4992,
+    "ge9": {
+     "mean": 6.356,
+     "median": 6,
+     "max": 15,
+     "pct_periods_nonzero": 0.9989,
+     "pct_ge2": 0.9883
+    },
+    "ge14": {
+     "mean": 0.239,
+     "median": 0,
+     "max": 4,
+     "pct_periods_nonzero": 0.2165,
+     "pct_ge2": 0.0205
+    },
+    "max_streak_available": {
+     "median": 12,
+     "p90": 15,
+     "max": 28
+    }
+   }
+  },
+  {
+   "tag": "random1",
+   "n_periods": 2101,
+   "r012": {
+    "n_rules": 3240,
+    "base_rate": 0.3324,
+    "ge9": {
+     "mean": 0.169,
+     "median": 0,
+     "max": 3,
+     "pct_periods_nonzero": 0.1532,
+     "pct_ge2": 0.0155
+    },
+    "ge14": {
+     "mean": 0.001,
+     "median": 0,
+     "max": 1,
+     "pct_periods_nonzero": 0.0011,
+     "pct_ge2": 0.0
+    },
+    "max_streak_available": {
+     "median": 7,
+     "p90": 9,
+     "max": 14
+    }
+   },
+   "tailsize": {
+    "n_rules": 3240,
+    "base_rate": 0.4996,
+    "ge9": {
+     "mean": 6.395,
+     "median": 6,
+     "max": 16,
+     "pct_periods_nonzero": 0.9972,
+     "pct_ge2": 0.9872
+    },
+    "ge14": {
+     "mean": 0.205,
+     "median": 0,
+     "max": 3,
+     "pct_periods_nonzero": 0.1827,
+     "pct_ge2": 0.0217
+    },
+    "max_streak_available": {
+     "median": 12,
+     "p90": 14,
+     "max": 22
+    }
+   }
+  },
+  {
+   "tag": "random2",
+   "n_periods": 2101,
+   "r012": {
+    "n_rules": 3240,
+    "base_rate": 0.3328,
+    "ge9": {
+     "mean": 0.148,
+     "median": 0,
+     "max": 3,
+     "pct_periods_nonzero": 0.1405,
+     "pct_ge2": 0.0072
+    },
+    "ge14": {
+     "mean": 0.001,
+     "median": 0,
+     "max": 1,
+     "pct_periods_nonzero": 0.0011,
+     "pct_ge2": 0.0
+    },
+    "max_streak_available": {
+     "median": 7,
+     "p90": 9,
+     "max": 15
+    }
+   },
+   "tailsize": {
+    "n_rules": 3240,
+    "base_rate": 0.4995,
+    "ge9": {
+     "mean": 6.489,
+     "median": 6,
+     "max": 17,
+     "pct_periods_nonzero": 0.9983,
+     "pct_ge2": 0.9889
+    },
+    "ge14": {
+     "mean": 0.224,
+     "median": 0,
+     "max": 4,
+     "pct_periods_nonzero": 0.1927,
+     "pct_ge2": 0.0261
+    },
+    "max_streak_available": {
+     "median": 12,
+     "p90": 15,
+     "max": 23
+    }
+   }
+  }
+ ],
+ "compare": {
+  "r012_ge9": {
+   "real_mean": 0.152,
+   "real_pct_nonzero": 0.141,
+   "random_mean_range": [
+    0.148,
+    0.193
+   ],
+   "random_pct_nonzero_range": [
+    0.1405,
+    0.1727
+   ]
+  },
+  "r012_ge14": {
+   "real_mean": 0.002,
+   "real_pct_nonzero": 0.0017,
+   "random_mean_range": [
+    0.001,
+    0.001
+   ],
+   "random_pct_nonzero_range": [
+    0.0006,
+    0.0011
+   ]
+  },
+  "tailsize_ge9": {
+   "real_mean": 6.349,
+   "real_pct_nonzero": 0.9983,
+   "random_mean_range": [
+    6.356,
+    6.489
+   ],
+   "random_pct_nonzero_range": [
+    0.9972,
+    0.9989
+   ]
+  },
+  "tailsize_ge14": {
+   "real_mean": 0.227,
+   "real_pct_nonzero": 0.2016,
+   "random_mean_range": [
+    0.205,
+    0.239
+   ],
+   "random_pct_nonzero_range": [
+    0.1827,
+    0.2165
+   ]
+  }
+ },
+ "offsets": [
+  -6,
+  -5,
+  -4,
+  -3,
+  -2,
+  -1,
+  0,
+  1,
+  2
+ ],
+ "note": "连中数按 t-1 及以前计，t 为待预测期"
+}

@@ -1,0 +1,316 @@
+<div v-show="activeTab === 'psychological_game'" class="space-y-6">
+  <!-- G5: 静态快照降级提示 —— 降级数据不得冒充实时结果 -->
+  <div v-if="psychologicalGameData?.__stale_fallback || psychologicalGameBacktest?.__stale_fallback"
+       class="glass-panel p-3 border-l-4 border-amber-400 text-xs text-amber-300">
+    ⚠️ {{ (psychologicalGameBacktest?.__stale_note || psychologicalGameData?.__stale_note) || '接口不可用，当前展示的是静态快照，可能已过期' }}
+  </div>
+
+  <!-- B3: 观察仓水印 —— 没有票权的模块不许看起来像系统推荐 -->
+  <div v-if="psychGameGate.known && !psychGameGate.votable"
+       class="glass-panel p-4 border-l-4 border-amber-400 text-xs space-y-1">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="text-lg">👁</span>
+      <span class="font-bold text-amber-300">观察仓 · 未验证</span>
+      <span class="cyber-badge font-mono" :style="psychGameGate.cls">{{ psychGameGate.label }}</span>
+      <span class="text-slate-400 font-mono">票权 {{ psychGameGate.weight }}</span>
+      <span class="text-slate-400 font-mono">
+        前瞻账 {{ moduleStatusOf('psychological_game')?.prospective_periods ?? 0 }}/200 期
+      </span>
+    </div>
+    <p class="text-slate-400 leading-relaxed">
+      大白话：本模块<b class="text-amber-200">不参与共识投票</b>，本页号码仅供观察，不代表系统推荐。
+      它已登记假设并冻结规则，要攒够 <b>200 期前瞻账</b>、再通过 BH-FDR 多重检验校正，才可能取得投票权。
+    </p>
+    <p v-if="psychGameGate.note" class="text-slate-500">裁决理由: {{ psychGameGate.note }}</p>
+  </div>
+
+  <!-- ══════════ 心理博弈论与逆向均值回归量化推演看板 (四大心理支柱) ══════════ -->
+  <div class="glass-panel p-6 space-y-6 border border-indigo-500/30 shadow-[0_0_20px_rgba(99,102,241,0.15)]">
+          <!-- 模块标题栏 -->
+          <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-pink-500/20 border border-indigo-400/40 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(99,102,241,0.3)]">
+                🧠
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                  <span>心理博弈论与逆向均值回归 · 核心决策看板</span>
+                  <span class="text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono border border-indigo-500/30">
+                    逆向反转 · 钟摆回归
+                  </span>
+                </h3>
+                <p class="text-xs text-slate-400 mt-0.5">
+                  目标推演第 <span class="text-indigo-400 font-mono font-bold">{{ psychologicalGameData?.target_period || '---' }}</span> 期 · 基于 {{ psychologicalGameData?.total_draws ? psychologicalGameData.total_draws + ' 期开奖' : (psychologicalGameData?.based_on_period ? '第 ' + psychologicalGameData.based_on_period + ' 期' : '全量历史') }} 真实开奖底账
+                </p>
+              </div>
+            </div>
+            <button @click="triggerPsychologicalGameRun" 
+                    :disabled="isRunning"
+                    class="cyber-btn cyber-btn-primary text-xs !py-1.5 !px-3 flex items-center gap-1.5">
+              <span :class="{'animate-spin': isRunning}">🔄</span>
+              <span>{{ isRunning ? '解算中...' : '重新推演心理博弈' }}</span>
+            </button>
+          </div>
+
+          <!-- 顶部博弈决策核心卡 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- 卡片 1: 最优 3 码 -->
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.15)] relative overflow-hidden">
+              <div class="absolute -right-2 -bottom-2 text-5xl opacity-10 pointer-events-none">🌟</div>
+              <div class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                <span>🌟</span> 最优 3 码 (大白话: 胜率最高核心胆)
+              </div>
+              <div class="text-[10px] text-slate-400 mt-1">散户狂热抛弃 + 均值回归拉力顶峰号码</div>
+              <div class="mt-3 flex items-center gap-2 flex-wrap">
+                <span v-for="num in (psychologicalGameData?.top3_gold || psychologicalGameData?.top5_assault || [])" :key="'pg-top3-'+num"
+                      @click="openBallDetail({number: num})"
+                      class="px-2.5 py-1 rounded-lg bg-amber-500/20 border border-amber-400/80 text-amber-300 font-mono font-black text-sm shadow-[0_0_8px_rgba(245,158,11,0.4)] cursor-pointer hover:scale-110 transition">
+                  {{ String(num).padStart(2, '0') }}
+                </span>
+              </div>
+            </div>
+
+            <!-- 卡片 2: 弹性冷号突击名单 -->
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.15)] relative overflow-hidden">
+              <div class="absolute -right-2 -bottom-2 text-5xl opacity-10 pointer-events-none">❄️</div>
+              <div class="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
+                <span>❄️</span> 弹性冷号突击 (遗漏6-18期·绝望点回补)
+              </div>
+              <div class="text-[10px] text-slate-400 mt-1">大众绝望割肉，大数定律报复性回补</div>
+              <div class="mt-3 flex items-center gap-2 flex-wrap">
+                <span v-for="num in (psychologicalGameData?.top_cold_spring || [])" :key="'pg-cold-'+num"
+                      @click="openBallDetail({number: num})"
+                      class="px-2.5 py-1 rounded-lg bg-cyan-500/20 border border-cyan-400/80 text-cyan-300 font-mono font-black text-sm shadow-[0_0_8px_rgba(6,182,212,0.4)] cursor-pointer hover:scale-110 transition">
+                  {{ String(num).padStart(2, '0') }}
+                </span>
+              </div>
+            </div>
+
+            <!-- 卡片 3: 单点健康重号 -->
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.15)] relative overflow-hidden">
+              <div class="absolute -right-2 -bottom-2 text-5xl opacity-10 pointer-events-none">🔥</div>
+              <div class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                <span>🔥</span> 单点健康重号 (无连号截断·顺风连庄)
+              </div>
+              <div class="text-[10px] text-slate-400 mt-1">上期开出且身边无截断阻碍，连庄阻力小</div>
+              <div class="mt-3 flex items-center gap-2 flex-wrap">
+                <span v-for="num in (psychologicalGameData?.top_healthy_repeats || [])" :key="'pg-repeat-'+num"
+                      @click="openBallDetail({number: num})"
+                      class="px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-400/80 text-emerald-300 font-mono font-black text-sm shadow-[0_0_8px_rgba(16,185,129,0.4)] cursor-pointer hover:scale-110 transition">
+                  {{ String(num).padStart(2, '0') }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 宏观钟摆态势与四分区拥挤度流向 -->
+          <div class="p-5 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <div class="flex items-center gap-2">
+                <span class="text-base">⚖️</span>
+                <h4 class="text-xs font-bold text-slate-200">宏观钟摆态势与资金回流诊断</h4>
+              </div>
+              <span class="text-[11px] px-2.5 py-0.5 rounded-full font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                {{ psychologicalGameData?.macro_pendulum?.target_size_bias || '大小均衡对冲' }}
+              </span>
+            </div>
+
+            <!-- 诊断结论横幅 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-start gap-2.5">
+                <span class="text-amber-400 text-sm mt-0.5">📐</span>
+                <div>
+                  <b class="text-slate-200 block">大小比钟摆诊断:</b>
+                  <p class="text-slate-400 text-[11px] mt-0.5 leading-relaxed">
+                    {{ psychologicalGameData?.macro_pendulum?.size_trend_desc || '常态区间震荡' }}
+                  </p>
+                </div>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-start gap-2.5">
+                <span class="text-indigo-400 text-sm mt-0.5">🔄</span>
+                <div>
+                  <b class="text-slate-200 block">连号空间迁移提示:</b>
+                  <p class="text-slate-400 text-[11px] mt-0.5 leading-relaxed">
+                    {{ psychologicalGameData?.healthy_repeats_and_clusters?.cluster_bias_desc || '连号向前区转移' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 四分区拥挤度进度对比 -->
+            <div class="space-y-2 pt-2">
+              <div class="text-[11px] font-bold text-slate-300 flex items-center justify-between">
+                <span>四分区筹码拥挤度与回流权重</span>
+                <span class="text-[10px] text-slate-500 font-mono">基准占比: 25.0%</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                <div v-for="(diag, zIdx) in (psychologicalGameData?.macro_pendulum?.zone_diagnoses || [])" :key="'zone-diag-'+zIdx"
+                     class="p-2.5 rounded-xl border bg-slate-900/80"
+                     :class="(psychologicalGameData?.macro_pendulum?.zone_shares?.[zIdx] >= 32.0) ? 'border-rose-500/50 bg-rose-950/15' : ((psychologicalGameData?.macro_pendulum?.zone_shares?.[zIdx] <= 18.0) ? 'border-cyan-500/50 bg-cyan-950/15' : 'border-slate-800')">
+                  <div class="flex items-center justify-between text-[11px] font-mono">
+                    <span class="font-bold" :class="(psychologicalGameData?.macro_pendulum?.zone_shares?.[zIdx] >= 32.0) ? 'text-rose-300' : ((psychologicalGameData?.macro_pendulum?.zone_shares?.[zIdx] <= 18.0) ? 'text-cyan-300' : 'text-slate-300')">
+                      {{ (zIdx + 1) }}区 ({{ String(zIdx*20+1).padStart(2,'0') }}-{{ String((zIdx+1)*20).padStart(2,'0') }})
+                    </span>
+                    <span class="font-bold">{{ psychologicalGameData?.macro_pendulum?.zone_shares?.[zIdx] }}%</span>
+                  </div>
+                  <div class="w-full h-1.5 rounded-full bg-slate-800 mt-1.5 overflow-hidden">
+                    <div class="h-full rounded-full transition-all duration-500"
+                         :style="{ width: Math.min(100, (psychologicalGameData?.macro_pendulum?.zone_shares?.[zIdx] || 25) * 2.5) + '%' }"
+                         :class="(psychologicalGameData?.macro_pendulum?.zone_shares?.[zIdx] >= 32.0) ? 'bg-rose-500' : ((psychologicalGameData?.macro_pendulum?.zone_shares?.[zIdx] <= 18.0) ? 'bg-cyan-400' : 'bg-indigo-500')">
+                    </div>
+                  </div>
+                  <div class="text-[9px] mt-1.5 truncate" :class="(psychologicalGameData?.macro_pendulum?.zone_shares?.[zIdx] >= 32.0) ? 'text-rose-300' : ((psychologicalGameData?.macro_pendulum?.zone_shares?.[zIdx] <= 18.0) ? 'text-cyan-300' : 'text-slate-400')">
+                    {{ (psychologicalGameData?.macro_pendulum?.zone_shares?.[zIdx] >= 32.0) ? '🔥 极度拥挤 (高位滞涨)' : ((psychologicalGameData?.macro_pendulum?.zone_shares?.[zIdx] <= 18.0) ? '❄️ 偏冷缺口 (资金回补)' : '常态温水区') }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══════════ 严格样本外滚动回测决算看板 (Walk-Forward Audit) ══════════ -->
+          <div id="module-review-psychological_game" class="p-5 rounded-2xl bg-slate-950/70 border border-emerald-500/30 space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-4 pb-3 border-b border-slate-800">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-lg shadow-[0_0_12px_rgba(16,185,129,0.3)]">
+                  📊
+                </div>
+                <div>
+                  <h3 class="text-xs font-bold text-slate-100 flex items-center gap-2">
+                    <span>严格样本外滚动回测复盘</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono border border-emerald-500/30">
+                      Walk-Forward · 屏蔽未来数据
+                    </span>
+                  </h3>
+                  <p class="text-[11px] text-slate-400 mt-0.5">
+                    实测期数: <span class="text-emerald-400 font-mono font-bold">{{ activePsychologicalBacktest?.n_tests != null ? activePsychologicalBacktest?.n_tests : '--' }}</span> 期 · 覆盖期号: {{ activePsychologicalBacktest?.start_issue }} ~ {{ activePsychologicalBacktest?.end_issue }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- 周期切换与重新审计按钮 -->
+              <div class="flex items-center gap-2">
+                <div class="flex items-center bg-slate-900 rounded-lg p-1 border border-slate-800">
+                  <button v-for="winKey in ['last_30', 'last_50', 'last_100', 'last_200']" :key="winKey"
+                          @click="psychologicalGameBacktestWindow = winKey"
+                          :class="psychologicalGameBacktestWindow === winKey ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-bold' : 'text-slate-400 hover:text-slate-200 border-transparent'"
+                          class="px-2.5 py-1 text-xs rounded border transition font-mono">
+                    {{ winKey === 'last_30' ? '近30期' : (winKey === 'last_50' ? '近50期' : (winKey === 'last_100' ? '近100期' : '近200期')) }}
+                  </button>
+                </div>
+                <button @click="triggerPsychologicalGameBacktestRun" 
+                        :disabled="isRunning"
+                        class="cyber-btn cyber-btn-primary text-xs !py-1.5 !px-3 flex items-center gap-1.5">
+                  <span :class="{'animate-spin': isRunning}">🔄</span>
+                  <span>{{ isRunning ? '回测中...' : '重新审计' }}</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 回测宏观战果 3 大指标卡 -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <!-- 最优3码均中 -->
+              <div class="p-3.5 rounded-xl bg-slate-900/90 border border-amber-500/30">
+                <div class="text-[11px] text-slate-400">最优3码均中 / 命中率</div>
+                <div class="text-base font-black text-amber-300 font-mono mt-1">
+                  {{ activePsychologicalBacktest?.avg_h5 || '---' }} <span class="text-xs font-normal text-slate-400">/ 3码</span>
+                </div>
+                <div class="text-[10px] text-amber-400/90 font-mono mt-0.5">
+                  命中率 {{ activePsychologicalBacktest?.rate5_pct }}% (Lift {{ activePsychologicalBacktest?.lift5 }}x)
+                </div>
+              </div>
+
+              <!-- 选2双全中率 -->
+              <div class="p-3.5 rounded-xl bg-slate-900/90 border border-indigo-500/30">
+                <div class="text-[11px] text-slate-400">选2双中率 (单期≥2码)</div>
+                <div class="text-base font-black text-indigo-300 font-mono mt-1">
+                  {{ activePsychologicalBacktest?.top5_win2_rate_pct || '---' }}%
+                </div>
+                <div class="text-[10px] text-indigo-400/90 font-mono mt-0.5">
+                  双中及以上期数占比
+                </div>
+              </div>
+
+              <!-- 弹性冷号突击 -->
+              <div class="p-3.5 rounded-xl bg-slate-900/90 border border-blue-500/30">
+                <div class="text-[11px] text-slate-400">弹性冷号突击 (4码)</div>
+                <div class="text-base font-black text-blue-300 font-mono mt-1">
+                  {{ activePsychologicalBacktest?.avg_cold4 || '---' }} <span class="text-xs font-normal text-slate-400">/ 4码</span>
+                </div>
+                <div class="text-[10px] text-blue-400/90 font-mono mt-0.5">
+                  绝望点反弹有效捕获
+                </div>
+              </div>
+
+            </div>
+
+            <!-- 逐期滚动复盘对账流水明细表 -->
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm">📜</span>
+                  <h4 class="text-xs font-bold text-slate-200">近 100 期逐期复盘对账流水明细 (倒序排列 · 最新在最前)</h4>
+                </div>
+                <span class="text-[10px] text-slate-400 font-mono">共 {{ psychologicalGameBacktest?.detailed_100_records?.length || 0 }} 期实测底账</span>
+              </div>
+
+              <div class="overflow-x-auto max-h-[460px] overflow-y-auto">
+                <table class="w-full text-left text-xs border-collapse font-mono">
+                  <thead class="bg-slate-950 text-[11px] text-slate-400 sticky top-0 border-b border-slate-800 z-10">
+                    <tr>
+                      <th class="py-2.5 px-3">期号</th>
+                      <th class="py-2.5 px-2">日期</th>
+                      <th class="py-2.5 px-3">真实开奖 (20码)</th>
+                      <th class="py-2.5 px-3">最优3码预测</th>
+                      <th class="py-2.5 px-3">最优3码命中</th>
+                      <th class="py-2.5 px-2">弹性冷号</th>
+                      <th class="py-2.5 px-2">健康重号</th>
+                      <th class="py-2.5 px-2">大小比</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                    <tr v-for="rec in ([...(psychologicalGameBacktest?.detailed_100_records || [])].reverse())" :key="'rec-'+rec.issue" class="hover:bg-slate-950/60 transition">
+                      <td class="py-2 px-3 font-bold text-indigo-300">{{ rec.issue }}</td>
+                      <td class="py-2 px-2 text-[10px] text-slate-400">{{ rec.date }}</td>
+                      <td class="py-2 px-3 text-[11px] text-slate-400 whitespace-nowrap">
+                        <span v-for="num in rec.target_numbers" :key="'target-'+rec.issue+'-'+num"
+                              :class="rec.top5?.includes(num) ? 'text-amber-400 font-bold bg-amber-500/20 px-1 py-0.5 rounded' : ''"
+                              class="mr-1 inline-block">
+                          {{ String(num).padStart(2, '0') }}
+                        </span>
+                      </td>
+                      <td class="py-2 px-3 whitespace-nowrap">
+                        <span v-for="num in rec.top5" :key="'t5-'+rec.issue+'-'+num"
+                              :class="rec.top5_hits?.includes(num) ? 'text-amber-300 bg-amber-500/20 font-bold border border-amber-400/60' : 'text-slate-400'"
+                              class="px-1.5 py-0.5 rounded mr-1 inline-block text-[11px]">
+                          {{ String(num).padStart(2, '0') }}
+                        </span>
+                      </td>
+                      <td class="py-2 px-3 whitespace-nowrap">
+                        <span :class="rec.top5_hit_count >= 2 ? 'text-emerald-400 font-black' : (rec.top5_hit_count === 1 ? 'text-amber-400 font-bold' : 'text-slate-500')">
+                          {{ rec.top5_hit_count }} 个
+                        </span>
+                        <span v-if="rec.top5_hits?.length" class="text-[10px] text-slate-400 ml-1">
+                          ({{ rec.top5_hits.map(n => String(n).padStart(2, '0')).join(', ') }})
+                        </span>
+                      </td>
+                      <td class="py-2 px-2 whitespace-nowrap text-[11px]">
+                        <span :class="rec.cold4_hit_count > 0 ? 'text-cyan-300 font-bold' : 'text-slate-500'">
+                          {{ rec.cold4_hits?.length ? rec.cold4_hits.map(n => String(n).padStart(2, '0')).join(' ') : '—' }}
+                        </span>
+                      </td>
+                      <td class="py-2 px-2 whitespace-nowrap text-[11px]">
+                        <span :class="rec.repeats4_hit_count > 0 ? 'text-emerald-300 font-bold' : 'text-slate-500'">
+                          {{ rec.repeats4_hits?.length ? rec.repeats4_hits.map(n => String(n).padStart(2, '0')).join(' ') : '—' }}
+                        </span>
+                      </td>
+                      <td class="py-2 px-2 text-[10px] text-slate-400 whitespace-nowrap">
+                        {{ rec.actual_size_ratio }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+</div>

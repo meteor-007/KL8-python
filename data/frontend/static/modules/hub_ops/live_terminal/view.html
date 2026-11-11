@@ -1,0 +1,33 @@
+<div v-show="activeTab === 'live_terminal'" class="space-y-4">
+        <div class="glass-panel p-5">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-cyan-400 animate-ping"></span>
+              <h2 class="text-sm font-bold text-cyan-300 uppercase tracking-widest font-mono">
+                💻 自动化流水线实时调度终端 (LIVE LOG STREAMER)
+              </h2>
+            </div>
+            <div class="flex items-center gap-3 text-xs">
+              <button @click="runPipeline" :disabled="isRunning" class="cyber-btn cyber-btn-gold text-xs !py-1">⚡ 立即运行流水线</button>
+              <button @click="syncData" :disabled="isRunning" class="cyber-btn cyber-btn-cyan text-xs !py-1">🔄 同步数据</button>
+              <label class="flex items-center gap-1 text-slate-400 cursor-pointer ml-3">
+                <input type="checkbox" v-model="autoScroll" class="accent-cyan-400 rounded">
+                <span>自动滚动</span>
+              </label>
+              <button @click="clearLogs" class="text-slate-500 hover:text-slate-300 ml-2">清空日志</button>
+            </div>
+          </div>
+          
+          <div id="terminal-logs-window" class="terminal-window !h-[580px]">
+            <div v-for="(line, idx) in terminalLogs" :key="idx" 
+                 class="terminal-line"
+                 :class="{
+                   'success': line.includes('✅') || line.includes('成功'),
+                   'warn': line.includes('⚠️') || line.includes('警告'),
+                   'error': line.includes('❌') || line.includes('异常') || line.includes('失败')
+                 }">
+              {{ line }}
+            </div>
+          </div>
+        </div>
+      </div>

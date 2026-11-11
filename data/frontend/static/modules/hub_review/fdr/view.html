@@ -1,0 +1,139 @@
+<div v-show="activeTab === 'fdr_audit'" class="space-y-6">
+        <!-- 头部 Header -->
+        <div class="glass-panel p-6 border-l-4 border-purple-400 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-[0_0_25px_rgba(168,85,247,0.15)]">
+          <div class="space-y-1">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">🔬</span>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="text-xl font-bold text-white tracking-wide">FDR-BH 严谨统计信标真伪审计</h2>
+                  <span class="cyber-badge cyber-badge-purple font-mono font-bold">95% CI 下界 + BH-FDR</span>
+                </div>
+                <p class="text-xs text-slate-400">
+                  大白话：先算每个模块的 95% 置信区间下界，再用 Benjamini-Hochberg 多重检验校正。校正前算的是"在几十个模块里挑最好的"——挑出来的必然好看，所以必须打折。判定只认校正后的结果，不认裸 Lift。
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <select v-model="fdrAuditPeriods" @change="fetchFdrAuditSummary(fdrAuditPeriods)"
+                    class="bg-slate-900 border border-slate-700 text-xs text-cyan-300 rounded px-2.5 py-1.5">
+              <option :value="50">最近 50 期审计</option>
+              <option :value="100">最近 100 期审计</option>
+              <option :value="200">最近 200 期审计</option>
+            </select>
+            <button @click="fetchFdrAuditSummary(fdrAuditPeriods)" class="cyber-btn cyber-btn-purple text-xs">
+              <span>🔄 重新审计</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 样本不足水印 (C3) -->
+        <div v-if="fdrAuditPeriods < 100"
+             class="glass-panel p-3 border-l-4 border-amber-400 text-xs text-amber-200">
+          ⚠️ <b>样本不足</b>：当前窗口 {{ fdrAuditPeriods }} 期 &lt; 100 期。30 期窗口里 Top5 的 95%CI 约 ±0.9x，
+          分辨不出 1.2x 以下的差异，任何"显著"结论都不可信。要看结论请切到 100 期或以上。
+        </div>
+
+        <!-- 3 项审计汇总指标 (无数据时不编数字, 直接显示 -) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="glass-panel p-4 border-l-4 border-purple-500 space-y-1">
+            <span class="text-xs text-slate-400 font-semibold">被审计量化模块数</span>
+            <div class="text-xl font-bold text-purple-300">{{ moduleCount === null ? '-' : moduleCount }} 个子系统</div>
+            <div class="text-[10px] text-slate-500 font-mono">窗口 {{ fdrAuditSummary?.n || fdrAuditPeriods }} 期实测流水</div>
+          </div>
+          <div class="glass-panel p-4 border-l-4 border-emerald-500 space-y-1">
+            <span class="text-xs text-slate-400 font-semibold">⭐ 过 BH-FDR 的模块</span>
+            <div class="text-xl font-bold text-emerald-400">{{ winningCount === null ? '-' : winningCount }} 个</div>
+            <div class="text-[10px] text-slate-500 font-mono">
+              口径: q &lt; 0.05 且 CI 下界 &gt; 基线；零个是常态，不是故障
+            </div>
+          </div>
+          <div class="glass-panel p-4 border-l-4 border-cyan-500 space-y-1">
+            <span class="text-xs text-slate-400 font-semibold">随机大盘基线 (Baseline)</span>
+            <div class="text-xl font-bold text-cyan-300">{{ baselinePct }}% <span class="text-xs text-slate-400">(20/80)</span></div>
+            <div class="text-[10px] text-slate-500 font-mono">Lift 1.00x = 与随机挑号无差别</div>
+          </div>
+        </div>
+
+        <!-- 审计明细数据表格 -->
+        <div class="glass-panel p-6 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <span class="text-sm font-bold text-white">各子系统 95%CI 下界 与 BH-FDR 真超额鉴定总表</span>
+            <span class="text-xs text-slate-400 font-mono">近 {{ fdrAuditSummary?.n || fdrAuditPeriods }} 期实测流水</span>
+          </div>
+
+          <div v-if="fdrAuditLoading" class="text-xs text-slate-400 py-6 text-center">审计计算中…</div>
+          <div v-else-if="!moduleCount" class="text-xs text-slate-400 py-6 text-center">
+            暂无可审计数据（该窗口内没有模块产出前瞻号码）
+          </div>
+
+          <div v-else class="overflow-x-auto">
+            <table class="cyber-table w-full text-left text-xs">
+              <thead>
+                <tr class="bg-slate-900/80 text-slate-400 font-mono">
+                  <th class="py-2.5 px-3">子系统模块</th>
+                  <th class="py-2.5 px-3">期数</th>
+                  <th class="py-2.5 px-3">测试总抽样</th>
+                  <th class="py-2.5 px-3">实测命中率</th>
+                  <th class="py-2.5 px-3">95%CI 下界</th>
+                  <th class="py-2.5 px-3">Lift</th>
+                  <th class="py-2.5 px-3">BH-q</th>
+                  <th class="py-2.5 px-3">结论</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono">
+                <tr v-for="(info, name) in (fdrAuditSummary?.modules || {})" :key="name" class="hover:bg-slate-800/40">
+                  <td class="py-2.5 px-3 font-bold text-white">
+                    {{ name }}
+                    <span v-if="info.winner" class="ml-1 px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px]">🏆 winner</span>
+                  </td>
+                  <td class="py-2.5 px-3 text-slate-300">{{ info.n_periods ?? '-' }}</td>
+                  <td class="py-2.5 px-3 text-slate-300">{{ info.total_picks ?? '-' }} 次</td>
+                  <td class="py-2.5 px-3 font-bold"
+                      :class="(info.pooled_rate || 0) > baselineRate ? 'text-emerald-400' : 'text-slate-400'">
+                    {{ pct(info.pooled_rate) }}
+                  </td>
+                  <td class="py-2.5 px-3"
+                      :class="(info.ci_lo || 0) > baselineRate ? 'text-emerald-300' : 'text-slate-400'">
+                    {{ pct(info.ci_lo) }}
+                    <span class="text-[10px] text-slate-500">(基线 {{ pct(baselineRate) }})</span>
+                  </td>
+                  <td class="py-2.5 px-3 font-bold"
+                      :class="(info.lift || 0) > 1 ? 'text-amber-400' : 'text-slate-400'">
+                    {{ (info.lift ?? 1).toFixed(3) }}x
+                    <span class="text-[10px] text-slate-500">CI下界 {{ (info.lift_ci_lo ?? 0).toFixed(3) }}</span>
+                  </td>
+                  <td class="py-2.5 px-3" :class="qClass(info)">
+                    {{ info.bh_q === null || info.bh_q === undefined ? '-' : info.bh_q.toFixed(3) }}
+                  </td>
+                  <td class="py-2.5 px-3">
+                    <span v-if="info.insufficient"
+                          class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/40">
+                      ⚠️ 样本不足
+                    </span>
+                    <span v-else-if="bhPassed(info)"
+                          class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
+                      ✅ 过 BH-FDR
+                    </span>
+                    <span v-else-if="info.significant"
+                          class="px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+                      ⚠️ 仅原始p&lt;0.05，未过BH校正
+                    </span>
+                    <span v-else
+                          class="px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+                      ❌ 未证显著
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="text-[11px] text-slate-500 leading-relaxed border-t border-slate-800 pt-3 space-y-1">
+            <div>· <b>95%CI 下界</b>：命中率的下限估计（Wilson 区间）。下界压在基线以下 = 就算点估计好看，也不能说赢。</div>
+            <div>· <b>BH-q</b>：多重检验校正后的假阳性率。同时审 N 个模块时 q 会变大，这正是它存在的意义。</div>
+            <div>· <b>结论</b>：只有"样本够 + q&lt;0.05 + CI 下界&gt;基线"三条同时满足才算过；只满足一部分的一律算未证显著。</div>
+          </div>
+        </div>
+      </div>

@@ -49,3 +49,16 @@ nul
 *.json_lock
 .agents/
 .codegraph/
+
+# ================================
+# 运行期数据（storage 每日重写，体积随期数无限增长，不入库）
+# 例外：两个"真相源"与三高录入台账属于不可再生的输入，单独放行
+# ================================
+data/storage/*
+!data/storage/raw/
+!data/storage/points/
+data/storage/raw/*
+data/storage/points/*
+!data/storage/raw/daily_points.txt
+!data/storage/raw/kl8_history_final.txt
+!data/storage/points/tri_high_points.json

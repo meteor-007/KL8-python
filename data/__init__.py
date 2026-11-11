@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
-"""快乐8 数据分析系统 — 前后端模块化标准版
-目录结构已规范化重构：
-- frontend/ : 前端大屏与可视化组件
-- backend/  : 后端 API、核心算法、数据采集、流水线、审计风控等 10 大功能模块
-- storage/  : 数据持久化与资产存储中心
+"""快乐8 / K8-QUANT — 项目根包标记
+
+目录约定（v5.4+）：
+- frontend/ : 大屏视图与 js/pages
+- backend/  : API、modules、pipeline、横切 core
+- storage/  : raw/cache/outputs/reports/reviews 等活数据
+- scripts/  : 运维与辅助脚本（ops/ 下放 bat/ps1/服务）
+- docs/     : 文档
+- deploy/   : Dockerfile / render.yaml
 """
 import sys
 import os

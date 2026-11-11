@@ -1,0 +1,484 @@
+<div v-show="activeTab === 'suppression_cockpit'" class="space-y-6">
+        <!-- 头部概览 -->
+        <div class="glass-panel p-5">
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🪞</span>
+                <h2 class="text-lg font-bold text-cyan-300">未开点位反弹决策大屏 (Point Suppression Cockpit)</h2>
+                <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono">
+                  高压弹簧回补 · 影子替身 · 能量外溢
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">
+                专攻机器推荐后未开（落空点位/高压弹簧）在下一期的深度反弹；结合 7 路信号共振、外溢邻居铺路与影子替身伴生。
+              </p>
+            </div>
+            <div class="flex items-center gap-3">
+              <button @click="triggerSuppressionRun" :disabled="isRunning" class="cyber-btn cyber-btn-cyan text-xs">
+                <span>⚡</span>
+                <span>{{ isRunning ? '推演中...' : '重新推演未开反弹' }}</span>
+              </button>
+              <button @click="openModuleHistory('suppression_cockpit')" class="cyber-btn text-xs flex items-center gap-1 bg-purple-500/15 text-purple-200 border border-purple-400/40 hover:border-purple-300/70">
+                <span>📜</span> 历史复盘记录
+              </button>
+            </div>
+          </div>
+
+          <!-- 核心指标卡片 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+            <div class="stat-card border border-cyan-500/30">
+              <div class="text-xs text-slate-400">首重反弹金胆 (Top 1)</div>
+              <div class="flex items-baseline gap-3 mt-1" v-if="suppressionSummary && suppressionSummary.top1">
+                <div class="lottery-ball ball-gold text-lg font-bold">
+                  {{ String(suppressionSummary.top1.num).padStart(2, '0') }}
+                </div>
+                <div>
+                  <div class="text-sm font-bold text-white font-mono">压制 {{ suppressionSummary.top1.k_suppression }} 期 · 得分 {{ suppressionSummary.top1.score }}</div>
+                  <div class="text-[11px] text-cyan-400">{{ suppressionSummary.top1.confidence }}</div>
+                </div>
+              </div>
+              <div v-else class="text-sm text-slate-500 mt-2">计算中...</div>
+            </div>
+
+            <div class="stat-card border border-emerald-500/30">
+              <div class="text-xs text-slate-400">样本外复盘置信评级 (近 30 期)</div>
+              <div class="mt-1" v-if="suppressionSummary && suppressionSummary.confidence">
+                <div class="text-sm font-bold text-emerald-400 font-mono">{{ suppressionSummary.confidence.description }}</div>
+                <div class="text-xs text-slate-400 mt-0.5" v-if="suppressionSummary.wf_summary">
+                  区域命中: <strong class="text-emerald-300">{{ (suppressionSummary.wf_summary.top1_region_rate * 100).toFixed(1) }}%</strong> (Lift {{ suppressionSummary.wf_summary.top1_region_lift }}x)
+                </div>
+              </div>
+              <div v-else class="text-sm text-slate-500 mt-2">评级中...</div>
+            </div>
+
+            <div class="stat-card border border-amber-500/30">
+              <div class="text-xs text-slate-400">待反弹高压池规模</div>
+              <div class="flex items-baseline gap-2 mt-1" v-if="suppressionSummary">
+                <span class="text-2xl font-bold font-mono text-amber-400">{{ suppressionSummary.total_candidates || 0 }}</span>
+                <span class="text-xs text-slate-400">个激活号码 · Top 3 推荐</span>
+              </div>
+              <div class="text-[11px] text-slate-500 mt-0.5">
+                覆盖未开期数 K ≥ 1 的高压弹簧号
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 今日精选 Top 3 反弹金胆卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div v-for="(cand, idx) in (suppressionSummary && suppressionSummary.top3 ? suppressionSummary.top3 : [])" :key="cand.num"
+               class="glass-panel p-5 border flex flex-col justify-between space-y-4"
+               :class="idx === 0 ? 'border-amber-500/60 bg-amber-950/10' : 'border-cyan-500/40'">
+            <div>
+              <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-mono font-bold px-2 py-0.5 rounded"
+                        :class="idx === 0 ? 'bg-amber-500/30 text-amber-300 border border-amber-500/50' : 'bg-cyan-500/20 text-cyan-300'">
+                    #{{ idx + 1 }} {{ idx === 0 ? '👑 首重金胆' : '⭐ 反弹金胆' }}
+                  </span>
+                </div>
+                <span class="text-xs font-mono font-bold"
+                      :class="cand.conf_grade === 'S' ? 'text-emerald-400' : (cand.conf_grade === 'A' ? 'text-amber-400' : 'text-slate-400')">
+                  {{ cand.confidence }}
+                </span>
+              </div>
+
+              <!-- 号码球展示 -->
+              <div class="flex items-center gap-4 py-3">
+                <div class="lottery-ball text-xl font-bold w-12 h-12 flex items-center justify-center cursor-pointer shadow-lg"
+                     :class="idx === 0 ? 'ball-gold' : 'ball-cyan'"
+                     @click="openBallDetail({number: cand.num})">
+                  {{ String(cand.num).padStart(2, '0') }}
+                </div>
+                <div class="space-y-1 text-xs font-mono">
+                  <div class="text-slate-200 font-bold">综合得分: <strong class="text-amber-300 text-sm">{{ cand.score }}</strong></div>
+                  <div class="text-slate-400">连续压制: <strong class="text-cyan-400">{{ cand.k_suppression }}</strong> 期未开</div>
+                  <div class="text-slate-400">全局遗漏: {{ cand.gap }} 期 · 共振 {{ cand.res }} 路</div>
+                </div>
+              </div>
+
+              <!-- 7 路共振信号标签 -->
+              <div class="space-y-1.5 pt-2 border-t border-slate-800/80 text-xs">
+                <div class="text-[11px] text-slate-400 font-semibold">激活共振信号:</div>
+                <div class="flex flex-wrap gap-1.5 font-mono">
+                  <span v-for="sig in cand.sigs" :key="sig" class="px-1.5 py-0.2 rounded text-[10px] bg-slate-800 text-cyan-300 border border-slate-700">
+                    {{ sig === 'R' ? 'R 重码' : (sig === 'O' ? 'O 遗漏回补' : (sig === 'L' ? 'L 遗留延续' : (sig === 'D' ? 'D 连号扩散' : sig))) }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- 三号区范围 -->
+              <div class="pt-2 text-xs text-slate-400 font-mono">
+                <span>三号区范围: </span>
+                <span class="text-amber-300 font-bold">{{ cand.region.map(x => String(x).padStart(2, '0')).join('-') }}</span>
+              </div>
+
+              <!-- 伴生影子替身 -->
+              <div v-if="cand.surr_list && cand.surr_list.length" class="pt-2 border-t border-slate-800/80 text-xs">
+                <div class="text-[11px] text-purple-300 font-semibold mb-1 flex items-center gap-1">
+                  <span>🪞</span> <span>伴生影子替身 (落空伴生):</span>
+                </div>
+                <div class="space-y-1">
+                  <div v-for="surr in cand.surr_list" :key="surr.surrogate_num" class="flex items-center justify-between p-1.5 rounded bg-slate-900/60 font-mono text-[11px]">
+                    <span class="text-slate-300 font-bold">号码 {{ String(surr.surrogate_num).padStart(2, '0') }}</span>
+                    <span class="text-purple-300">胜率 {{ (surr.prob * 100).toFixed(1) }}% · Lift {{ surr.lift }}x</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-800 text-[11px] text-slate-500 text-center">
+              <span>🎯 连续落空高压反弹 · 黄金回补窗口</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 跨系统共振与交叉风控打标 -->
+        <div class="glass-panel p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-lg">🔗</span>
+            <h3 class="text-sm font-bold text-slate-100">跨系统多维共振与交叉风控打标</h3>
+            <span class="text-xs text-slate-400 font-mono">(与主系统Top5/12、选2黄金搭档、重点点位Core5、跟随与顺口溜交叉验证)</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" v-if="suppressionSummary && suppressionSummary.cross_validation">
+            <div v-for="item in suppressionSummary.cross_validation.cross_items.slice(0, 8)" :key="item.num"
+                 class="p-3 rounded-lg bg-slate-900/80 border border-slate-800 flex flex-col justify-between space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="lottery-ball ball-cyan text-xs font-bold">{{ String(item.num).padStart(2, '0') }}</span>
+                  <span class="text-xs font-bold text-slate-200">号码 {{ String(item.num).padStart(2, '0') }}</span>
+                </div>
+                <span class="text-xs font-mono text-amber-300 font-bold">{{ item.score }}分</span>
+              </div>
+              <div class="flex flex-wrap gap-1">
+                <span v-for="tag in item.tags" :key="tag" class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-cyan-950/60 text-cyan-300 border border-cyan-500/30">
+                  {{ tag }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 全盘待反弹号码排行榜 (Top 10) -->
+        <div class="glass-panel p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">📋</span>
+              <h3 class="text-sm font-bold text-slate-100">未开高压点位综合打分排行榜 (Top 10)</h3>
+            </div>
+            <span class="text-xs text-slate-400 font-mono">6维综合打分优选</span>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-slate-800">
+            <table class="cyber-table w-full text-xs text-left">
+              <thead>
+                <tr>
+                  <th style="width: 70px;">排名</th>
+                  <th style="width: 90px;">号码</th>
+                  <th style="width: 110px;">压制期数 K</th>
+                  <th style="width: 110px;">综合得分</th>
+                  <th style="width: 100px;">7路共振</th>
+                  <th style="width: 100px;">遗漏期数</th>
+                  <th style="width: 140px;">三号区范围</th>
+                  <th style="width: 130px;">置信评级</th>
+                  <th>影子替身伴生</th>
+                </tr>
+              </thead>
+              <tbody v-if="suppressionSummary && suppressionSummary.candidates">
+                <tr v-for="(row, idx) in suppressionSummary.candidates" :key="row.num"
+                    class="cursor-pointer hover:bg-slate-800/40 transition"
+                    @click="openBallDetail({number: row.num})">
+                  <td class="font-mono font-bold text-slate-400">#{{ idx + 1 }}</td>
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <span class="lottery-ball ball-cyan text-xs font-bold">{{ String(row.num).padStart(2, '0') }}</span>
+                      <span class="font-bold text-slate-200">{{ String(row.num).padStart(2, '0') }}</span>
+                    </div>
+                  </td>
+                  <td class="font-mono">
+                    <span class="px-2 py-0.5 rounded text-xs font-bold"
+                          :class="row.k_suppression >= 2 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-slate-800 text-slate-400'">
+                      连续 {{ row.k_suppression }} 期
+                    </span>
+                  </td>
+                  <td class="font-mono font-bold text-amber-300 text-sm">{{ row.score }}</td>
+                  <td class="font-mono text-cyan-400">{{ row.res }} 路</td>
+                  <td class="font-mono text-slate-400">{{ row.gap }} 期</td>
+                  <td class="font-mono text-slate-300">{{ row.region.map(x => String(x).padStart(2, '0')).join('-') }}</td>
+                  <td>
+                    <span class="px-2 py-0.5 rounded font-mono text-[11px] font-bold"
+                          :class="row.conf_grade === 'S' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : (row.conf_grade === 'A' ? 'bg-amber-500/20 text-amber-300' : 'bg-slate-800 text-slate-500')">
+                      {{ row.confidence }}
+                    </span>
+                  </td>
+                  <td class="font-mono text-slate-400">
+                    <span v-if="row.surr_list && row.surr_list.length">
+                      {{ row.surr_list.map(s => String(s.surrogate_num).padStart(2, '0') + '(Lift ' + s.lift + 'x)').join(', ') }}
+                    </span>
+                    <span v-else class="text-slate-600">-</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ TAB: 影子替身与能量外溢 ═══════════ -->
+
+      <div v-show="activeTab === 'suppression_patterns'" class="space-y-6">
+        <!-- 头部概览 -->
+        <div class="glass-panel p-5">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🪞</span>
+                <h2 class="text-lg font-bold text-purple-300">影子替身伴生网络与能量外溢图谱</h2>
+                <span class="text-xs px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono">
+                  伴生矩阵 P(Y开出 | X落空) · 空间漂移率
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">
+                统计落空点位在历史失败后，能量漂移到 ±1(邻居)、±2(次邻居)、同尾数或触发黄金替身开出的量化规律。
+              </p>
+            </div>
+            <button @click="fetchSuppressionPatterns" class="cyber-btn cyber-btn-cyan text-xs">
+              <span>🔄</span> 刷新模式数据
+            </button>
+          </div>
+
+          <!-- 外溢漂移率指标面板 -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5" v-if="suppressionPatterns && suppressionPatterns.spill_stats">
+            <div class="stat-card border border-cyan-500/30">
+              <div class="text-xs text-slate-400">±1 邻居能量外溢率</div>
+              <div class="text-xl font-bold font-mono text-cyan-300 mt-1">
+                {{ ((suppressionPatterns.spill_stats.r1_hit / Math.max(suppressionPatterns.spill_stats.total_miss, 1)) * 100).toFixed(1) }}%
+              </div>
+              <div class="text-[10px] text-slate-500 mt-0.5">次期落入左右邻号概率</div>
+            </div>
+
+            <div class="stat-card border border-indigo-500/30">
+              <div class="text-xs text-slate-400">±2 次邻居外溢率</div>
+              <div class="text-xl font-bold font-mono text-indigo-300 mt-1">
+                {{ ((suppressionPatterns.spill_stats.r2_hit / Math.max(suppressionPatterns.spill_stats.total_miss, 1)) * 100).toFixed(1) }}%
+              </div>
+              <div class="text-[10px] text-slate-500 mt-0.5">次期落入次邻号概率</div>
+            </div>
+
+            <div class="stat-card border border-amber-500/30">
+              <div class="text-xs text-slate-400">同尾数外溢率</div>
+              <div class="text-xl font-bold font-mono text-amber-300 mt-1">
+                {{ ((suppressionPatterns.spill_stats.tail_hit / Math.max(suppressionPatterns.spill_stats.total_miss, 1)) * 100).toFixed(1) }}%
+              </div>
+              <div class="text-[10px] text-slate-500 mt-0.5">次期相同尾数开出概率</div>
+            </div>
+
+            <div class="stat-card border border-rose-500/30">
+              <div class="text-xs text-slate-400">对称点漂移率</div>
+              <div class="text-xl font-bold font-mono text-rose-300 mt-1">
+                {{ ((suppressionPatterns.spill_stats.sym_hit / Math.max(suppressionPatterns.spill_stats.total_miss, 1)) * 100).toFixed(1) }}%
+              </div>
+              <div class="text-[10px] text-slate-500 mt-0.5">81-N 镜像点位开出率</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 激活落空号码的影子替身清单 -->
+        <div class="glass-panel p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">🪞</span>
+              <h3 class="text-sm font-bold text-slate-100">当前激活落空号码 ➔ 黄金影子替身伴生对 (共 {{ suppressionPatterns ? suppressionPatterns.active_supp_count : 0 }} 个)</h3>
+            </div>
+            <span class="text-xs text-slate-400 font-mono">当主号码落空时，影子号码在下一期高概率开出</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" v-if="suppressionPatterns && suppressionPatterns.active_supp_items">
+            <div v-for="item in suppressionPatterns.active_supp_items" :key="item.num"
+                 class="p-4 rounded-lg bg-slate-900/80 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <div class="flex items-center gap-2.5">
+                  <span class="lottery-ball ball-gold text-xs font-bold">{{ String(item.num).padStart(2, '0') }}</span>
+                  <div>
+                    <div class="text-xs font-bold text-white">落空号码 {{ String(item.num).padStart(2, '0') }}</div>
+                    <div class="text-[10px] text-slate-400 font-mono">连续压制 {{ item.k_suppression }} 期</div>
+                  </div>
+                </div>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                  {{ item.surrogates.length }} 个替身对
+                </span>
+              </div>
+
+              <div class="space-y-1.5">
+                <div v-for="surr in item.surrogates" :key="surr.surrogate_num"
+                     class="flex items-center justify-between p-2 rounded bg-slate-950/70 border border-slate-800/80 hover:border-purple-500/40 transition cursor-pointer"
+                     @click="openBallDetail({number: surr.surrogate_num})">
+                  <div class="flex items-center gap-2">
+                    <span class="lottery-ball text-[11px] font-bold bg-purple-950 text-purple-200 border border-purple-500 w-6 h-6 flex items-center justify-center">
+                      {{ String(surr.surrogate_num).padStart(2, '0') }}
+                    </span>
+                    <span class="text-xs text-slate-200 font-bold">影子号码 {{ String(surr.surrogate_num).padStart(2, '0') }}</span>
+                  </div>
+                  <div class="font-mono text-right">
+                    <div class="text-xs font-bold text-amber-300">胜率 {{ (surr.prob * 100).toFixed(1) }}%</div>
+                    <div class="text-[10px] text-cyan-400">Lift {{ surr.lift }}x ({{ surr.cnt }}次)</div>
+                  </div>
+                </div>
+                <div v-if="!item.surrogates.length" class="text-xs text-slate-500 py-1 text-center font-mono">
+                  暂无显著伴生替身
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ 页内：未开点位反弹样本外复盘 ═══════════ -->
+
+      <div v-show="activeTab === 'suppression_cockpit'" id="module-review-suppression" class="space-y-6">
+        <!-- 头部概览 -->
+        <div class="glass-panel p-5">
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xl">📊</span>
+                <h2 class="text-lg font-bold text-emerald-300">未开点位反弹 Walk-Forward 滚动样本外复盘对账</h2>
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">
+                  真实 Walk-Forward · 绝无未来函数
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">
+                每一期仅利用当期历史前序序列统计弹簧张力与替身矩阵，并在目标期开奖前进行纯样本外预测对账。
+              </p>
+            </div>
+            <div class="flex items-center gap-2 font-mono text-xs">
+              <span class="text-slate-400">复盘期数:</span>
+              <button v-for="n in [20, 30, 50, 100]" :key="n"
+                      @click="fetchSuppressionReview(n)"
+                      class="px-2.5 py-1 rounded border text-xs transition"
+                      :class="suppressionReviewPeriods === n ? 'bg-emerald-500/30 text-emerald-300 border-emerald-500/60 font-bold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700'">
+                {{ n }} 期
+              </button>
+            </div>
+          </div>
+
+          <!-- 样本外统计卡片 -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-5" v-if="suppressionReview">
+            <div class="stat-card border border-emerald-500/30">
+              <div class="text-xs text-slate-400">Top 1 单码实测命中率</div>
+              <div class="flex items-baseline gap-2 mt-1">
+                <span class="text-2xl font-bold font-mono text-emerald-300">{{ (suppressionReview.top1_single_rate * 100).toFixed(1) }}%</span>
+                <span class="text-xs font-mono font-bold" :class="suppressionReview.top1_single_lift >= 1.0 ? 'text-emerald-400' : 'text-slate-400'">
+                  (Lift {{ suppressionReview.top1_single_lift }}x)
+                </span>
+              </div>
+              <div class="text-[10px] text-slate-500 mt-0.5">基准线: 25.0% (20/80)</div>
+            </div>
+
+            <div class="stat-card border border-cyan-500/30">
+              <div class="text-xs text-slate-400">Top 1 三号区命中率</div>
+              <div class="flex items-baseline gap-2 mt-1">
+                <span class="text-2xl font-bold font-mono text-cyan-300">{{ (suppressionReview.top1_region_rate * 100).toFixed(1) }}%</span>
+                <span class="text-xs font-mono font-bold" :class="suppressionReview.top1_region_lift >= 1.0 ? 'text-cyan-400' : 'text-slate-400'">
+                  (Lift {{ suppressionReview.top1_region_lift }}x)
+                </span>
+              </div>
+              <div class="text-[10px] text-slate-500 mt-0.5">基准线: 58.35% (组合数)</div>
+            </div>
+
+            <div class="stat-card border border-amber-500/30">
+              <div class="text-xs text-slate-400">Top 3 任意单码命中率</div>
+              <div class="flex items-baseline gap-2 mt-1">
+                <span class="text-2xl font-bold font-mono text-amber-300">{{ (suppressionReview.top3_any_hit_rate * 100).toFixed(1) }}%</span>
+                <span class="text-xs text-slate-400 font-mono" title="3 码随机期望命中 0.75 码；单期数字不构成显著性证据。">均命中 {{ suppressionReview.avg_top3_hits }} 码 · 基线 0.75</span>
+              </div>
+              <div class="text-[10px] text-slate-500 mt-0.5">Top 3 组合捕获率（对照随机基线 25%）</div>
+            </div>
+
+            <div class="stat-card border border-purple-500/30">
+              <div class="text-xs text-slate-400">统计显著性 z-score</div>
+              <div class="flex items-baseline gap-2 mt-1">
+                <span class="text-2xl font-bold font-mono text-purple-300">z = {{ suppressionReview.z_score }}</span>
+              </div>
+              <div class="text-[10px] text-slate-400 mt-0.5">{{ suppressionReview.confidence ? suppressionReview.confidence.description : '' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 逐期复盘流水表格 -->
+        <div class="glass-panel p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">📜</span>
+              <h3 class="text-sm font-bold text-slate-100">逐期滚动对账流水明细</h3>
+            </div>
+            <span class="text-xs text-slate-400 font-mono" v-if="suppressionReview">
+              共 {{ suppressionReview.n_periods }} 期样本外测试
+            </span>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-slate-800 max-h-[460px]">
+            <table class="cyber-table w-full text-xs text-left">
+              <thead>
+                <tr>
+                  <th style="width: 110px;">开奖期号</th>
+                  <th style="width: 110px;">开奖日期</th>
+                  <th style="width: 120px;">Top 1 反弹首重胆</th>
+                  <th style="width: 100px;">压制期数 K</th>
+                  <th style="width: 110px;">置信评级</th>
+                  <th style="width: 130px;">Top 1 单码命中</th>
+                  <th style="width: 130px;">Top 1 三号区命中</th>
+                  <th style="width: 130px;">Top 3 命中数</th>
+                  <th>开奖号码</th>
+                </tr>
+              </thead>
+              <tbody v-if="suppressionReview && suppressionReview.period_logs">
+                <tr v-for="row in suppressionReview.period_logs.slice().reverse()" :key="row.period">
+                  <td class="font-mono font-bold text-cyan-400">{{ row.period }}</td>
+                  <td class="font-mono text-slate-400">{{ row.date }}</td>
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <span class="lottery-ball ball-gold text-xs font-bold">{{ String(row.top1_num).padStart(2, '0') }}</span>
+                      <span class="font-mono font-bold text-slate-200">{{ String(row.top1_num).padStart(2, '0') }}</span>
+                    </div>
+                  </td>
+                  <td class="font-mono text-slate-400">K = {{ row.top1_k }} 期</td>
+                  <td>
+                    <span class="px-2 py-0.5 rounded font-mono text-[10px] font-bold"
+                          :class="row.top1_grade === 'S' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : (row.top1_grade === 'A' ? 'bg-amber-500/20 text-amber-300' : 'bg-slate-800 text-slate-500')">
+                      {{ row.top1_grade }} 级
+                    </span>
+                  </td>
+                  <td>
+                    <span class="px-2 py-0.5 rounded font-mono font-bold text-xs"
+                          :class="row.top1_single_hit ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-slate-800 text-slate-500'">
+                      {{ row.top1_single_hit ? '🎯 单码命中 ✅' : '未命中 ✗' }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="px-2 py-0.5 rounded font-mono font-bold text-xs"
+                          :class="row.top1_region_hit ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' : 'bg-slate-800 text-slate-500'">
+                      {{ row.top1_region_hit ? '🌐 区域命中 ✅' : '未命中 ✗' }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="px-2 py-0.5 rounded font-mono font-bold text-xs"
+                          :class="row.top3_hits >= 2 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : (row.top3_hits === 1 ? 'bg-cyan-500/20 text-cyan-300' : 'bg-slate-800 text-slate-500')">
+                      ⭐ {{ row.top3_hits }} / 3 码
+                    </span>
+                  </td>
+                  <td class="font-mono text-[11px] text-slate-400">
+                    <span v-for="n in row.actual_numbers" :key="n"
+                          class="inline-block mr-1"
+                          :class="n === row.top1_num ? 'text-amber-300 font-bold underline' : (row.top3_nums.includes(n) ? 'text-cyan-300 font-bold' : 'text-slate-400')">
+                      {{ String(n).padStart(2, '0') }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>

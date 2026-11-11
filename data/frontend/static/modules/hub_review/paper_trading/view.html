@@ -1,0 +1,251 @@
+<div v-show="activeTab === 'paper_trading'" class="space-y-6">
+        <!-- 头部 Header -->
+        <div class="glass-panel p-6 border-l-4 border-cyan-400 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-[0_0_25px_rgba(6,182,212,0.15)]">
+          <div class="space-y-1">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">📒</span>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="text-xl font-bold text-white tracking-wide">样本外前瞻台账与选2盈亏平衡对照</h2>
+                  <span class="cyber-badge cyber-badge-cyan font-mono font-bold">OOS LEDGER</span>
+                </div>
+                <p class="text-xs text-slate-400">
+                  大白话：这里只记录"每期推荐了哪些号、实际开出几码、比随机高多少"，<b>不编造金额</b>。
+                  能不能赚钱，看的是下方的选2盈亏平衡门槛。
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <select v-model="paperTradingRolling" @change="fetchPaperTradingSummary(paperTradingRolling)"
+                    class="bg-slate-900 border border-slate-700 text-xs text-cyan-300 rounded px-2.5 py-1.5">
+              <option :value="15">近 15 期样本外对账</option>
+              <option :value="30">近 30 期样本外对账</option>
+              <option :value="60">近 60 期样本外对账</option>
+            </select>
+            <button @click="fetchPaperTradingSummary(paperTradingRolling)" class="cyber-btn cyber-btn-cyan text-xs">
+              <span>🔄 刷新台账</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 2026-09-10 整改说明: 此前这里有一条"模拟盘资金净值曲线", 已移除 -->
+        <div class="glass-panel p-4 border-l-4 border-rose-500 text-xs space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">⏹</span>
+            <span class="font-bold text-rose-300">本页此前的"资金净值曲线"已移除 (2026-09-10)</span>
+          </div>
+          <p class="text-slate-400 leading-relaxed">
+            大白话：原来这里有一条"初始本金 ¥10,000、逐期盈亏、当前总资产"的曲线，看起来很真实。
+            但它不是任何真实玩法的结算 —— 每期盈亏是拿
+            <code>(命中数/20 − 0.25) × 4 × 200元</code> 这个线性公式<b>臆造</b>出来的。
+            快乐8 选2 是 2 元/注、两码全中派 19 元，跟"命中率有没有超过 25%"没有任何关系。
+            结果就是：在 Lift≈1.04（等于毫无优势）时，这条曲线照样显示"盈利"。
+          </p>
+          <p class="text-slate-500">
+            另一个硬事实：本台账只记录 Top20 号码的<b>命中数</b>与 Lift，<b>从未记录</b>实际下注的选2组合，
+            所以它<b>根本无从结算真实盈亏</b>。与其编一条曲线，不如如实告诉你这一点。
+          </p>
+        </div>
+
+        <!-- 无数据时不编数字 -->
+        <div v-if="!paperTradingSummary || paperTradingSummary.status !== 'ok'"
+             class="glass-panel p-3 border-l-4 border-amber-400 text-xs text-amber-200">
+          ⚠️ 前瞻台账暂不可读。这里<b>不会</b>填占位数字 —— 看不到就是看不到，宁可空白。
+        </div>
+
+        <!-- 4 项真实指标看板卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="glass-panel p-4 border-l-4 border-rose-500 space-y-1">
+            <span class="text-xs text-slate-400 font-semibold">选2 盈亏平衡门槛</span>
+            <div class="text-2xl font-bold font-mono text-rose-300">
+              {{ paperTradingSummary?.breakeven_lift != null ? paperTradingSummary.breakeven_lift.toFixed(2) + 'x' : '-' }}
+            </div>
+            <div class="text-[10px] text-slate-500 font-mono leading-snug">
+              低于此值 = 长期必亏。随机成对概率 C(20,2)/C(80,2) = 6.01%，派彩 19 元 / 投入 2 元。
+            </div>
+          </div>
+
+          <div class="glass-panel p-4 border-l-4 border-cyan-500 space-y-1">
+            <span class="text-xs text-slate-400 font-semibold">累计样本外 Lift (提升度)</span>
+            <div class="text-2xl font-bold font-mono text-cyan-300">
+              {{ paperTradingSummary?.summary?.cumulative?.lift != null
+                 ? paperTradingSummary.summary.cumulative.lift.toFixed(3) + 'x' : '-' }}
+            </div>
+            <div class="text-[10px] text-slate-500 font-mono">
+              对门槛: 需 ≥ {{ paperTradingSummary?.breakeven_lift != null ? paperTradingSummary.breakeven_lift.toFixed(2) + 'x' : '-' }}
+              (1.00x = 与随机挑号无差别)
+            </div>
+          </div>
+
+          <div class="glass-panel p-4 border-l-4 border-amber-500 space-y-1">
+            <span class="text-xs text-slate-400 font-semibold">滚动 {{ paperTradingRolling }} 期 Lift</span>
+            <div class="text-2xl font-bold font-mono text-amber-300">
+              {{ paperTradingSummary?.summary?.rolling?.lift != null
+                 ? paperTradingSummary.summary.rolling.lift.toFixed(3) + 'x' : '-' }}
+            </div>
+            <div class="text-[10px] text-slate-500 font-mono">小窗口易波动，须配合 BH-FDR 一起看</div>
+          </div>
+
+          <div class="glass-panel p-4 border-l-4 border-purple-500 space-y-1">
+            <span class="text-xs text-slate-400 font-semibold">累计测试总期数</span>
+            <div class="text-2xl font-bold font-mono text-purple-300">
+              {{ paperTradingSummary?.total_records != null ? paperTradingSummary.total_records : '-' }} 期
+            </div>
+            <div class="text-[10px] text-slate-500 font-mono">追加式台账，只增不改</div>
+          </div>
+        </div>
+
+        <!-- ══════════ C5: 全员模块独立前瞻账 (每个模块各算各的) ══════════ -->
+        <div class="glass-panel p-6 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
+            <span class="text-sm font-bold text-white">全员模块独立前瞻账 (C5 · 各模块各算各的命中率)</span>
+            <button @click="fetchModuleRegistry()" class="text-xs text-cyan-400 hover:underline">🔄 同步注册表状态</button>
+          </div>
+
+          <p class="text-[11px] text-slate-500 leading-relaxed">
+            大白话：过去全系统共用一本账，一个模块跑赢会被别的模块拖平。现在每个模块单独开一本，
+            各算各的 Lift。只有<b>已开奖</b>的期数才算得进 Lift；刚上线的模块会显示"N 条待对账"，
+            这是正常的 —— 得先攒够 <b>200 期前瞻账</b>且通过 BH-FDR，才可能拿到投票权。
+          </p>
+
+          <div v-if="!byModuleRows.length" class="text-xs text-slate-400 py-4 text-center">
+            模块前瞻账暂为空 (需先跑一次含各模块的预测期)。
+          </div>
+
+          <div v-else class="overflow-x-auto">
+            <table class="cyber-table w-full text-left text-xs">
+              <thead>
+                <tr class="bg-slate-900/80 text-slate-400 font-mono">
+                  <th class="py-2.5 px-3">模块</th>
+                  <th class="py-2.5 px-3">注册表状态</th>
+                  <th class="py-2.5 px-3">已对账期数</th>
+                  <th class="py-2.5 px-3">待对账</th>
+                  <th class="py-2.5 px-3">实测命中率</th>
+                  <th class="py-2.5 px-3">Lift</th>
+                  <th class="py-2.5 px-3">BH-q</th>
+                  <th class="py-2.5 px-3">门槛进度</th>
+                  <th class="py-2.5 px-3">判定</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono">
+                <tr v-for="row in byModuleRows" :key="row.id" class="hover:bg-slate-800/40">
+                  <td class="py-2.5 px-3 font-bold text-white">{{ row.name }}</td>
+                  <td class="py-2.5 px-3">
+                    <span v-if="row.disp.known" class="px-2 py-0.5 rounded text-[10px]" :style="row.disp.cls">
+                      {{ row.disp.label }}
+                    </span>
+                    <span v-else class="text-slate-500">-</span>
+                  </td>
+                  <td class="py-2.5 px-3 text-slate-300">{{ row.n_periods }}</td>
+                  <td class="py-2.5 px-3" :class="row.pending > 0 ? 'text-amber-300' : 'text-slate-500'">
+                    {{ row.pending }} 条
+                  </td>
+                  <td class="py-2.5 px-3 font-bold"
+                      :class="(row.pooled_rate || 0) > 0.25 ? 'text-emerald-400' : 'text-slate-400'">
+                    {{ pct(row.pooled_rate) }}
+                  </td>
+                  <td class="py-2.5 px-3 font-bold"
+                      :class="(row.lift || 0) > 1 ? 'text-amber-400' : 'text-slate-400'">
+                    {{ row.lift != null ? row.lift.toFixed(3) + 'x' : '-' }}
+                    <span v-if="row.lift_ci_lo != null" class="text-[10px] text-slate-500">
+                      CI下界 {{ row.lift_ci_lo.toFixed(3) }}
+                    </span>
+                  </td>
+                  <td class="py-2.5 px-3"
+                      :class="row.bh_q != null && row.bh_q < 0.05 ? 'text-emerald-300 font-bold' : 'text-slate-400'">
+                    {{ row.bh_q != null ? row.bh_q.toFixed(3) : '-' }}
+                  </td>
+                  <td class="py-2.5 px-3 text-slate-400">{{ row.gate_progress }}</td>
+                  <td class="py-2.5 px-3">
+                    <span v-if="row.lift == null"
+                          class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/40">
+                      ⏳ 待开奖对账
+                    </span>
+                    <span v-else-if="bhPassed(row)"
+                          class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold">
+                      ✅ 过 BH-FDR
+                    </span>
+                    <span v-else-if="row.significant"
+                          class="px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+                      ⚠️ 仅原始p&lt;0.05，未过BH校正
+                    </span>
+                    <span v-else-if="row.insufficient"
+                          class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/40">
+                      ⚠️ 样本不足
+                    </span>
+                    <span v-else
+                          class="px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+                      ❌ 未证显著
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="text-[11px] text-slate-500 leading-relaxed border-t border-slate-800 pt-3">
+            · <b>BH-q 全是 "-" 或大于 0.05 是常态</b>，不是坏了：零个模块显著本来就该是默认结论。
+            · 一个模块只要还没通过门槛，它在共识里就<b>没有投票权</b>，本表再好看也不影响最终推荐。
+          </div>
+        </div>
+
+        <!-- 逐期样本外对账明细表 (无金额) -->
+        <div class="glass-panel p-6 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <span class="text-sm font-bold text-white">逐期样本外对账明细 (Top 20 号码命中)</span>
+            <span class="text-xs text-slate-400 font-mono">随机期望 = 20 × 25% = 5.0 码</span>
+          </div>
+
+          <div v-if="!paperTradingSummary?.curve?.length" class="text-xs text-slate-400 py-4 text-center">
+            暂无逐期流水。
+          </div>
+
+          <div v-else class="overflow-x-auto">
+            <table class="cyber-table w-full text-left text-xs">
+              <thead>
+                <tr class="bg-slate-900/80 text-slate-400 font-mono">
+                  <th class="py-2.5 px-3">开奖期号</th>
+                  <th class="py-2.5 px-3">预测池大小</th>
+                  <th class="py-2.5 px-3">实际命中</th>
+                  <th class="py-2.5 px-3">随机期望</th>
+                  <th class="py-2.5 px-3">当期 Lift</th>
+                  <th class="py-2.5 px-3">对账判定</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono">
+                <tr v-for="r in (paperTradingSummary?.curve || [])" :key="r.period" class="hover:bg-slate-800/40">
+                  <td class="py-2.5 px-3 font-bold text-cyan-400">第 {{ r.period }} 期</td>
+                  <td class="py-2.5 px-3 text-slate-400">Top {{ r.top_k }}</td>
+                  <td class="py-2.5 px-3 text-slate-300">命中 {{ r.hits }} 码</td>
+                  <td class="py-2.5 px-3 text-slate-500">{{ r.baseline_expected_hits }}</td>
+                  <td class="py-2.5 px-3 font-bold"
+                      :class="(r.lift || 0) >= (paperTradingSummary?.breakeven_lift || 1.75) ? 'text-emerald-400'
+                              : ((r.lift || 0) > 1 ? 'text-slate-300' : 'text-slate-500')">
+                    {{ r.lift != null ? r.lift.toFixed(3) + 'x' : '-' }}
+                  </td>
+                  <td class="py-2.5 px-3">
+                    <span v-if="(r.lift || 0) >= (paperTradingSummary?.breakeven_lift || 1.75)"
+                          class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                      🟢 达选2门槛
+                    </span>
+                    <span v-else-if="(r.lift || 0) > 1"
+                          class="px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+                      🟡 优于随机但低于门槛
+                    </span>
+                    <span v-else
+                          class="px-2 py-0.5 rounded bg-red-950/80 text-red-400 border border-red-800/80">
+                      🔴 低于随机
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="text-[11px] text-slate-500 leading-relaxed border-t border-slate-800 pt-3">
+            · 上表<b>不显示金额</b>：本台账没有记录实际下注的选2组合，任何"盈亏"都只能是编的。
+            · 单期 Lift 波动很大，<b>不要</b>用某一期的 Lift 判断策略好坏；请看累计 Lift 与 BH-FDR。
+          </div>
+        </div>
+      </div>

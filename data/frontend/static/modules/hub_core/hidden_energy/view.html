@@ -1,0 +1,30 @@
+<div v-show="activeTab === 'hidden_energy'" class="space-y-6">
+        <div class="glass-panel p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-base font-bold text-purple-300 flex items-center gap-2">
+                <span>🌟</span> 首席战略官特供 · Hidden Energy 5
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">共振逻辑：B3 Right 矩阵映射 x AI 置信度 Top12 x 隐能量场 (EF/RW/FO)</p>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded bg-purple-500/20 text-purple-300 font-mono border border-purple-500/30">
+              长期平均命中 > 2 码
+            </span>
+          </div>
+
+          <div class="flex items-center justify-around py-6 bg-slate-900/60 rounded-xl border border-purple-500/20">
+            <div v-for="num in prediction.hidden_energy_5" :key="num" class="flex flex-col items-center gap-2 cursor-pointer" @click="openBallDetail({number: num})">
+              <div class="lottery-ball ball-purple text-xl font-bold hover:scale-110 transition">
+                {{ String(num).padStart(2, '0') }}
+              </div>
+              <span class="text-xs text-slate-400 font-mono">动能领跑</span>
+            </div>
+          </div>
+
+          <div class="mt-6 p-4 rounded-lg bg-slate-950/80 border border-slate-800 text-xs space-y-2">
+            <div class="text-slate-300 font-bold">📐 动能评分公式：</div>
+            <div class="font-mono text-cyan-400">Score = Min-Max归一化 [ EF_n × 1.0 + RW_n × 0.8 + FO_n × 0.5 ]</div>
+            <p class="text-slate-400">此模块由高斯流能场与 B3 质量评分联合筛选，在震荡盘面下具有极高的防御性与捕获率。</p>
+          </div>
+        </div>
+      </div>

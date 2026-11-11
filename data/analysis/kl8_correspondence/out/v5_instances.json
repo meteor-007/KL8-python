@@ -1,0 +1,311 @@
+{
+ "verified_instances": [
+  {
+   "name": "图5-和值尾数大小",
+   "attr": "tailsize",
+   "template": {
+    "purple_pos": 2,
+    "rows": [
+     -3,
+     -1,
+     -1
+    ],
+    "opos": [
+     2,
+     3,
+     4
+    ]
+   },
+   "n": 1905,
+   "hits": 947,
+   "rate": 0.49711,
+   "base_rate": 0.5,
+   "deviation": -0.00289,
+   "max_run_all_history": 8,
+   "streak_until_2026279": 4,
+   "target_period": 2026280,
+   "target_orange_triple": [
+    9,
+    9,
+    11
+   ],
+   "target_orange_sum": 29,
+   "predicted_value": "大",
+   "actual_purple_ball": 5,
+   "actual_value": "大",
+   "prediction_hit": true,
+   "detail_at_target": null
+  },
+  {
+   "name": "图5规则-紫球改1位",
+   "attr": "tailsize",
+   "template": {
+    "purple_pos": 1,
+    "rows": [
+     -3,
+     -1,
+     -1
+    ],
+    "opos": [
+     2,
+     3,
+     4
+    ]
+   },
+   "n": 1905,
+   "hits": 935,
+   "rate": 0.49081,
+   "base_rate": 0.5,
+   "deviation": -0.00919,
+   "max_run_all_history": 8,
+   "streak_until_2026279": 0,
+   "target_period": 2026280,
+   "target_orange_triple": [
+    9,
+    9,
+    11
+   ],
+   "target_orange_sum": 29,
+   "predicted_value": "大",
+   "actual_purple_ball": 4,
+   "actual_value": "小",
+   "prediction_hit": false,
+   "detail_at_target": null
+  },
+  {
+   "name": "图1/2规则-紫1位",
+   "attr": "r012",
+   "template": {
+    "purple_pos": 1,
+    "rows": [
+     -2,
+     -1,
+     -1
+    ],
+    "opos": [
+     3,
+     2,
+     4
+    ]
+   },
+   "n": 1894,
+   "hits": 634,
+   "rate": 0.33474,
+   "base_rate": 0.3333333333333333,
+   "deviation": 0.00141,
+   "max_run_all_history": 7,
+   "streak_until_2026279": 0,
+   "target_period": 2026280,
+   "target_orange_triple": [
+    8,
+    8,
+    11
+   ],
+   "target_orange_sum": 27,
+   "predicted_value": 0,
+   "actual_purple_ball": 4,
+   "actual_value": 1,
+   "prediction_hit": false,
+   "detail_at_target": null
+  },
+  {
+   "name": "图1/2规则-紫2位",
+   "attr": "r012",
+   "template": {
+    "purple_pos": 2,
+    "rows": [
+     -2,
+     -1,
+     -1
+    ],
+    "opos": [
+     3,
+     2,
+     4
+    ]
+   },
+   "n": 1894,
+   "hits": 621,
+   "rate": 0.32788,
+   "base_rate": 0.3333333333333333,
+   "deviation": -0.00546,
+   "max_run_all_history": 6,
+   "streak_until_2026279": 1,
+   "target_period": 2026280,
+   "target_orange_triple": [
+    8,
+    8,
+    11
+   ],
+   "target_orange_sum": 27,
+   "predicted_value": 0,
+   "actual_purple_ball": 5,
+   "actual_value": 2,
+   "prediction_hit": false,
+   "detail_at_target": null
+  }
+ ],
+ "back_solve_012": [
+  {
+   "purple_pos": 1,
+   "purple_at_26279": 1,
+   "purple_r012": 1,
+   "matches_now": false,
+   "streak_until_26278": 0,
+   "history_rate": 0.3347
+  },
+  {
+   "purple_pos": 2,
+   "purple_at_26279": 8,
+   "purple_r012": 2,
+   "matches_now": true,
+   "streak_until_26278": 0,
+   "history_rate": 0.3279
+  },
+  {
+   "purple_pos": 3,
+   "purple_at_26279": 9,
+   "purple_r012": 0,
+   "matches_now": false,
+   "streak_until_26278": 1,
+   "history_rate": 0.3464
+  },
+  {
+   "purple_pos": 4,
+   "purple_at_26279": 11,
+   "purple_r012": 2,
+   "matches_now": true,
+   "streak_until_26278": 0,
+   "history_rate": 0.3374
+  },
+  {
+   "purple_pos": 5,
+   "purple_at_26279": 15,
+   "purple_r012": 0,
+   "matches_now": false,
+   "streak_until_26278": 1,
+   "history_rate": 0.3363
+  },
+  {
+   "purple_pos": 6,
+   "purple_at_26279": 19,
+   "purple_r012": 1,
+   "matches_now": false,
+   "streak_until_26278": 0,
+   "history_rate": 0.3458
+  },
+  {
+   "purple_pos": 7,
+   "purple_at_26279": 23,
+   "purple_r012": 2,
+   "matches_now": true,
+   "streak_until_26278": 0,
+   "history_rate": 0.3416
+  },
+  {
+   "purple_pos": 8,
+   "purple_at_26279": 27,
+   "purple_r012": 0,
+   "matches_now": false,
+   "streak_until_26278": 0,
+   "history_rate": 0.3485
+  },
+  {
+   "purple_pos": 9,
+   "purple_at_26279": 30,
+   "purple_r012": 0,
+   "matches_now": false,
+   "streak_until_26278": 1,
+   "history_rate": 0.3442
+  },
+  {
+   "purple_pos": 10,
+   "purple_at_26279": 36,
+   "purple_r012": 0,
+   "matches_now": false,
+   "streak_until_26278": 0,
+   "history_rate": 0.331
+  },
+  {
+   "purple_pos": 11,
+   "purple_at_26279": 38,
+   "purple_r012": 2,
+   "matches_now": true,
+   "streak_until_26278": 0,
+   "history_rate": 0.3194
+  },
+  {
+   "purple_pos": 12,
+   "purple_at_26279": 40,
+   "purple_r012": 1,
+   "matches_now": false,
+   "streak_until_26278": 0,
+   "history_rate": 0.3464
+  },
+  {
+   "purple_pos": 13,
+   "purple_at_26279": 43,
+   "purple_r012": 1,
+   "matches_now": false,
+   "streak_until_26278": 2,
+   "history_rate": 0.3258
+  },
+  {
+   "purple_pos": 14,
+   "purple_at_26279": 44,
+   "purple_r012": 2,
+   "matches_now": true,
+   "streak_until_26278": 1,
+   "history_rate": 0.3152
+  },
+  {
+   "purple_pos": 15,
+   "purple_at_26279": 52,
+   "purple_r012": 1,
+   "matches_now": false,
+   "streak_until_26278": 0,
+   "history_rate": 0.3284
+  },
+  {
+   "purple_pos": 16,
+   "purple_at_26279": 58,
+   "purple_r012": 1,
+   "matches_now": false,
+   "streak_until_26278": 0,
+   "history_rate": 0.3152
+  },
+  {
+   "purple_pos": 17,
+   "purple_at_26279": 59,
+   "purple_r012": 2,
+   "matches_now": true,
+   "streak_until_26278": 0,
+   "history_rate": 0.331
+  },
+  {
+   "purple_pos": 18,
+   "purple_at_26279": 61,
+   "purple_r012": 1,
+   "matches_now": false,
+   "streak_until_26278": 2,
+   "history_rate": 0.3258
+  },
+  {
+   "purple_pos": 19,
+   "purple_at_26279": 70,
+   "purple_r012": 1,
+   "matches_now": false,
+   "streak_until_26278": 0,
+   "history_rate": 0.3453
+  },
+  {
+   "purple_pos": 20,
+   "purple_at_26279": 79,
+   "purple_r012": 1,
+   "matches_now": false,
+   "streak_until_26278": 0,
+   "history_rate": 0.3353
+  }
+ ],
+ "target": 2026280
+}

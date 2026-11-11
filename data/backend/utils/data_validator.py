@@ -36,9 +36,9 @@ _ensure_project_path()
 _PROJ = get_project_root()
 
 
-HISTORY_FILE = os.path.join(_PROJ, 'kl8_history_final.txt')
-POINTS_FILE = os.path.join(_PROJ, 'daily_points.txt')
-EXCEL_FILE = os.path.join(_PROJ, '跟随+点位+开奖数据.xlsx')
+HISTORY_FILE = data_path('kl8_history_final.txt')
+POINTS_FILE = data_path('daily_points.txt')
+EXCEL_FILE = data_path('跟随+点位+开奖数据.xlsx')
 HOT_DIR = data_path('热码统计')
 
 logger = logging.getLogger("DataValidator")
@@ -176,6 +176,25 @@ def validate_all(auto_fix: bool = False) -> Dict:
         'fixes': [],
         'all_pass': True
     }
+
+    # ═══════════════════════════════════════════
+    # B0. 点位台账自愈（必须排在所有模块读点位之前）
+    # ═══════════════════════════════════════════
+    if auto_fix:
+        try:
+            try:
+                from backend.data_acquisition.daily_points_manager import repair_points_file
+            except ImportError:
+                from data_acquisition.daily_points_manager import repair_points_file
+            _rp = repair_points_file()
+            if _rp.get('status') == 'repaired':
+                report['fixes'].append(
+                    f"B0. 点位台账已自愈: {_rp['reason']} → 重建 {_rp['after_records']} 期"
+                    f"(最新 {_rp['latest']})，来源 {_rp['source_backup']}，原文件留证 {_rp['evidence']}"
+                )
+                report['checks']['B0_points_repair'] = _rp
+        except Exception as _e:
+            report['warnings'].append(f"B0. 点位台账自愈失败: {_e}")
 
     # ═══════════════════════════════════════════
     # A. kl8_history_final.txt 数据新鲜度与完整性

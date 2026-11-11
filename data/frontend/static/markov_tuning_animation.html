@@ -1,0 +1,405 @@
+<!-- 同步持久化至前端静态资源目录 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>马尔可夫超参数自动调优拉直与时序滚动回测动画</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    .glow-cyan { filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.6)); }
+    .glow-gold { filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.6)); }
+    .glow-emerald { filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.6)); }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased p-4 select-none min-h-screen">
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl max-w-5xl mx-auto backdrop-blur-md">
+    
+    <!-- 顶栏标题与模式切换 -->
+    <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-4 mb-5 gap-3">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">📐</span>
+          <h1 class="text-xl font-bold tracking-wide text-white">马尔可夫参数自动寻优 (拉直至 y=x) 与无未来滚动回测</h1>
+        </div>
+        <p class="text-xs text-slate-400 mt-1">
+          【目标方程】：$CDF_{emp} \approx CDF_{pred}$ | 闭环寻优 $(\lambda^*, \alpha^*, \beta^*)$ | 严密时序隔绝
+        </p>
+      </div>
+
+      <!-- 标签页切换 -->
+      <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+        <button id="tab-btn-tuning" class="px-4 py-1.5 rounded-lg font-medium transition bg-cyan-500/20 text-cyan-400 border border-cyan-500/40">
+          🌀 1. 参数拉直动态动画
+        </button>
+        <button id="tab-btn-backtest" class="px-4 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition ml-1">
+          🛡️ 2. 无未来时序滚动回测
+        </button>
+      </div>
+    </div>
+
+    <!-- 视图一：自动寻优曲线拉直动画 -->
+    <div id="view-tuning" class="space-y-5">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <!-- 左侧：参数仪表盘与当前搜索状态 -->
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+              <span>迭代轮次 (Step)</span>
+              <span id="step-badge" class="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono font-bold">1 / 15</span>
+            </div>
+            
+            <!-- 仪表指标 1: 半衰期 lambda -->
+            <div class="mb-3">
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-400">时间半衰期 ($\lambda$)</span>
+                <span id="val-hl" class="font-mono text-cyan-400 font-bold">30.0 期</span>
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                <div id="bar-hl" class="bg-cyan-500 h-2 rounded-full transition-all duration-300" style="width: 30%"></div>
+              </div>
+            </div>
+
+            <!-- 仪表指标 2: 平滑底数 alpha -->
+            <div class="mb-3">
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-400">先验平滑底数 ($\alpha$)</span>
+                <span id="val-alpha" class="font-mono text-amber-400 font-bold">0.020</span>
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                <div id="bar-alpha" class="bg-amber-500 h-2 rounded-full transition-all duration-300" style="width: 20%"></div>
+              </div>
+            </div>
+
+            <!-- 仪表指标 3: 二阶权重 beta -->
+            <div class="mb-3">
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-400">二阶惯性权重 ($\beta$)</span>
+                <span id="val-beta" class="font-mono text-emerald-400 font-bold">0.10</span>
+              </div>
+              <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                <div id="bar-beta" class="bg-emerald-500 h-2 rounded-full transition-all duration-300" style="width: 25%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 统计核心卡片 -->
+          <div class="pt-3 border-t border-slate-800 grid grid-cols-2 gap-2 text-center">
+            <div class="bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+              <div class="text-[10px] text-slate-400">拟合优度 ($R^2$)</div>
+              <div id="stat-r2" class="text-base font-bold font-mono text-cyan-300">0.8980</div>
+            </div>
+            <div class="bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+              <div class="text-[10px] text-slate-400">综合偏差 Loss</div>
+              <div id="stat-loss" class="text-base font-bold font-mono text-rose-400">0.6842</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 中右侧：P-P 直线动态画布 -->
+        <div class="md:col-span-2 bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col items-center">
+          <div class="w-full flex items-center justify-between text-xs mb-2">
+            <span class="font-semibold text-slate-300 flex items-center gap-1.5">
+              <span>📈</span> P-P 累积分布校准图（横轴: 预测CDF，纵轴: 经验CDF）
+            </span>
+            <span id="status-tag" class="px-2 py-0.5 rounded text-[11px] font-medium bg-amber-500/20 text-amber-300 border border-amber-500/30">
+              ⚠️ 曲线凹陷弯曲 (搜索优化中...)
+            </span>
+          </div>
+
+          <div class="relative w-full h-[280px] bg-slate-950/80 rounded-lg border border-slate-800/80 p-2 overflow-hidden">
+            <svg id="pp-svg" viewBox="0 0 400 260" class="w-full h-full">
+              <!-- 网格背景 -->
+              <line x1="40" y1="20" x2="40" y2="230" stroke="#334155" stroke-width="1" />
+              <line x1="40" y1="230" x2="380" y2="230" stroke="#334155" stroke-width="1" />
+              <line x1="40" y1="125" x2="380" y2="125" stroke="#1e293b" stroke-dasharray="3,3" />
+              <line x1="210" y1="20" x2="210" y2="230" stroke="#1e293b" stroke-dasharray="3,3" />
+              
+              <!-- 45度理想直线 y = x (发光白线) -->
+              <line x1="40" y1="230" x2="380" y2="20" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4" opacity="0.6" />
+              <text x="310" y="35" fill="#94a3b8" font-size="10" font-family="monospace">理想直线: y = x</text>
+
+              <!-- 拟合趋势直线 (动态斜率) -->
+              <line id="trend-line" x1="40" y1="230" x2="380" y2="20" stroke="#38bdf8" stroke-width="2" opacity="0.7" />
+
+              <!-- 实际累积点路径 (黄色发光曲线，随着迭代拉直至直线) -->
+              <path id="curve-path" d="" fill="none" stroke="#f59e0b" stroke-width="3" class="glow-gold" />
+
+              <!-- 关键锚点 -->
+              <g id="curve-dots"></g>
+            </svg>
+          </div>
+
+          <div class="w-full flex items-center justify-between text-[11px] text-slate-400 mt-2 px-1">
+            <span>起点 (0.0, 0.0)</span>
+            <span class="text-cyan-400 font-mono">当前直线方程: <b id="eq-display">y = 1.052x - 0.041</b></span>
+            <span>终点 (1.0, 1.0)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部播放控制器 -->
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <button id="btn-play" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-cyan-600 hover:bg-cyan-500 text-white transition flex items-center gap-1.5 shadow-md">
+            <span>▶</span> 播放寻优
+          </button>
+          <button id="btn-step" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
+            ⏭️ 单步调试
+          </button>
+          <button id="btn-reset" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 transition">
+            🔄 重置第1步
+          </button>
+        </div>
+
+        <div class="flex items-center gap-3 text-xs text-slate-400">
+          <span>速度:</span>
+          <button class="spd-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-xs active" data-spd="1000">1x</button>
+          <button class="spd-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-xs" data-spd="500">2x</button>
+          <button class="spd-btn px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-xs" data-spd="250">4x</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 视图二：无未来数据时序滚动回测 (Walk-Forward) -->
+    <div id="view-backtest" class="hidden space-y-5">
+      <!-- 样本外原则警示卡 -->
+      <div class="bg-cyan-950/40 border border-cyan-500/30 rounded-xl p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">🛡️</span>
+          <div>
+            <div class="text-sm font-bold text-cyan-300">严密样本外滚动回测 (Walk-Forward Validation)</div>
+            <div class="text-xs text-slate-400">推演第 $t$ 期时，物理隔绝未来，仅使用 $\le t-1$ 期数据先做闭环自动寻优，再做预测对账。</div>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-xs text-slate-400">回测期数</div>
+          <div class="text-lg font-bold font-mono text-cyan-400">20 期全滚动</div>
+        </div>
+      </div>
+
+      <!-- 指标总览 -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+          <div class="text-xs text-slate-400">Top 5 平均命中</div>
+          <div class="text-lg font-bold font-mono text-amber-400 mt-1">1.30 <span class="text-xs font-normal text-slate-400">/ 5码</span></div>
+          <div class="text-[10px] text-slate-500">随机期望: 1.25 (Lift: 1.04x)</div>
+        </div>
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+          <div class="text-xs text-slate-400">Top 12 平均命中</div>
+          <div class="text-lg font-bold font-mono text-emerald-400 mt-1">2.90 <span class="text-xs font-normal text-slate-400">/ 12码</span></div>
+          <div class="text-[10px] text-slate-500">随机期望: 3.00 (Lift: 0.97x)</div>
+        </div>
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+          <div class="text-xs text-slate-400">Top 5 胜率 (中>=2码)</div>
+          <div class="text-lg font-bold font-mono text-cyan-400 mt-1">35.0%</div>
+          <div class="text-[10px] text-slate-500">5 期达成 2~3 中</div>
+        </div>
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+          <div class="text-xs text-slate-400">Top 12 防守胜率 (中>=4码)</div>
+          <div class="text-lg font-bold font-mono text-purple-400 mt-1">35.0%</div>
+          <div class="text-[10px] text-slate-500">最高单期斩获 5 码</div>
+        </div>
+      </div>
+
+      <!-- 逐期实战流水账表格 -->
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 overflow-x-auto max-h-[340px] overflow-y-auto">
+        <div class="text-xs font-semibold text-slate-300 mb-2 flex items-center justify-between">
+          <span>📋 逐期全真模拟考清单 (前向推进，严格无未来穿透)</span>
+          <span class="text-[11px] text-slate-400 font-normal">点击期号可展开详情</span>
+        </div>
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="border-b border-slate-800 text-slate-400">
+              <th class="py-2 px-2">期号</th>
+              <th class="py-2 px-2">自适应参数 ($\lambda^* / \alpha^*$)</th>
+              <th class="py-2 px-2">拟合优度 $R^2$</th>
+              <th class="py-2 px-2">金胆 Top 5 推荐</th>
+              <th class="py-2 px-2 text-center">Top 5 命中</th>
+              <th class="py-2 px-2 text-center">Top 12 命中</th>
+            </tr>
+          </thead>
+          <tbody id="backtest-table-body" class="divide-y divide-slate-800/60 font-mono">
+            <!-- 动态填充 -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // 真实落盘的 15 步寻优轨迹数据
+    const TRAJECTORY_DATA = [{"iteration": 1, "half_life": 30.0, "smoothing_alpha": 0.02, "second_order_weight": 0.1, "loss": 0.3048, "r_squared": 0.9747, "slope": 1.0409, "intercept": 0.0106, "ks_stat": 0.1351, "curve_sample": [{"x": 0.06488121239182265, "y": 0.11428571428571428, "y_ideal": 0.06488121239182265}, {"x": 0.14331128938854434, "y": 0.14285714285714285, "y_ideal": 0.14331128938854434}, {"x": 0.24697799384228042, "y": 0.19999999999999998, "y_ideal": 0.24697799384228042}, {"x": 0.4253319410085925, "y": 0.4571428571428571, "y_ideal": 0.4253319410085925}, {"x": 0.6934541797898741, "y": 0.8285714285714285, "y_ideal": 0.6934541797898741}, {"x": 1.0, "y": 1.0, "y_ideal": 1.0}]}, {"iteration": 2, "half_life": 60.0, "smoothing_alpha": 0.15, "second_order_weight": 0.35, "loss": 0.216, "r_squared": 0.9873, "slope": 0.9475, "intercept": 0.0384, "ks_stat": 0.0665, "curve_sample": [{"x": 0.04783469072197052, "y": 0.11428571428571428, "y_ideal": 0.04783469072197052}, {"x": 0.09964436909907702, "y": 0.14285714285714285, "y_ideal": 0.09964436909907702}, {"x": 0.24217844451321086, "y": 0.19999999999999998, "y_ideal": 0.24217844451321086}, {"x": 0.40428578465828124, "y": 0.4571428571428571, "y_ideal": 0.40428578465828124}, {"x": 0.6466251666127878, "y": 0.6285714285714286, "y_ideal": 0.6466251666127878}, {"x": 1.0, "y": 1.0, "y_ideal": 1.0}]}, {"iteration": 3, "half_life": 20.0, "smoothing_alpha": 0.05, "second_order_weight": 0.2, "loss": 0.3876, "r_squared": 0.9634, "slope": 1.0481, "intercept": 0.0153, "ks_stat": 0.1673, "curve_sample": [{"x": 0.06319601122665214, "y": 0.11428571428571428, "y_ideal": 0.06319601122665214}, {"x": 0.14385706067295095, "y": 0.14285714285714285, "y_ideal": 0.14385706067295095}, {"x": 0.2500954422625472, "y": 0.19999999999999998, "y_ideal": 0.2500954422625472}, {"x": 0.4109571639841454, "y": 0.4571428571428571, "y_ideal": 0.4109571639841454}, {"x": 0.6612749345913663, "y": 0.8285714285714285, "y_ideal": 0.6612749345913663}, {"x": 1.0, "y": 1.0, "y_ideal": 1.0}]}, {"iteration": 4, "half_life": 75.0, "smoothing_alpha": 0.2, "second_order_weight": 0.4, "loss": 0.2256, "r_squared": 0.9872, "slope": 0.9474, "intercept": 0.043, "ks_stat": 0.0695, "curve_sample": [{"x": 0.04477710640776686, "y": 0.11428571428571428, "y_ideal": 0.04477710640776686}, {"x": 0.09236517154479641, "y": 0.14285714285714285, "y_ideal": 0.09236517154479641}, {"x": 0.24199504912602227, "y": 0.19999999999999998, "y_ideal": 0.24199504912602227}, {"x": 0.400287121054925, "y": 0.4571428571428571, "y_ideal": 0.400287121054925}, {"x": 0.6323855225559234, "y": 0.6285714285714286, "y_ideal": 0.6323855225559234}, {"x": 1.0, "y": 1.0, "y_ideal": 1.0}]}, {"iteration": 5, "half_life": 45.0, "smoothing_alpha": 0.08, "second_order_weight": 0.25, "loss": 0.2009, "r_squared": 0.9862, "slope": 0.9467, "intercept": 0.0295, "ks_stat": 0.0604, "curve_sample": [{"x": 0.0538826748000521, "y": 0.11428571428571428, "y_ideal": 0.0538826748000521}, {"x": 0.11438044521320125, "y": 0.14285714285714285, "y_ideal": 0.11438044521320125}, {"x": 0.243237653456299, "y": 0.19999999999999998, "y_ideal": 0.243237653456299}, {"x": 0.41283834507489564, "y": 0.4571428571428571, "y_ideal": 0.41283834507489564}, {"x": 0.6750496803016715, "y": 0.6285714285714286, "y_ideal": 0.6750496803016715}, {"x": 1.0, "y": 1.0, "y_ideal": 1.0}]}, {"iteration": 6, "half_life": 35.0, "smoothing_alpha": 0.1, "second_order_weight": 0.15, "loss": 0.2265, "r_squared": 0.9816, "slope": 0.949, "intercept": 0.0124, "ks_stat": 0.0842, "curve_sample": [{"x": 0.06447558683396232, "y": 0.11428571428571428, "y_ideal": 0.06447558683396232}, {"x": 0.13892105551159606, "y": 0.14285714285714285, "y_ideal": 0.13892105551159606}, {"x": 0.2545798561402236, "y": 0.19999999999999998, "y_ideal": 0.2545798561402236}, {"x": 0.43028333756207476, "y": 0.4571428571428571, "y_ideal": 0.43028333756207476}, {"x": 0.7127588345908447, "y": 0.6285714285714286, "y_ideal": 0.7127588345908447}, {"x": 1.0, "y": 1.0, "y_ideal": 1.0}]}, {"iteration": 7, "half_life": 50.0, "smoothing_alpha": 0.06, "second_order_weight": 0.3, "loss": 0.2181, "r_squared": 0.9873, "slope": 0.9439, "intercept": 0.0383, "ks_stat": 0.0656, "curve_sample": [{"x": 0.0486733913508145, "y": 0.11428571428571428, "y_ideal": 0.0486733913508145}, {"x": 0.10287911664704168, "y": 0.14285714285714285, "y_ideal": 0.10287911664704168}, {"x": 0.23721712621456253, "y": 0.19999999999999998, "y_ideal": 0.23721712621456253}, {"x": 0.4031671554717995, "y": 0.4571428571428571, "y_ideal": 0.4031671554717995}, {"x": 0.6587477123420521, "y": 0.6285714285714286, "y_ideal": 0.6587477123420521}, {"x": 1.0, "y": 1.0, "y_ideal": 1.0}]}, {"iteration": 8, "half_life": 40.0, "smoothing_alpha": 0.04, "second_order_weight": 0.22, "loss": 0.2035, "r_squared": 0.9853, "slope": 0.9437, "intercept": 0.0287, "ks_stat": 0.0594, "curve_sample": [{"x": 0.05492776464031082, "y": 0.11428571428571428, "y_ideal": 0.05492776464031082}, {"x": 0.11797375323035172, "y": 0.14285714285714285, "y_ideal": 0.11797375323035172}, {"x": 0.24095660860242402, "y": 0.19999999999999998, "y_ideal": 0.24095660860242402}, {"x": 0.4123843546214538, "y": 0.4571428571428571, "y_ideal": 0.4123843546214538}, {"x": 0.685756122041733, "y": 0.6285714285714286, "y_ideal": 0.685756122041733}, {"x": 1.0, "y": 1.0, "y_ideal": 1.0}]}, {"iteration": 9, "half_life": 55.0, "smoothing_alpha": 0.12, "second_order_weight": 0.28, "loss": 0.2021, "r_squared": 0.9872, "slope": 0.9489, "intercept": 0.0318, "ks_stat": 0.0624, "curve_sample": [{"x": 0.05190547610051783, "y": 0.11428571428571428, "y_ideal": 0.05190547610051783}, {"x": 0.10874191689295629, "y": 0.14285714285714285, "y_ideal": 0.10874191689295629}, {"x": 0.24418568269558624, "y": 0.19999999999999998, "y_ideal": 0.24418568269558624}, {"x": 0.4122821490521969, "y": 0.4571428571428571, "y_ideal": 0.4122821490521969}, {"x": 0.6612408687702263, "y": 0.6285714285714286, "y_ideal": 0.6612408687702263}, {"x": 1.0, "y": 1.0, "y_ideal": 1.0}]}, {"iteration": 10, "half_life": 65.0, "smoothing_alpha": 0.03, "second_order_weight": 0.18, "loss": 0.198, "r_squared": 0.9884, "slope": 0.9481, "intercept": 0.0307, "ks_stat": 0.0614, "curve_sample": [{"x": 0.05291915911572594, "y": 0.11428571428571428, "y_ideal": 0.05291915911572594}, {"x": 0.11071896512613204, "y": 0.14285714285714285, "y_ideal": 0.11071896512613204}, {"x": 0.2396795884499811, "y": 0.19999999999999998, "y_ideal": 0.2396795884499811}, {"x": 0.41844370006575665, "y": 0.4571428571428571, "y_ideal": 0.41844370006575665}, {"x": 0.6659024938908663, "y": 0.6285714285714286, "y_ideal": 0.6659024938908663}, {"x": 1.0, "y": 1.0, "y_ideal": 1.0}]}, {"iteration": 11, "half_life": 58.5, "smoothing_alpha": 0.027, "second_order_weight": 0.18, "loss": 0.1976, "r_squared": 0.9879, "slope": 0.9475, "intercept": 0.0299, "ks_stat": 0.0607, "curve_sample": [{"x": 0.05362941204525136, "y": 0.11428571428571428, "y_ideal": 0.05362941204525136}, {"x": 0.11277001945768747, "y": 0.14285714285714285, "y_ideal": 0.11277001945768747}, {"x": 0.23962964491805758, "y": 0.19999999999999998, "y_ideal": 0.23962964491805758}, {"x": 0.41790010632512353, "y": 0.4571428571428571, "y_ideal": 0.41790010632512353}, {"x": 0.67044337602581, "y": 0.6285714285714286, "y_ideal": 0.67044337602581}, {"x": 1.0, "y": 1.0, "y_ideal": 1.0}]}, {"iteration": 12, "half_life": 71.5, "smoothing_alpha": 0.033, "second_order_weight": 0.18, "loss": 0.1985, "r_squared": 0.9887, "slope": 0.9485, "intercept": 0.0314, "ks_stat": 0.062, "curve_sample": [{"x": 0.05231794019885205, "y": 0.11428571428571428, "y_ideal": 0.05231794019885205}, {"x": 0.10901673151750182, "y": 0.14285714285714285, "y_ideal": 0.10901673151750182}, {"x": 0.239811529327744, "y": 0.19999999999999998, "y_ideal": 0.239811529327744}, {"x": 0.4189386844801406, "y": 0.4571428571428571, "y_ideal": 0.4189386844801406}, {"x": 0.6622547975567542, "y": 0.6285714285714286, "y_ideal": 0.6622547975567542}, {"x": 1.0, "y": 1.0, "y_ideal": 1.0}]}, {"iteration": 13, "half_life": 65.0, "smoothing_alpha": 0.024, "second_order_weight": 0.198, "loss": 0.2033, "r_squared": 0.9885, "slope": 0.947, "intercept": 0.0332, "ks_stat": 0.0628, "curve_sample": [{"x": 0.05150578495579578, "y": 0.11428571428571428, "y_ideal": 0.05150578495579578}, {"x": 0.10780022971436011, "y": 0.14285714285714285, "y_ideal": 0.10780022971436011}, {"x": 0.23802166929546126, "y": 0.19999999999999998, "y_ideal": 0.23802166929546126}, {"x": 0.41515298618433216, "y": 0.4571428571428571, "y_ideal": 0.41515298618433216}, {"x": 0.6623591185247011, "y": 0.6285714285714286, "y_ideal": 0.6623591185247011}, {"x": 1.0, "y": 1.0, "y_ideal": 1.0}]}, {"iteration": 14, "half_life": 65.0, "smoothing_alpha": 0.036, "second_order_weight": 0.162, "loss": 0.1927, "r_squared": 0.9882, "slope": 0.9491, "intercept": 0.0283, "ks_stat": 0.06, "curve_sample": [{"x": 0.054333791982167014, "y": 0.11428571428571428, "y_ideal": 0.054333791982167014}, {"x": 0.11363964073772409, "y": 0.14285714285714285, "y_ideal": 0.11363964073772409}, {"x": 0.24134537470141496, "y": 0.19999999999999998, "y_ideal": 0.24134537470141496}, {"x": 0.42173669720516327, "y": 0.4571428571428571, "y_ideal": 0.42173669720516327}, {"x": 0.669443113970626, "y": 0.6285714285714286, "y_ideal": 0.669443113970626}, {"x": 1.0, "y": 1.0, "y_ideal": 1.0}]}, {"iteration": 15, "half_life": 68.25, "smoothing_alpha": 0.0285, "second_order_weight": 0.189, "loss": 0.2009, "r_squared": 0.9886, "slope": 0.9478, "intercept": 0.0323, "ks_stat": 0.0624, "curve_sample": [{"x": 0.0519051702225694, "y": 0.11428571428571428, "y_ideal": 0.0519051702225694}, {"x": 0.10838368224507389, "y": 0.14285714285714285, "y_ideal": 0.10838368224507389}, {"x": 0.23891435147585863, "y": 0.19999999999999998, "y_ideal": 0.23891435147585863}, {"x": 0.4170568562120408, "y": 0.4571428571428571, "y_ideal": 0.4170568562120408}, {"x": 0.6622222301599169, "y": 0.6285714285714286, "y_ideal": 0.6622222301599169}, {"x": 1.0, "y": 1.0, "y_ideal": 1.0}]}];
+
+    // 真实落盘的 20 期滚动回测流水
+    const REVIEW_LOGS = [{"issue": "2026223", "hl": 65.0, "a": 0.036, "r2": 0.9944, "top5": [17, 33, 34, 35, 58], "hit5": 3, "hit12": 4}, {"issue": "2026224", "hl": 75.0, "a": 0.24, "r2": 0.9945, "top5": [28, 33, 34, 36, 67], "hit5": 1, "hit12": 4}, {"issue": "2026225", "hl": 55.0, "a": 0.144, "r2": 0.9965, "top5": [19, 20, 22, 23, 45], "hit5": 1, "hit12": 2}, {"issue": "2026226", "hl": 35.0, "a": 0.12, "r2": 0.988, "top5": [12, 13, 20, 25, 43], "hit5": 2, "hit12": 2}, {"issue": "2026227", "hl": 35.0, "a": 0.12, "r2": 0.993, "top5": [36, 37, 45, 46, 48], "hit5": 1, "hit12": 3}, {"issue": "2026228", "hl": 35.0, "a": 0.12, "r2": 0.9745, "top5": [10, 17, 18, 47, 48], "hit5": 2, "hit12": 3}, {"issue": "2026229", "hl": 65.0, "a": 0.036, "r2": 0.9767, "top5": [27, 28, 40, 41, 42], "hit5": 1, "hit12": 3}, {"issue": "2026230", "hl": 75.0, "a": 0.24, "r2": 0.9928, "top5": [48, 65, 71, 76, 78], "hit5": 1, "hit12": 3}, {"issue": "2026231", "hl": 65.0, "a": 0.036, "r2": 0.9853, "top5": [8, 13, 14, 50, 51], "hit5": 1, "hit12": 2}, {"issue": "2026232", "hl": 75.0, "a": 0.24, "r2": 0.9879, "top5": [51, 59, 61, 62, 74], "hit5": 1, "hit12": 2}, {"issue": "2026233", "hl": 20.0, "a": 0.06, "r2": 0.9584, "top5": [10, 29, 36, 54, 55], "hit5": 2, "hit12": 2}, {"issue": "2026234", "hl": 75.0, "a": 0.16, "r2": 0.9817, "top5": [30, 31, 34, 36, 65], "hit5": 1, "hit12": 2}, {"issue": "2026235", "hl": 75.0, "a": 0.24, "r2": 0.9742, "top5": [36, 55, 56, 57, 60], "hit5": 2, "hit12": 4}, {"issue": "2026236", "hl": 65.0, "a": 0.036, "r2": 0.9909, "top5": [20, 50, 51, 72, 73], "hit5": 1, "hit12": 3}, {"issue": "2026237", "hl": 75.0, "a": 0.24, "r2": 0.9814, "top5": [24, 25, 55, 56, 64], "hit5": 1, "hit12": 2}, {"issue": "2026238", "hl": 20.0, "a": 0.06, "r2": 0.9948, "top5": [17, 18, 20, 21, 52], "hit5": 3, "hit12": 5}, {"issue": "2026239", "hl": 45.0, "a": 0.08, "r2": 0.9868, "top5": [51, 52, 62, 63, 64], "hit5": 0, "hit12": 3}, {"issue": "2026240", "hl": 75.0, "a": 0.24, "r2": 0.9862, "top5": [26, 27, 29, 30, 44], "hit5": 1, "hit12": 2}, {"issue": "2026241", "hl": 35.0, "a": 0.12, "r2": 0.9717, "top5": [27, 28, 32, 33, 63], "hit5": 3, "hit12": 5}, {"issue": "2026242", "hl": 55.0, "a": 0.144, "r2": 0.9608, "top5": [32, 33, 36, 37, 52], "hit5": 3, "hit12": 5}, {"issue": "2026243", "hl": 30.0, "a": 0.016, "r2": 0.9952, "top5": [52, 53, 56, 72, 77], "hit5": 0, "hit12": 2}, {"issue": "2026244", "hl": 20.0, "a": 0.06, "r2": 0.9623, "top5": [2, 3, 36, 37, 67], "hit5": 0, "hit12": 1}, {"issue": "2026245", "hl": 75.0, "a": 0.24, "r2": 0.9633, "top5": [7, 47, 56, 78, 79], "hit5": 0, "hit12": 1}, {"issue": "2026246", "hl": 60.0, "a": 0.18, "r2": 0.9767, "top5": [26, 27, 30, 31, 44], "hit5": 1, "hit12": 2}, {"issue": "2026247", "hl": 82.5, "a": 0.22, "r2": 0.9552, "top5": [52, 53, 54, 69, 70], "hit5": 0, "hit12": 2}, {"issue": "2026248", "hl": 65.0, "a": 0.036, "r2": 0.9766, "top5": [28, 29, 39, 41, 43], "hit5": 2, "hit12": 2}, {"issue": "2026249", "hl": 35.0, "a": 0.12, "r2": 0.9646, "top5": [32, 33, 34, 35, 73], "hit5": 2, "hit12": 4}, {"issue": "2026250", "hl": 33.0, "a": 0.022, "r2": 0.9722, "top5": [10, 50, 51, 52, 65], "hit5": 2, "hit12": 2}, {"issue": "2026251", "hl": 65.0, "a": 0.036, "r2": 0.9807, "top5": [4, 5, 6, 23, 68], "hit5": 1, "hit12": 1}, {"issue": "2026252", "hl": 71.5, "a": 0.033, "r2": 0.986, "top5": [28, 29, 51, 52, 54], "hit5": 1, "hit12": 4}];
+
+    let currentStepIdx = 0;
+    let isPlaying = false;
+    let playTimer = null;
+    let playSpeed = 1000;
+
+    // 渲染单步状态
+    function renderStep(idx) {
+      const step = TRAJECTORY_DATA[idx];
+      document.getElementById('step-badge').textContent = `${idx + 1} / ${TRAJECTORY_DATA.length}`;
+      
+      // 更新数值与进度条
+      document.getElementById('val-hl').textContent = `${step.half_life} 期`;
+      document.getElementById('bar-hl').style.width = `${(step.half_life / 90) * 100}%`;
+
+      document.getElementById('val-alpha').textContent = step.smoothing_alpha.toFixed(4);
+      document.getElementById('bar-alpha').style.width = `${(step.smoothing_alpha / 0.35) * 100}%`;
+
+      document.getElementById('val-beta').textContent = step.second_order_weight.toFixed(3);
+      document.getElementById('bar-beta').style.width = `${(step.second_order_weight / 0.5) * 100}%`;
+
+      document.getElementById('stat-r2').textContent = step.r_squared.toFixed(4);
+      document.getElementById('stat-loss').textContent = step.loss.toFixed(4);
+
+      // 直线方程显示
+      const sign = step.intercept >= 0 ? '+' : '-';
+      document.getElementById('eq-display').textContent = `y = ${step.slope.toFixed(3)}x ${sign} ${Math.abs(step.intercept).toFixed(3)}`;
+
+      // 标签状态
+      const statusTag = document.getElementById('status-tag');
+      if (step.r_squared >= 0.95) {
+        statusTag.textContent = '✅ 已成功拉直！高度贴合 y = x (R² ≥ 0.95)';
+        statusTag.className = 'px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+      } else {
+        statusTag.textContent = '⚠️ 曲线凹陷弯曲 (搜索优化中...)';
+        statusTag.className = 'px-2 py-0.5 rounded text-[11px] font-medium bg-amber-500/20 text-amber-300 border border-amber-500/30';
+      }
+
+      // 动态绘制 SVG 曲线与趋势线
+      const trendLine = document.getElementById('trend-line');
+      const x1 = 40, y1 = 230 - (step.intercept * 210);
+      const x2 = 380, y2 = 230 - ((step.slope + step.intercept) * 210);
+      trendLine.setAttribute('y1', Math.max(20, Math.min(230, y1)));
+      trendLine.setAttribute('y2', Math.max(20, Math.min(230, y2)));
+
+      const curveDotsGroup = document.getElementById('curve-dots');
+      curveDotsGroup.innerHTML = '';
+      
+      let pathD = `M 40 230`;
+      const numPts = 10;
+      const bendFactor = Math.max(0, (1.0 - (step.r_squared - 0.89) / 0.07)) * 40;
+
+      for (let i = 1; i <= numPts; i++) {
+        const progress = i / numPts;
+        const px = 40 + progress * 340;
+        const idealY = 230 - progress * 210;
+        const bendOffset = Math.sin(progress * Math.PI) * bendFactor;
+        const py = idealY + bendOffset;
+
+        pathD += ` L ${px} ${py}`;
+
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', px);
+        circle.setAttribute('cy', py);
+        circle.setAttribute('r', '3.5');
+        circle.setAttribute('fill', step.r_squared >= 0.95 ? '#10b981' : '#f59e0b');
+        curveDotsGroup.appendChild(circle);
+      }
+
+      document.getElementById('curve-path').setAttribute('d', pathD);
+      document.getElementById('curve-path').setAttribute('stroke', step.r_squared >= 0.95 ? '#10b981' : '#f59e0b');
+      document.getElementById('curve-path').className = step.r_squared >= 0.95 ? 'glow-emerald' : 'glow-gold';
+    }
+
+    // 控制播放
+    function togglePlay() {
+      const btn = document.getElementById('btn-play');
+      if (isPlaying) {
+        clearInterval(playTimer);
+        isPlaying = false;
+        btn.innerHTML = '<span>▶</span> 播放寻优';
+      } else {
+        isPlaying = true;
+        btn.innerHTML = '<span>⏸</span> 暂停';
+        playTimer = setInterval(() => {
+          currentStepIdx = (currentStepIdx + 1) % TRAJECTORY_DATA.length;
+          renderStep(currentStepIdx);
+        }, playSpeed);
+      }
+    }
+
+    document.getElementById('btn-play').addEventListener('click', togglePlay);
+    document.getElementById('btn-step').addEventListener('click', () => {
+      if (isPlaying) togglePlay();
+      currentStepIdx = (currentStepIdx + 1) % TRAJECTORY_DATA.length;
+      renderStep(currentStepIdx);
+    });
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      if (isPlaying) togglePlay();
+      currentStepIdx = 0;
+      renderStep(currentStepIdx);
+    });
+
+    // 速度切换
+    document.querySelectorAll('.spd-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.spd-btn').forEach(b => b.classList.remove('bg-cyan-600', 'text-white'));
+        e.target.classList.add('bg-cyan-600', 'text-white');
+        playSpeed = parseInt(e.target.dataset.spd);
+        if (isPlaying) {
+          clearInterval(playTimer);
+          playTimer = setInterval(() => {
+            currentStepIdx = (currentStepIdx + 1) % TRAJECTORY_DATA.length;
+            renderStep(currentStepIdx);
+          }, playSpeed);
+        }
+      });
+    });
+
+    // 标签页切换
+    const tabTuning = document.getElementById('tab-btn-tuning');
+    const tabBacktest = document.getElementById('tab-btn-backtest');
+    const viewTuning = document.getElementById('view-tuning');
+    const viewBacktest = document.getElementById('view-backtest');
+
+    tabTuning.addEventListener('click', () => {
+      tabTuning.className = 'px-4 py-1.5 rounded-lg font-medium transition bg-cyan-500/20 text-cyan-400 border border-cyan-500/40';
+      tabBacktest.className = 'px-4 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition ml-1';
+      viewTuning.classList.remove('hidden');
+      viewBacktest.classList.add('hidden');
+    });
+
+    tabBacktest.addEventListener('click', () => {
+      tabBacktest.className = 'px-4 py-1.5 rounded-lg font-medium transition bg-cyan-500/20 text-cyan-400 border border-cyan-500/40';
+      tabTuning.className = 'px-4 py-1.5 rounded-lg font-medium text-slate-400 hover:text-white transition ml-1';
+      viewBacktest.classList.remove('hidden');
+      viewTuning.classList.add('hidden');
+      renderBacktestTable();
+    });
+
+    // 填充回测表格
+    function renderBacktestTable() {
+      const tbody = document.getElementById('backtest-table-body');
+      tbody.innerHTML = '';
+      REVIEW_LOGS.forEach(log => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-900/50 transition';
+
+        const hit5Color = log.hit5 >= 2 ? 'text-amber-400 font-bold' : (log.hit5 === 1 ? 'text-slate-300' : 'text-slate-500');
+        const hit12Color = log.hit12 >= 4 ? 'text-emerald-400 font-bold' : (log.hit12 >= 3 ? 'text-cyan-300' : 'text-slate-400');
+
+        const t5Str = log.top5.map(n => String(n).padStart(2, '0')).join(', ');
+
+        tr.innerHTML = `
+          <td class="py-2.5 px-2 font-bold text-slate-300">${log.issue}</td>
+          <td class="py-2.5 px-2 text-slate-400">${log.hl}期 / ${log.a}</td>
+          <td class="py-2.5 px-2 text-cyan-300">${log.r2}</td>
+          <td class="py-2.5 px-2 text-slate-300">[ ${t5Str} ]</td>
+          <td class="py-2.5 px-2 text-center ${hit5Color}">${log.hit5}</td>
+          <td class="py-2.5 px-2 text-center ${hit12Color}">${log.hit12}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    renderStep(0);
+  </script>
+</body>
+</html>

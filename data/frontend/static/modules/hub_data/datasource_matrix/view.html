@@ -1,0 +1,611 @@
+<div v-show="activeTab === 'datasource_matrix'" class="space-y-6">
+  <!-- 头部操作与全局控制栏 -->
+  <div class="glass-panel p-5">
+    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🧬</span>
+          <h2 class="text-lg font-bold bg-gradient-to-r from-cyan-400 via-teal-300 to-amber-300 bg-clip-text text-transparent">
+            数据源1与数据源2 原始阵列全景看板 (DataSource Matrix Inspector)
+          </h2>
+          <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono border border-cyan-500/30">
+            1:1 像素级高保真 · 4×4 双翼板块还原
+          </span>
+        </div>
+        <p class="text-xs text-slate-400 mt-1">
+          直连《跟随+点位+开奖数据.xlsx》跟随号码统计表，逐期完整映射数据源1与数据源2的 4 大板块(Block 0-3)、左右两翼(Left/Right)、热码星号(⭐)、点位底色(🌸)与当期中奖紫框(🟣)。
+        </p>
+      </div>
+
+      <!-- 期号选择与操作按钮 -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button @click="prevDatasourcePeriod" :disabled="datasourceMatrixLoading || !canPrevDatasourcePeriod"
+                class="px-2.5 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-xs transition">
+          ◀ 上一期
+        </button>
+
+        <div class="flex items-center gap-1.5 bg-slate-900 px-2.5 py-1 rounded border border-cyan-500/40">
+          <span class="text-[11px] text-cyan-400 font-mono font-bold">期号:</span>
+          <select v-model="datasourceMatrixSelectedPeriod" @change="fetchDatasourceMatrix(datasourceMatrixSelectedPeriod)"
+                  class="bg-transparent text-amber-300 font-mono text-xs font-bold focus:outline-none cursor-pointer">
+            <option v-for="p in (datasourceMatrixData?.available_periods || [])" :key="p" :value="p" class="bg-slate-900 text-slate-200">
+              第 {{ p }} 期
+            </option>
+          </select>
+        </div>
+
+        <button @click="nextDatasourcePeriod" :disabled="datasourceMatrixLoading || !canNextDatasourcePeriod"
+                class="px-2.5 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-xs transition">
+          下一期 ▶
+        </button>
+
+        <button @click="fetchDatasourceMatrix(null)" :disabled="datasourceMatrixLoading"
+                class="cyber-btn cyber-btn-cyan text-xs flex items-center gap-1">
+          <span>🔄</span>
+          <span>{{ datasourceMatrixLoading ? '加载中...' : '刷新矩阵(最新期)' }}</span>
+        </button>
+        <button @click="scrollToDatasourceMatrixReview" class="cyber-btn text-xs flex items-center gap-1 bg-emerald-500/15 text-emerald-200 border border-emerald-400/40 hover:border-emerald-300/70">
+          <span>📊</span> 滚动复盘
+        </button>
+      </div>
+    </div>
+
+    <!-- 期号对齐：矩阵真源=跟随号码统计（今日目标期）；紫框实开=开奖后才有 -->
+    <div class="mt-4 p-3 rounded-xl border text-xs leading-relaxed"
+         :class="!datasourceMatrixData?.is_drawn && datasourceMatrixData?.period
+           ? 'border-amber-500/40 bg-amber-950/20 text-amber-100'
+           : 'border-slate-700/60 bg-slate-900/50 text-slate-300'">
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono">
+        <span>最新开奖 <b class="text-emerald-300">{{ systemStatus?.latest_draw_period || '—' }}</b>
+          <span class="text-slate-500">({{ systemStatus?.latest_draw_date || '—' }})</span></span>
+        <span class="text-slate-600">|</span>
+        <span>矩阵当前期 <b class="text-cyan-300">{{ datasourceMatrixSelectedPeriod || '—' }}</b>
+          <span v-if="datasourceMatrixData && !datasourceMatrixData.is_drawn" class="text-amber-400">·未开奖</span>
+          <span v-else-if="datasourceMatrixData?.is_drawn" class="text-emerald-400">·已开奖</span>
+        </span>
+        <span class="text-slate-600">|</span>
+        <span>点位最新 <b class="text-amber-300">{{ dailyPointsInfo?.target_info?.latest_points_period || '—' }}</b></span>
+        <span class="text-slate-600">|</span>
+        <span>预测目标 <b class="text-fuchsia-300">{{ datasourceSummary?.target_period || systemStatus?.target_period || '—' }}</b></span>
+      </div>
+      <p class="mt-1.5 text-slate-400">
+        矩阵期号来自 Excel「跟随号码统计」（今日目标期应有热码+点位粉框）。
+        <template v-if="datasourceMatrixData && !datasourceMatrixData.is_drawn">
+          当前 <b class="text-cyan-300">{{ datasourceMatrixData.period }}</b> 期<strong class="text-white">阵列/点位应已更新</strong>；紫框命中要等 <b>21:30</b> 开奖同步后才出现——那是实开对账，不是阵列停更。
+        </template>
+        <template v-else>
+          若矩阵仍停在旧期：到「点位录入」勾选联动重跑（含写入跟随号码统计），或点下方「点位联动」。
+        </template>
+      </p>
+      <div class="mt-2 flex flex-wrap gap-2">
+        <button type="button" @click="fetchDatasourceMatrix()" :disabled="datasourceMatrixLoading"
+                class="cyber-btn cyber-btn-cyan text-[11px] !py-1 !px-2.5">🔄 刷新矩阵</button>
+        <button type="button" @click="triggerDailyPointsSyncAll" :disabled="isRunning"
+                class="cyber-btn text-[11px] !py-1 !px-2.5 bg-amber-500/15 text-amber-200 border border-amber-400/40">🧬 点位联动(写跟随表)</button>
+        <button type="button" @click="openTab('points_input')"
+                class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2.5">📝 点位录入</button>
+      </div>
+    </div>
+
+    <!-- 下一期最可能号码（复用深层关联引擎，非显著超额） -->
+    <div class="mt-4 pt-4 border-t border-slate-800/80" v-if="datasourceSummary">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <div class="flex items-center gap-2">
+          <h3 class="text-sm font-bold text-amber-300 flex items-center gap-1.5">
+            <span>🎯</span> 下一期最可能号码
+            <span class="text-[10px] font-mono text-cyan-400">目标期 {{ datasourceSummary.target_period || '--' }}</span>
+          </h3>
+          <span class="text-[10px] px-1.5 py-0.5 rounded border border-amber-500/30 bg-amber-500/10 text-amber-300/90">结构推荐 · 非显著超额</span>
+        </div>
+        <div class="text-[10px] text-slate-500 font-mono">
+          锚定期 {{ datasourceSummary.anchor_period || datasourceSummary.latest_excel_issue || datasourceSummary.latest_period || '--' }}
+          · 搭档共现 {{ datasourceSummary.gold_pair_cooccur_100 ?? '--' }}
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-2 mb-2" v-if="(datasourceSummary.next_likely_numbers || []).length">
+        <div v-for="(item, idx) in (datasourceSummary.next_likely_numbers || [])" :key="item.ball"
+             class="min-w-[72px] rounded-lg border px-2 py-1.5 bg-slate-900/70"
+             :class="item.kill_flags?.length ? 'border-rose-500/40' : (item.in_consensus ? 'border-amber-400/50' : 'border-slate-700')">
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-[10px] text-slate-500 font-mono">#{{ idx + 1 }}</span>
+            <span class="text-[10px] text-slate-400 font-mono">{{ Number(item.score).toFixed(1) }}</span>
+          </div>
+          <div class="text-lg font-black font-mono text-center"
+               :class="item.kill_flags?.length ? 'text-rose-300' : 'text-amber-300'">
+            {{ String(item.ball).padStart(2, '0') }}
+          </div>
+          <div class="flex flex-wrap gap-0.5 justify-center mt-0.5">
+            <span v-for="s in (item.sources || []).slice(0, 2)" :key="s"
+                  class="text-[9px] px-1 rounded bg-cyan-500/15 text-cyan-300 border border-cyan-500/20">{{ s }}</span>
+            <span v-for="k in (item.kill_flags || [])" :key="k"
+                  class="text-[9px] px-1 rounded bg-rose-500/15 text-rose-300 border border-rose-500/20">{{ k }}</span>
+          </div>
+        </div>
+      </div>
+      <p class="text-[10px] text-slate-500 leading-relaxed">
+        {{ datasourceSummary.evidence_note || '结构推荐（非显著超额）；仅作形态参考。' }}
+        <button @click="scrollToDatasourceMatrixReview" class="ml-2 text-emerald-400 hover:underline">↓ 窗口滚动复盘（无未来）</button>
+        <button @click="openTab('datasource_cockpit')" class="ml-2 text-cyan-400 hover:underline">打开深层关联大屏 →</button>
+      </p>
+    </div>
+
+    <!-- 当期开奖号码条展示 -->
+    <div class="mt-4 pt-3 border-t border-slate-800/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-3" v-if="datasourceMatrixData">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-xs font-bold flex items-center gap-1"
+              :class="datasourceMatrixData.is_drawn ? 'text-amber-400' : 'text-slate-400'">
+          <span>🎯</span>
+          <template v-if="datasourceMatrixData.is_drawn">第 {{ datasourceMatrixData.period }} 期 真实开奖号码 (20码):</template>
+          <template v-else>第 {{ datasourceMatrixData.period }} 期 尚未开奖 — 下方为跟随阵列/点位（粉框），紫框待开奖后出现</template>
+        </span>
+        <span v-if="datasourceMatrixData.draw_date" class="text-[10px] text-slate-500 font-mono">({{ datasourceMatrixData.draw_date }})</span>
+        <div class="flex flex-wrap gap-1.5" v-if="(datasourceMatrixData.actual_numbers || []).length">
+          <span v-for="n in datasourceMatrixData.actual_numbers" :key="n"
+                class="lottery-ball ball-gold w-7 h-7 text-[11px] font-bold">{{ String(n).padStart(2,'0') }}</span>
+        </div>
+        <span v-else class="text-[11px] text-amber-300/80 font-mono">等待 21:30 开奖同步</span>
+      </div>
+
+      <!-- 快捷高亮过滤器 -->
+      <div class="flex items-center gap-1 bg-slate-950/80 p-1 rounded-lg border border-slate-800 text-[11px]">
+        <span class="text-slate-500 px-1 text-[10px]">高亮模式:</span>
+        <button v-for="mode in matrixHighlightModes" :key="mode.id"
+                @click="currentMatrixHighlightMode = mode.id"
+                class="px-2 py-0.5 rounded transition text-[11px]"
+                :class="currentMatrixHighlightMode === mode.id ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40' : 'text-slate-400 hover:text-slate-200'">
+          {{ mode.icon }} {{ mode.label }}
+        </button>
+      </div>
+    </div>
+
+    <!-- 4 项核心数据对齐卡片 -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4" v-if="datasourceMatrixData">
+      <!-- 数据源1 概况 -->
+      <div class="p-3 rounded-lg bg-slate-900/90 border border-teal-500/30">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] text-teal-300 font-bold">📊 数据源 1 (热码与点位)</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded bg-teal-500/20 text-teal-300 font-mono">Data 1</span>
+        </div>
+        <div class="flex items-baseline gap-2 mt-1">
+          <span class="text-xl font-bold font-mono text-teal-400">
+            {{ datasourceMatrixData.data1?.stats?.hit_count || 0 }} / {{ datasourceMatrixData.data1?.stats?.total_count || 0 }}
+          </span>
+          <span class="text-[11px] text-teal-500 font-mono"
+                title="命中数必须对照随机基线：M 码的期望命中为 M×0.25；Lift>1 且经多重检验显著才谈得上有预测力。">
+            命中率 {{ ((datasourceMatrixData.data1?.stats?.hit_rate || 0) * 100).toFixed(1) }}%
+            <span class="text-slate-500">· 基线 {{ ((datasourceMatrixData.data1?.stats?.total_count || 0) * 0.25).toFixed(1) }} 码
+            · Lift {{ datasourceMatrixData.data1?.stats?.total_count ? ((datasourceMatrixData.data1.stats.hit_count || 0) / datasourceMatrixData.data1.stats.total_count / 0.25).toFixed(2) + 'x' : '--' }}</span>
+          </span>
+        </div>
+        <div class="text-[10px] text-slate-400 font-mono mt-1 flex gap-2">
+          <span>⭐ 热码: {{ datasourceMatrixData.data1?.stats?.star_count || 0 }}</span>
+          <span>🌸 点位: {{ datasourceMatrixData.data1?.stats?.point_count || 0 }}</span>
+        </div>
+      </div>
+
+      <!-- 数据源2 概况 -->
+      <div class="p-3 rounded-lg bg-slate-900/90 border border-cyan-500/30">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] text-cyan-300 font-bold">📐 数据源 2 (规律码阵列)</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-mono">Data 2</span>
+        </div>
+        <div class="flex items-baseline gap-2 mt-1">
+          <span class="text-xl font-bold font-mono text-cyan-400">
+            {{ datasourceMatrixData.data2?.stats?.hit_count || 0 }} / {{ datasourceMatrixData.data2?.stats?.total_count || 0 }}
+          </span>
+          <span class="text-[11px] text-cyan-500 font-mono"
+                title="命中数必须对照随机基线：M 码的期望命中为 M×0.25；Lift>1 且经多重检验显著才谈得上有预测力。">
+            命中率 {{ ((datasourceMatrixData.data2?.stats?.hit_rate || 0) * 100).toFixed(1) }}%
+            <span class="text-slate-500">· 基线 {{ ((datasourceMatrixData.data2?.stats?.total_count || 0) * 0.25).toFixed(1) }} 码
+            · Lift {{ datasourceMatrixData.data2?.stats?.total_count ? ((datasourceMatrixData.data2.stats.hit_count || 0) / datasourceMatrixData.data2.stats.total_count / 0.25).toFixed(2) + 'x' : '--' }}</span>
+          </span>
+        </div>
+        <div class="text-[10px] text-slate-400 font-mono mt-1 flex gap-2">
+          <span>🌸 点位: {{ datasourceMatrixData.data2?.stats?.point_count || 0 }}</span>
+          <span>🏛️ 覆盖: {{ datasourceMatrixData.data2?.stats?.total_count || 0 }}码</span>
+        </div>
+      </div>
+
+      <!-- 1×2 双源交集共振 -->
+      <div class="p-3 rounded-lg bg-slate-900/90 border border-amber-500/30">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] text-amber-300 font-bold">👑 1×2 双源交集共振</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-mono">做多金胆核</span>
+        </div>
+        <div class="flex items-baseline gap-2 mt-1">
+          <span class="text-xl font-bold font-mono text-amber-400">
+            {{ datasourceMatrixData.cross_stats?.intersection_hits?.length || 0 }} / {{ datasourceMatrixData.cross_stats?.intersection?.length || 0 }}
+          </span>
+          <span class="text-[11px] text-amber-500 font-mono">
+            命中率 {{ ((datasourceMatrixData.cross_stats?.intersection_hit_rate || 0) * 100).toFixed(1) }}%
+          </span>
+        </div>
+        <div class="text-[10px] text-slate-400 font-mono mt-1 truncate" :title="(datasourceMatrixData.cross_stats?.intersection || []).join(', ')">
+          交集: {{ (datasourceMatrixData.cross_stats?.intersection || []).slice(0, 8).map(x => String(x).padStart(2, '0')).join(' ') }}...
+        </div>
+      </div>
+
+      <!-- 杀号/D2回避产品已退役：仅保留双源交集做多核 -->
+      <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-700/40">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] text-slate-400 font-bold">ℹ️ 防守杀号池</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded bg-slate-700/40 text-slate-400 font-mono">已退役</span>
+        </div>
+        <div class="text-[11px] text-slate-500 font-mono mt-2 leading-relaxed">
+          D2 外部回避 / 规则杀号产品面已拆除，矩阵页只展示双源交集共振。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 图例指示标尺 -->
+  <div class="flex flex-wrap items-center justify-between gap-3 text-xs px-2 font-mono text-slate-400">
+    <div class="flex items-center gap-4 flex-wrap">
+      <span class="flex items-center gap-1.5">
+        <span class="w-4 h-4 rounded bg-slate-800 border border-slate-700 inline-flex items-center justify-center text-[10px] text-slate-400 font-bold">01</span>
+        <span>普通号码</span>
+      </span>
+      <span class="flex items-center gap-1.5">
+        <span class="w-4 h-4 rounded bg-slate-800 border border-amber-500/60 inline-flex items-center justify-center text-[10px] text-amber-300 font-bold relative">
+          01<span class="absolute -top-1 -right-1 text-[8px] text-amber-400">★</span>
+        </span>
+        <span>⭐ 热码星号 (*)</span>
+      </span>
+      <span class="flex items-center gap-1.5">
+        <span class="w-4 h-4 rounded bg-pink-500/25 border border-pink-400 text-pink-200 inline-flex items-center justify-center text-[10px] font-bold">01</span>
+        <span>🌸 空间点位 (粉底)</span>
+      </span>
+      <span class="flex items-center gap-1.5">
+        <span class="w-4 h-4 rounded bg-purple-900/40 border-2 border-purple-400 text-purple-200 shadow-[0_0_8px_rgba(192,132,252,0.6)] inline-flex items-center justify-center text-[10px] font-bold">01</span>
+        <span>🟣 当期开出 (紫色中奖边框)</span>
+      </span>
+      <span class="flex items-center gap-1.5">
+        <span class="w-4 h-4 rounded bg-amber-500/20 border border-amber-400 text-amber-300 inline-flex items-center justify-center text-[10px] font-bold">👑</span>
+        <span>1×2 双源交集共振</span>
+      </span>
+    </div>
+    <div class="text-[11px] text-slate-500">
+      💡 提示：点击任意号码球可查看该号码全维度穿透分析
+    </div>
+  </div>
+
+  <!-- 主体左右分栏矩阵区 -->
+  <div v-if="datasourceMatrixLoading" class="glass-panel p-12 text-center text-slate-400 text-sm">
+    <div class="inline-block animate-spin text-2xl mb-2">🧬</div>
+    <div>正在解析加载第 {{ datasourceMatrixSelectedPeriod }} 期 Excel 1:1 原始阵列...</div>
+  </div>
+
+  <div v-else-if="!datasourceMatrixData" class="glass-panel p-12 text-center text-slate-500 text-sm">
+    暂无数据，请尝试点击上方“刷新矩阵”
+  </div>
+
+  <div v-else class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+    <!-- ══════════════ 左分栏：数据源 1 原始阵列 ══════════════ -->
+    <div class="glass-panel p-5 space-y-4 border-t-2 border-teal-500">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📊</span>
+          <div>
+            <h3 class="text-sm font-bold text-teal-300">数据源 1 · 跟随号码统计表 (Data 1)</h3>
+            <span class="text-[10px] text-slate-400">热码统计与点位跟随 · 4 大板块对称分布</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono font-bold">
+            命中 {{ datasourceMatrixData.data1?.stats?.hit_count || 0 }} / {{ datasourceMatrixData.data1?.stats?.total_count || 0 }} 码
+          </span>
+          <span class="text-[10px] text-slate-400 font-mono"
+                title="命中数必须对照随机基线：M 码的期望命中为 M×0.25；Lift>1 且经多重检验显著才谈得上有预测力。">
+            基线 {{ ((datasourceMatrixData.data1?.stats?.total_count || 0) * 0.25).toFixed(1) }} 期望 ·
+            Lift {{ datasourceMatrixData.data1?.stats?.total_count ? ((datasourceMatrixData.data1.stats.hit_count || 0) / datasourceMatrixData.data1.stats.total_count / 0.25).toFixed(2) + 'x' : '--' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- 4 个 Block 列表 -->
+      <div class="space-y-4">
+        <div v-for="blk in (datasourceMatrixData.data1?.blocks || [])" :key="'d1_b_' + blk.block_idx"
+             class="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/90 hover:border-slate-700 transition">
+          <div class="flex items-center justify-between mb-2.5">
+            <span class="text-xs font-bold text-slate-300 font-mono flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-teal-400"></span>
+              {{ blk.block_name }}
+            </span>
+            <div class="flex items-center gap-3 text-[10px] font-mono text-slate-500">
+              <span>左翼 (Left 4×4)</span>
+              <span class="text-slate-700">|</span>
+              <span>右翼 (Right 4×4)</span>
+            </div>
+          </div>
+
+          <!-- 双翼 4x4 左右排布网格 -->
+          <div class="grid grid-cols-2 gap-3">
+            <!-- 左翼 Left 4x4 -->
+            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800/60">
+              <div class="text-[9px] text-teal-400/80 font-mono mb-1 text-center font-bold">LEFT (前4列)</div>
+              <div class="grid grid-cols-4 gap-1.5">
+                <template v-for="(row, rIdx) in blk.left_grid" :key="'d1_l_r_' + rIdx">
+                  <template v-for="(cell, cIdx) in row" :key="'d1_l_' + rIdx + '_' + cIdx">
+                    <div v-if="cell" 
+                         @click="openBallDetail({number: cell.num})"
+                         class="lottery-matrix-cell transition cursor-pointer"
+                         :class="getMatrixCellClass(cell)"
+                         :title="'号码: ' + cell.num_str + (cell.is_star ? ' (星号热码)' : '') + (cell.is_point ? ' (空间点位)' : '') + (cell.is_win ? ' (当期开出)' : '')">
+                      <span class="font-mono font-bold">{{ cell.num_str }}</span>
+                      <span v-if="cell.is_star" class="matrix-star-badge">★</span>
+                      <span v-if="isCrossIntersection(cell.num)" class="matrix-cross-badge">👑</span>
+                    </div>
+                    <div v-else class="w-full aspect-square rounded bg-slate-950/40 border border-slate-900 flex items-center justify-center text-[10px] text-slate-700 font-mono">-</div>
+                  </template>
+                </template>
+              </div>
+            </div>
+
+            <!-- 右翼 Right 4x4 -->
+            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800/60">
+              <div class="text-[9px] text-teal-400/80 font-mono mb-1 text-center font-bold">RIGHT (后4列)</div>
+              <div class="grid grid-cols-4 gap-1.5">
+                <template v-for="(row, rIdx) in blk.right_grid" :key="'d1_r_r_' + rIdx">
+                  <template v-for="(cell, cIdx) in row" :key="'d1_r_' + rIdx + '_' + cIdx">
+                    <div v-if="cell" 
+                         @click="openBallDetail({number: cell.num})"
+                         class="lottery-matrix-cell transition cursor-pointer"
+                         :class="getMatrixCellClass(cell)"
+                         :title="'号码: ' + cell.num_str + (cell.is_star ? ' (星号热码)' : '') + (cell.is_point ? ' (空间点位)' : '') + (cell.is_win ? ' (当期开出)' : '')">
+                      <span class="font-mono font-bold">{{ cell.num_str }}</span>
+                      <span v-if="cell.is_star" class="matrix-star-badge">★</span>
+                      <span v-if="isCrossIntersection(cell.num)" class="matrix-cross-badge">👑</span>
+                    </div>
+                    <div v-else class="w-full aspect-square rounded bg-slate-950/40 border border-slate-900 flex items-center justify-center text-[10px] text-slate-700 font-mono">-</div>
+                  </template>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════ 右分栏：数据源 2 原始阵列 ══════════════ -->
+    <div class="glass-panel p-5 space-y-4 border-t-2 border-cyan-500">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📐</span>
+          <div>
+            <h3 class="text-sm font-bold text-cyan-300">数据源 2 · 规律码阵列表 (Data 2)</h3>
+            <span class="text-[10px] text-slate-400">微观状态跃迁阵列 · 4 大板块对称分布</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono font-bold">
+            命中 {{ datasourceMatrixData.data2?.stats?.hit_count || 0 }} / {{ datasourceMatrixData.data2?.stats?.total_count || 0 }} 码
+          </span>
+          <span class="text-[10px] text-slate-400 font-mono"
+                title="命中数必须对照随机基线：M 码的期望命中为 M×0.25；Lift>1 且经多重检验显著才谈得上有预测力。">
+            基线 {{ ((datasourceMatrixData.data2?.stats?.total_count || 0) * 0.25).toFixed(1) }} 期望 ·
+            Lift {{ datasourceMatrixData.data2?.stats?.total_count ? ((datasourceMatrixData.data2.stats.hit_count || 0) / datasourceMatrixData.data2.stats.total_count / 0.25).toFixed(2) + 'x' : '--' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- 4 个 Block 列表 -->
+      <div class="space-y-4">
+        <div v-for="blk in (datasourceMatrixData.data2?.blocks || [])" :key="'d2_b_' + blk.block_idx"
+             class="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/90 hover:border-slate-700 transition">
+          <div class="flex items-center justify-between mb-2.5">
+            <span class="text-xs font-bold text-slate-300 font-mono flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+              {{ blk.block_name }}
+            </span>
+            <div class="flex items-center gap-3 text-[10px] font-mono text-slate-500">
+              <span>左翼 (Left 4×4)</span>
+              <span class="text-slate-700">|</span>
+              <span>右翼 (Right 4×4)</span>
+            </div>
+          </div>
+
+          <!-- 双翼 4x4 左右排布网格 -->
+          <div class="grid grid-cols-2 gap-3">
+            <!-- 左翼 Left 4x4 -->
+            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800/60">
+              <div class="text-[9px] text-cyan-400/80 font-mono mb-1 text-center font-bold">LEFT (前4列)</div>
+              <div class="grid grid-cols-4 gap-1.5">
+                <template v-for="(row, rIdx) in blk.left_grid" :key="'d2_l_r_' + rIdx">
+                  <template v-for="(cell, cIdx) in row" :key="'d2_l_' + rIdx + '_' + cIdx">
+                    <div v-if="cell" 
+                         @click="openBallDetail({number: cell.num})"
+                         class="lottery-matrix-cell transition cursor-pointer"
+                         :class="getMatrixCellClass(cell)"
+                         :title="'号码: ' + cell.num_str + (cell.is_star ? ' (星号热码)' : '') + (cell.is_point ? ' (空间点位)' : '') + (cell.is_win ? ' (当期开出)' : '')">
+                      <span class="font-mono font-bold">{{ cell.num_str }}</span>
+                      <span v-if="cell.is_star" class="matrix-star-badge">★</span>
+                      <span v-if="isCrossIntersection(cell.num)" class="matrix-cross-badge">👑</span>
+                    </div>
+                    <div v-else class="w-full aspect-square rounded bg-slate-950/40 border border-slate-900 flex items-center justify-center text-[10px] text-slate-700 font-mono">-</div>
+                  </template>
+                </template>
+              </div>
+            </div>
+
+            <!-- 右翼 Right 4x4 -->
+            <div class="p-2 rounded-lg bg-slate-900/60 border border-slate-800/60">
+              <div class="text-[9px] text-cyan-400/80 font-mono mb-1 text-center font-bold">RIGHT (后4列)</div>
+              <div class="grid grid-cols-4 gap-1.5">
+                <template v-for="(row, rIdx) in blk.right_grid" :key="'d2_r_r_' + rIdx">
+                  <template v-for="(cell, cIdx) in row" :key="'d2_r_' + rIdx + '_' + cIdx">
+                    <div v-if="cell" 
+                         @click="openBallDetail({number: cell.num})"
+                         class="lottery-matrix-cell transition cursor-pointer"
+                         :class="getMatrixCellClass(cell)"
+                         :title="'号码: ' + cell.num_str + (cell.is_star ? ' (星号热码)' : '') + (cell.is_point ? ' (空间点位)' : '') + (cell.is_win ? ' (当期开出)' : '')">
+                      <span class="font-mono font-bold">{{ cell.num_str }}</span>
+                      <span v-if="cell.is_star" class="matrix-star-badge">★</span>
+                      <span v-if="isCrossIntersection(cell.num)" class="matrix-cross-badge">👑</span>
+                    </div>
+                    <div v-else class="w-full aspect-square rounded bg-slate-950/40 border border-slate-900 flex items-center justify-center text-[10px] text-slate-700 font-mono">-</div>
+                  </template>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════ Walk-Forward 窗口滚动复盘（屏蔽未来数据） ══════════ -->
+  <div id="module-review-datasource-matrix" class="space-y-4">
+    <div class="glass-panel p-5 border border-emerald-500/30">
+      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xl">📊</span>
+            <h3 class="text-sm font-bold text-emerald-300">窗口滚动复盘 · Walk-Forward（严格屏蔽未来数据）</h3>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-mono">
+              近 {{ datasourceReviewPeriods }} 期 · 无未来
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1.5 leading-relaxed max-w-3xl">
+            对目标期 <b class="text-slate-300">T</b>：只用 <b class="text-slate-300">T-1 / T-2</b> 的 Excel 结构推演爆发 Top5，
+            再与 <b class="text-slate-300">T</b> 真实开奖对账。绝不读取 T 期及之后数据；模块杀号产品已退役。
+            {{ datasourceReview?.evidence_note || '' }}
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-[11px] text-slate-500 font-mono">窗口:</span>
+          <button v-for="n in [15, 30, 50]" :key="'ds_wf_'+n"
+                  @click="fetchDatasourceReview(n)"
+                  class="px-2.5 py-1 rounded text-xs font-mono transition border"
+                  :class="datasourceReviewPeriods === n ? 'bg-emerald-500/25 text-emerald-200 border-emerald-400/50 font-bold' : 'bg-slate-900 text-slate-400 border-slate-700 hover:border-slate-600'">
+            {{ n }}期
+          </button>
+          <button @click="fetchDatasourceReview(datasourceReviewPeriods)" :disabled="datasourceLoading"
+                  class="cyber-btn cyber-btn-cyan text-xs">
+            {{ datasourceLoading ? '计算中...' : '🔄 刷新复盘' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- 汇总指标 -->
+      <div class="grid grid-cols-2 lg:grid-cols-2 gap-3 mt-4" v-if="datasourceReview && datasourceReview.total_evaluated">
+        <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800">
+          <div class="text-[11px] text-slate-400">做多爆发均命中</div>
+          <div class="text-2xl font-bold font-mono text-emerald-400 mt-0.5">
+            {{ datasourceReview.hot_top5_mean_hits != null ? Number(datasourceReview.hot_top5_mean_hits).toFixed(2) : '--' }}
+            <span class="text-xs text-slate-500">码/期</span>
+          </div>
+          <div class="text-[10px] text-slate-500 font-mono mt-0.5">基线期望 {{ datasourceReview.baseline_hot_hits || 1.25 }} 码</div>
+        </div>
+        <div class="p-3 rounded-lg bg-slate-900/90 border border-slate-800">
+          <div class="text-[11px] text-slate-400">做多单码命中率</div>
+          <div class="text-2xl font-bold font-mono text-amber-400 mt-0.5">
+            {{ ((datasourceReview.hot_top5_hit_rate ?? datasourceReview.hot_single_rate ?? 0) * 100).toFixed(1) }}%
+          </div>
+          <div class="text-[10px] text-amber-500/90 font-mono mt-0.5">
+            Lift {{ datasourceReview.hot_lift != null ? datasourceReview.hot_lift + 'x' : '--' }} · 基线 25%
+          </div>
+        </div>
+      </div>
+
+      <!-- 与当前阵列期号对齐的快照 -->
+      <div class="mt-4 p-3 rounded-xl border border-cyan-500/30 bg-cyan-950/20"
+           v-if="datasourceMatrixReviewRow">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <div class="text-xs font-bold text-cyan-300">
+            📍 当前阵列期 {{ datasourceMatrixReviewRow.target_period || datasourceMatrixReviewRow.period }}
+            · 锚定期 {{ datasourceMatrixReviewRow.anchor_period || '--' }}（仅用此前数据）
+          </div>
+          <span class="text-[10px] px-1.5 py-0.5 rounded font-mono"
+                :class="(datasourceMatrixReviewRow.hot_hits || 0) >= 2 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-slate-800 text-slate-400 border border-slate-700'">
+            爆发命中 {{ datasourceMatrixReviewRow.hot_hits || 0 }} / 5
+          </span>
+        </div>
+        <div class="flex flex-wrap gap-1.5 items-center">
+          <span class="text-[10px] text-slate-500">爆发 Top5:</span>
+          <span v-for="b in (datasourceMatrixReviewRow.hot_top5 || datasourceMatrixReviewRow.top_hot || [])" :key="'cur_hot_'+b"
+                class="px-1.5 py-0.5 rounded text-[11px] font-mono font-bold"
+                :class="(datasourceMatrixReviewRow.actual_numbers || []).includes(b) ? 'bg-emerald-500/25 text-emerald-200 border border-emerald-400/50' : 'bg-slate-800 text-slate-400 border border-slate-700'">
+            {{ String(b).padStart(2, '0') }}
+          </span>
+          <span class="text-[10px] text-slate-500 ml-2">命中球:</span>
+          <span class="text-[11px] font-mono text-emerald-300">
+            {{ (datasourceMatrixReviewRow.hot_hit_balls || []).map(x => String(x).padStart(2,'0')).join(' ') || '—' }}
+          </span>
+        </div>
+      </div>
+      <div class="mt-4 p-3 rounded-xl border border-slate-700 bg-slate-900/50 text-[11px] text-slate-500"
+           v-else-if="datasourceReview && datasourceMatrixSelectedPeriod">
+        当前阵列期 {{ datasourceMatrixSelectedPeriod }} 不在近 {{ datasourceReviewPeriods }} 期 Walk-Forward 窗口内（或该期尚无开奖对账）。
+      </div>
+    </div>
+
+    <!-- 逐期流水 -->
+    <div class="glass-panel p-5">
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <h4 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+          <span>📋</span> 逐期样本外对账明细
+          <span class="text-[10px] text-slate-500 font-mono font-normal">
+            共 {{ datasourceReview?.rows?.length ?? '--' }} 期 · 点击行可跳转阵列期号
+          </span>
+        </h4>
+        <span class="text-[10px] text-slate-500">绿框 = 该码实开命中</span>
+      </div>
+
+      <div v-if="datasourceLoading" class="py-8 text-center text-slate-400 text-sm">正在计算 Walk-Forward 流水（屏蔽未来）...</div>
+      <div v-else-if="!datasourceReview || !datasourceReview.rows || !datasourceReview.rows.length"
+           class="py-8 text-center text-slate-500 text-sm">
+        暂无复盘数据，请点击「刷新复盘」
+      </div>
+      <div v-else class="overflow-x-auto max-h-[420px] overflow-y-auto">
+        <table class="w-full text-xs font-mono">
+          <thead class="sticky top-0 bg-slate-950 z-10">
+            <tr class="text-slate-400 border-b border-slate-800 text-left">
+              <th class="py-2.5 px-3">目标期 T</th>
+              <th class="py-2.5 px-3">锚定期 T-1</th>
+              <th class="py-2.5 px-3">爆发 Top5（无未来推演）</th>
+              <th class="py-2.5 px-3">命中</th>
+              <th class="py-2.5 px-3">实开节选</th>
+              <th class="py-2.5 px-3 text-right">状态</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/60">
+            <tr v-for="row in datasourceReview.rows" :key="'wf_'+row.target_period"
+                @click="jumpMatrixToReviewPeriod(row.target_period || row.period)"
+                class="hover:bg-slate-800/40 transition cursor-pointer"
+                :class="String(row.target_period || row.period) === String(datasourceMatrixSelectedPeriod) ? 'bg-cyan-500/10 ring-1 ring-inset ring-cyan-500/30' : ''">
+              <td class="py-2.5 px-3 font-bold text-amber-300">{{ row.target_period || row.period }}</td>
+              <td class="py-2.5 px-3 text-slate-400">{{ row.anchor_period || '--' }}</td>
+              <td class="py-2.5 px-3">
+                <div class="flex flex-wrap gap-1">
+                  <span v-for="b in (row.hot_top5 || row.top_hot || [])" :key="row.target_period+'_'+b"
+                        class="px-1.5 py-0.5 rounded text-[11px] font-bold"
+                        :class="(row.actual_numbers || []).includes(b) ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-slate-800 text-slate-400'">
+                    {{ String(b).padStart(2, '0') }}
+                  </span>
+                </div>
+              </td>
+              <td class="py-2.5 px-3">
+                <span class="px-2 py-0.5 rounded text-xs font-bold"
+                      :class="(row.hot_hits || 0) >= 2 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-slate-800 text-slate-300'">
+                  {{ row.hot_hits || 0 }} / 5
+                </span>
+              </td>
+              <td class="py-2.5 px-3 text-slate-500">
+                {{ (row.actual_numbers || []).slice(0, 8).map(x => String(x).padStart(2, '0')).join(' ') }}…
+              </td>
+              <td class="py-2.5 px-3 text-right">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold"
+                      :class="(row.hot_hits || 0) >= 1 ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'">
+                  {{ (row.hot_hits || 0) >= 1 ? '有命中' : '未命中' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

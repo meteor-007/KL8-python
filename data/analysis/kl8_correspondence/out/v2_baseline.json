@@ -1,0 +1,30 @@
+{
+ "r012": {
+  "n_templates": 360,
+  "theoretical": 0.3333333333333333,
+  "measured_mean": 0.332652,
+  "template_sd": 0.009993,
+  "theoretical_se": 0.010289,
+  "max_rate": 0.3554,
+  "min_rate": 0.307
+ },
+ "tailsize": {
+  "n_templates": 360,
+  "theoretical": 0.5,
+  "measured_mean": 0.498974,
+  "template_sd": 0.012092,
+  "theoretical_se": 0.010913,
+  "max_rate": 0.5331,
+  "min_rate": 0.4536
+ },
+ "ball_road_counts": {
+  "0": 26,
+  "1": 27,
+  "2": 27
+ },
+ "ball_road_props": {
+  "0": 0.325,
+  "1": 0.3375,
+  "2": 0.3375
+ }
+}

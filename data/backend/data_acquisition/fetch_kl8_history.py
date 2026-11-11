@@ -11,7 +11,9 @@ import requests
 import json
 import os
 import re
+import time
 import logging
+from typing import Optional
 from datetime import datetime
 
 logger = logging.getLogger("FetchKl8History")
@@ -126,29 +128,57 @@ def _validate_history_file(filepath: str) -> dict:
 
 
 def fetch_from_17500():
-    """从 17500 获取数据"""
+    """从 17500 获取数据。
+
+    2026-11-10：该接口已降为**备源**（CWL 升为主源），因为上游长期不可用
+    （实测 429 限流，或 HTTP 200 但 body 为 {"code":500,"msg":"Server internal error"}）。
+    原实现只在抛异常时打日志，非 200 / 业务错误码一律静默 return []，故障完全不可见；
+    现改为：完整浏览器头 + 429 重试 + 任何失败都显式告警。
+    """
     url = "https://m.17500.cn/tgj/api/kl8/getTbList"
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    try:
-        resp = requests.get(url, headers=headers, timeout=10)
-        if resp.status_code == 200:
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                      '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Referer': 'https://m.17500.cn/',
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'zh-CN,zh;q=0.9',
+        'X-Requested-With': 'XMLHttpRequest',
+    }
+    for attempt in (1, 2):
+        try:
+            resp = requests.get(url, headers=headers, timeout=12)
+            if resp.status_code == 429 and attempt == 1:
+                logger.warning("[17500] 429 限流，2 秒后重试一次")
+                time.sleep(2)
+                continue
+            if resp.status_code != 200:
+                logger.warning(f"[17500 备源] 不可用：HTTP {resp.status_code}"
+                               f"{'（本次抓取将失败）' if attempt == 2 else ''}")
+                return []
             data = resp.json()
-            if 'list' in data:
-                results = []
-                for item in data['list']:
-                    # 格式转化 (字段缺失/结构变化时跳过该条并告警, 避免 KeyError 崩溃)
-                    issue = item.get('qihao')
-                    opencode = item.get('opencode')
-                    opentime = item.get('opentime')
-                    if not issue or not opencode or not opentime:
-                        print(f"[17500] 跳过畸形记录: {item}")
-                        continue
-                    nums = opencode.replace(',', '-')
-                    date = opentime.split(' ')[0]
-                    results.append(f"date:{date},period:{issue},numbers:{nums}")
-                return results
-    except Exception as e:
-        print(f"[错误] 17500 API 获取失败: {e}")
+            if data.get('code') not in (0, '0', None):
+                logger.warning(f"[17500 备源] 返回业务错误 code={data.get('code')} msg={data.get('msg')}")
+                return []
+            if 'list' not in data:
+                logger.warning("[17500 备源] 响应缺少 list 字段")
+                return []
+            results = []
+            for item in data['list']:
+                # 格式转化 (字段缺失/结构变化时跳过该条并告警, 避免 KeyError 崩溃)
+                issue = item.get('qihao')
+                opencode = item.get('opencode')
+                opentime = item.get('opentime')
+                if not issue or not opencode or not opentime:
+                    print(f"[17500] 跳过畸形记录: {item}")
+                    continue
+                nums = opencode.replace(',', '-')
+                date = opentime.split(' ')[0]
+                results.append(f"date:{date},period:{issue},numbers:{nums}")
+            return results
+        except Exception as e:
+            logger.warning(f"[17500 备源] 请求异常：{type(e).__name__}: {e}")
+            if attempt == 2:
+                return []
     return []
 
 def fetch_from_cwl():
@@ -185,6 +215,134 @@ def fetch_from_cwl():
         print(f"[错误] CWL API 获取失败: {e}")
     return []
 
+
+def fetch_from_17500_static():
+    """17500 静态历史文件（备源一）。
+
+    2026-11-10 新增：这是与那个已失效的 JSON API 完全不同的端点，每天更新全量历史。
+    实测可用（2120 期，最新一期与本地库一致），作为 CWL 之后的第二道保险。
+
+    注意：该文件的 20 个号码是**升序排列**，不含真实出球顺序（kjhyjsx）。
+    因为增量写入只补本地没有的期号，正常情况下永远不会走到这里；
+    一旦真的走到，说明 CWL 也挂了，此时"有排序号码"远好过"没有数据"。
+    """
+    url = "https://data.17500.cn/kl8_asc.txt"
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                      '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Referer': 'https://www.17500.cn/',
+    }
+    try:
+        resp = requests.get(url, headers=headers, timeout=30)
+        if resp.status_code != 200:
+            logger.warning(f"[17500 静态] 不可用：HTTP {resp.status_code}")
+            return []
+        text = resp.content.decode('gbk', errors='replace')
+        results = []
+        for line in text.splitlines():
+            parts = line.split()
+            if len(parts) < 22:
+                continue
+            issue, date = parts[0], parts[1]
+            nums = parts[2:22]
+            if not issue.isdigit() or not re.match(r'\d{4}-\d{2}-\d{2}$', date):
+                continue
+            if len(nums) != 20 or any(not n.isdigit() for n in nums):
+                continue
+            results.append(f"date:{date},period:{issue},numbers:{'-'.join(nums)}")
+        if not results:
+            logger.warning("[17500 静态] 解析结果为空（文件格式可能已变更）")
+        return results
+    except Exception as e:
+        logger.warning(f"[17500 静态] 请求异常：{type(e).__name__}: {e}")
+        return []
+
+
+# ══════════════════════════════════════════════════════════
+# 抓取健康度与告警
+# ══════════════════════════════════════════════════════════
+# 为什么单独记一个状态文件：抓取是流水线第一步，一旦长期失败，下游全是旧数据，
+# 但历史文件本身还能读、数据校验也过得去 —— 只有"连续失败计数"能把它暴露出来。
+
+PRIMARY_SOURCE = "CWL 官方源"
+FETCH_FAIL_ALERT_DAYS = 2          # 连续失败达到该次数（每天跑一次 ≈ 天数）才升级告警
+
+
+def _health_file() -> str:
+    from utils.paths import get_cache_dir
+    return os.path.join(get_cache_dir(), "fetch_health.json")
+
+
+def _load_health() -> dict:
+    try:
+        p = _health_file()
+        if os.path.exists(p):
+            with open(p, "r", encoding="utf-8") as f:
+                return json.load(f) or {}
+    except Exception:
+        pass
+    return {}
+
+
+def _save_health(d: dict) -> None:
+    try:
+        p = _health_file()
+        os.makedirs(os.path.dirname(p), exist_ok=True)
+        with open(p, "w", encoding="utf-8") as f:
+            json.dump(d, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        logger.warning(f"[抓取健康度] 落盘失败: {e}")
+
+
+def _record_fetch_outcome(source: Optional[str], success: bool) -> None:
+    """记录本次抓取结果；连续失败达阈值时告警，恢复时发恢复通知。"""
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    d = _load_health()
+    if success:
+        prev_fail = int(d.get("consecutive_failures") or 0)
+        d.update({
+            "consecutive_failures": 0,
+            "last_success": now,
+            "last_source": source or "",
+        })
+        _save_health(d)
+        try:
+            from backend.utils.alerting import send_alert, LEVEL_INFO, LEVEL_WARN
+            if prev_fail >= FETCH_FAIL_ALERT_DAYS:
+                send_alert(
+                    "fetch_recovered", "开奖数据抓取已恢复",
+                    f"此前连续失败 {prev_fail} 次，本次已通过「{source}」成功抓取。",
+                    level=LEVEL_INFO, force=True,
+                )
+            elif source and not source.startswith(PRIMARY_SOURCE):
+                send_alert(
+                    "fetch_primary_degraded", "开奖数据主源降级",
+                    f"主源「{PRIMARY_SOURCE}」本次不可用，已自动切换到「{source}」。\n"
+                    f"数据不受影响，但主源需要关注。",
+                    level=LEVEL_WARN,
+                )
+        except Exception as e:
+            logger.warning(f"[抓取健康度] 告警投递失败: {e}")
+        return
+
+    n = int(d.get("consecutive_failures") or 0) + 1
+    d.update({"consecutive_failures": n, "last_failure": now})
+    _save_health(d)
+    logger.error(f"[抓取健康度] 全部数据源失败，连续第 {n} 次")
+    if n >= FETCH_FAIL_ALERT_DAYS:
+        try:
+            from backend.utils.alerting import send_alert, LEVEL_CRITICAL
+            send_alert(
+                "fetch_all_sources_failed", "开奖数据全部源抓取失败",
+                f"已连续 {n} 次抓取失败（CWL 主源 + 17500 静态备源 + 17500 JSON 备源全部不可用）。\n\n"
+                f"影响：历史库停在 {get_latest_issue_and_date() or '未知'}，"
+                f"下游所有模块将继续使用旧数据，请尽快人工介入补数据。",
+                level=LEVEL_CRITICAL, force=True,
+            )
+        except Exception as e:
+            logger.warning(f"[抓取健康度] 告警投递失败: {e}")
+
+
 def fetch_history():
     print(f"[抓取] 开始获取快乐8最新数据...")
     
@@ -196,15 +354,32 @@ def fetch_history():
                 m = re.search(r'period:(\d+)', line)
                 if m: existing_periods.add(m.group(1))
 
-    # 按照任务要求：优先使用 17500，若失败则 fallback 到 CWL
-    data_list = fetch_from_17500()
-    if not data_list:
-        print("[尝试] 17500 失败，尝试备选源 CWL...")
-        data_list = fetch_from_cwl()
+    # 2026-11-10 调整：CWL 官方源升为主源，17500 降为备源；并新增静态文件作第二备源。
+    # 理由：17500 的 JSON 接口已长期不可用（实测 429 限流 / HTTP 500 / body 报
+    # "Server internal error"），每天都要先失败一次再切换；CWL 一直稳定，
+    # 且提供 kjhyjsx 真实出球顺序，本来就比 17500 更权威。
+    # 三级链路：CWL → 17500 静态文件 → 17500 JSON，任何一级成功即止。
+    data_list = []
+    source_used = None
+    for source_name, fetcher in (
+        (PRIMARY_SOURCE, fetch_from_cwl),
+        ("17500 静态文件", fetch_from_17500_static),
+        ("17500 JSON API", fetch_from_17500),
+    ):
+        data_list = fetcher()
+        if data_list:
+            source_used = source_name
+            if source_name != PRIMARY_SOURCE:
+                logger.warning(f"[抓取] 主源不可用，已降级到「{source_name}」")
+            break
+        print(f"[尝试] {source_name} 失败，切换下一级...")
 
     if not data_list:
         print("[失败] 所有数据源均不可用。")
+        _record_fetch_outcome(None, success=False)
         return False
+
+    _record_fetch_outcome(source_used, success=True)
 
     # 增量处理
     new_entries = []
@@ -216,9 +391,14 @@ def fetch_history():
 
     if not new_entries:
         print("[完成] 数据已是最新，无需更新。")
-        # 即使无更新也做校验
+        # 即使无更新也做校验与特征表一致性同步
         v = _validate_history_file(HISTORY_FILE)
         print(f"[校验] 历史{v['total']}期, 最新={v['latest_issue']}({v['latest_date']}), 有效={v['valid']}")
+        try:
+            from backend.data_acquisition.generate_roads_and_prime_stats import sync_roads_and_prime_stats
+            sync_roads_and_prime_stats(history_file=HISTORY_FILE)
+        except Exception as e:
+            logger.warning(f"[012路与质合表同步] 联动异常: {e}")
         return True
 
     # ── 写入前校验新数据 ──
@@ -260,6 +440,31 @@ def fetch_history():
         print(f"[校验] ✅ 写入后验证通过: {v['total']}期, 最新={v['latest_issue']}({v['latest_date']})")
     else:
         print(f"[校验] ❌ 写入后验证失败: errors={v['errors'][:3]}")
+
+    # ── 自动联动同步 012路与质合特征汇总表 ──
+    try:
+        from backend.data_acquisition.generate_roads_and_prime_stats import sync_roads_and_prime_stats
+        sync_roads_and_prime_stats(history_file=HISTORY_FILE)
+    except Exception as e:
+        logger.warning(f"[012路与质合表同步] 联动异常: {e}")
+
+    # ── 新开奖入库后自动刷新 16期分桶/维度看板 ──
+    try:
+        from backend.modules.sixteen.run_daily import run_sixteen_pipeline
+        print("[联动] 刷新 16期中热操盘简报与分桶维度看板...")
+        run_sixteen_pipeline(verbose=False)
+        print("[联动] ✅ 16期模块已按最新开奖重算")
+    except Exception as e:
+        logger.warning(f"[16期模块联动] 刷新异常: {e}")
+
+    # ── 统一对账：对新开奖期做 settle（若已有预测快照）──
+    try:
+        from backend.modules.unified_audit.run_daily import run_settle
+        print("[联动] 统一对账 settle(latest)...")
+        ua = run_settle()
+        print(f"[联动] 统一对账: {ua.get('status')} {ua.get('message') or ua.get('target_period')}")
+    except Exception as e:
+        logger.warning(f"[统一对账联动] settle 异常: {e}")
 
     return v['valid']
 

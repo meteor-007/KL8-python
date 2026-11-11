@@ -1,0 +1,123 @@
+{
+ "Q1": {
+  "obs_small": 979,
+  "obs_big": 1122,
+  "n": 2101,
+  "obs_big_prop": 0.53403,
+  "tail_counts": {
+   "0": 174,
+   "1": 187,
+   "2": 194,
+   "3": 201,
+   "4": 223,
+   "5": 228,
+   "6": 245,
+   "7": 223,
+   "8": 205,
+   "9": 221
+  },
+  "mc_theory_tail_props": {
+   "0": 0.09943,
+   "1": 0.10053,
+   "2": 0.10046,
+   "3": 0.10071,
+   "4": 0.10032,
+   "5": 0.10049,
+   "6": 0.10028,
+   "7": 0.09982,
+   "8": 0.09825,
+   "9": 0.0997
+  },
+  "mc_theory_big_prop": 0.49854,
+  "z_vs_half": 3.12,
+  "p_vs_half": 0.001942,
+  "p_vs_mc_theory": 0.001149,
+  "conclusion": "理论分布本身接近均匀(0.4985)，实测偏差不能归因于理论不均匀"
+ },
+ "Q2": {
+  "p_value": 0.001942,
+  "table": [
+   {
+    "n_tests": 10,
+    "bonferroni_threshold": 0.005,
+    "bonferroni_significant": true,
+    "bh_threshold_if_smallest": 0.005,
+    "bh_significant": true
+   },
+   {
+    "n_tests": 20,
+    "bonferroni_threshold": 0.0025,
+    "bonferroni_significant": true,
+    "bh_threshold_if_smallest": 0.0025,
+    "bh_significant": true
+   },
+   {
+    "n_tests": 30,
+    "bonferroni_threshold": 0.001667,
+    "bonferroni_significant": false,
+    "bh_threshold_if_smallest": 0.001667,
+    "bh_significant": false
+   },
+   {
+    "n_tests": 50,
+    "bonferroni_threshold": 0.001,
+    "bonferroni_significant": false,
+    "bh_threshold_if_smallest": 0.001,
+    "bh_significant": false
+   },
+   {
+    "n_tests": 100,
+    "bonferroni_threshold": 0.0005,
+    "bonferroni_significant": false,
+    "bh_threshold_if_smallest": 0.0005,
+    "bh_significant": false
+   }
+  ],
+  "features_checked_in_this_report": ">=30（位次12 + 012路结构4 + 和值5 + 独立性约10）",
+  "note": "在 m>=30 时 Bonferroni 与 BH 均不显著"
+ },
+ "Q3": {
+  "autocorrelation": {
+   "1": 0.0135,
+   "2": 0.0083,
+   "3": 0.0087,
+   "5": -0.0009,
+   "10": 0.0189
+  },
+  "transition": {
+   "1": {
+    "n": 1122,
+    "p_big_next": 0.5401
+   },
+   "0": {
+    "n": 978,
+    "p_big_next": 0.5266
+   }
+  },
+  "chi2_transition": 0.3839,
+  "p_transition": 0.5355,
+  "segments": {
+   "前半": {
+    "p_big": 0.5476,
+    "n": 1050,
+    "p": 0.0022
+   },
+   "后半": {
+    "p_big": 0.5205,
+    "n": 1051,
+    "p": 0.1951
+   }
+  },
+  "conclusion": "自相关≈0.01，转移矩阵 p 不显著 → 该偏差对下一期无预测力"
+ },
+ "Q4": {
+  "triple_big": 1196647,
+  "triple_small": 1198493,
+  "total": 2395140,
+  "big_prop": 0.49961,
+  "deviation": -0.00039,
+  "p_value": 0.2332,
+  "conclusion": "三球和值尾数完全无偏(偏差-0.0004, p=0.23) → 整体和值的偏差无法迁移到规则B"
+ },
+ "summary": "整体和值尾数存在轻微偏差(z=3.12)，但不通过 m>=30 的多重校正、无自相关、且三球和值尾数完全无偏，故不可用于任何规则或下注"
+}

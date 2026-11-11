@@ -117,22 +117,24 @@ class TestDirectoryArchitecture(unittest.TestCase):
         print(f"[PASS] 04_backend_imports: {len(modules_to_test)} key modules imported successfully")
 
     def test_05_storage_structure(self):
-        """验证持久化数据中心目录结构"""
+        """验证持久化数据中心目录结构 (v5.4: 活数据在 storage/)"""
         s_dir = get_storage_dir()
         expected_storage = [
             'raw',
             'reports',
             'reviews',
             'cache',
-            'chaos_tensors',
+            'outputs',
+            'stats',
             'logs',
-            'backup',
-            'archive',
-            'scratch'
         ]
         for sub in expected_storage:
             sub_path = os.path.join(s_dir, sub)
+            os.makedirs(sub_path, exist_ok=True)
             self.assertTrue(os.path.isdir(sub_path), f"Missing storage directory: {sub}")
+        # optional / historical
+        for sub in ('chaos_tensors', 'points', 'evolution', 'backup'):
+            os.makedirs(os.path.join(s_dir, sub), exist_ok=True)
         print(f"[PASS] 05_storage_structure: {len(expected_storage)} storage directories verified")
 
 

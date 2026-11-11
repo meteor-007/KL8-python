@@ -7,8 +7,66 @@ const { createApp, ref, reactive, computed, watch, onMounted, onBeforeUnmount, n
 
 const App = {
   setup() {
-    // 侧边栏折叠状态
+    // ────────────── 全局双重环境感知机制 (Environment Detector) ──────────────
+    const detectIsMobile = () => {
+      if (typeof window === 'undefined') return false;
+      const isNarrow = window.innerWidth <= 1024;
+      const isTouch = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || ('ontouchstart' in window);
+      return isNarrow || isTouch;
+    };
+
+    const isMobile = ref(detectIsMobile());
+    const isDesktop = computed(() => !isMobile.value);
+
+    // 侧边栏折叠状态 (桌面端生效；移动端恒置 false，杜绝菜单文字坍塌)
     const isSidebarCollapsed = ref(false);
+    // 移动端侧边栏抽屉状态 (<=1024px 时生效，桌面端无副作用)
+    const isMobileSidebarOpen = ref(false);
+
+    // 同步将 is-mobile / is-desktop 样式类打在 <html> 和 <body> 上，驱动全局 CSS 自适应
+    const syncEnvironmentClasses = () => {
+      const mobileVal = detectIsMobile();
+      isMobile.value = mobileVal;
+      if (typeof document !== 'undefined') {
+        const root = document.documentElement;
+        const body = document.body;
+        if (mobileVal) {
+          root.classList.add('is-mobile');
+          root.classList.remove('is-desktop');
+          body.classList.add('is-mobile');
+          body.classList.remove('is-desktop');
+          isSidebarCollapsed.value = false;
+        } else {
+          root.classList.add('is-desktop');
+          root.classList.remove('is-mobile');
+          body.classList.add('is-desktop');
+          body.classList.remove('is-mobile');
+        }
+      }
+    };
+    syncEnvironmentClasses();
+
+    const toggleMobileSidebar = (forceState) => {
+      if (typeof forceState === 'boolean') {
+        isMobileSidebarOpen.value = forceState;
+      } else {
+        isMobileSidebarOpen.value = !isMobileSidebarOpen.value;
+      }
+      if (isMobileSidebarOpen.value) {
+        // 移动端展开抽屉时，强制保持非折叠，完整显示所有文字
+        isSidebarCollapsed.value = false;
+      }
+    };
+
+    // 统一侧边栏切换动作：移动端点击“收起侧边栏”直接关闭抽屉，桌面端切换折叠/展开
+    const handleSidebarToggle = () => {
+      if (isMobile.value || window.innerWidth <= 1024) {
+        isMobileSidebarOpen.value = false;
+        isSidebarCollapsed.value = false;
+      } else {
+        isSidebarCollapsed.value = !isSidebarCollapsed.value;
+      }
+    };
 
     // ──────────────── 0. 6 大系统主题状态与切换 ────────────────
     const themes = [
@@ -41,148 +99,374 @@ const App = {
       });
     };
 
-    // 多级菜单配置
-    const menuGroups = ref([
+    // 多级菜单：真源见 menu_registry.js（K8MenuRegistry）
+    const menuGroups = ref(
+      (window.K8MenuRegistry && typeof window.K8MenuRegistry.buildMenuGroups === 'function')
+        ? window.K8MenuRegistry.buildMenuGroups()
+        : []
+    );
+    const MENU_OPENED_STORAGE_KEY =
+      (window.K8MenuRegistry && window.K8MenuRegistry.MENU_OPENED_STORAGE_KEY) || 'k8.menu.opened.v6';
+
+    const persistMenuOpenedState = () => {
+      try {
+        const state = {};
+        menuGroups.value.forEach((g) => {
+          state[g.id] = !!g.opened;
+        });
+        localStorage.setItem(MENU_OPENED_STORAGE_KEY, JSON.stringify(state));
+      } catch (e) { /* ignore quota / private mode */ }
+    };
+
+    const isGroupActive = (group) => {
+      if (!group || !group.children) return false;
+      return group.children.some((c) => c.key === activeTab.value);
+    };
+
+    const expandMenuGroupForKey = (key) => {
+      const meta = (window.K8MenuRegistry && window.K8MenuRegistry.MENU_BY_KEY[key]) || null;
+      if (!meta || !meta.hub) return;
+      const group = menuGroups.value.find((g) => g.id === meta.hub);
+      if (group && !group.opened) {
+        group.opened = true;
+        persistMenuOpenedState();
+      }
+    };
+
+    // 动态 Tab：默认进入遗传算法（高维区仅保留 GA + 线性代数）
+    const _menuMeta = (key) => (window.K8MenuRegistry && window.K8MenuRegistry.MENU_BY_KEY[key]) || {};
+    const tabs = ref([
       {
-        id: 'stage1_data',
-        name: '1️⃣ 阶段一 · 数据同步与底座',
-        icon: '🔄',
-        opened: true,
-        children: [
-          { key: 'draw_trend_chart', title: '开奖号码全景走势图', icon: '📈', badge: '100期' },
-          { key: 'matrix_80', title: '80码全景热力矩阵', icon: '🌐', badge: '80' },
-          { key: 'tail_entropy', title: '尾数分布与香农熵', icon: '📊', badge: '尾数' },
-          { key: 'history_table', title: '历史开奖总库检索', icon: '📋', badge: '总库' }
-        ]
+        key: 'genetic_cockpit',
+        title: _menuMeta('genetic_cockpit').title || '遗传算法自进化推演战区',
+        shortTitle: _menuMeta('genetic_cockpit').shortTitle || '遗传算法',
+        icon: _menuMeta('genetic_cockpit').icon || '🧬',
+        closable: false
       },
       {
-        id: 'stage2_points',
-        name: '2️⃣ 阶段二 · 当期点位录入与画像',
-        icon: '📝',
-        opened: true,
-        children: [
-          { key: 'points_input', title: '每日点位录入管理', icon: '📝', badge: '录入' },
-          { key: 'points_cockpit', title: '空间重点点位决策大屏', icon: '🎯', badge: '4维' },
-          { key: 'points_matrix', title: '80点位全景精排矩阵', icon: '🌐', badge: '80' },
-          { key: 'suppression_cockpit', title: '未开点位高压反弹驾驶舱', icon: '🪞', badge: '反弹' },
-          { key: 'suppression_patterns', title: '影子替身与能量外溢模式', icon: '🪞', badge: '规律' }
-        ]
-      },
-      {
-        id: 'stage3_prediction',
-        name: '3️⃣ 阶段三 · 全模块核心量化推演',
-        icon: '⚡',
-        opened: true,
-        children: [
-          { key: 'modules_overview', title: '10大子系统预测全景大盘', icon: '🌐', badge: 'ALL' },
-          { key: 'live_cockpit', title: '实时主量化驾驶舱', icon: '⚡', badge: 'HOT' },
-          { key: 'gold_pairs', title: '今日极简选2 · 黄金搭档', icon: '👑', badge: '选2' },
-          { key: 'hidden_energy', title: '首席特供 Hidden Energy 5', icon: '🌟', badge: '5码' },
-          { key: 'pure_pool', title: '纯净池与LR定胆分析', icon: '🧪', badge: '冷号' },
-          { key: 'radar_view', title: 'EF/RW/FO 三维动能雷达', icon: '🧭', badge: '雷达' },
-          { key: 'lstm_cockpit', title: '双层LSTM时序决策大屏', icon: '🧠', badge: 'AI' },
-          { key: 'gold_pick2_cockpit', title: '定金选2决策驾驶舱', icon: '💎', badge: '选2' },
-          { key: 'gemini_cockpit', title: 'Gemini 选2多算子驾驶舱', icon: '🔮', badge: '算子' },
-          { key: 'jingle_cockpit', title: '顺口溜组合带出研判', icon: '📜', badge: '口诀' },
-          { key: 'jingle_rules_lib', title: '90条精英口诀规则库', icon: '📖', badge: '90条' },
-          { key: 'follow_cockpit', title: '跟班跟随分析决策舱', icon: '🔗', badge: '跟随' },
-          { key: 'follow_conditions', title: '条件跟随多窗明细', icon: '🔍', badge: '5对' },
-          { key: 'sixteen_cockpit', title: '16期中热频次推演驾驶舱', icon: '🔥', badge: '稳健' },
-          { key: 'sixteen_dist', title: '1~8+频次分桶大盘光谱', icon: '📊', badge: '光谱' },
-          { key: 'sixteen_matrix', title: '80码16期频次全景', icon: '🌐', badge: '80' },
-          { key: 'kill_cockpit', title: 'KillSeeker 核心杀号大屏', icon: '⚔️', badge: '杀25' },
-          { key: 'agg_cockpit', title: '终审共识多维汇总决策', icon: '🧬', badge: '终审' }
-        ]
-      },
-      {
-        id: 'stage4_dispatch',
-        name: '4️⃣ 阶段四 · 自动化全流程调度',
-        icon: '💻',
-        opened: true,
-        children: [
-          { key: 'live_terminal', title: '流水线黑客实时日志终端', icon: '💻', badge: 'LIVE' },
-          { key: 'model_tuning', title: '三维权重动态调优配置', icon: '⚙️', badge: '调参' }
-        ]
-      },
-      {
-        id: 'stage5_review',
-        name: '5️⃣ 阶段五 · 自主复盘与研报总账本',
-        icon: '📋',
-        opened: true,
-        children: [
-          { key: 'daily_reviews_ledger', title: '每日自学习自动复盘总账本', icon: '📋', badge: '47+' },
-          { key: 'hit_rate_trends', title: '历史 25 期命中率走势', icon: '📉', badge: '走势' },
-          { key: 'reports_browser', title: '每日综合研判大研报总库', icon: '📑', badge: '150+' },
-          { key: 'lstm_review', title: '双层LSTM 样本外滚动复盘', icon: '🧠', badge: 'WF' },
-          { key: 'lstm_reports', title: '双层LSTM 深度时序研报库', icon: '📑', badge: 'LSTM' },
-          { key: 'points_review', title: '重点点位 样本外滚动复盘', icon: '🎯', badge: 'WF' },
-          { key: 'suppression_review', title: '未开反弹 样本外滚动复盘', icon: '🪞', badge: 'WF' },
-          { key: 'gold_pick2_review', title: '定金选2 样本外滚动复盘', icon: '💎', badge: 'WF' },
-          { key: 'gold_pick2_logs', title: '定金选2 历史研报中心', icon: '📑', badge: '' },
-          { key: 'gemini_review', title: 'Gemini选2 样本外滚动复盘', icon: '🔮', badge: 'WF' },
-          { key: 'gemini_history', title: 'Gemini选2 每日预测研报库', icon: '📑', badge: '' },
-          { key: 'jingle_review', title: '顺口溜口诀 样本外滚动复盘', icon: '📜', badge: 'WF' },
-          { key: 'follow_review', title: '跟随分析 样本外滚动复盘', icon: '🔗', badge: 'WF' },
-          { key: 'sixteen_review', title: '16期中热 样本外滚动复盘', icon: '🔥', badge: 'WF' },
-          { key: 'sixteen_reports', title: '16期中热 历史研报总库', icon: '📑', badge: '' },
-          { key: 'kill_review', title: 'KillSeeker 杀号对账复盘', icon: '⚔️', badge: '75%+' },
-          { key: 'kill_logs', title: 'KillSeeker 杀号控制研报中心', icon: '📑', badge: '' },
-          { key: 'agg_reports', title: '终审共识 每日战报总库', icon: '📑', badge: '' }
-        ]
+        key: 'sixteen_cockpit',
+        title: _menuMeta('sixteen_cockpit').title || '16期中热频次推演（含频次全景）',
+        shortTitle: _menuMeta('sixteen_cockpit').shortTitle || '16期中热推演',
+        icon: _menuMeta('sixteen_cockpit').icon || '🔥',
+        closable: true
       }
     ]);
-
-    // 动态 Tab 标签页管理
-    const tabs = ref([
-      { key: 'live_cockpit', title: '实时量化驾驶舱', icon: '⚡', closable: false }
-    ]);
-    const activeTab = ref('live_cockpit');
+    const activeTab = ref('genetic_cockpit');
+    expandMenuGroupForKey(activeTab.value);
 
     watch(activeTab, (newTab) => {
+      if (newTab === 'modules_overview') {
+        fetchAllAiMathModels();
+      }
+      if (newTab === 'classic_overview') {
+        fetchAllClassicModels();
+      }
+      if (newTab === 'draw_trend_chart') {
+        fetchLotteryTrends(trendLimit.value || 100);
+        fetchModuleConsensus();
+        setTimeout(() => {
+          const el = document.getElementById('trendTableWrapper');
+          if (el) el.scrollTop = el.scrollHeight;
+        }, 120);
+      }
+      if (newTab === 'points_matrix' && (!spatialPointsMatrix.value || spatialPointsMatrix.value.length === 0)) {
+        fetchSpatialPointsMatrix();
+      }
+      if (newTab === 'unified_brain_cockpit') {
+        fetchUnifiedBrain();
+      }
+      if (newTab === 'nightly_scheduler') {
+        fetchEvolutionStatus();
+        fetchSchedulerStatus();
+      }
+      if (newTab === 'tri_high_input') {
+        fetchTriHighHistory();
+        fetchTriHighSummary();
+      }
+      if (newTab === 'psychological_game') {
+        fetchPsychologicalGameData();
+        fetchPsychologicalGameBacktest();
+      }
+      if (newTab === 'point_omission_cockpit') {
+        fetchPointOmissionSummary();
+        fetchPointOmissionBacktest();
+        fetchPointOmissionHitLedger();
+      }
+      if (newTab === 'genetic_cockpit') {
+        fetchGeneticData();
+        fetchGeneticReview();
+      }
+      if (newTab === 'linear_algebra_cockpit') {
+        fetchLinearAlgebraData();
+      }
+      if (newTab === 'random_forest_cockpit') {
+        fetchRandomForestData();
+      }
+      if (newTab === 'error_correction_cockpit') {
+        fetchErrorCorrectionData();
+      }
+      if (newTab === 'spear_shield_cockpit') {
+        fetchSpearShieldData();
+      }
+      if (newTab === 'point_road_cockpit') {
+        fetchPointRoadData();
+      }
+      if (newTab === 'sixteen_cockpit' || newTab === 'sixteen_dist') {
+        fetchSixteenSummary(!sixteenSummary?.value?.daily_ops_brief);
+      }
+      if (newTab === 'dtw_cockpit') {
+        fetchDTWData();
+      }
+      if (newTab === 'transformer_cockpit') {
+        fetchTransformerData();
+      }
+      if (newTab === 'matrix_profile_cockpit') {
+        fetchMatrixProfileData();
+      }
+      if (newTab === 'tda_cockpit') {
+        fetchTDAData();
+      }
       nextTick(() => {
         handleResize();
         if (newTab === 'sixteen_dist') {
           updateSixteenDistChart();
+        }
+        if (newTab === 'genetic_cockpit') {
+          initGeneticConvergenceChart();
+          initGeneticRadarChart();
         }
       });
     });
 
     const toggleGroup = (group) => {
       group.opened = !group.opened;
+      persistMenuOpenedState();
     };
 
-    const openTab = (key, title, icon = '📄') => {
+    const toggleAllGroups = (expandAll) => {
+      const targetState = typeof expandAll === 'boolean' ? expandAll : !menuGroups.value.every(g => g.opened);
+      menuGroups.value.forEach(g => {
+        g.opened = targetState;
+      });
+      persistMenuOpenedState();
+    };
+
+    // 旧「复盘审计」独立 tab → 对应模块驾驶舱（复盘已迁入页内，不再单独开菜单）
+    const REVIEW_TAB_ALIASES = {
+      gold_pick2_review: 'gold_pick2_cockpit',
+      sixteen_review: 'sixteen_cockpit',
+      datasource_review: 'datasource_matrix',
+      suppression_review: 'suppression_cockpit',
+      jingle_review: 'jingle_cockpit',
+      master_review_cockpit: 'genetic_cockpit',
+      lstm_review: 'lstm_cockpit',
+      follow_review: 'follow_cockpit',
+      points_review: 'points_cockpit',
+      gemini_review: 'gemini_cockpit',
+      sixteen_matrix: 'sixteen_cockpit'
+    };
+
+    // 模块页内复盘锚点（openModuleHistory 滚到此处）
+    const MODULE_REVIEW_ANCHORS = {
+      gold_pick2_cockpit: 'module-review-gold_pick2',
+      sixteen_cockpit: 'module-review-sixteen-matrix',
+      sixteen_matrix: 'module-review-sixteen-matrix',
+      datasource_cockpit: 'module-review-datasource-matrix',
+      datasource_matrix: 'module-review-datasource-matrix',
+      suppression_cockpit: 'module-review-suppression',
+      jingle_cockpit: 'module-review-jingle',
+      psychological_game: 'module-review-psychological_game',
+      genetic_cockpit: 'module-review-genetic',
+      linear_algebra_cockpit: 'module-review-linear_algebra',
+      random_forest_cockpit: 'module-review-random_forest',
+      error_correction_cockpit: 'module-review-error-correction'
+    };
+
+    const openTab = (key, title, icon) => {
+      if (REVIEW_TAB_ALIASES[key]) {
+        const target = REVIEW_TAB_ALIASES[key];
+        openTab(target, title, icon);
+        const anchor = MODULE_REVIEW_ANCHORS[target];
+        if (anchor) {
+          nextTick(() => {
+            setTimeout(() => {
+              const el = document.getElementById(anchor);
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 80);
+          });
+        }
+        return;
+      }
+      const meta = (window.K8MenuRegistry && window.K8MenuRegistry.MENU_BY_KEY[key]) || {};
+      const resolvedTitle = title || meta.title || key;
+      const resolvedShortTitle = meta.shortTitle || resolvedTitle;
+      const resolvedIcon = icon || meta.icon || '📄';
       const existing = tabs.value.find(t => t.key === key);
       if (!existing) {
-        tabs.value.push({ key, title, icon, closable: key !== 'live_cockpit' });
+        tabs.value.push({
+          key,
+          title: resolvedTitle,
+          shortTitle: resolvedShortTitle,
+          icon: resolvedIcon,
+          closable: key !== 'live_cockpit'
+        });
+      } else {
+        if (!title && meta.title && existing.title !== meta.title) {
+          // 侧栏真源标题优先，纠正历史硬编码漂移
+          existing.title = meta.title;
+          if (meta.icon) existing.icon = meta.icon;
+        }
+        if (meta.shortTitle) existing.shortTitle = meta.shortTitle;
+        else if (!existing.shortTitle) existing.shortTitle = existing.title;
       }
       activeTab.value = key;
+      expandMenuGroupForKey(key);
+      // 移动端：点击菜单后自动收起抽屉式侧边栏
+      isMobileSidebarOpen.value = false;
       if (key === 'lstm_cockpit') {
         fetchLstmSummary();
       } else if (key === 'lstm_review') {
         fetchLstmReview(lstmReviewPeriods.value);
       } else if (key === 'lstm_reports') {
         fetchLstmReports();
+      } else if (key === 'jingle_cockpit') {
+        fetchJingleSummary();
+        fetchJingleRules();
+        fetchJingleReview(jingleReviewPeriods.value);
       } else if (key === 'jingle_review') {
         fetchJingleReview(jingleReviewPeriods.value);
+      } else if (key === 'follow_cockpit') {
+        fetchFollowSummary();
+        fetchFollowConditions();
       } else if (key === 'follow_review') {
         fetchFollowReview(followReviewPeriods.value);
+      } else if (key === 'points_cockpit') {
+        fetchSpatialPointsSummary();
+        fetchSpatialPointsMatrix();
+        fetchDailyPointsInfo();
+      } else if (key === 'points_matrix') {
+        fetchSpatialPointsMatrix();
+      } else if (key === 'points_review') {
+        fetchSpatialPointsReview(pointsReviewPeriods.value);
+      } else if (key === 'suppression_cockpit') {
+        fetchSuppressionSummary();
+        fetchSuppressionPatterns();
+        fetchSuppressionReview(suppressionReviewPeriods.value);
+      } else if (key === 'point_omission_cockpit') {
+        fetchPointOmissionSummary();
+        fetchPointOmissionBacktest();
+        fetchPointOmissionHitLedger();
+      } else if (key === 'suppression_review') {
+        fetchSuppressionReview(suppressionReviewPeriods.value);
+      } else if (key === 'gold_pick2_cockpit') {
+        fetchGoldPick2Summary();
+        fetchGoldPick2Matrix();
+        fetchGoldPick2Logs();
+        fetchGoldPick2Review(goldPick2ReviewPeriods.value);
+      } else if (key === 'gold_pick2_review') {
+        fetchGoldPick2Review(goldPick2ReviewPeriods.value);
+      } else if (key === 'gemini_cockpit') {
+        fetchGeminiSummary();
+        fetchGeminiHistory();
+      } else if (key === 'gemini_review') {
+        fetchGeminiReview(geminiReviewPeriods.value);
+      } else if (key === 'datasource_cockpit') {
+        fetchDatasourceSummary();
+        fetchDatasourceReview(30);
+      } else if (key === 'reports_browser') {
+        fetchReportList();
       } else if (key === 'daily_reviews_ledger') {
         fetchReviewsLedger(reviewsLedgerLimit.value);
+      } else if (key === 'tail_entropy') {
+        fetchPrimeCompositeData();
       } else if (key === 'modules_overview') {
-        fetchAllModulesOverview();
+        // 本页是六大高维数学/AI 综合大盘：只拉 AI 模型与共识，绝不触发全流程 pipeline
+        fetchAllAiMathModels();
+      } else if (key === 'classic_overview') {
+        // 经典量化汇总大盘：并行拉七大子模块摘要，不自动跑 pipeline
+        fetchAllClassicModels();
+      } else if (key === 'meta_gold_cockpit') {
+        fetchMetaGoldSummary();
+        fetchMetaGoldReview(metaGoldReviewPeriods.value);
+      } else if (key === 'funnel_cockpit') {
+        fetchFunnelSummary();
+        fetchFunnelReview(funnelReviewPeriods.value);
+      } else if (key === 'env_regime') {
+        fetchEnvRegimeSummary();
+      } else if (key === 'fdr_audit') {
+        fetchFdrAuditSummary(fdrAuditPeriods.value);
+      } else if (key === 'paper_trading') {
+        fetchPaperTradingSummary(paperTradingRolling.value);
       } else if (key === 'agg_cockpit') {
         fetchAggCockpit();
       } else if (key === 'agg_reports') {
         fetchAggHistory();
       } else if (key === 'sixteen_cockpit' || key === 'sixteen_matrix') {
-        fetchSixteenSummary();
+        fetchSixteenSummary(!(sixteenSummary && sixteenSummary.value && sixteenSummary.value.daily_ops_brief));
+        fetchSixteenReview(sixteenReviewPeriods.value);
       } else if (key === 'sixteen_dist') {
-        fetchSixteenSummary();
+        fetchSixteenSummary(!(sixteenSummary && sixteenSummary.value && sixteenSummary.value.daily_ops_brief));
       } else if (key === 'sixteen_review') {
         fetchSixteenReview(sixteenReviewPeriods.value);
       } else if (key === 'sixteen_reports') {
         fetchSixteenHistory();
+      } else if (key === 'genetic_cockpit') {
+        fetchGeneticData();
+        fetchGeneticReview();
+      } else if (key === 'linear_algebra_cockpit') {
+        fetchLinearAlgebraData();
+      } else if (key === 'random_forest_cockpit') {
+        fetchRandomForestData();
+      } else if (key === 'error_correction_cockpit') {
+        fetchErrorCorrectionData();
+      } else if (key === 'spear_shield_cockpit') {
+        fetchSpearShieldData();
+      } else if (key === 'point_road_cockpit') {
+        fetchPointRoadData();
+      } else if (key === 'dtw_cockpit') {
+        fetchDTWData();
+      } else if (key === 'transformer_cockpit') {
+        fetchTransformerData();
+      } else if (key === 'matrix_profile_cockpit') {
+        fetchMatrixProfileData();
+      } else if (key === 'tda_cockpit') {
+        fetchTDAData();
+      } else if (key === 'hit_leaderboard') {
+        fetchHitLeaderboard(hitRange.value);
+      } else if (key === 'nightly_scheduler') {
+        fetchSchedulerStatus();
+        fetchEvolutionStatus();
+      } else if (key === 'datasource_review') {
+        fetchDatasourceReview(30);
+      } else if (key === 'datasource_matrix') {
+        // 始终拉跟随表最新期，避免本地粘住上一开奖期
+        datasourceMatrixSelectedPeriod.value = '';
+        fetchDatasourceMatrix(null);
+        fetchDatasourceSummary();
+        fetchDatasourceReview(datasourceReviewPeriods.value || 30);
+        fetchDailyPointsInfo();
+      } else if (key === 'master_review_cockpit') {
+        fetchMasterReview(masterReviewPeriods.value || 30);
+      } else if (key === 'unified_brain_cockpit') {
+        fetchUnifiedBrain();
+      } else if (key === 'draw_trend_chart') {
+        fetchLotteryTrends(100);
+        fetchModuleConsensus();
+      } else if (key === 'matrix_80') {
+        fetchMatrixData();
+        // 合页另一半：预拉 012/尾数，切账本页签更快
+        if (typeof fetchPrimeCompositeData === 'function') fetchPrimeCompositeData();
+      } else if (key === 'history_table') {
+        fetchHistoryTable(1);
+      } else if (key === 'points_input') {
+        fetchDailyPointsInfo();
+        fetchDailyPointsHistory(30);
+      } else if (key === 'tri_high_input') {
+        fetchTriHighHistory();
+        fetchTriHighSummary();
+      } else if (key === 'psychological_game') {
+        fetchPsychologicalGameData();
+        fetchPsychologicalGameBacktest();
       }
       // 切换标签后重新调整图表尺寸与主题
       nextTick(() => {
@@ -199,23 +483,151 @@ const App = {
       }
     };
 
+    // 模块「历史复盘」：优先滚到页内锚点；无锚点时再打开遗留总库页（研报等）
+    const MODULE_HISTORY = {
+      live_cockpit:       { key: 'daily_reviews_ledger', title: '每日自学习自动复盘总账本', icon: '📜' },
+      modules_overview:   { key: 'genetic_cockpit',      title: '遗传算法自进化推演战区',     icon: '🧬' },
+      classic_overview:   { key: 'reports_browser',      title: '每日综合研判大研报总库',     icon: '📜' },
+      meta_gold_cockpit:  { key: 'agg_reports',         title: '策略汇总 历史战报记录',       icon: '📜' },
+      funnel_cockpit:     { key: 'daily_reviews_ledger', title: '每日自学习自动复盘总账本', icon: '📜' },
+      agg_cockpit:        { key: 'agg_reports',         title: '策略汇总 历史战报记录',       icon: '📜' }
+    };
+
+    const openModuleHistory = (key) => {
+      // 数据源 / 16期复盘主阵地迁到对应全景页
+      const tabRedirect = {
+        datasource_cockpit: 'datasource_matrix',
+        sixteen_matrix: 'sixteen_cockpit'
+      };
+      const tabKey = tabRedirect[key] || key;
+      const anchor = MODULE_REVIEW_ANCHORS[key] || MODULE_REVIEW_ANCHORS[tabKey];
+      if (anchor) {
+        openTab(tabKey);
+        nextTick(() => {
+          setTimeout(() => {
+            const el = document.getElementById(anchor);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 120);
+        });
+        return;
+      }
+      const h = MODULE_HISTORY[key];
+      if (h) openTab(h.key, h.title, h.icon);
+    };
+
+    // ────────────── Tab 标签页高级管理与右键快捷菜单 ──────────────
+    const tabContextMenu = reactive({
+      visible: false,
+      x: 0,
+      y: 0,
+      tab: null
+    });
+
+    const openTabContextMenu = (e, tab) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      tabContextMenu.visible = true;
+      const menuWidth = 160;
+      const menuHeight = 220;
+      const posX = (e ? e.clientX : 0) + menuWidth > window.innerWidth ? Math.max(10, window.innerWidth - menuWidth - 15) : (e ? e.clientX : 0);
+      const posY = (e ? e.clientY : 0) + menuHeight > window.innerHeight ? Math.max(10, window.innerHeight - menuHeight - 15) : (e ? e.clientY : 0);
+      tabContextMenu.x = posX;
+      tabContextMenu.y = posY;
+      tabContextMenu.tab = tab;
+    };
+
+    const closeTabContextMenu = () => {
+      tabContextMenu.visible = false;
+      tabContextMenu.tab = null;
+    };
+
     const closeTab = (key) => {
+      closeTabContextMenu();
       const idx = tabs.value.findIndex(t => t.key === key);
       if (idx === -1) return;
       tabs.value.splice(idx, 1);
       if (activeTab.value === key) {
-        activeTab.value = tabs.value[Math.max(0, idx - 1)].key;
+        if (tabs.value.length > 0) {
+          activeTab.value = tabs.value[Math.max(0, idx - 1)].key;
+        } else {
+          // 兜底：若所有标签均被移除，则恢复默认主全景
+          tabs.value.push({
+            key: 'genetic_cockpit',
+            title: _menuMeta('genetic_cockpit').title || '遗传算法',
+            icon: _menuMeta('genetic_cockpit').icon || '🧬',
+            closable: false
+          });
+          activeTab.value = 'genetic_cockpit';
+        }
       }
       nextTick(() => { handleResize(); });
     };
 
-    const closeOtherTabs = () => {
-      tabs.value = tabs.value.filter(t => t.key === activeTab.value || !t.closable);
+    const closeOtherTabs = (targetKey) => {
+      closeTabContextMenu();
+      const keepKey = targetKey || activeTab.value;
+      tabs.value = tabs.value.filter(t => t.key === keepKey || !t.closable);
+      if (!tabs.value.some(t => t.key === keepKey)) {
+        if (tabs.value.length > 0) {
+          activeTab.value = tabs.value[0].key;
+        }
+      } else {
+        activeTab.value = keepKey;
+      }
+      nextTick(() => { handleResize(); });
     };
 
+    const closeRightTabs = (targetKey) => {
+      closeTabContextMenu();
+      const keepKey = targetKey || activeTab.value;
+      const idx = tabs.value.findIndex(t => t.key === keepKey);
+      if (idx === -1) return;
+      tabs.value = tabs.value.filter((t, i) => i <= idx || !t.closable);
+      if (!tabs.value.some(t => t.key === activeTab.value)) {
+        activeTab.value = keepKey;
+      }
+      nextTick(() => { handleResize(); });
+    };
+
+    const closeLeftTabs = (targetKey) => {
+      closeTabContextMenu();
+      const keepKey = targetKey || activeTab.value;
+      const idx = tabs.value.findIndex(t => t.key === keepKey);
+      if (idx === -1) return;
+      tabs.value = tabs.value.filter((t, i) => i >= idx || !t.closable);
+      if (!tabs.value.some(t => t.key === activeTab.value)) {
+        activeTab.value = keepKey;
+      }
+      nextTick(() => { handleResize(); });
+    };
+
+    /**
+     * 【一键关闭全部 Tab 标签页】
+     * 规则：一键清除所有已打开的可关闭标签页，平滑恢复至系统预测全景主驾驶舱，瞬间清爽
+     */
     const closeAllTabs = () => {
+      closeTabContextMenu();
       tabs.value = tabs.value.filter(t => !t.closable);
-      activeTab.value = 'live_cockpit';
+      if (tabs.value.length === 0) {
+        tabs.value.push({
+          key: 'genetic_cockpit',
+          title: _menuMeta('genetic_cockpit').title || '遗传算法',
+          icon: _menuMeta('genetic_cockpit').icon || '🧬',
+          closable: false
+        });
+      }
+      activeTab.value = tabs.value[0].key;
+      nextTick(() => { handleResize(); });
+    };
+
+    const refreshCurrentTab = (targetKey) => {
+      closeTabContextMenu();
+      const key = targetKey || activeTab.value;
+      if (key) {
+        switchTab(key);
+      }
     };
 
     // ──────────────── 业务数据状态 ────────────────
@@ -233,8 +645,11 @@ const App = {
     const prediction = ref({
       period: '---',
       date: '---',
-      golden_pair: [0, 0],
+      golden_pair: [],
       golden_pair_reason: '加载中...',
+      golden_pair_score: null,
+      golden_pair_lift: null,
+      golden_pair_cooc: null,
       top5_gold: [],
       top12_pool: [],
       golden_core: [],
@@ -248,10 +663,282 @@ const App = {
     });
 
     const matrixData = ref([]);
+    const hitLeaderboard = ref(null);
+    const hitLoading = ref(false);
+    const hitRange = ref(10);
+    const hitSortKey = ref('rate'); // 'rate' | 'count'
+
+    // 命中榜单排序（默认按最新期命中率降序）
+    const hitSortedModules = computed(() => {
+      const lb = hitLeaderboard.value;
+      if (!lb || !lb.modules) return [];
+      const rate = (m) => (m.latest && m.latest.hit_rate != null) ? m.latest.hit_rate : 0;
+      const count = (m) => (m.latest && m.latest.hit_count != null) ? m.latest.hit_count : 0;
+      const arr = [...lb.modules];
+      arr.sort((a, b) => {
+        const ka = a.pick_type === 'kill' ? 1 : 0;
+        const kb = b.pick_type === 'kill' ? 1 : 0;
+        if (ka !== kb) return ka - kb; // 荐号类排前，杀号类整体排后
+        return hitSortKey.value === 'count' ? count(b) - count(a) : rate(b) - rate(a);
+      });
+      return arr;
+    });
+
+    // 热力矩阵辅助：取模块在指定期的命中率 / 命中率配色
+    const hitRateOf = (m, period) => {
+      if (!m || !m.series) return null;
+      const e = m.series.find(x => x.period === period);
+      return e && e.hit_rate != null ? e.hit_rate : null;
+    };
+    const hitColor = (rate) => {
+      if (rate == null) return 'rgba(15,23,42,0.55)';
+      if (rate >= 75) return 'rgba(16,185,129,0.85)';
+      if (rate >= 50) return 'rgba(6,182,212,0.72)';
+      if (rate >= 25) return 'rgba(245,158,11,0.6)';
+      return 'rgba(239,68,68,0.55)';
+    };
+    const hitRateOfColor = hitColor;
     const tailStats = ref([]);
     const zoneStats = ref([]);
     const trendStats = ref(null);
-    const activeFilter = ref('all');
+    const activeFilter = ref('all'); // 兼容实时驾驶舱等旧单选绑定
+    const activeFilters = ref([]); // 矩阵多选池筛选：[]=全部；可同时含 top5/top12/cold/hot
+    const matrixFilterMode = ref('or'); // or=任一命中 | and=同时命中
+    const matrixMorphFilters = reactive({ roads: [], primes: [], zones: [] });
+    // 基础形态叠层：分区 / 012路 / 质合（与池筛选独立，纯前端按号码推算）
+    const matrixDimOverlay = ref('none'); // none | zone | road012 | prime
+    const primeCompositeData = ref(null);
+    const primeCompositeLoading = ref(false);
+    const primeCompositeRefreshMsg = ref('');
+    const psychologicalGameData = ref(null);
+    const psychologicalGameLoading = ref(false);
+    const psychologicalGameBacktest = ref(null);
+    const psychologicalGameBacktestLoading = ref(false);
+    const psychologicalGameBacktestWindow = ref('last_100');
+
+    // 09. 遗传算法自进化推演状态
+    const geneticData = ref(null);
+    const geneticReviewData = ref(null);
+    const isGeneticRunning = ref(false);
+    let gaConvergenceChart = null;
+    let gaRadarChart = null;
+
+    // 10. 线性代数空间投影量化推演状态
+    const linearAlgebraData = ref(null);
+    const linearAlgebraReviewData = ref(null);
+    const isLinearAlgebraRunning = ref(false);
+    const linearAlgebraLoading = ref(false);
+
+    // 随机森林号码预测
+    const randomForestData = ref(null);
+    const randomForestReviewData = ref(null);
+    const isRandomForestRunning = ref(false);
+    const randomForestLoading = ref(false);
+
+    // 残差改错 GBDT
+    const errorCorrectionData = ref(null);
+    const errorCorrectionReviewData = ref(null);
+    const isErrorCorrectionRunning = ref(false);
+    const errorCorrectionLoading = ref(false);
+
+    // 一胆拖三盾 · 选2组合拳 (2026-10-22 补齐独立驾驶舱)
+    const spearShieldData = ref(null);
+    const spearShieldReviewData = ref(null);
+    const spearShieldLoading = ref(false);
+    const spearShieldRerunning = ref(false);
+
+    // 点位012偏态压缩器 (2026-10-22 补齐独立驾驶舱)
+    const pointRoadData = ref(null);
+    const pointRoadReviewData = ref(null);
+    const pointRoadLoading = ref(false);
+
+    // 11. 动态时间规整 DTW 推演状态
+    const dtwData = ref(null);
+    const dtwReviewData = ref(null);
+    const dtwLoading = ref(false);
+
+    // 12. Transformer 全局自注意力推演状态
+    const transformerData = ref(null);
+    const transformerReviewData = ref(null);
+    const transformerLoading = ref(false);
+
+    // 13. 矩阵轮廓 Matrix Profile 查重状态
+    const matrixProfileData = ref(null);
+    const matrixProfileReviewData = ref(null);
+    const matrixProfileLoading = ref(false);
+
+    // 14. 拓扑数据分析 TDA 持续同调状态
+    const tdaData = ref(null);
+    const tdaReviewData = ref(null);
+    const tdaLoading = ref(false);
+
+    // ═════════════════ 六大高维数学与AI模型超级共识计算 ═════════════════
+    const aiResonanceSortMode = ref('score');
+    const aiMathLoading = ref(false);
+    const aiMathConsensusReviewData = ref(null);
+
+
+    const activeAiModelCount = computed(() => {
+      let count = 0;
+      if (geneticData.value) count++;
+      if (linearAlgebraData.value) count++;
+      if (dtwData.value) count++;
+      if (transformerData.value) count++;
+      if (matrixProfileData.value) count++;
+      if (tdaData.value) count++;
+      return count;
+    });
+
+    const aiMathConsensus = computed(() => {
+      // 80 码共振得分与投票追踪
+      const balls = Array.from({ length: 80 }, (_, i) => ({
+        ball: i + 1,
+        score: 0.0,
+        vote_count: 0,
+        sources: [],
+        is_gold: false,
+        in_top5: false,
+        in_top12: false,
+        is_killed: false
+      }));
+
+      const addModuleVotes = (data, code, weight = 1.0) => {
+        if (!data) return;
+        const top5 = data.top5_gold || data.top5_assault || [];
+        const top12 = data.top12_elite || data.top12_balanced || [];
+
+        top5.forEach((b, idx) => {
+          if (b >= 1 && b <= 80) {
+            const item = balls[b - 1];
+            item.score += (5.0 - idx * 0.5) * weight;
+            item.vote_count += 1;
+            if (!item.sources.includes(code)) item.sources.push(code);
+          }
+        });
+
+        top12.forEach((b, idx) => {
+          if (b >= 1 && b <= 80 && !top5.includes(b)) {
+            const item = balls[b - 1];
+            item.score += (2.5 - idx * 0.15) * weight;
+            item.vote_count += 1;
+            if (!item.sources.includes(code)) item.sources.push(code);
+          }
+        });
+      };
+
+      // 汇总 6 大前沿数学与AI模型
+      addModuleVotes(geneticData.value, 'GA', 1.05);
+      addModuleVotes(linearAlgebraData.value, 'SVD', 1.0);
+      addModuleVotes(dtwData.value, 'DTW', 1.0);
+      addModuleVotes(transformerData.value, 'TRANS', 1.0);
+      addModuleVotes(matrixProfileData.value, 'MP', 1.0);
+      addModuleVotes(tdaData.value, 'TDA', 1.0);
+
+      // 排序与判定（主口径最优3码；top5/top12 兼容别名）
+      const sortedByScore = [...balls].sort((a, b) => b.score - a.score || b.vote_count - a.vote_count);
+      
+      const top3List = sortedByScore.slice(0, 3);
+      const top5List = top3List;
+      const top12List = top3List;
+      const top3Set = new Set(top3List.map(x => x.ball));
+      const killList = [];
+
+      balls.forEach(item => {
+        item.is_gold = top3Set.has(item.ball);
+        item.in_top5 = top3Set.has(item.ball);
+        item.in_top12 = top3Set.has(item.ball);
+        item.is_killed = false;
+      });
+
+      // 黄金搭档提取
+      const pairMap = new Map();
+      const recordPair = (p, source) => {
+        if (!p || p.length < 2) return;
+        const [a, b] = [Math.min(p[0], p[1]), Math.max(p[0], p[1])];
+        const key = `${a}-${b}`;
+        if (!pairMap.has(key)) {
+          pairMap.set(key, { pair: [a, b], count: 0, sources: [] });
+        }
+        const obj = pairMap.get(key);
+        obj.count += 1;
+        if (!obj.sources.includes(source)) obj.sources.push(source);
+      };
+
+      if (geneticData.value?.gold_pair) recordPair(geneticData.value.gold_pair, 'GA');
+      if (linearAlgebraData.value?.top_pairs?.[0]?.pair) recordPair(linearAlgebraData.value.top_pairs[0].pair, 'SVD');
+      if (dtwData.value?.top_pairs?.[0]?.pair) recordPair(dtwData.value.top_pairs[0].pair, 'DTW');
+      if (transformerData.value?.top_pairs?.[0]?.pair) recordPair(transformerData.value.top_pairs[0].pair, 'TRANS');
+      if (matrixProfileData.value?.top_pairs?.[0]?.pair) recordPair(matrixProfileData.value.top_pairs[0].pair, 'MP');
+      if (tdaData.value?.top_pairs?.[0]?.pair) recordPair(tdaData.value.top_pairs[0].pair, 'TDA');
+
+      // 兜底高分搭档
+      if (top5List.length >= 2) {
+        recordPair([top5List[0].ball, top5List[1].ball], '共识金胆连体');
+      }
+
+      const pairs = Array.from(pairMap.values()).map(p => ({
+        pair: p.pair,
+        sources: p.sources.join(' + '),
+        count: p.count
+      })).sort((a, b) => b.count - a.count);
+
+      return {
+        top3_gold: top3List,
+        top5: top5List,
+        top12: top12List,
+        kill_list: killList,
+        pairs: pairs,
+        balls: balls
+      };
+    });
+
+    const sortedAiResonanceList = computed(() => {
+      const list = [...(aiMathConsensus.value?.balls || [])];
+      if (aiResonanceSortMode.value === 'score') {
+        return list.sort((a, b) => b.score - a.score || b.vote_count - a.vote_count || a.ball - b.ball);
+      } else {
+        return list.sort((a, b) => a.ball - b.ball);
+      }
+    });
+
+    // 批量加载 / 刷新六大高维数学与AI模型
+    const fetchAllAiMathModels = async (forceRefresh = false) => {
+      aiMathLoading.value = true;
+      try {
+        await Promise.allSettled([
+          fetchGeneticData(forceRefresh),
+          fetchLinearAlgebraData(forceRefresh),
+          fetchDTWData(forceRefresh),
+          fetchTransformerData(forceRefresh),
+          fetchMatrixProfileData(forceRefresh),
+          fetchTDAData(forceRefresh),
+          fetchAiMathConsensusReview(30, forceRefresh)
+        ]);
+        addLog('📐 六大高维数学与AI模型最新推演数据已极速汇聚解算完成', 'success');
+      } catch (err) {
+        console.error('汇聚六大AI/数学模型失败:', err);
+      } finally {
+        aiMathLoading.value = false;
+      }
+    };
+
+    // 当前选定窗口的汇总回测数据计算属性
+    const activePsychologicalBacktest = computed(() => {
+      const summary = psychologicalGameBacktest.value?.multi_window_summary || {};
+      return summary[psychologicalGameBacktestWindow.value] || summary['last_100'] || {};
+    });
+
+    // 矩阵筛选按钮的真实计数（不再写死 (5)/(12)，按实际分类统计）
+    const matrixFilterCounts = computed(() => {
+      const m = matrixData.value || [];
+      return {
+        all: m.length,
+        top5: m.filter(c => c.is_top5).length,
+        top12: m.filter(c => c.is_top12 && !c.is_top5).length,
+        cold: m.filter(c => c.category === 'cold_rebound').length,
+        hot: m.filter(c => c.category === 'hot_energy').length
+      };
+    });
 
     // 80码开奖走势图状态 (默认100期、日期升序)
     const trendLimit = ref(100);
@@ -264,6 +951,13 @@ const App = {
     const highlightedBall = ref(null);
     const trendSearchBall = ref('');
     const customPicks = ref([]);
+
+    // ── 全模块预测共识叠加 (2026-10-22 新增) ──
+    // 数据源: /api/quant/module-consensus (前瞻账, 与全模块看板同源)
+    const consensusData = ref({ status: 'ok', modules: [], consensus: {}, target_period: null });
+    const consensusEnabled = ref([]);          // 勾选中的模块 id
+    const consensusLoading = ref(false);
+    const consensusLegendOpen = ref(true);
 
     // 历史表格分页
     const historyTable = reactive({
@@ -278,6 +972,17 @@ const App = {
     // 研判报告
     const reportList = ref([]);
     const currentReport = ref({ title: '', content: '', date: '', period: '' });
+    // G4 整改: 研报总库新旧口径筛选器 (全量 / 诚实新口径 / 历史归档)
+    const reportFilter = ref('all');
+    const filteredReportList = computed(() => {
+      if (reportFilter.value === 'honest') {
+        return reportList.value.filter(r => r.is_honest_caliber);
+      }
+      if (reportFilter.value === 'legacy') {
+        return reportList.value.filter(r => !r.is_honest_caliber);
+      }
+      return reportList.value;
+    });
 
     // 弹窗与详情
     const selectedBall = ref(null);
@@ -304,6 +1009,8 @@ const App = {
     // ECharts 实例引用 (支持驾驶舱与独立 Tab 双向挂载)
     let radarChart = null;
     let radarChartTab = null;
+    // Shared with pages/sixteen.js (ECharts instance must outlive page mixin scope)
+    const chartHandles = { sixteenDistChart: null };
     let trendChart = null;
     let trendChartTab = null;
     let tailChart = null;
@@ -357,6 +1064,721 @@ const App = {
       }
     };
 
+    const fetchPrimeCompositeData = async (forceRefresh = false) => {
+      primeCompositeLoading.value = true;
+      primeCompositeRefreshMsg.value = '';
+      try {
+        const url = `/api/quant/prime-composite-analysis${forceRefresh ? '?refresh=true' : ''}`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.status === 'ok') {
+            primeCompositeData.value = resp.data;
+            const d = resp.data || {};
+            const fromMsg = d.based_on_period ? `第 ${d.based_on_period} 期` : '最新历史';
+            const drawMsg = d.total_draws ? `${d.total_draws} 期开奖` : '';
+            primeCompositeRefreshMsg.value = `✅ 已${forceRefresh ? '重新推演' : '加载'}质合与尾数 · 基于 ${fromMsg} / ${drawMsg} ，结果已是最新`;
+            return;
+          }
+        }
+        // 双通道降级: 尝试读取静态兜底数据 (带时间戳破坏浏览器磁盘强缓存)
+        const cacheBuster = `?_t=${Date.now()}`;
+        const fallbackRes = await fetch(`/static/prime_tail_analysis.json${cacheBuster}`, { cache: 'no-store' });
+        if (fallbackRes.ok) {
+          const fallbackData = await fallbackRes.json();
+          // G5: 静态快照可能过期, 必须显式标注来源, 不能冒充实时结果
+          primeCompositeData.value = { ...fallbackData, __stale_fallback: true,
+            __stale_note: '接口不可用，当前展示的是静态快照，可能已过期' };
+        }
+      } catch (err) {
+        console.warn('优先接口未就绪，切换至静态通道:', err);
+        try {
+          const fallbackRes = await fetch(`/static/prime_tail_analysis.json?_t=${Date.now()}`, { cache: 'no-store' });
+          if (fallbackRes.ok) {
+            const fallbackData = await fallbackRes.json();
+            primeCompositeData.value = fallbackData;
+          }
+        } catch (e) {
+          console.error('双通道均获取失败:', e);
+        }
+      } finally {
+        primeCompositeLoading.value = false;
+      }
+    };
+
+    const fetchPsychologicalGameData = async (forceRefresh = false) => {
+      psychologicalGameLoading.value = true;
+      try {
+        const url = `/api/quant/psychological-game-analysis${forceRefresh ? '?refresh=true' : ''}`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.status === 'ok') {
+            psychologicalGameData.value = resp.data;
+            return;
+          }
+        }
+        // 双通道降级: 尝试读取静态兜底数据 (带时间戳破坏浏览器磁盘强缓存)
+        const cacheBuster = `?_t=${Date.now()}`;
+        const fallbackRes = await fetch(`/static/psychological_game_analysis.json${cacheBuster}`, { cache: 'no-store' });
+        if (fallbackRes.ok) {
+          const fallbackData = await fallbackRes.json();
+          psychologicalGameData.value = { ...fallbackData, __stale_fallback: true,
+            __stale_note: '接口不可用，当前展示的是静态快照，可能已过期' };
+        }
+      } catch (err) {
+        console.warn('优先接口未就绪，切换至静态通道:', err);
+        try {
+          const fallbackRes = await fetch(`/static/psychological_game_analysis.json?_t=${Date.now()}`, { cache: 'no-store' });
+          if (fallbackRes.ok) {
+            const fallbackData = await fallbackRes.json();
+            psychologicalGameData.value = fallbackData;
+          }
+        } catch (e) {
+          console.error('双通道均获取失败:', e);
+        }
+      } finally {
+        psychologicalGameLoading.value = false;
+      }
+    };
+
+    const fetchPsychologicalGameBacktest = async (forceRefresh = false) => {
+      psychologicalGameBacktestLoading.value = true;
+      try {
+        const url = `/api/quant/psychological-game-backtest${forceRefresh ? '?refresh=true' : ''}`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.status === 'ok') {
+            psychologicalGameBacktest.value = resp.data;
+            return;
+          }
+        }
+        // 双通道降级: 静态兜底 (带时间戳防缓存)
+        const cacheBuster = `?_t=${Date.now()}`;
+        const fallbackRes = await fetch(`/static/psychological_game_backtest_ledger.json${cacheBuster}`, { cache: 'no-store' });
+        if (fallbackRes.ok) {
+          const fallbackData = await fallbackRes.json();
+          psychologicalGameBacktest.value = { ...fallbackData, __stale_fallback: true,
+            __stale_note: '接口不可用，当前展示的是静态回测快照，可能已过期' };
+        }
+      } catch (err) {
+        console.warn('优先回测接口未就绪，切换至静态通道:', err);
+        try {
+          const fallbackRes = await fetch(`/static/psychological_game_backtest_ledger.json?_t=${Date.now()}`, { cache: 'no-store' });
+          if (fallbackRes.ok) {
+            const fallbackData = await fallbackRes.json();
+            psychologicalGameBacktest.value = fallbackData;
+          }
+        } catch (e) {
+          console.error('双通道回测获取均失败:', e);
+        }
+      } finally {
+        psychologicalGameBacktestLoading.value = false;
+      }
+    };
+
+    // 09. 遗传算法自进化推演交互与图表渲染
+    const initGeneticConvergenceChart = () => {
+      const el = document.getElementById('chart-ga-convergence');
+      if (!el || typeof echarts === 'undefined') return;
+      if (gaConvergenceChart && !gaConvergenceChart.isDisposed()) gaConvergenceChart.dispose();
+      gaConvergenceChart = echarts.init(el);
+      const curve = geneticData.value?.convergence_curve || [];
+      const gens = curve.map(c => `第${c.generation}代`);
+      const bestFits = curve.map(c => c.best_fitness);
+      const avgFits = curve.map(c => c.avg_fitness);
+      gaConvergenceChart.setOption({
+        backgroundColor: 'transparent',
+        tooltip: { trigger: 'axis', backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: '#06b6d4', textStyle: { color: '#f8fafc', fontSize: 11 } },
+        legend: { data: ['最优个体适应度', '种群平均适应度'], textStyle: { color: '#94a3b8', fontSize: 10 }, top: 0 },
+        grid: { left: '3%', right: '4%', bottom: '3%', top: '15%', containLabel: true },
+        xAxis: { type: 'category', data: gens.length ? gens : ['第1代', '第5代', '第10代', '第15代', '第20代'], axisLine: { lineStyle: { color: '#334155' } }, axisLabel: { color: '#94a3b8', fontSize: 10 } },
+        yAxis: { type: 'value', name: '适应度得分', nameTextStyle: { color: '#64748b', fontSize: 10 }, splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } }, axisLabel: { color: '#94a3b8', fontSize: 10 } },
+        series: [
+          { name: '最优个体适应度', type: 'line', smooth: true, data: bestFits.length ? bestFits : [12.5, 14.8, 16.2, 17.5, 18.9], lineStyle: { width: 3, color: '#06b6d4' }, itemStyle: { color: '#06b6d4' }, areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(6, 182, 212, 0.3)' }, { offset: 1, color: 'rgba(6, 182, 212, 0.0)' }]) } },
+          { name: '种群平均适应度', type: 'line', smooth: true, data: avgFits.length ? avgFits : [10.1, 11.5, 13.0, 14.2, 15.1], lineStyle: { width: 2, color: '#6366f1', type: 'dashed' }, itemStyle: { color: '#6366f1' } }
+        ]
+      });
+    };
+
+    const initGeneticRadarChart = () => {
+      const el = document.getElementById('chart-ga-radar');
+      if (!el || typeof echarts === 'undefined') return;
+      if (gaRadarChart && !gaRadarChart.isDisposed()) gaRadarChart.dispose();
+      gaRadarChart = echarts.init(el);
+      const r = geneticData.value?.radar_features || { '频次势能': 65, '动量热度': 75, '遗漏回补': 80, '重邻粘性': 70, '同尾共振': 55, '分区均衡': 60 };
+      gaRadarChart.setOption({
+        backgroundColor: 'transparent',
+        tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: '#06b6d4', textStyle: { color: '#f8fafc', fontSize: 11 } },
+        radar: {
+          indicator: [
+            { name: '长期频次', max: 100 },
+            { name: '冷热动量', max: 100 },
+            { name: '遗漏回补', max: 100 },
+            { name: '重邻粘性', max: 100 },
+            { name: '同尾共振', max: 100 },
+            { name: '分区均衡', max: 100 }
+          ],
+          shape: 'polygon', splitNumber: 4,
+          axisName: { color: '#94a3b8', fontSize: 10 },
+          splitLine: { lineStyle: { color: '#1e293b' } },
+          splitArea: { show: false },
+          axisLine: { lineStyle: { color: '#334155' } }
+        },
+        series: [{
+          name: '最优特征权重', type: 'radar',
+          data: [{
+            value: [r['频次势能'] || 60, r['动量热度'] || 70, r['遗漏回补'] || 75, r['重邻粘性'] || 65, r['同尾共振'] || 50, r['分区均衡'] || 60],
+            name: '最优基因画像',
+            itemStyle: { color: '#06b6d4' },
+            areaStyle: { color: 'rgba(6, 182, 212, 0.35)' },
+            lineStyle: { width: 2, color: '#22d3ee' }
+          }]
+        }]
+      });
+    };
+
+    const fetchGeneticData = async (force = false) => {
+      try {
+        const res = await fetch(`/api/genetic/summary${force ? '?force_refresh=true' : ''}`);
+        if (res.ok) {
+          geneticData.value = await res.json();
+          nextTick(() => {
+            initGeneticConvergenceChart();
+            initGeneticRadarChart();
+          });
+        }
+      } catch (e) {
+        console.error('获取遗传算法推演失败:', e);
+      }
+    };
+
+    const fetchGeneticReview = async (n = 30) => {
+      try {
+        const res = await fetch(`/api/genetic/review?n=${n}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && (data.status === 'success' || data.records)) {
+            geneticReviewData.value = data;
+            return;
+          }
+        }
+      } catch (e) {
+        // 静默降级
+      }
+      try {
+        const fallbackRes = await fetch(`/static/genetic_review_${n}.json?_t=${Date.now()}`, { cache: 'no-store' });
+        if (fallbackRes.ok) geneticReviewData.value = await fallbackRes.json();
+      } catch (e) {}
+    };
+
+    const triggerGeneticEvolution = async () => {
+      isGeneticRunning.value = true;
+      try {
+        const res = await fetch('/api/genetic/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pop_size: 40, generations: 25, eval_periods: 15 })
+        });
+        if (res.ok) {
+          geneticData.value = await res.json();
+          await fetchGeneticReview(30);
+          nextTick(() => {
+            initGeneticConvergenceChart();
+            initGeneticRadarChart();
+          });
+          addLog('🧬 遗传算法种群自进化寻优完成，最新最优决策已生效', 'info');
+        }
+      } catch (e) {
+        console.error('触发遗传算法进化失败:', e);
+        addLog('❌ 遗传算法进化执行失败: ' + (e.message || e), 'error');
+      } finally {
+        isGeneticRunning.value = false;
+      }
+    };
+
+    // 10. 线性代数空间投影量化推演数据获取
+    const fetchLinearAlgebraReview = async (n = 30) => {
+      try {
+        const res = await fetch(`/api/quant/linear-algebra/review?n=${n}`);
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.code === 200 && resp.data) {
+            linearAlgebraReviewData.value = resp.data;
+            return;
+          }
+          if (resp.status === 'success' || resp.records) {
+            linearAlgebraReviewData.value = resp;
+            return;
+          }
+        }
+      } catch (e) {
+        // 静默降级
+      }
+      try {
+        const fallbackRes = await fetch(`/static/linear_algebra_review_${n}.json?_t=${Date.now()}`, { cache: 'no-store' });
+        if (fallbackRes.ok) linearAlgebraReviewData.value = await fallbackRes.json();
+      } catch (e) {}
+    };
+
+    const fetchLinearAlgebraData = async (forceRefresh = false) => {
+      linearAlgebraLoading.value = true;
+      try {
+        const url = forceRefresh ? '/api/quant/linear-algebra/run' : '/api/quant/linear-algebra/latest';
+        const method = forceRefresh ? 'POST' : 'GET';
+        const res = await fetch(url, { method });
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.code === 200 && resp.data) {
+            linearAlgebraData.value = resp.data;
+            fetchLinearAlgebraReview(30);
+            return;
+          }
+        }
+        // 双通道降级: 尝试读取静态兜底数据 (带时间戳破坏缓存)
+        const cacheBuster = `?_t=${Date.now()}`;
+        const fallbackRes = await fetch(`/static/linear_algebra_analysis.json${cacheBuster}`, { cache: 'no-store' });
+        if (fallbackRes.ok) {
+          linearAlgebraData.value = await fallbackRes.json();
+        }
+        fetchLinearAlgebraReview(30);
+      } catch (err) {
+        console.warn('获取线性代数推演数据失败，切换至静态快照:', err);
+        try {
+          const fallbackRes = await fetch(`/static/linear_algebra_analysis.json?_t=${Date.now()}`, { cache: 'no-store' });
+          if (fallbackRes.ok) {
+            linearAlgebraData.value = await fallbackRes.json();
+          }
+          fetchLinearAlgebraReview(30);
+        } catch (e) {
+          console.error('线性代数双通道获取均失败:', e);
+        }
+      } finally {
+        linearAlgebraLoading.value = false;
+      }
+    };
+
+    const fetchRandomForestReview = async (n = 30, forceRefresh = false) => {
+      try {
+        const q = forceRefresh ? '&force_refresh=true' : '';
+        const res = await fetch(`/api/quant/random-forest/review?n=${n}${q}`);
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.code === 200 && resp.data) {
+            randomForestReviewData.value = resp.data;
+            return;
+          }
+          if (resp.status === 'success' || resp.records) {
+            randomForestReviewData.value = resp;
+            return;
+          }
+        }
+      } catch (e) {}
+      try {
+        const fallbackRes = await fetch(`/static/random_forest_review_${n}.json?_t=${Date.now()}`, { cache: 'no-store' });
+        if (fallbackRes.ok) randomForestReviewData.value = await fallbackRes.json();
+      } catch (e) {}
+    };
+
+    const fetchRandomForestData = async (forceRefresh = false) => {
+      randomForestLoading.value = true;
+      try {
+        const url = forceRefresh ? '/api/quant/random-forest/run' : '/api/quant/random-forest/latest';
+        const method = forceRefresh ? 'POST' : 'GET';
+        const res = await fetch(url, { method });
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.code === 200 && resp.data) {
+            randomForestData.value = resp.data;
+            fetchRandomForestReview(30);
+            return;
+          }
+        }
+        const fallbackRes = await fetch(`/static/random_forest_analysis.json?_t=${Date.now()}`, { cache: 'no-store' });
+        if (fallbackRes.ok) randomForestData.value = await fallbackRes.json();
+        fetchRandomForestReview(30);
+      } catch (err) {
+        console.warn('获取随机森林数据失败:', err);
+        try {
+          const fallbackRes = await fetch(`/static/random_forest_analysis.json?_t=${Date.now()}`, { cache: 'no-store' });
+          if (fallbackRes.ok) randomForestData.value = await fallbackRes.json();
+          fetchRandomForestReview(30);
+        } catch (e) {}
+      } finally {
+        randomForestLoading.value = false;
+      }
+    };
+
+    const fetchErrorCorrectionReview = async (n = 30, forceRefresh = false) => {
+      try {
+        const q = forceRefresh ? '&force_refresh=true' : '';
+        const res = await fetch(`/api/error_correction/review?n=${n}${q}`);
+        if (res.ok) {
+          const resp = await res.json();
+          if ((resp.status === 'ok' || resp.code === 200) && resp.data) {
+            errorCorrectionReviewData.value = resp.data;
+            return;
+          }
+          if (resp.status === 'success' || resp.records) {
+            errorCorrectionReviewData.value = resp;
+            return;
+          }
+        }
+      } catch (e) {}
+      try {
+        const fallbackRes = await fetch(`/static/error_correction_review_${n}.json?_t=${Date.now()}`, { cache: 'no-store' });
+        if (fallbackRes.ok) errorCorrectionReviewData.value = await fallbackRes.json();
+      } catch (e) {}
+    };
+
+    const fetchErrorCorrectionData = async (forceRefresh = false) => {
+      errorCorrectionLoading.value = true;
+      try {
+        const url = forceRefresh ? '/api/error_correction/run' : '/api/error_correction/latest';
+        const method = forceRefresh ? 'POST' : 'GET';
+        const res = await fetch(url, { method });
+        if (res.ok) {
+          const resp = await res.json();
+          if ((resp.status === 'ok' || resp.code === 200) && resp.data) {
+            errorCorrectionData.value = resp.data;
+            fetchErrorCorrectionReview(30);
+            return;
+          }
+        }
+        const fallbackRes = await fetch(`/static/error_correction_analysis.json?_t=${Date.now()}`, { cache: 'no-store' });
+        if (fallbackRes.ok) errorCorrectionData.value = await fallbackRes.json();
+        fetchErrorCorrectionReview(30);
+      } catch (err) {
+        console.warn('获取残差改错数据失败:', err);
+        try {
+          const fallbackRes = await fetch(`/static/error_correction_analysis.json?_t=${Date.now()}`, { cache: 'no-store' });
+          if (fallbackRes.ok) errorCorrectionData.value = await fallbackRes.json();
+          fetchErrorCorrectionReview(30);
+        } catch (e) {}
+      } finally {
+        errorCorrectionLoading.value = false;
+      }
+    };
+
+    // ── 一胆拖三盾 · 选2组合拳 数据获取 (2026-10-22) ──
+    const fetchSpearShieldReview = async (n = 0) => {
+      try {
+        const res = await fetch(`/api/spear_shield/review${n ? '?n=' + n : ''}`);
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.status === 'ok' && resp.data) spearShieldReviewData.value = resp.data;
+        }
+      } catch (e) { console.warn('获取一胆拖三盾复盘失败:', e); }
+    };
+
+    const fetchSpearShieldData = async () => {
+      spearShieldLoading.value = true;
+      try {
+        const res = await fetch('/api/spear_shield/latest');
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.status === 'ok' && resp.data) {
+            spearShieldData.value = resp.data;
+            fetchSpearShieldReview();
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('获取一胆拖三盾票面失败:', err);
+      } finally {
+        spearShieldLoading.value = false;
+      }
+    };
+
+    const rerunSpearShieldReview = async (n = 30) => {
+      if (spearShieldRerunning.value) return;
+      spearShieldRerunning.value = true;
+      try {
+        const res = await fetch(`/api/spear_shield/review-rerun?n=${n}`, { method: 'POST' });
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.status === 'ok' && resp.data) spearShieldReviewData.value = resp.data;
+        }
+      } catch (e) {
+        console.warn('重跑一胆拖三盾回测失败:', e);
+      } finally {
+        spearShieldRerunning.value = false;
+      }
+    };
+
+    // ── 点位012偏态压缩器 数据获取 (2026-10-22) ──
+    const fetchPointRoadData = async () => {
+      pointRoadLoading.value = true;
+      try {
+        const [a, b] = await Promise.allSettled([
+          fetch('/api/point_road/latest').then(r => r.ok ? r.json() : null),
+          fetch('/api/point_road/review?n=30').then(r => r.ok ? r.json() : null),
+        ]);
+        if (a.status === 'fulfilled' && a.value && a.value.status === 'ok') pointRoadData.value = a.value.data;
+        if (b.status === 'fulfilled' && b.value && b.value.status === 'ok') pointRoadReviewData.value = b.value.data;
+      } catch (err) {
+        console.warn('获取点位012压缩数据失败:', err);
+      } finally {
+        pointRoadLoading.value = false;
+      }
+    };
+
+    // 11. 动态时间规整 DTW 数据获取
+    const fetchDTWReview = async (n = 30) => {
+      try {
+        const res = await fetch(`/api/quant/dtw/review?n=${n}`);
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.code === 200 && resp.data) {
+            dtwReviewData.value = resp.data;
+            return;
+          }
+          if (resp.status === 'success' || resp.records) {
+            dtwReviewData.value = resp;
+            return;
+          }
+        }
+      } catch (e) {
+        // 静默降级
+      }
+      try {
+        const fallbackRes = await fetch(`/static/dtw_review_${n}.json?_t=${Date.now()}`, { cache: 'no-store' });
+        if (fallbackRes.ok) dtwReviewData.value = await fallbackRes.json();
+      } catch (e) {}
+    };
+
+    const fetchDTWData = async (forceRefresh = false) => {
+      dtwLoading.value = true;
+      try {
+        const url = forceRefresh ? '/api/quant/dtw/run' : '/api/quant/dtw/latest';
+        const method = forceRefresh ? 'POST' : 'GET';
+        const res = await fetch(url, { method });
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.code === 200 && resp.data) {
+            dtwData.value = resp.data;
+            fetchDTWReview(30);
+            return;
+          }
+        }
+        const cacheBuster = `?_t=${Date.now()}`;
+        const fallbackRes = await fetch(`/static/dtw_analysis.json${cacheBuster}`, { cache: 'no-store' });
+        if (fallbackRes.ok) dtwData.value = await fallbackRes.json();
+        fetchDTWReview(30);
+      } catch (err) {
+        console.warn('获取DTW数据失败，读取静态缓存:', err);
+        try {
+          const fallbackRes = await fetch(`/static/dtw_analysis.json?_t=${Date.now()}`, { cache: 'no-store' });
+          if (fallbackRes.ok) dtwData.value = await fallbackRes.json();
+          fetchDTWReview(30);
+        } catch (e) {}
+      } finally {
+        dtwLoading.value = false;
+      }
+    };
+
+    // 12. Transformer 全局自注意力数据获取
+    const fetchTransformerReview = async (n = 30) => {
+      try {
+        const res = await fetch(`/api/quant/transformer/review?n=${n}`);
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.code === 200 && resp.data) {
+            transformerReviewData.value = resp.data;
+            return;
+          }
+          if (resp.status === 'success' || resp.records) {
+            transformerReviewData.value = resp;
+            return;
+          }
+        }
+      } catch (e) {
+        // 静默降级
+      }
+      try {
+        const fallbackRes = await fetch(`/static/transformer_review_${n}.json?_t=${Date.now()}`, { cache: 'no-store' });
+        if (fallbackRes.ok) transformerReviewData.value = await fallbackRes.json();
+      } catch (e) {}
+    };
+
+    const fetchTransformerData = async (forceRefresh = false) => {
+      transformerLoading.value = true;
+      try {
+        const url = forceRefresh ? '/api/quant/transformer/run' : '/api/quant/transformer/latest';
+        const method = forceRefresh ? 'POST' : 'GET';
+        const res = await fetch(url, { method });
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.code === 200 && resp.data) {
+            transformerData.value = resp.data;
+            fetchTransformerReview(30);
+            return;
+          }
+        }
+        const cacheBuster = `?_t=${Date.now()}`;
+        const fallbackRes = await fetch(`/static/transformer_analysis.json${cacheBuster}`, { cache: 'no-store' });
+        if (fallbackRes.ok) transformerData.value = await fallbackRes.json();
+        fetchTransformerReview(30);
+      } catch (err) {
+        console.warn('获取Transformer数据失败，读取静态缓存:', err);
+        try {
+          const fallbackRes = await fetch(`/static/transformer_analysis.json?_t=${Date.now()}`, { cache: 'no-store' });
+          if (fallbackRes.ok) transformerData.value = await fallbackRes.json();
+          fetchTransformerReview(30);
+        } catch (e) {}
+      } finally {
+        transformerLoading.value = false;
+      }
+    };
+
+    // 13. 矩阵轮廓 Matrix Profile 数据获取
+    const fetchMatrixProfileReview = async (n = 30) => {
+      try {
+        const res = await fetch(`/api/quant/matrix-profile/review?n=${n}`);
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.code === 200 && resp.data) {
+            matrixProfileReviewData.value = resp.data;
+            return;
+          }
+          if (resp.status === 'success' || resp.records) {
+            matrixProfileReviewData.value = resp;
+            return;
+          }
+        }
+      } catch (e) {
+        // 静默降级
+      }
+      try {
+        const fallbackRes = await fetch(`/static/matrix_profile_review_${n}.json?_t=${Date.now()}`, { cache: 'no-store' });
+        if (fallbackRes.ok) matrixProfileReviewData.value = await fallbackRes.json();
+      } catch (e) {}
+    };
+
+    const fetchMatrixProfileData = async (forceRefresh = false) => {
+      matrixProfileLoading.value = true;
+      try {
+        const url = forceRefresh ? '/api/quant/matrix-profile/run' : '/api/quant/matrix-profile/latest';
+        const method = forceRefresh ? 'POST' : 'GET';
+        const res = await fetch(url, { method });
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.code === 200 && resp.data) {
+            matrixProfileData.value = resp.data;
+            fetchMatrixProfileReview(30);
+            return;
+          }
+        }
+        const cacheBuster = `?_t=${Date.now()}`;
+        const fallbackRes = await fetch(`/static/matrix_profile_analysis.json${cacheBuster}`, { cache: 'no-store' });
+        if (fallbackRes.ok) matrixProfileData.value = await fallbackRes.json();
+        fetchMatrixProfileReview(30);
+      } catch (err) {
+        console.warn('获取矩阵轮廓数据失败，读取静态缓存:', err);
+        try {
+          const fallbackRes = await fetch(`/static/matrix_profile_analysis.json?_t=${Date.now()}`, { cache: 'no-store' });
+          if (fallbackRes.ok) matrixProfileData.value = await fallbackRes.json();
+          fetchMatrixProfileReview(30);
+        } catch (e) {}
+      } finally {
+        matrixProfileLoading.value = false;
+      }
+    };
+
+    // 14. 拓扑数据分析 TDA 数据获取
+    const fetchTDAReview = async (n = 30) => {
+      try {
+        const res = await fetch(`/api/quant/tda/review?n=${n}`);
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.code === 200 && resp.data) {
+            tdaReviewData.value = resp.data;
+            return;
+          }
+          if (resp.status === 'success' || resp.records) {
+            tdaReviewData.value = resp;
+            return;
+          }
+        }
+      } catch (e) {
+        // 静默降级
+      }
+      try {
+        const fallbackRes = await fetch(`/static/tda_review_${n}.json?_t=${Date.now()}`, { cache: 'no-store' });
+        if (fallbackRes.ok) tdaReviewData.value = await fallbackRes.json();
+      } catch (e) {}
+    };
+
+    const fetchTDAData = async (forceRefresh = false) => {
+      tdaLoading.value = true;
+      try {
+        const url = forceRefresh ? '/api/quant/tda/run' : '/api/quant/tda/latest';
+        const method = forceRefresh ? 'POST' : 'GET';
+        const res = await fetch(url, { method });
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.code === 200 && resp.data) {
+            tdaData.value = resp.data;
+            fetchTDAReview(30);
+            return;
+          }
+        }
+        const cacheBuster = `?_t=${Date.now()}`;
+        const fallbackRes = await fetch(`/static/tda_analysis.json${cacheBuster}`, { cache: 'no-store' });
+        if (fallbackRes.ok) tdaData.value = await fallbackRes.json();
+        fetchTDAReview(30);
+      } catch (err) {
+        console.warn('获取TDA数据失败，读取静态缓存:', err);
+        try {
+          const fallbackRes = await fetch(`/static/tda_analysis.json?_t=${Date.now()}`, { cache: 'no-store' });
+          if (fallbackRes.ok) tdaData.value = await fallbackRes.json();
+          fetchTDAReview(30);
+        } catch (e) {}
+      } finally {
+        tdaLoading.value = false;
+      }
+    };
+
+    // ═════════════════ 六大高维数学与AI超级共识 滚动对账 ═════════════════
+    const fetchAiMathConsensusReview = async (n = 30, forceRefresh = false) => {
+      try {
+        const res = await fetch(`/api/quant/ai-math-consensus/review?n=${n}${forceRefresh ? '&force_refresh=true' : ''}`);
+        if (res.ok) {
+          const resp = await res.json();
+          if (resp.status === 'success' || resp.records) {
+            aiMathConsensusReviewData.value = resp;
+            return;
+          }
+        }
+      } catch (e) {
+        // 静默降级
+      }
+      try {
+        const fallbackRes = await fetch(`/static/ai_consensus_review_${n}.json?_t=${Date.now()}`, { cache: 'no-store' });
+        if (fallbackRes.ok) {
+          aiMathConsensusReviewData.value = await fallbackRes.json();
+        }
+      } catch (e) {
+        console.warn('静态读取超级共识对账流水失败:', e);
+      }
+    };
+
+    const fetchHitLeaderboard = async (n = hitRange.value) => {
+      hitLoading.value = true;
+      try {
+        const res = await fetch(`/api/quant/hit-leaderboard?n=${n}`);
+        if (res.ok) {
+          const data = await res.json();
+          hitLeaderboard.value = data;
+        }
+      } catch (err) {
+        console.error('获取命中热力榜失败:', err);
+      } finally {
+        hitLoading.value = false;
+      }
+    };
+
     const fetchHistoryTrends = async (limit = 25) => {
       try {
         const res = await fetch(`/api/quant/history-trends?limit=${limit}`);
@@ -381,6 +1803,10 @@ const App = {
           nextTick(() => {
             updateTrendDistChart();
             updateTrendSumOddChart();
+            const el = document.getElementById('trendTableWrapper');
+            if (el) {
+              el.scrollTop = el.scrollHeight;
+            }
           });
         }
       } catch (err) {
@@ -388,6 +1814,70 @@ const App = {
       } finally {
         trendLoading.value = false;
       }
+    };
+
+    // ───────── 全模块预测共识叠加 (2026-10-22) ─────────
+    // 默认勾选: 水位 Lift >= 1.15 且非样本不足的现役模块 (强信号优先)
+    const DEFAULT_CONSENSUS_MIN_LIFT = 1.15;
+
+    const fetchModuleConsensus = async () => {
+      try {
+        consensusLoading.value = true;
+        const res = await fetch('/api/quant/module-consensus');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data && data.status === 'ok') {
+          consensusData.value = data;
+          // 首次加载时给出合理默认勾选, 之后尊重用户手动选择
+          if (consensusEnabled.value.length === 0 && (data.modules || []).length) {
+            consensusEnabled.value = data.modules
+              .filter(m => (m.lift || 0) >= DEFAULT_CONSENSUS_MIN_LIFT)
+              .map(m => m.id);
+          }
+        }
+      } catch (err) {
+        console.error('获取全模块共识叠加数据失败:', err);
+      } finally {
+        consensusLoading.value = false;
+      }
+    };
+
+    const consensusModuleMap = computed(() => {
+      const map = {};
+      for (const m of (consensusData.value.modules || [])) map[m.id] = m;
+      return map;
+    });
+
+    // 号码 -> 当前勾选模块中点了它的模块列表 (含颜色)
+    const consensusByBall = computed(() => {
+      const on = new Set(consensusEnabled.value);
+      const out = {};
+      const src = consensusData.value.consensus || {};
+      for (const [numStr, ids] of Object.entries(src)) {
+        const hit = ids.filter(id => on.has(id));
+        if (hit.length) out[numStr] = hit;
+      }
+      return out;
+    });
+
+    const toggleConsensusModule = (id) => {
+      const i = consensusEnabled.value.indexOf(id);
+      if (i > -1) consensusEnabled.value.splice(i, 1);
+      else consensusEnabled.value.push(id);
+    };
+
+    const selectAllConsensusModules = () => {
+      consensusEnabled.value = (consensusData.value.modules || []).map(m => m.id);
+    };
+
+    const selectStrongConsensusModules = () => {
+      consensusEnabled.value = (consensusData.value.modules || [])
+        .filter(m => (m.lift || 0) >= DEFAULT_CONSENSUS_MIN_LIFT)
+        .map(m => m.id);
+    };
+
+    const clearConsensusModules = () => {
+      consensusEnabled.value = [];
     };
 
     const handleCustomLimitSubmit = () => {
@@ -474,6 +1964,46 @@ const App = {
       }
     };
 
+    // 历史总库：012路 / 质合（优先用后端字段，否则就地从号码推算，免重启也能显示）
+    const _KL8_PRIMES = new Set([2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79]);
+    const histRoad = (row) => {
+      if (row && row.road0 != null && row.road1 != null && row.road2 != null) {
+        return { r0: row.road0, r1: row.road1, r2: row.road2 };
+      }
+      const nums = (row && row.numbers) || [];
+      let r0 = 0, r1 = 0, r2 = 0;
+      for (const n of nums) {
+        const m = Number(n) % 3;
+        if (m === 0) r0++; else if (m === 1) r1++; else r2++;
+      }
+      return { r0, r1, r2 };
+    };
+    const histPrime = (row) => {
+      if (row && row.prime_count != null && row.composite_count != null) {
+        return { p: row.prime_count, c: row.composite_count, has01: !!row.has_01 };
+      }
+      const nums = (row && row.numbers) || [];
+      let p = 0, c = 0, has01 = false;
+      for (const n of nums) {
+        const v = Number(n);
+        if (v === 1) { has01 = true; continue; }
+        if (_KL8_PRIMES.has(v)) p++; else c++;
+      }
+      return { p, c, has01 };
+    };
+    const histBallRoadClass = (num) => {
+      const m = Number(num) % 3;
+      if (m === 0) return 'bg-rose-500/15 text-rose-300 border-rose-400/40';
+      if (m === 1) return 'bg-amber-500/15 text-amber-300 border-amber-400/40';
+      return 'bg-emerald-500/15 text-emerald-300 border-emerald-400/40';
+    };
+    const histBallTip = (num) => {
+      const v = Number(num);
+      const road = v % 3;
+      const kind = v === 1 ? '01(非质非合)' : (_KL8_PRIMES.has(v) ? '质数' : '合数');
+      return `${String(v).padStart(2, '0')} · ${road}路 · ${kind}`;
+    };
+
     const fetchReportList = async () => {
       try {
         const res = await fetch('/api/reports/list');
@@ -507,14 +2037,134 @@ const App = {
 
     const openBallDetail = async (ball) => {
       try {
-        const res = await fetch(`/api/quant/number/${ball.number}`);
-        if (res.ok) {
-          selectedBall.value = await res.json();
-          showBallModal.value = true;
+        const num = ball && (ball.number != null ? ball.number : ball);
+        // 详情要合并金/重/冷/热：矩阵未加载时先拉截面
+        if (!(matrixData.value || []).length) {
+          await fetchMatrixData();
         }
+        const res = await fetch(`/api/quant/number/${num}`);
+        if (!res.ok) return;
+        const detail = await res.json();
+        if (detail.error) return;
+
+        const cell = (matrixData.value || []).find((c) => Number(c.number) === Number(num));
+        const merged = { ...detail };
+        if (cell) {
+          if (cell.omission != null) merged.omission = cell.omission;
+          if (cell.freq_30 != null) merged.freq_30 = cell.freq_30;
+          if (cell.energy != null) merged.energy = cell.energy;
+          merged.is_top5 = !!cell.is_top5;
+          merged.is_top12 = !!cell.is_top12;
+          merged.category = cell.category || null;
+          merged.recommend_tag = cell.recommend_tag || null;
+          merged.ladder_name = cell.ladder_name || null;
+        } else if (ball && typeof ball === 'object') {
+          merged.is_top5 = !!ball.is_top5;
+          merged.is_top12 = !!ball.is_top12;
+          merged.category = ball.category || null;
+        }
+
+        const zone = merged.zone != null ? Number(merged.zone) : (Math.floor((Number(num) - 1) / 20) + 1);
+        const road = merged.road != null ? Number(merged.road) : (Number(num) % 3);
+        const pk = merged.prime_kind || (Number(num) === 1 ? 'neither' : (
+          [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79].includes(Number(num)) ? 'prime' : 'composite'
+        ));
+        merged.zone = zone;
+        merged.road = road;
+        merged.road_label = merged.road_label || `${road}路`;
+        merged.prime_kind = pk;
+        merged.prime_label = merged.prime_label || (pk === 'prime' ? '质数' : (pk === 'composite' ? '合数' : '非质非合'));
+
+        const tags = [];
+        tags.push({ key: 'zone', label: `区${zone}`, tone: `tag-zone-${zone}`, title: `分区 ${zone} · 点击在矩阵筛选` });
+        tags.push({ key: 'tail', label: `尾${merged.tail != null ? merged.tail : (num % 10)}`, tone: 'tag-focus', title: '尾数' });
+        tags.push({ key: 'road', label: `${road}路`, tone: `tag-road-${road}`, title: `012路 · 点击在矩阵筛选` });
+        tags.push({
+          key: 'prime',
+          label: pk === 'prime' ? '质' : (pk === 'composite' ? '合' : '—'),
+          tone: `tag-prime-${pk}`,
+          title: `${merged.prime_label} · 点击在矩阵筛选`
+        });
+        tags.push({
+          key: 'oe',
+          label: (merged.odd_even === '偶数' || num % 2 === 0) ? '偶' : '奇',
+          tone: 'tag-he',
+          title: merged.odd_even || (num % 2 ? '奇数' : '偶数')
+        });
+        if (merged.is_top5) tags.push({ key: 'gold', label: '金', tone: 'tag-gold', title: '金胆 Top5 · 点击在矩阵筛选' });
+        else if (merged.is_top12) tags.push({ key: 'focus', label: '重', tone: 'tag-focus', title: '重点候选 · 点击在矩阵筛选' });
+        if (merged.category === 'golden_pair') tags.push({ key: 'pair', label: '对', tone: 'tag-gold', title: '黄金搭档' });
+        if (merged.category === 'hidden_energy') tags.push({ key: 'he', label: 'HE', tone: 'tag-he', title: 'Hidden Energy' });
+        if (merged.category === 'cold_rebound') tags.push({ key: 'cold', label: '冷', tone: 'tag-cold', title: '极冷号 · 点击在矩阵筛选' });
+        if (merged.category === 'hot_energy') tags.push({ key: 'hot', label: '热', tone: 'tag-hot', title: '极热码 · 点击在矩阵筛选' });
+
+        merged.dim_tags = tags;
+        merged.dim_summary = [
+          `区${zone}`,
+          `尾${merged.tail != null ? merged.tail : (num % 10)}`,
+          `${road}路`,
+          merged.prime_label,
+          merged.odd_even || (num % 2 ? '奇数' : '偶数'),
+          merged.is_top5 ? '金胆' : (merged.is_top12 ? '重点候选' : null),
+          merged.category === 'cold_rebound' ? '极冷' : null,
+          merged.category === 'hot_energy' ? '极热' : null,
+          merged.omission != null ? `遗${merged.omission}` : null,
+          merged.freq_30 != null ? `近30·${merged.freq_30}次` : null,
+          merged.energy != null ? `E${merged.energy}` : null
+        ].filter(Boolean).join(' · ');
+
+        selectedBall.value = merged;
+        showBallModal.value = true;
       } catch (err) {
         console.error('获取球号详情失败:', err);
       }
+    };
+
+    /** 从号码详情角标跳到 80 码矩阵并套上对应筛选 */
+    const focusMatrixFromBallTag = (tag) => {
+      const b = selectedBall.value;
+      if (!tag || !b) return;
+      const key = tag.key;
+      if (key === 'tail' || key === 'oe' || key === 'pair' || key === 'he') {
+        showBallModal.value = false;
+        openTab('matrix_80');
+        return;
+      }
+
+      activeFilters.value = [];
+      activeFilter.value = 'all';
+      matrixMorphFilters.roads = [];
+      matrixMorphFilters.primes = [];
+      matrixMorphFilters.zones = [];
+      matrixFilterMode.value = 'or';
+      matrixDimOverlay.value = 'none';
+
+      if (key === 'zone') {
+        matrixMorphFilters.zones = [Number(b.zone)];
+        matrixDimOverlay.value = 'zone';
+      } else if (key === 'road') {
+        matrixMorphFilters.roads = [Number(b.road)];
+        matrixDimOverlay.value = 'road012';
+      } else if (key === 'prime') {
+        matrixMorphFilters.primes = [b.prime_kind || 'composite'];
+        matrixDimOverlay.value = 'prime';
+      } else if (key === 'gold') {
+        activeFilters.value = ['top5'];
+        activeFilter.value = 'top5';
+      } else if (key === 'focus') {
+        activeFilters.value = ['top12'];
+        activeFilter.value = 'top12';
+      } else if (key === 'cold') {
+        activeFilters.value = ['cold'];
+        activeFilter.value = 'cold';
+      } else if (key === 'hot') {
+        activeFilters.value = ['hot'];
+        activeFilter.value = 'hot';
+      }
+
+      showBallModal.value = false;
+      openTab('matrix_80');
+      addLog(`📍 矩阵已按「${tag.label}」筛选（来自号码 ${b.display}）`, 'info');
     };
 
     // ──────────────── 任务与流水线触发 ────────────────
@@ -522,7 +2172,7 @@ const App = {
     const runPipeline = async () => {
       if (isRunning.value) return;
       try {
-        openTab('live_terminal', '流水线黑客日志终端', '💻');
+        openTab('live_terminal');
         isRunning.value = true;
         addLog('⚡ 正在发起【全流程量化预测流水线】任务请求...');
         const res = await fetch('/api/pipeline/run', { method: 'POST' });
@@ -544,7 +2194,7 @@ const App = {
     const syncData = async () => {
       if (isRunning.value) return;
       try {
-        openTab('live_terminal', '流水线黑客日志终端', '💻');
+        openTab('live_terminal');
         isRunning.value = true;
         addLog('🔄 正在拉取并同步历史开奖数据...');
         const res = await fetch('/api/pipeline/sync-data', { method: 'POST' });
@@ -552,7 +2202,12 @@ const App = {
         if (data && data.task_id) {
           currentTaskId.value = data.task_id;
           addLog(`✅ 数据同步任务已就绪 (ID: ${data.task_id})`, 'success');
-          startLogPolling(data.task_id);
+          startLogPolling(data.task_id, async () => {
+            addLog('📌 开奖已同步。正在打开「夜间/开奖流水线」——可一键跑非点位全自动；点位类请录入后再手动跑。', 'info');
+            await fetchSystemStatus();
+            fetchSchedulerStatus();
+            openTab('nightly_scheduler');
+          });
         } else {
           addLog(`⚠️ 同步提示: ${data?.message || '任务冲突'}`, 'warn');
           isRunning.value = false;
@@ -758,8 +2413,8 @@ const App = {
       if (trendSumOddElem) trendSumOddChart = echarts.init(trendSumOddElem);
 
       const sixteenElem = document.getElementById('sixteenDistChart');
-      if (sixteenElem && !sixteenDistChart) {
-        sixteenDistChart = echarts.init(sixteenElem);
+      if (sixteenElem && !chartHandles.sixteenDistChart) {
+        chartHandles.sixteenDistChart = echarts.init(sixteenElem);
       }
 
       window.addEventListener('resize', handleResize);
@@ -794,6 +2449,7 @@ const App = {
     };
 
     const handleResize = () => {
+      syncEnvironmentClasses();
       if (radarChart) radarChart.resize();
       if (radarChartTab) radarChartTab.resize();
       if (trendChart) trendChart.resize();
@@ -804,7 +2460,9 @@ const App = {
       if (zoneChartTab) zoneChartTab.resize();
       if (trendDistChart) trendDistChart.resize();
       if (trendSumOddChart) trendSumOddChart.resize();
-      if (sixteenDistChart) sixteenDistChart.resize();
+      if (chartHandles.sixteenDistChart) chartHandles.sixteenDistChart.resize();
+      if (gaConvergenceChart) gaConvergenceChart.resize();
+      if (gaRadarChart) gaRadarChart.resize();
     };
 
     const updateRadarChart = () => {
@@ -1209,14 +2867,229 @@ const App = {
 
     // ──────────────── 辅助计算与衍生视图 ────────────────
 
-    const filteredMatrix = computed(() => {
-      if (activeFilter.value === 'all') return matrixData.value;
-      if (activeFilter.value === 'top5') return matrixData.value.filter(b => b.is_top5);
-      if (activeFilter.value === 'top12') return matrixData.value.filter(b => b.is_top12);
-      if (activeFilter.value === 'cold') return matrixData.value.filter(b => b.omission >= 6);
-      if (activeFilter.value === 'hot') return matrixData.value.filter(b => b.freq_30 >= 8);
-      return matrixData.value;
+    const hasMatrixPoolFilter = computed(() => (activeFilters.value || []).length > 0);
+    const hasMatrixMorphFilter = computed(() => {
+      const mf = matrixMorphFilters;
+      return (mf.roads && mf.roads.length) || (mf.primes && mf.primes.length) || (mf.zones && mf.zones.length);
     });
+    const hasMatrixFilter = computed(() => hasMatrixPoolFilter.value || hasMatrixMorphFilter.value);
+
+    const toggleMatrixFilter = (key) => {
+      if (key === 'all') {
+        activeFilters.value = [];
+        activeFilter.value = 'all';
+        return;
+      }
+      const arr = [...(activeFilters.value || [])];
+      const i = arr.indexOf(key);
+      if (i >= 0) arr.splice(i, 1);
+      else arr.push(key);
+      activeFilters.value = arr;
+      // 同步旧单选：0→all，1→该键，多选→multi
+      activeFilter.value = arr.length === 0 ? 'all' : (arr.length === 1 ? arr[0] : 'multi');
+    };
+
+    const isMatrixFilterActive = (key) => {
+      if (key === 'all') return !(activeFilters.value || []).length;
+      return (activeFilters.value || []).includes(key);
+    };
+
+    const toggleMatrixMorph = (dim, value) => {
+      const mf = matrixMorphFilters;
+      const listKey = dim === 'road' ? 'roads' : (dim === 'prime' ? 'primes' : 'zones');
+      const arr = [...(mf[listKey] || [])];
+      const i = arr.indexOf(value);
+      if (i >= 0) arr.splice(i, 1);
+      else arr.push(value);
+      mf[listKey] = arr;
+    };
+
+    const isMatrixMorphActive = (dim, value) => {
+      const mf = matrixMorphFilters;
+      if (dim === 'road') return (mf.roads || []).includes(value);
+      if (dim === 'prime') return (mf.primes || []).includes(value);
+      if (dim === 'zone') return (mf.zones || []).includes(value);
+      return false;
+    };
+
+    const clearMatrixMorphFilters = () => {
+      matrixMorphFilters.roads = [];
+      matrixMorphFilters.primes = [];
+      matrixMorphFilters.zones = [];
+    };
+
+    const isMatrixPoolMatch = (cell) => {
+      if (!cell) return false;
+      const fs = activeFilters.value || [];
+      if (!fs.length) {
+        // 兼容旧单选 activeFilter
+        const f = activeFilter.value;
+        if (!f || f === 'all' || f === 'multi') return true;
+        if (f === 'top5') return !!cell.is_top5;
+        if (f === 'top12') return !!cell.is_top12;
+        if (f === 'cold') return cell.category === 'cold_rebound';
+        if (f === 'hot') return cell.category === 'hot_energy';
+        return true;
+      }
+      const checks = fs.map((f) => {
+        if (f === 'top5') return !!cell.is_top5;
+        if (f === 'top12') return !!cell.is_top12;
+        if (f === 'cold') return cell.category === 'cold_rebound';
+        if (f === 'hot') return cell.category === 'hot_energy';
+        return false;
+      });
+      return matrixFilterMode.value === 'and' ? checks.every(Boolean) : checks.some(Boolean);
+    };
+
+    const isMatrixMorphMatch = (cell) => {
+      if (!cell) return false;
+      const mf = matrixMorphFilters;
+      const roadOk = !(mf.roads || []).length || mf.roads.includes(matrixBallRoad(cell));
+      const primeOk = !(mf.primes || []).length || mf.primes.includes(matrixBallPrimeKind(cell));
+      const zoneOk = !(mf.zones || []).length || mf.zones.includes(matrixBallZone(cell));
+      return roadOk && primeOk && zoneOk;
+    };
+
+    const isMatrixFilterMatch = (cell) => {
+      return isMatrixPoolMatch(cell) && isMatrixMorphMatch(cell);
+    };
+
+    const filteredMatrix = computed(() => {
+      if (!hasMatrixFilter.value) return matrixData.value;
+      return (matrixData.value || []).filter(isMatrixFilterMatch);
+    });
+
+    const matrixBallZone = (cell) => {
+      const n = cell && cell.number != null ? Number(cell.number) : 0;
+      if (cell && cell.zone != null) return Number(cell.zone);
+      return n ? (Math.floor((n - 1) / 20) + 1) : 0;
+    };
+    const matrixBallRoad = (cell) => {
+      const n = cell && cell.number != null ? Number(cell.number) : 0;
+      return n % 3;
+    };
+    const matrixBallPrimeKind = (cell) => {
+      const n = cell && cell.number != null ? Number(cell.number) : 0;
+      if (n === 1) return 'neither';
+      return _KL8_PRIMES.has(n) ? 'prime' : 'composite';
+    };
+    const matrixDimLabel = (cell) => {
+      const mode = matrixDimOverlay.value;
+      if (mode === 'zone') return '区' + matrixBallZone(cell);
+      if (mode === 'road012') return matrixBallRoad(cell) + '路';
+      if (mode === 'prime') {
+        const k = matrixBallPrimeKind(cell);
+        return k === 'prime' ? '质' : (k === 'composite' ? '合' : '—');
+      }
+      return '';
+    };
+    const matrixDimCellClass = (cell) => {
+      const mode = matrixDimOverlay.value;
+      if (mode === 'none' || !cell) return '';
+      if (mode === 'zone') return 'dim-zone-' + matrixBallZone(cell);
+      if (mode === 'road012') return 'dim-road-' + matrixBallRoad(cell);
+      if (mode === 'prime') return 'dim-prime-' + matrixBallPrimeKind(cell);
+      return '';
+    };
+    /**
+     * 多维属性叠加角标：池标签（金/重/冷/热…）+ 形态（区/路/质合）。
+     * 当前分组轴已由区块标题表达时，不再重复该维，避免噪音。
+     */
+    const matrixCellAttrTags = (cell) => {
+      if (!cell) return [];
+      const tags = [];
+      const mode = matrixDimOverlay.value;
+
+      if (cell.is_top5) tags.push({ key: 'gold', label: '金', tone: 'tag-gold', title: '金胆 Top5' });
+      else if (cell.is_top12) tags.push({ key: 'focus', label: '重', tone: 'tag-focus', title: '重点候选 Top12' });
+      if (cell.category === 'golden_pair') tags.push({ key: 'pair', label: '对', tone: 'tag-gold', title: '黄金搭档' });
+      if (cell.category === 'hidden_energy') tags.push({ key: 'he', label: 'HE', tone: 'tag-he', title: 'Hidden Energy' });
+      if (cell.category === 'cold_rebound') tags.push({ key: 'cold', label: '冷', tone: 'tag-cold', title: '极冷号' });
+      if (cell.category === 'hot_energy') tags.push({ key: 'hot', label: '热', tone: 'tag-hot', title: '极热码' });
+
+      if (mode !== 'zone') {
+        const z = matrixBallZone(cell);
+        tags.push({ key: 'zone', label: '区' + z, tone: 'tag-zone-' + z, title: '分区 ' + z });
+      }
+      if (mode !== 'road012') {
+        const r = matrixBallRoad(cell);
+        tags.push({ key: 'road', label: r + '路', tone: 'tag-road-' + r, title: '012路 · mod3=' + r });
+      }
+      if (mode !== 'prime') {
+        const k = matrixBallPrimeKind(cell);
+        const label = k === 'prime' ? '质' : (k === 'composite' ? '合' : '—');
+        tags.push({
+          key: 'prime',
+          label,
+          tone: 'tag-prime-' + k,
+          title: k === 'prime' ? '质数' : (k === 'composite' ? '合数' : '非质非合(01)')
+        });
+      }
+      return tags;
+    };
+    const matrixAttrTagMap = computed(() => {
+      const map = {};
+      for (const cell of (matrixData.value || [])) {
+        if (cell && cell.number != null) map[cell.number] = matrixCellAttrTags(cell);
+      }
+      return map;
+    });
+    /** 分组视图：分区 / 012路 / 质合 各自成块分别展示，不再只叠层着色 */
+    const matrixDimGroups = computed(() => {
+      const mode = matrixDimOverlay.value;
+      const data = Array.isArray(matrixData.value) ? matrixData.value : [];
+      if (mode === 'none' || !data.length) return null;
+      const withMatchMeta = (cells) => {
+        const matched = !hasMatrixFilter.value
+          ? cells.length
+          : cells.filter((c) => isMatrixFilterMatch(c)).length;
+        return { cells, matched, total: cells.length };
+      };
+      if (mode === 'zone') {
+        return [1, 2, 3, 4].map((z) => {
+          const meta = withMatchMeta(data.filter((c) => matrixBallZone(c) === z));
+          return {
+            key: 'zone-' + z,
+            tone: 'tone-zone-' + z,
+            title: `${['', '一', '二', '三', '四'][z]}区`,
+            subtitle: `${String((z - 1) * 20 + 1).padStart(2, '0')}-${String(z * 20).padStart(2, '0')}`,
+            ...meta
+          };
+        });
+      }
+      if (mode === 'road012') {
+        return [0, 1, 2].map((r) => {
+          const meta = withMatchMeta(data.filter((c) => matrixBallRoad(c) === r));
+          return {
+            key: 'road-' + r,
+            tone: 'tone-road-' + r,
+            title: `${r}路`,
+            subtitle: `号码 mod 3 = ${r}`,
+            ...meta
+          };
+        });
+      }
+      if (mode === 'prime') {
+        return [
+          { key: 'prime-prime', tone: 'tone-prime-prime', title: '质数', subtitle: '质数码', kind: 'prime' },
+          { key: 'prime-composite', tone: 'tone-prime-composite', title: '合数', subtitle: '合数码', kind: 'composite' },
+          { key: 'prime-neither', tone: 'tone-prime-neither', title: '非质非合', subtitle: '号码 01', kind: 'neither' }
+        ].map((g) => {
+          const meta = withMatchMeta(data.filter((c) => matrixBallPrimeKind(c) === g.kind));
+          return {
+            key: g.key,
+            tone: g.tone,
+            title: g.title,
+            subtitle: g.subtitle,
+            ...meta
+          };
+        });
+      }
+      return null;
+    });
+    const setMatrixDimOverlay = (mode) => {
+      matrixDimOverlay.value = matrixDimOverlay.value === mode ? 'none' : mode;
+    };
 
     const purePoolDetailed = computed(() => {
       const pool = prediction.value?.pure_pool || [];
@@ -1311,1224 +3184,601 @@ const App = {
       return result;
     });
 
-    // ──────────────── 顺口溜口诀规则与对账状态 ────────────────
-    const jingleSummary = ref(null);
-    const jingleReview = ref(null);
-    const jingleRules = ref([]);
-    const jingleRulesMeta = ref({});
-    const jingleRuleKindFilter = ref('all');
-    const jingleRuleSearchKeyword = ref('');
-    const jingleLoading = ref(false);
-
-    const fetchJingleSummary = async () => {
-      try {
-        const res = await fetch('/api/jingle/summary');
-        if (res.ok) {
-          jingleSummary.value = await res.json();
+    // ─── K8 page modules (extracted fetch/state clusters) ───
+    const __k8PageBindings = window.K8Pages.apply(
+      { ref, reactive, computed, watch, nextTick },
+      {
+        isRunning,
+        openTab,
+        addLog,
+        startLogPolling,
+        getThemeColors,
+        terminalLogs,
+        chartHandles,
+        fetchPrediction,
+        fetchPsychologicalGameData,
+        fetchPsychologicalGameBacktest,
+        fetchPrimeCompositeData,
+        fetchLinearAlgebraData,
+        fetchRandomForestData,
+        fetchErrorCorrectionData,
+        fetchDTWData,
+        fetchTransformerData,
+        fetchMatrixProfileData,
+        fetchTDAData,
+        isLinearAlgebraRunning,
+        isRandomForestRunning,
+        isErrorCorrectionRunning,
+        // late-bound wrappers: safe to capture during apply; resolve at call-time
+        fetchMetaGoldSummary(...args) {
+          return __k8PageBindings.fetchMetaGoldSummary(...args);
+        },
+        fetchFunnelSummary(...args) {
+          return __k8PageBindings.fetchFunnelSummary(...args);
+        },
+        fetchAllModulesOverview(...args) {
+          return __k8PageBindings.fetchAllModulesOverview(...args);
         }
-      } catch (err) {
-        console.error('Failed to fetch jingle summary:', err);
       }
-    };
+    );
+    window.__k8PageBindings = __k8PageBindings;
+    const {
+      jingleSummary,
+      jingleReview,
+      jingleRules,
+      jingleRulesMeta,
+      jingleRuleKindFilter,
+      jingleRuleSearchKeyword,
+      jingleLoading,
+      filteredJingleRules,
+      fetchJingleSummary,
+      fetchJingleReview,
+      fetchJingleRules,
+      triggerJingleRun,
+      jingleReviewPeriods,
+      fetchJingleReviewEnhanced,
+      spatialPointsSummary,
+      spatialPointsMatrix,
+      spatialPointsReview,
+      spatialPointsLoading,
+      pointsMatrixFilter,
+      pointsReviewPeriods,
+      filteredPointsMatrix,
+      fetchSpatialPointsSummary,
+      fetchSpatialPointsMatrix,
+      fetchSpatialPointsReview,
+      triggerSpatialPointsRun,
+      dailyPointsInfo,
+      dailyPointsHistory,
+      dailyPointsInputText,
+      dailyPointsSelectedBalls,
+      dailyPointsTargetPeriod,
+      dailyPointsTargetDate,
+      dailyPointsAutoRun,
+      dailyPointsSubmitting,
+      dailyPointsLoading,
+      dailyPointsAnalysis,
+      fetchDailyPointsInfo,
+      fetchDailyPointsHistory,
+      toggleDailyPointBall,
+      syncDailyPointsFromText,
+      clearDailyPointsInput,
+      submitDailyPointsForm,
+      triggerDailyPointsSyncAll,
+      triHighSubTab,
+      triHighHistoryRows,
+      triHighSummaryData,
+      triHighInputPeriod,
+      triHighInputDate,
+      triHighRepeatText,
+      triHighRepeatBalls,
+      triHighEdgeLeftText,
+      triHighEdgeLeftBalls,
+      triHighEdgeRightText,
+      triHighEdgeRightBalls,
+      triHighColdText,
+      triHighColdBalls,
+      triHighSaving,
+      parseTriHighRepeat,
+      parseTriHighEdgeLeft,
+      parseTriHighEdgeRight,
+      parseTriHighCold,
+      clearTriHighInputs,
+      getUnionTriHighCount,
+      getResonanceWithDailyPoints,
+      fetchTriHighHistory,
+      fetchTriHighSummary,
+      saveTriHighRecord,
+      triggerTriHighRun,
+      selectTriHighQuickPeriod,
+      followSummary,
+      followReview,
+      followConditions,
+      followLoading,
+      followReviewPeriods,
+      fetchFollowSummary,
+      fetchFollowReview,
+      fetchFollowConditions,
+      triggerFollowRun,
+      geminiSummary,
+      geminiReview,
+      geminiHistory,
+      selectedGeminiReport,
+      geminiReportDetail,
+      geminiLoading,
+      geminiReviewPeriods,
+      fetchGeminiSummary,
+      fetchGeminiReview,
+      fetchGeminiHistory,
+      selectGeminiReport,
+      triggerGeminiRun,
+      lstmSummary,
+      lstmReview,
+      lstmReviewPeriods,
+      lstmReports,
+      selectedLstmReport,
+      lstmReportDetail,
+      lstmLoading,
+      fetchLstmSummary,
+      fetchLstmReview,
+      fetchLstmReports,
+      selectLstmReport,
+      triggerLstmRun,
+      suppressionSummary,
+      suppressionReview,
+      suppressionPatterns,
+      suppressionLoading,
+      suppressionReviewPeriods,
+      fetchSuppressionSummary,
+      fetchSuppressionReview,
+      fetchSuppressionPatterns,
+      triggerSuppressionRun,
+      pointOmissionSummary,
+      pointOmissionReport,
+      pointOmissionReportHtml,
+      pointOmissionBacktest,
+      pointOmissionHitLedger,
+      pointOmissionLoading,
+      pointOmissionLedgerLoading,
+      pointOmissionSubTab,
+      getMethodChineseName,
+      fetchPointOmissionSummary,
+      fetchPointOmissionReport,
+      fetchPointOmissionBacktest,
+      fetchPointOmissionHitLedger,
+      seedPointOmissionHitLedger,
+      triggerPointOmissionRun,
+      setPointOmissionSubTab,
+      isPointOmissionCore,
+      isPointOmissionExpanded,
+      isPointOmissionTop5,
+      isPointOmissionDefensive,
+      getPointOmissionNumScore,
+      getPointOmissionNumMiss,
+      getPointOmissionMatrixClass,
+      goldPick2Summary,
+      goldPick2Review,
+      goldPick2Matrix,
+      goldPick2Logs,
+      selectedGoldPick2Log,
+      goldPick2LogDetail,
+      goldPick2Loading,
+      goldPick2ReviewPeriods,
+      fetchGoldPick2Summary,
+      fetchGoldPick2Review,
+      fetchGoldPick2Matrix,
+      fetchGoldPick2Logs,
+      selectGoldPick2Log,
+      triggerGoldPick2Run,
+      aggCockpit,
+      aggHistory,
+      selectedAggReport,
+      aggReportDetail,
+      aggLoading,
+      fetchAggCockpit,
+      fetchAggHistory,
+      selectAggReport,
+      triggerAggRun,
+      sixteenSummary,
+      sixteenReview,
+      sixteenReviewPeriods,
+      sixteenHistory,
+      selectedSixteenReport,
+      sixteenReportDetail,
+      sixteenLoading,
+      sixteenMatrixFilter,
+      filteredSixteenMatrix,
+      setSixteenMatrixFilter,
+      scrollToSixteenMatrixReview,
+      fetchSixteenSummary,
+      sixteenDisplayTop5,
+      sixteenDisplayTop12,
+      sixteenTip3Text,
+      sixteenDisplayRebound,
+      sixteenDisplayPairs,
+      sixteenBallChipClass,
+      sixteenOpsPointsSet,
+      formatSixteenKillHits,
+      fetchSixteenReview,
+      fetchSixteenHistory,
+      selectSixteenReport,
+      triggerSixteenRun,
+      updateSixteenDistChart,
+      applySixteenBucketConfig,
+      isSixteenBucketHit,
+      sixteenBucketLookback,
+      fetchSixteenBucketLookback,
+      clearSixteenBucketLookback,
+      copySixteenWechatBrief,
+      sixteenBucketAdvanced,
+      sixteenBucketSortCompare,
+      fetchSixteenBucketSortCompare,
+      applyBestBucketSort,
+      metaGoldSummary,
+      metaGoldReview,
+      metaGoldReviewPeriods,
+      metaGoldLoading,
+      fetchMetaGoldSummary,
+      fetchMetaGoldReview,
+      funnelSummary,
+      funnelReview,
+      funnelReviewPeriods,
+      funnelLoading,
+      fetchFunnelSummary,
+      fetchFunnelReview,
+      envRegimeSummary,
+      fdrAuditSummary,
+      fdrAuditLoading,
+      moduleCount,
+      winningCount,
+      baselineRate,
+      baselinePct,
+      pct,
+      qClass,
+      freshness,
+      freshnessExpanded,
+      freshnessLoading,
+      freshnessBadCount,
+      freshnessMark,
+      freshnessStateText,
+      freshnessLagText,
+      fetchFreshness,
+      moduleRegistry,
+      moduleRegistryLoading,
+      weeklyAdvice,
+      weeklyAdviceLoading,
+      fetchModuleRegistry,
+      fetchWeeklyAdvice,
+      moduleStatusOf,
+      moduleDisposition,
+      primeCompositeGate,
+      psychGameGate,
+      byModuleRows,
+      voteWeightSum,
+      registryRows,
+      paperTradingSummary,
+      fdrAuditPeriods,
+      paperTradingRolling,
+      fetchEnvRegimeSummary,
+      fetchFdrAuditSummary,
+      fetchPaperTradingSummary,
+      datasourceSummary,
+      datasourceReview,
+      datasourceLogs,
+      selectedDatasourceLog,
+      datasourceLogDetail,
+      datasourceLoading,
+      datasourceReviewPeriods,
+      fetchDatasourceSummary,
+      fetchDatasourceReview,
+      fetchDatasourceLogs,
+      selectDatasourceLog,
+      triggerDatasourceRun,
+      datasourceMatrixData,
+      datasourceMatrixLoading,
+      datasourceMatrixSelectedPeriod,
+      currentMatrixHighlightMode,
+      matrixHighlightModes,
+      canPrevDatasourcePeriod,
+      canNextDatasourcePeriod,
+      fetchDatasourceMatrix,
+      prevDatasourcePeriod,
+      nextDatasourcePeriod,
+      isCrossIntersection,
+      getMatrixCellClass,
+      reviewsLedgerData,
+      reviewsLedgerLimit,
+      reviewsLedgerLoading,
+      selectedReviewDetail,
+      showReviewDetailModal,
+      fetchReviewsLedger,
+      openReviewDetailModal,
+      closeReviewDetailModal,
+      modulesOverviewData,
+      modulesOverviewLoading,
+      fetchAllModulesOverview,
+      schedulerStatus,
+      schedulerLoading,
+      fetchSchedulerStatus,
+      triggerNightlyRun,
+      masterReviewData,
+      masterReviewLoading,
+      masterReviewPeriods,
+      fetchMasterReview,
+      triggerMasterReviewRun,
+      evolutionData,
+      evolutionHistory,
+      evolutionHistoryStale,
+      evolutionLoading,
+      fetchEvolutionStatus,
+      triggerEvolutionRun,
+      selectedEvolutionItem,
+      showEvolutionModal,
+      openEvolutionDetail,
+      closeEvolutionDetail,
+      unifiedBrainData,
+      unifiedBrainLoading,
+      fetchUnifiedBrain,
+      triggerUnifiedBrainRun,
+      triggerPsychologicalGameRun,
+      triggerPsychologicalGameBacktestRun,
+      triggerPrimeCompositeRun,
+      triggerLinearAlgebraRun,
+      triggerRandomForestRun,
+      triggerErrorCorrectionRun,
+      triggerDTWRun,
+      triggerTransformerRun,
+      triggerMatrixProfileRun,
+      triggerTDARun
+    } = __k8PageBindings;
 
-    const fetchJingleReview = async (n = 30) => {
-      try {
-        jingleLoading.value = true;
-        const res = await fetch(`/api/jingle/review?n=${n}`);
-        if (res.ok) {
-          jingleReview.value = await res.json();
-        }
-      } catch (err) {
-        console.error('Failed to fetch jingle review:', err);
-      } finally {
-        jingleLoading.value = false;
-      }
-    };
+    // ═════════════════ 经典量化七大子模块汇总大盘 ═════════════════
+    const classicLoading = ref(false);
 
-    const fetchJingleRules = async () => {
-      try {
-        const res = await fetch('/api/jingle/rules');
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.status === 'ok') {
-            jingleRules.value = data.rules || [];
-            jingleRulesMeta.value = data.meta || {};
-          }
-        }
-      } catch (err) {
-        console.error('Failed to fetch jingle rules:', err);
-      }
-    };
+    const activeClassicModelCount = computed(() => {
+      return [
+        datasourceSummary?.value,
+        goldPick2Summary?.value,
+        jingleSummary?.value,
+        suppressionSummary?.value,
+        psychologicalGameData.value,
+        pointOmissionSummary?.value
+      ].filter(Boolean).length;
+    });
 
-    const triggerJingleRun = async () => {
-      if (isRunning.value) return;
-      try {
-        isRunning.value = true;
-        openTab('live_terminal', '流水线黑客日志终端', '💻');
-        terminalLogs.value = [];
-        addLog('🚀 顺口溜口诀全流程推演任务已提交后台...', 'info');
-        const res = await fetch('/api/pipeline/run-jingle', { method: 'POST' });
-        if (res.ok) {
-          const data = await res.json();
-          const taskId = data.task_id;
-          startLogPolling(taskId, async () => {
-            await fetchJingleSummary();
-            await fetchJingleReview();
-            addLog('✨ 顺口溜口诀数据与预测已实时刷新完毕！', 'success');
-          });
-        }
-      } catch (err) {
-        isRunning.value = false;
-        addLog('❌ 启动顺口溜任务失败: ' + err.message, 'danger');
-      }
-    };
+    const classicConsensus = computed(() => {
+      const balls = Array.from({ length: 80 }, (_, i) => ({
+        ball: i + 1,
+        score: 0,
+        vote_count: 0,
+        sources: []
+      }));
 
-    const filteredJingleRules = computed(() => {
-      let list = jingleRules.value || [];
-      if (jingleRuleKindFilter.value !== 'all') {
-        list = list.filter(r => r.kind === jingleRuleKindFilter.value);
-      }
-      if (jingleRuleSearchKeyword.value && jingleRuleSearchKeyword.value.trim()) {
-        const kw = jingleRuleSearchKeyword.value.trim();
-        list = list.filter(r => {
-          const trgStr = (r.trigger || []).map(x => String(x).padStart(2, '0')).join(' ');
-          const predStr = (r.predict || []).map(x => String(x).padStart(2, '0')).join(' ');
-          return trgStr.includes(kw) || predStr.includes(kw) || String(r.rule_id).includes(kw);
+      const asNums = (list, max = 12) => {
+        if (!Array.isArray(list)) return [];
+        return list.map((x) => {
+          if (typeof x === 'number') return x;
+          if (x && typeof x === 'object') return Number(x.number ?? x.num ?? x.ball);
+          return Number(x);
+        }).filter((n) => Number.isFinite(n) && n >= 1 && n <= 80).slice(0, max);
+      };
+
+      const addVotes = (nums, code, weight = 1.0, asTop5 = true) => {
+        nums.forEach((b, idx) => {
+          const item = balls[b - 1];
+          const base = asTop5 ? (5.0 - idx * 0.5) : (2.5 - idx * 0.15);
+          item.score += Math.max(0.3, base) * weight;
+          item.vote_count += 1;
+          if (!item.sources.includes(code)) item.sources.push(code);
         });
+      };
+
+      const gp = goldPick2Summary?.value;
+      if (gp) {
+        const core = asNums([gp.golden, gp.hot].filter((x) => x != null), 5);
+        const fromPairs = (gp.top5_golden || []).flatMap((p) => p.pair || []);
+        addVotes([...new Set([...core, ...asNums(fromPairs, 10)])].slice(0, 8), '选2', 1.1);
       }
-      return list;
+
+      const jg = jingleSummary?.value;
+      if (jg) addVotes(asNums(jg.recommended_numbers, 10), '口诀', 1.0);
+
+      const sp = suppressionSummary?.value;
+      if (sp) addVotes(asNums((sp.top3 || []).map((c) => c.num), 5), '反弹', 1.0);
+
+      const ds = datasourceSummary?.value;
+      if (ds) {
+        addVotes(asNums(ds.top3_gold || ds.top_hot_numbers || ds.consensus_numbers, 3), '数据源', 1.0);
+      }
+
+      const pg = psychologicalGameData.value;
+      if (pg) {
+        addVotes(asNums(pg.top3_gold || pg.top5_assault, 3), '心理', 1.05);
+      }
+
+      const po = pointOmissionSummary?.value;
+      if (po) addVotes(asNums(po.top3_gold || po.top5, 3), '遗漏', 1.0);
+
+      const sorted = [...balls].sort((a, b) => b.score - a.score || b.vote_count - a.vote_count);
+      const top3 = sorted.filter((x) => x.vote_count > 0).slice(0, 3);
+      // 兼容旧字段：主口径最优3码
+      const top5 = top3;
+      const top12 = top3;
+      const top3Set = new Set(top3.map((x) => x.ball));
+      const kill_list = [];
+
+      const pairMap = new Map();
+      const recordPair = (p, source) => {
+        if (!p || p.length < 2) return;
+        const a = Math.min(p[0], p[1]);
+        const b = Math.max(p[0], p[1]);
+        if (a < 1 || b > 80) return;
+        const key = `${a}-${b}`;
+        if (!pairMap.has(key)) pairMap.set(key, { pair: [a, b], count: 0, sources: [] });
+        const obj = pairMap.get(key);
+        obj.count += 1;
+        if (!obj.sources.includes(source)) obj.sources.push(source);
+      };
+
+      if (gp?.gold_pair) recordPair(gp.gold_pair, '选2');
+      (gp?.top5_golden || []).slice(0, 3).forEach((p) => recordPair(p.pair, '选2'));
+      if (ds?.gold_pair) recordPair(ds.gold_pair, '数据源');
+      if (top3.length >= 2) recordPair([top3[0].ball, top3[1].ball], '共识');
+
+      const pairs = Array.from(pairMap.values())
+        .map((p) => ({ pair: p.pair, sources: p.sources.join(' + '), count: p.count }))
+        .sort((a, b) => b.count - a.count);
+
+      balls.forEach((item) => {
+        item.is_gold = top3Set.has(item.ball);
+        item.in_top5 = top3Set.has(item.ball);
+        item.in_top12 = top3Set.has(item.ball);
+        item.is_killed = false;
+      });
+
+      return { top3_gold: top3, top5, top12, kill_list, pairs, balls };
     });
 
-    // ──────────────── 空间重点点位分析状态 ────────────────
-    const spatialPointsSummary = ref(null);
-    const spatialPointsMatrix = ref([]);
-    const spatialPointsReview = ref(null);
-    const spatialPointsLoading = ref(false);
-    const pointsMatrixFilter = ref('all');
-    const pointsReviewPeriods = ref(30);
-
-    const filteredPointsMatrix = computed(() => {
-      let list = spatialPointsMatrix.value || [];
-      if (pointsMatrixFilter.value === 'core5') {
-        list = list.filter(b => b.tier === 'Core5');
-      } else if (pointsMatrixFilter.value === 'top10') {
-        list = list.filter(b => b.tier === 'Core5' || b.tier === 'Top10');
-      } else if (pointsMatrixFilter.value === 'ext15') {
-        list = list.filter(b => b.tier === 'Core5' || b.tier === 'Top10' || b.tier === 'Ext15');
-      } else if (pointsMatrixFilter.value === 'sig') {
-        list = list.filter(b => b.is_significant);
+    const classicResonanceSortMode = ref('score');
+    const sortedClassicResonanceList = computed(() => {
+      const list = [...(classicConsensus.value?.balls || [])];
+      if (classicResonanceSortMode.value === 'score') {
+        return list.sort((a, b) => b.score - a.score || b.vote_count - a.vote_count || a.ball - b.ball);
       }
-      return list;
+      return list.sort((a, b) => a.ball - b.ball);
     });
 
-    const fetchSpatialPointsSummary = async () => {
+    const fetchAllClassicModels = async (forceRefresh = false) => {
+      classicLoading.value = true;
       try {
-        const res = await fetch('/api/spatial-points/summary');
-        if (res.ok) {
-          spatialPointsSummary.value = await res.json();
-        }
+        await Promise.allSettled([
+          fetchDatasourceSummary(),
+          fetchGoldPick2Summary(),
+          fetchJingleSummary(),
+          fetchSuppressionSummary(),
+          fetchPsychologicalGameData(!!forceRefresh),
+          fetchPointOmissionSummary(!!forceRefresh),
+          fetchPrediction()
+        ]);
+        addLog('⚡ 经典量化预测层摘要已汇聚完成', 'success');
       } catch (err) {
-        console.error('获取空间重点点位摘要失败:', err);
-      }
-    };
-
-    const fetchSpatialPointsMatrix = async () => {
-      try {
-        const res = await fetch('/api/spatial-points/matrix');
-        if (res.ok) {
-          const data = await res.json();
-          spatialPointsMatrix.value = data.matrix || [];
-        }
-      } catch (err) {
-        console.error('获取空间重点点位矩阵失败:', err);
-      }
-    };
-
-    const fetchSpatialPointsReview = async (n = 30) => {
-      try {
-        spatialPointsLoading.value = true;
-        pointsReviewPeriods.value = n;
-        const res = await fetch(`/api/spatial-points/review?n=${n}`);
-        if (res.ok) {
-          spatialPointsReview.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取空间重点点位复盘失败:', err);
+        console.error('汇聚经典量化子模块失败:', err);
       } finally {
-        spatialPointsLoading.value = false;
+        classicLoading.value = false;
       }
     };
 
-    const triggerSpatialPointsRun = async () => {
-      if (isRunning.value) return;
-      try {
-        isRunning.value = true;
-        openTab('live_terminal', '流水线黑客日志终端', '💻');
-        terminalLogs.value = [];
-        addLog('🚀 空间重点点位全量推演流水线任务已提交后台...', 'info');
-        const res = await fetch('/api/pipeline/run-spatial-points', { method: 'POST' });
-        if (res.ok) {
-          const data = await res.json();
-          const taskId = data.task_id;
-          startLogPolling(taskId, async () => {
-            await fetchSpatialPointsSummary();
-            await fetchSpatialPointsMatrix();
-            await fetchSpatialPointsReview(pointsReviewPeriods.value);
-            addLog('✨ 空间重点点位推演与精排已实时刷新完毕！', 'success');
-          });
-        }
-      } catch (err) {
-        isRunning.value = false;
-        addLog('❌ 启动空间重点点位推演失败: ' + err.message, 'danger');
-      }
-    };
+    const CLASSIC_PIPELINE_STEPS = [
+      // 开奖侧自动（与夜间 v6 对齐）；点位类请在对应驾驶舱手动跑
+      { path: '/api/pipeline/run-gold-pick2', label: '定胆选2' },
+      { path: '/api/pipeline/run-jingle', label: '顺口溜' },
+      { path: '/api/pipeline/run-psychological-game', label: '心理博弈' }
+    ];
 
-    // ──────────────── 每日最新点位数据录入与联动 (Daily Points Input & Sync) ────────────────
-    const dailyPointsInfo = ref(null);
-    const dailyPointsHistory = ref([]);
-    const dailyPointsInputText = ref('');
-    const dailyPointsSelectedBalls = ref([]);
-    const dailyPointsTargetPeriod = ref('');
-    const dailyPointsTargetDate = ref('');
-    const dailyPointsAutoRun = ref(true);
-    const dailyPointsSubmitting = ref(false);
-    const dailyPointsLoading = ref(false);
-    const dailyPointsAnalysis = ref(null);
+    const runAllClassicModels = async () => {
+      if (isRunning.value || classicLoading.value) return;
+      openTab('live_terminal');
+      terminalLogs.value = [];
+      classicLoading.value = true;
+      isRunning.value = true;
+      addLog('⚡ 经典开奖侧子模块串行推演启动（不含点位类）…', 'info');
+      addLog('⏸️ 点位类（数据源/未开点位/点位遗漏/HE5）请录入后在对应页手动执行', 'warn');
 
-    const fetchDailyPointsInfo = async () => {
-      try {
-        dailyPointsLoading.value = true;
-        const res = await fetch('/api/daily-points/info');
-        if (res.ok) {
-          const data = await res.json();
-          dailyPointsInfo.value = data;
-          if (data.target_info) {
-            dailyPointsTargetPeriod.value = data.target_info.target_period_str || '';
-            dailyPointsTargetDate.value = data.target_info.target_date || '';
-            if (data.target_info.existing_points && data.target_info.existing_points.length === 20) {
-              dailyPointsSelectedBalls.value = [...data.target_info.existing_points].sort((a,b)=>a-b);
-              dailyPointsInputText.value = dailyPointsSelectedBalls.value.map(x => String(x).padStart(2, '0')).join(' ');
-            }
-          }
-          if (data.analysis) {
-            dailyPointsAnalysis.value = data.analysis;
-          }
-        }
-      } catch (err) {
-        console.error('获取点位库信息失败:', err);
-      } finally {
-        dailyPointsLoading.value = false;
-      }
-    };
-
-    const fetchDailyPointsHistory = async (limit = 30) => {
-      try {
-        const res = await fetch(`/api/daily-points/history?limit=${limit}`);
-        if (res.ok) {
-          const data = await res.json();
-          dailyPointsHistory.value = data.records || [];
-        }
-      } catch (err) {
-        console.error('获取历史点位对账失败:', err);
-      }
-    };
-
-    const toggleDailyPointBall = (num) => {
-      const idx = dailyPointsSelectedBalls.value.indexOf(num);
-      if (idx !== -1) {
-        dailyPointsSelectedBalls.value.splice(idx, 1);
-      } else {
-        if (dailyPointsSelectedBalls.value.length >= 20) {
-          addLog('⚠️ 点位最多只能选择 20 个号码，请先取消其他号码！', 'warning');
+      const runStep = async (idx) => {
+        if (idx >= CLASSIC_PIPELINE_STEPS.length) {
+          isRunning.value = false;
+          classicLoading.value = false;
+          await fetchPrediction();
+          await fetchAllClassicModels(true);
+          openTab('classic_overview');
+          addLog('✨ 经典开奖侧推演完成，已回到汇总大盘', 'success');
           return;
         }
-        dailyPointsSelectedBalls.value.push(num);
-      }
-      dailyPointsSelectedBalls.value.sort((a,b)=>a-b);
-      dailyPointsInputText.value = dailyPointsSelectedBalls.value.map(x => String(x).padStart(2, '0')).join(' ');
-    };
-
-    const syncDailyPointsFromText = () => {
-      const cleaned = (dailyPointsInputText.value || '')
-        .replace(/，/g, ' ').replace(/、/g, ' ').replace(/；/g, ' ')
-        .replace(/;/g, ' ').replace(/,/g, ' ').replace(/-/g, ' ').replace(/\|/g, ' ');
-      const tokens = cleaned.match(/\b\d+\b/g) || [];
-      const seen = new Set();
-      const nums = [];
-      for (const t of tokens) {
-        const v = parseInt(t, 10);
-        if (v >= 1 && v <= 80 && !seen.has(v)) {
-          seen.add(v);
-          nums.push(v);
-        }
-      }
-      nums.sort((a,b)=>a-b);
-      dailyPointsSelectedBalls.value = nums.slice(0, 20);
-    };
-
-    const clearDailyPointsInput = () => {
-      dailyPointsSelectedBalls.value = [];
-      dailyPointsInputText.value = '';
-      dailyPointsAnalysis.value = null;
-    };
-
-    const submitDailyPointsForm = async (autoRun = null) => {
-      if (dailyPointsSubmitting.value) return;
-      syncDailyPointsFromText();
-      if (dailyPointsSelectedBalls.value.length !== 20) {
-        addLog(`❌ 点位数量错误：当前只有 ${dailyPointsSelectedBalls.value.length} 个号码，必须恰好为 20 个！`, 'danger');
-        return;
-      }
-      const doAutoRun = autoRun !== null ? autoRun : dailyPointsAutoRun.value;
-      try {
-        dailyPointsSubmitting.value = true;
-        addLog(`💾 正在提交目标期 [${dailyPointsTargetPeriod.value}] 20个点位并执行安全落盘...`, 'info');
-        const payload = {
-          date: dailyPointsTargetDate.value,
-          period: String(dailyPointsTargetPeriod.value),
-          points: dailyPointsSelectedBalls.value.map(x => String(x).padStart(2, '0')).join(' '),
-          overwrite: true,
-          auto_run: doAutoRun
-        };
-        const res = await fetch('/api/daily-points/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (res.ok && data.status === 'ok') {
-          addLog(`✅ 目标期 ${dailyPointsTargetPeriod.value} 点位已成功落盘至 daily_points.txt！`, 'success');
-          if (data.data && data.data.analysis) {
-            dailyPointsAnalysis.value = data.data.analysis;
+        const step = CLASSIC_PIPELINE_STEPS[idx];
+        addLog(`▶️ [${idx + 1}/${CLASSIC_PIPELINE_STEPS.length}] ${step.label}`, 'info');
+        try {
+          isRunning.value = true;
+          const res = await fetch(step.path, { method: 'POST' });
+          if (!res.ok) {
+            addLog(`⚠️ ${step.label} 启动失败，跳过继续`, 'error');
+            await runStep(idx + 1);
+            return;
           }
-          await fetchDailyPointsInfo();
-          await fetchDailyPointsHistory();
-          if (doAutoRun && data.task_id) {
-            startLogPolling(data.task_id, async () => {
-              await fetchSpatialPointsSummary();
-              await fetchSuppressionSummary();
-              addLog('✨ 点位下游全模块联动推演与上色已全部完成！', 'success');
-            });
-          }
-        } else {
-          addLog(`❌ 点位落盘失败: ${data.detail || data.message || '未知错误'}`, 'danger');
-        }
-      } catch (err) {
-        addLog(`❌ 提交点位异常: ${err.message}`, 'danger');
-      } finally {
-        dailyPointsSubmitting.value = false;
-      }
-    };
-
-    const triggerDailyPointsSyncAll = async () => {
-      if (isRunning.value) return;
-      try {
-        isRunning.value = true;
-        openTab('live_terminal', '流水线黑客日志终端', '💻');
-        terminalLogs.value = [];
-        addLog('🚀 正在启动点位下游全模块联动计算 (热码加权 + 格式上色 + 空间点位 + 未开反弹)...', 'info');
-        const res = await fetch('/api/daily-points/sync-all', { method: 'POST' });
-        if (res.ok) {
           const data = await res.json();
           startLogPolling(data.task_id, async () => {
-            await fetchSpatialPointsSummary();
-            await fetchSuppressionSummary();
-            addLog('✨ 点位下游全模块联动推演与上色已全部完成！', 'success');
+            isRunning.value = true;
+            await runStep(idx + 1);
           });
+        } catch (e) {
+          addLog(`❌ ${step.label}: ${e.message}`, 'error');
+          await runStep(idx + 1);
         }
-      } catch (err) {
-        isRunning.value = false;
-        addLog('❌ 触发点位联动异常: ' + err.message, 'danger');
-      }
-    };
-
-    // ──────────────── 跟随分析 (重复号追踪与多窗条件跟随) 状态 ────────────────
-    const followSummary = ref(null);
-    const followReview = ref(null);
-    const followConditions = ref(null);
-    const followLoading = ref(false);
-    const followReviewPeriods = ref(30);
-
-    const fetchFollowSummary = async () => {
-      try {
-        const res = await fetch('/api/follow/summary');
-        if (res.ok) {
-          followSummary.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取跟随分析摘要失败:', err);
-      }
-    };
-
-    const fetchFollowReview = async (n = 30) => {
-      try {
-        followLoading.value = true;
-        followReviewPeriods.value = n;
-        const res = await fetch(`/api/follow/review?n=${n}`);
-        if (res.ok) {
-          followReview.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取跟随分析复盘失败:', err);
-      } finally {
-        followLoading.value = false;
-      }
-    };
-
-    const fetchFollowConditions = async () => {
-      try {
-        const res = await fetch('/api/follow/conditions');
-        if (res.ok) {
-          followConditions.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取跟随分析条件明细失败:', err);
-      }
-    };
-
-    const triggerFollowRun = async () => {
-      if (isRunning.value) return;
-      try {
-        isRunning.value = true;
-        openTab('live_terminal', '流水线黑客日志终端', '💻');
-        terminalLogs.value = [];
-        addLog('🚀 跟随分析(重复号追踪与多窗条件跟随)推演任务已提交后台...', 'info');
-        const res = await fetch('/api/pipeline/run-follow', { method: 'POST' });
-        if (res.ok) {
-          const data = await res.json();
-          const taskId = data.task_id;
-          startLogPolling(taskId, async () => {
-            await fetchFollowSummary();
-            await fetchFollowReview(followReviewPeriods.value);
-            await fetchFollowConditions();
-            addLog('✨ 跟随分析推演与复盘流水已实时刷新完毕！', 'success');
-          });
-        }
-      } catch (err) {
-        isRunning.value = false;
-        addLog('❌ 启动跟随分析推演失败: ' + err.message, 'danger');
-      }
-    };
-
-    // ──────────────── 未开点位反弹追踪 (Point Suppression Engine) 状态 ────────────────
-    const suppressionSummary = ref(null);
-    const suppressionReview = ref(null);
-    const suppressionPatterns = ref(null);
-    const suppressionLoading = ref(false);
-    const suppressionReviewPeriods = ref(30);
-
-    const fetchSuppressionSummary = async () => {
-      try {
-        const res = await fetch('/api/suppression/summary');
-        if (res.ok) {
-          suppressionSummary.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取未开点位反弹摘要失败:', err);
-      }
-    };
-
-    const fetchSuppressionReview = async (n = 30) => {
-      try {
-        suppressionLoading.value = true;
-        suppressionReviewPeriods.value = n;
-        const res = await fetch(`/api/suppression/review?n=${n}`);
-        if (res.ok) {
-          suppressionReview.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取未开点位反弹复盘流水失败:', err);
-      } finally {
-        suppressionLoading.value = false;
-      }
-    };
-
-    const fetchSuppressionPatterns = async () => {
-      try {
-        const res = await fetch('/api/suppression/patterns');
-        if (res.ok) {
-          suppressionPatterns.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取影子替身与能量外溢模式失败:', err);
-      }
-    };
-
-    const triggerSuppressionRun = async () => {
-      if (isRunning.value) return;
-      try {
-        isRunning.value = true;
-        openTab('live_terminal', '流水线黑客日志终端', '💻');
-        terminalLogs.value = [];
-        addLog('🚀 未开点位高压反弹与空间关联推演任务已提交后台...', 'info');
-        const res = await fetch('/api/pipeline/run-suppression', { method: 'POST' });
-        if (res.ok) {
-          const data = await res.json();
-          const taskId = data.task_id;
-          startLogPolling(taskId, async () => {
-            await fetchSuppressionSummary();
-            await fetchSuppressionReview(suppressionReviewPeriods.value);
-            await fetchSuppressionPatterns();
-            addLog('✨ 未开点位反弹追踪与影子替身数据已实时刷新完毕！', 'success');
-          });
-        }
-      } catch (err) {
-        isRunning.value = false;
-        addLog('❌ 启动未开点位反弹推演失败: ' + err.message, 'danger');
-      }
-    };
-
-    // ──────────────── 13. KillSeeker 杀号决策核心状态与方法 ────────────────
-    const killSummary = ref(null);
-    const killReview = ref(null);
-    const killLogs = ref([]);
-    const selectedKillLog = ref(null);
-    const killLogDetail = ref('');
-    const killLoading = ref(false);
-    const killReviewPeriods = ref(30);
-
-    const fetchKillSummary = async () => {
-      try {
-        const res = await fetch('/api/kill/summary');
-        if (res.ok) {
-          killSummary.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取KillSeeker杀号摘要失败:', err);
-      }
-    };
-
-    const fetchKillReview = async (n = 30) => {
-      try {
-        killLoading.value = true;
-        killReviewPeriods.value = n;
-        const res = await fetch(`/api/kill/review?n=${n}`);
-        if (res.ok) {
-          killReview.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取KillSeeker杀号复盘失败:', err);
-      } finally {
-        killLoading.value = false;
-      }
-    };
-
-    const fetchKillLogs = async () => {
-      try {
-        const res = await fetch('/api/kill/logs');
-        if (res.ok) {
-          killLogs.value = await res.json();
-          if (killLogs.value && killLogs.value.length > 0 && !selectedKillLog.value) {
-            selectKillLog(killLogs.value[0]);
-          }
-        }
-      } catch (err) {
-        console.error('获取KillSeeker日志列表失败:', err);
-      }
-    };
-
-    const selectKillLog = async (item) => {
-      selectedKillLog.value = item;
-      try {
-        const res = await fetch(`/api/kill/log-detail/${item.filename}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (window.marked) {
-            killLogDetail.value = marked.parse(data.content || '');
-          } else {
-            killLogDetail.value = data.content || '';
-          }
-        }
-      } catch (err) {
-        console.error('获取KillSeeker日志详情失败:', err);
-        killLogDetail.value = '加载日志失败: ' + err.message;
-      }
-    };
-
-    const triggerKillRun = async () => {
-      if (isRunning.value) return;
-      try {
-        isRunning.value = true;
-        openTab('live_terminal', '流水线黑客日志终端', '💻');
-        terminalLogs.value = [];
-        addLog('⚔️ KillSeeker 杀号全流程推演任务已提交后台...', 'info');
-        const res = await fetch('/api/pipeline/run-kill', { method: 'POST' });
-        if (res.ok) {
-          const data = await res.json();
-          const taskId = data.task_id;
-          startLogPolling(taskId, async () => {
-            await fetchKillSummary();
-            await fetchKillReview(killReviewPeriods.value);
-            await fetchKillLogs();
-            addLog('✨ KillSeeker 杀号推演数据已实时刷新完毕！', 'success');
-          });
-        }
-      } catch (err) {
-        isRunning.value = false;
-        addLog('❌ 启动KillSeeker杀号推演失败: ' + err.message, 'danger');
-      }
-    };
-
-    // ──────────────── 14. Gemini 选2预测核心状态与方法 ────────────────
-    const geminiSummary = ref(null);
-    const geminiReview = ref(null);
-    const geminiHistory = ref([]);
-    const selectedGeminiReport = ref(null);
-    const geminiReportDetail = ref('');
-    const geminiLoading = ref(false);
-    const geminiReviewPeriods = ref(30);
-
-    const fetchGeminiSummary = async () => {
-      try {
-        const res = await fetch('/api/gemini/summary');
-        if (res.ok) {
-          geminiSummary.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取Gemini选2摘要失败:', err);
-      }
-    };
-
-    const fetchGeminiReview = async (n = 30) => {
-      try {
-        geminiLoading.value = true;
-        geminiReviewPeriods.value = n;
-        const res = await fetch(`/api/gemini/review?n=${n}`);
-        if (res.ok) {
-          geminiReview.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取Gemini选2复盘失败:', err);
-      } finally {
-        geminiLoading.value = false;
-      }
-    };
-
-    const fetchGeminiHistory = async () => {
-      try {
-        const res = await fetch('/api/gemini/history');
-        if (res.ok) {
-          geminiHistory.value = await res.json();
-          if (geminiHistory.value && geminiHistory.value.length > 0 && !selectedGeminiReport.value) {
-            selectGeminiReport(geminiHistory.value[0]);
-          }
-        }
-      } catch (err) {
-        console.error('获取Gemini选2历史研报失败:', err);
-      }
-    };
-
-    const selectGeminiReport = async (item) => {
-      selectedGeminiReport.value = item;
-      try {
-        const res = await fetch(`/api/gemini/history-detail/${item.filename}`);
-        if (res.ok) {
-          const data = await res.json();
-          geminiReportDetail.value = data.content || '';
-        }
-      } catch (err) {
-        console.error('获取Gemini研报详情失败:', err);
-        geminiReportDetail.value = '加载研报失败: ' + err.message;
-      }
-    };
-
-    const triggerGeminiRun = async () => {
-      if (isRunning.value) return;
-      try {
-        isRunning.value = true;
-        openTab('live_terminal', '流水线黑客日志终端', '💻');
-        terminalLogs.value = [];
-        addLog('💎 Gemini 选2全流程量化推演任务已提交后台...', 'info');
-        const res = await fetch('/api/pipeline/run-gemini', { method: 'POST' });
-        if (res.ok) {
-          const data = await res.json();
-          const taskId = data.task_id;
-          startLogPolling(taskId, async () => {
-            await fetchGeminiSummary();
-            await fetchGeminiReview(geminiReviewPeriods.value);
-            await fetchGeminiHistory();
-            addLog('✨ Gemini 选2预测数据已实时刷新完毕！', 'success');
-          });
-        }
-      } catch (err) {
-        isRunning.value = false;
-        addLog('❌ 启动Gemini选2推演失败: ' + err.message, 'danger');
-      }
-    };
-
-    // ──────────────── 15. 定金选2决策 核心状态与方法 ────────────────
-    const goldPick2Summary = ref(null);
-    const goldPick2Review = ref(null);
-    const goldPick2Matrix = ref(null);
-    const goldPick2Logs = ref([]);
-    const selectedGoldPick2Log = ref(null);
-    const goldPick2LogDetail = ref('');
-    const goldPick2Loading = ref(false);
-    const goldPick2ReviewPeriods = ref(30);
-
-    const fetchGoldPick2Summary = async () => {
-      try {
-        const res = await fetch('/api/gold-pick2/summary');
-        if (res.ok) {
-          goldPick2Summary.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取定金选2摘要失败:', err);
-      }
-    };
-
-    const fetchGoldPick2Review = async (n = 30) => {
-      try {
-        goldPick2Loading.value = true;
-        goldPick2ReviewPeriods.value = n;
-        const res = await fetch(`/api/gold-pick2/review?n=${n}`);
-        if (res.ok) {
-          goldPick2Review.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取定金选2复盘失败:', err);
-      } finally {
-        goldPick2Loading.value = false;
-      }
-    };
-
-    const fetchGoldPick2Matrix = async () => {
-      try {
-        const res = await fetch('/api/gold-pick2/matrix');
-        if (res.ok) {
-          goldPick2Matrix.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取定金选2矩阵失败:', err);
-      }
-    };
-
-    const fetchGoldPick2Logs = async () => {
-      try {
-        const res = await fetch('/api/gold-pick2/logs');
-        if (res.ok) {
-          goldPick2Logs.value = await res.json();
-          if (goldPick2Logs.value && goldPick2Logs.value.length > 0 && !selectedGoldPick2Log.value) {
-            selectGoldPick2Log(goldPick2Logs.value[0]);
-          }
-        }
-      } catch (err) {
-        console.error('获取定金选2研报清单失败:', err);
-      }
-    };
-
-    const selectGoldPick2Log = async (item) => {
-      selectedGoldPick2Log.value = item;
-      try {
-        const res = await fetch(`/api/gold-pick2/log-detail/${item.filename}`);
-        if (res.ok) {
-          const data = await res.json();
-          goldPick2LogDetail.value = data.content || '';
-        }
-      } catch (err) {
-        console.error('获取定金选2研报详情失败:', err);
-        goldPick2LogDetail.value = '加载研报失败: ' + err.message;
-      }
-    };
-
-    const triggerGoldPick2Run = async () => {
-      if (isRunning.value) return;
-      try {
-        isRunning.value = true;
-        openTab('live_terminal', '流水线黑客日志终端', '💻');
-        terminalLogs.value = [];
-        addLog('💎 定金选2全流程决策推演任务已提交后台...', 'info');
-        const res = await fetch('/api/pipeline/run-gold-pick2', { method: 'POST' });
-        if (res.ok) {
-          const data = await res.json();
-          const taskId = data.task_id;
-          startLogPolling(taskId, async () => {
-            await fetchGoldPick2Summary();
-            await fetchGoldPick2Review(goldPick2ReviewPeriods.value);
-            await fetchGoldPick2Matrix();
-            await fetchGoldPick2Logs();
-            addLog('✨ 定金选2预测数据已实时刷新完毕！', 'success');
-          });
-        }
-      } catch (err) {
-        isRunning.value = false;
-        addLog('❌ 启动定金选2推演失败: ' + err.message, 'danger');
-      }
-    };
-
-    // ──────────────── 终审数据汇总复盘 ────────────────
-    const aggCockpit = ref({});
-    const aggHistory = ref([]);
-    const selectedAggReport = ref(null);
-    const aggReportDetail = ref('');
-    const aggLoading = ref(false);
-
-    const fetchAggCockpit = async () => {
-      aggLoading.value = true;
-      try {
-        const res = await fetch('/api/aggregation/cockpit');
-        if (res.ok) {
-          aggCockpit.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取终审数据汇总驾驶舱失败:', err);
-      } finally {
-        aggLoading.value = false;
-      }
-    };
-
-    const fetchAggHistory = async () => {
-      try {
-        const res = await fetch('/api/aggregation/history');
-        if (res.ok) {
-          const list = await res.json();
-          aggHistory.value = list;
-          if (list && list.length > 0 && !selectedAggReport.value) {
-            selectAggReport(list[0]);
-          }
-        }
-      } catch (err) {
-        console.error('获取汇总复盘历史失败:', err);
-      }
-    };
-
-    const selectAggReport = async (item) => {
-      selectedAggReport.value = item;
-      try {
-        const res = await fetch(`/api/aggregation/history/${item.filename}`);
-        if (res.ok) {
-          const data = await res.json();
-          aggReportDetail.value = data.content || '';
-        }
-      } catch (err) {
-        aggReportDetail.value = '读取战报详情失败: ' + err.message;
-      }
-    };
-
-    const triggerAggRun = async () => {
-      if (isRunning.value) return;
-      try {
-        isRunning.value = true;
-        openTab('live_terminal', '流水线黑客日志终端', '💻');
-        terminalLogs.value = [];
-        addLog('🧬 终审数据汇总复盘 (7路多维共振 + 8区空间平衡) 任务已提交后台...', 'info');
-        const res = await fetch('/api/aggregation/run?force=true', { method: 'POST' });
-        if (res.ok) {
-          const data = await res.json();
-          const taskId = data.task_id;
-          startLogPolling(taskId, async () => {
-            await fetchAggCockpit();
-            await fetchAggHistory();
-            addLog('✨ 终审数据汇总复盘计算完毕并已自动刷新！', 'success');
-          });
-        }
-      } catch (err) {
-        isRunning.value = false;
-        addLog('❌ 启动终审数据汇总失败: ' + err.message, 'danger');
-      }
-    };
-
-    // ──────────────── 16期中热频次动态推演与组合决策 ────────────────
-    const sixteenSummary = ref(null);
-    const sixteenReview = ref(null);
-    const sixteenReviewPeriods = ref(30);
-    const sixteenHistory = ref([]);
-    const selectedSixteenReport = ref(null);
-    const sixteenReportDetail = ref('');
-    const sixteenLoading = ref(false);
-    let sixteenDistChart = null;
-
-    const fetchSixteenSummary = async () => {
-      try {
-        const res = await fetch('/api/sixteen/summary');
-        if (res.ok) {
-          sixteenSummary.value = await res.json();
-          nextTick(() => {
-            updateSixteenDistChart();
-          });
-        }
-      } catch (err) {
-        console.error('获取16期中热推演摘要失败:', err);
-      }
-    };
-
-    const fetchSixteenReview = async (n = 30) => {
-      try {
-        sixteenLoading.value = true;
-        sixteenReviewPeriods.value = n;
-        const res = await fetch(`/api/sixteen/review?n=${n}`);
-        if (res.ok) {
-          sixteenReview.value = await res.json();
-        }
-      } catch (err) {
-        console.error('获取16期中热推演复盘失败:', err);
-      } finally {
-        sixteenLoading.value = false;
-      }
-    };
-
-    const fetchSixteenHistory = async () => {
-      try {
-        const res = await fetch('/api/sixteen/history');
-        if (res.ok) {
-          sixteenHistory.value = await res.json();
-          if (sixteenHistory.value && sixteenHistory.value.length > 0 && !selectedSixteenReport.value) {
-            selectSixteenReport(sixteenHistory.value[0]);
-          }
-        }
-      } catch (err) {
-        console.error('获取16期中热研报列表失败:', err);
-      }
-    };
-
-    const selectSixteenReport = async (item) => {
-      selectedSixteenReport.value = item;
-      try {
-        const res = await fetch(`/api/sixteen/history-detail/${item.filename}`);
-        if (res.ok) {
-          const data = await res.json();
-          sixteenReportDetail.value = data.content || '';
-        }
-      } catch (err) {
-        console.error('获取16期中热研报详情失败:', err);
-        sixteenReportDetail.value = '加载研报失败: ' + err.message;
-      }
-    };
-
-    const triggerSixteenRun = async () => {
-      if (isRunning.value) return;
-      try {
-        isRunning.value = true;
-        openTab('live_terminal', '流水线黑客日志终端', '💻');
-        terminalLogs.value = [];
-        addLog('🔥 16期中热频次动态推演与组合决策任务已提交后台...', 'info');
-        const res = await fetch('/api/pipeline/run-sixteen', { method: 'POST' });
-        if (res.ok) {
-          const data = await res.json();
-          const taskId = data.task_id;
-          startLogPolling(taskId, async () => {
-            await fetchSixteenSummary();
-            await fetchSixteenReview(sixteenReviewPeriods.value);
-            await fetchSixteenHistory();
-            addLog('✨ 16期中热频次推演已实时刷新完毕！', 'success');
-          });
-        }
-      } catch (err) {
-        isRunning.value = false;
-        addLog('❌ 启动16期中热推演失败: ' + err.message, 'danger');
-      }
-    };
-
-    const updateSixteenDistChart = () => {
-      const dom = document.getElementById('sixteenDistChart');
-      if (!dom || !sixteenSummary.value) return;
-      if (!sixteenDistChart || sixteenDistChart.isDisposed()) {
-        sixteenDistChart = echarts.init(dom);
-      }
-      const tc = getThemeColors();
-      const dist = sixteenSummary.value.distribution_counts || {};
-      const categories = ['0次\n(遗漏冷)', '1次\n(低频)', '2次\n(温冷)', '3次\n(中温)', '4次\n(黄金)', '5次\n(活跃)', '6次\n(强热)', '7次\n(高热)', '8+次\n(极热)'];
-      const values = [
-        dist['0'] || 0,
-        dist['1'] || 0,
-        dist['2'] || 0,
-        dist['3'] || 0,
-        dist['4'] || 0,
-        dist['5'] || 0,
-        dist['6'] || 0,
-        dist['7'] || 0,
-        dist['8+'] || 0
-      ];
-      const colors = ['#64748b', '#38bdf8', '#0ea5e9', '#facc15', '#10b981', '#34d399', '#fb923c', '#f87171', '#f43f5e'];
-
-      const opt = {
-        backgroundColor: 'transparent',
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { type: 'shadow' },
-          backgroundColor: tc.tooltipBg,
-          borderColor: tc.primary,
-          textStyle: { color: tc.textColor },
-          formatter: (params) => {
-            const p = params[0];
-            const cleanName = (p.name || '').replace('\n', ' ');
-            const val = p.value || 0;
-            const pct = ((val / 80) * 100).toFixed(1);
-            return `<div style="font-weight:bold;color:${tc.primary};margin-bottom:4px;">${cleanName}</div>
-                    <div style="font-size:12px;line-height:1.6;">
-                      <div>📊 号码个数: <b style="color:${tc.secondary};">${val}</b> 码</div>
-                      <div>🎯 大盘占比: <b>${pct}%</b> (共80码)</div>
-                    </div>`;
-          }
-        },
-        grid: { top: '16%', left: '3%', right: '3%', bottom: '12%', containLabel: true },
-        xAxis: {
-          type: 'category',
-          data: categories,
-          axisLabel: {
-            color: tc.textColor,
-            fontSize: 12,
-            interval: 0,
-            lineHeight: 16
-          },
-          axisLine: { lineStyle: { color: tc.axisColor } }
-        },
-        yAxis: {
-          type: 'value',
-          name: '号码个数 (码)',
-          nameTextStyle: { color: tc.textColor, fontSize: 12 },
-          axisLabel: { color: tc.textColor },
-          splitLine: { lineStyle: { color: tc.splitColor } }
-        },
-        series: [{
-          name: '号码个数',
-          type: 'bar',
-          barMaxWidth: 52,
-          barCategoryGap: '28%',
-          data: values.map((val, idx) => ({
-            value: val,
-            itemStyle: {
-              color: colors[idx],
-              borderRadius: [6, 6, 0, 0]
-            }
-          })),
-          label: {
-            show: true,
-            position: 'top',
-            color: tc.textColor,
-            fontWeight: 'bold',
-            fontSize: 13,
-            formatter: '{c} 码'
-          }
-        }]
       };
-      sixteenDistChart.setOption(opt, true);
-      sixteenDistChart.resize();
+
+      await runStep(0);
     };
 
-
-    // ══════════════════════════════════════════════════════════
-    // 双层LSTM 深度学习时序模块 State & Methods
-    // ══════════════════════════════════════════════════════════
-    const lstmSummary = ref(null);
-    const lstmReview = ref(null);
-    const lstmReviewPeriods = ref(15);
-    const lstmReports = ref([]);
-    const selectedLstmReport = ref(null);
-    const lstmReportDetail = ref(null);
-    const lstmLoading = ref(false);
-
-    const fetchLstmSummary = async () => {
-      lstmLoading.value = true;
-      try {
-        const res = await fetch('/api/lstm/summary');
-        if (res.ok) {
-          lstmSummary.value = await res.json();
-          addLog('🧠 双层LSTM最新推演数据加载完成', 'success');
-        } else {
-          addLog('⚠️ 双层LSTM数据获取异常', 'warn');
-        }
-      } catch (err) {
-        addLog(`❌ 获取双层LSTM数据失败: ${err.message}`, 'error');
-      } finally {
-        lstmLoading.value = false;
-      }
-    };
-
-    const fetchLstmReview = async (n = 15) => {
-      lstmLoading.value = true;
-      lstmReviewPeriods.value = n;
-      try {
-        const res = await fetch(`/api/lstm/review?n=${n}`);
-        if (res.ok) {
-          lstmReview.value = await res.json();
-          addLog(`📊 双层LSTM样本外近${n}期复盘数据加载完成`, 'success');
-        }
-      } catch (err) {
-        addLog(`❌ 获取双层LSTM复盘失败: ${err.message}`, 'error');
-      } finally {
-        lstmLoading.value = false;
-      }
-    };
-
-    const fetchLstmReports = async () => {
-      lstmLoading.value = true;
-      try {
-        const res = await fetch('/api/lstm/reports');
-        if (res.ok) {
-          lstmReports.value = await res.json();
-          if (lstmReports.value.length > 0 && !selectedLstmReport.value) {
-            selectLstmReport(lstmReports.value[0]);
-          }
-        }
-      } catch (err) {
-        addLog(`❌ 获取LSTM研报列表失败: ${err.message}`, 'error');
-      } finally {
-        lstmLoading.value = false;
-      }
-    };
-
-    const selectLstmReport = async (rep) => {
-      selectedLstmReport.value = rep;
-      lstmLoading.value = true;
-      try {
-        const res = await fetch(`/api/lstm/report-detail/${encodeURIComponent(rep.filename)}`);
-        if (res.ok) {
-          lstmReportDetail.value = await res.json();
-        }
-      } catch (err) {
-        addLog(`❌ 加载LSTM研报内容失败: ${err.message}`, 'error');
-      } finally {
-        lstmLoading.value = false;
-      }
-    };
-
-    const triggerLstmRun = async () => {
-      try {
-        const res = await fetch('/api/pipeline/run-lstm', { method: 'POST' });
-        const data = await res.json();
-        addLog(`🚀 ${data.message}`, 'info');
-        openTab('live_terminal', '流水线黑客日志终端', '💻');
-      } catch (err) {
-        addLog(`❌ 触发LSTM推演任务失败: ${err.message}`, 'error');
-      }
-    };
-
-    // ══════════════════════════════════════════════════════════
-    // 顺口溜 & 跟随 样本外复盘增强
-    // ══════════════════════════════════════════════════════════
-    const jingleReviewPeriods = ref(30);
-
-    const fetchJingleReviewEnhanced = async (n = 30) => {
-      jingleLoading.value = true;
-      jingleReviewPeriods.value = n;
-      try {
-        const res = await fetch(`/api/jingle/review?n=${n}`);
-        if (res.ok) {
-          jingleReview.value = await res.json();
-          addLog(`📜 顺口溜口诀样本外近${n}期复盘对账完成`, 'success');
-        }
-      } catch (err) {
-        addLog(`❌ 获取口诀复盘失败: ${err.message}`, 'error');
-      } finally {
-        jingleLoading.value = false;
-      }
-    };
-
-    // ══════════════════════════════════════════════════════════
-    // 每日自学习自动复盘总账本 & 10大模块预测全景大盘
-    // ══════════════════════════════════════════════════════════
-    const reviewsLedgerData = ref(null);
-    const reviewsLedgerLimit = ref(50);
-    const reviewsLedgerLoading = ref(false);
-    const selectedReviewDetail = ref(null);
-    const showReviewDetailModal = ref(false);
-
-    const fetchReviewsLedger = async (limit = 50) => {
-      reviewsLedgerLoading.value = true;
-      reviewsLedgerLimit.value = limit;
-      try {
-        const res = await fetch(`/api/reviews/ledger?limit=${limit}`);
-        if (res.ok) {
-          reviewsLedgerData.value = await res.json();
-          addLog(`📋 每日自学习自动复盘总账本 (近${limit}期) 加载完成`, 'success');
-        }
-      } catch (err) {
-        addLog(`❌ 获取复盘总账本失败: ${err.message}`, 'error');
-      } finally {
-        reviewsLedgerLoading.value = false;
-      }
-    };
-
-    const openReviewDetailModal = async (period) => {
-      try {
-        const res = await fetch(`/api/reviews/detail/${period}`);
-        if (res.ok) {
-          selectedReviewDetail.value = await res.json();
-          showReviewDetailModal.value = true;
-        }
-      } catch (err) {
-        addLog(`❌ 读取第${period}期复盘详情失败: ${err.message}`, 'error');
-      }
-    };
-
-    const closeReviewDetailModal = () => {
-      showReviewDetailModal.value = false;
-      selectedReviewDetail.value = null;
-    };
-
-    const modulesOverviewData = ref(null);
-    const modulesOverviewLoading = ref(false);
-
-    const fetchAllModulesOverview = async () => {
-      modulesOverviewLoading.value = true;
-      try {
-        const res = await fetch('/api/quant/modules-overview');
-        if (res.ok) {
-          modulesOverviewData.value = await res.json();
-          addLog('🌐 10大子模块今日预测全景大盘加载完成', 'success');
-        }
-      } catch (err) {
-        addLog(`❌ 获取全模块预测总览失败: ${err.message}`, 'error');
-      } finally {
-        modulesOverviewLoading.value = false;
-      }
-    };
-
-        onMounted(async () => {
+    onMounted(async () => {
       // 初始化当前主题
       document.documentElement.className = currentTheme.value;
       document.body.className = currentTheme.value;
 
       initCharts();
-      await fetchSystemStatus();
-      await fetchPrediction();
-      await fetchMatrixData();
-      await fetchHistoryTrends();
-      await fetchLotteryTrends(100);
-      await fetchHistoryTable(1);
-      await fetchReportList();
-      await fetchAggCockpit();
-      await fetchAggHistory();
-      await fetchJingleSummary();
-      await fetchJingleReview(30);
-      await fetchJingleRules();
-      await fetchSpatialPointsSummary();
-      await fetchSpatialPointsMatrix();
-      await fetchSpatialPointsReview(30);
-      await fetchDailyPointsInfo();
-      await fetchDailyPointsHistory(30);
-      await fetchFollowSummary();
-      await fetchFollowReview(30);
-      await fetchFollowConditions();
-      await fetchSuppressionSummary();
-      await fetchSuppressionReview(30);
-      await fetchSuppressionPatterns();
-      await fetchKillSummary();
-      await fetchKillReview(30);
-      await fetchKillLogs();
-      await fetchGoldPick2Summary();
-      await fetchGoldPick2Review(30);
-      await fetchGoldPick2Matrix();
-      await fetchGoldPick2Logs();
-      await fetchGeminiSummary();
-      await fetchGeminiReview(30);
-      await fetchGeminiHistory();
-      await fetchSixteenSummary();
-      await fetchSixteenReview(30);
-      await fetchSixteenHistory();
-      await fetchLstmSummary();
-      await fetchReviewsLedger(50);
-      await fetchAllModulesOverview();
+      // 2. 【首屏极速性能飞跃】：仅并发加载主驾驶舱首屏核心数据，杜绝串行等待！
+      try {
+        await Promise.allSettled([
+          fetchSchedulerStatus(),   // 顶栏开奖状态与倒计时
+          fetchSystemStatus(),      // 目标研判期与信标状态
+          fetchPrediction(),        // 实时主驾驶舱核心推荐号码 (Top5 / 推荐5码)
+          fetchAllAiMathModels(),   // 六大高维数学与AI模型推演与超级共识
+          fetchUnifiedBrain(),      // 统一决策主脑综合状态
+          fetchMasterReview(30),    // 实战决算大看板
+          fetchEvolutionStatus(),   // 元学习参数
+          fetchHistoryTable(1),     // 历史开奖表格第一页
+          fetchHistoryTrends(),     // 近期走势分析
+          fetchMatrixData(),        // 点位矩阵快照
+          fetchLotteryTrends(100),  // 走势图数据
+          fetchFreshness(),         // E5 顶栏数据新鲜度横幅
+          fetchModuleRegistry()     // B包 模块投票注册表 (全站状态权威源)
+        ]);
+      } catch (err) {
+        console.warn('首屏核心数据加载提示:', err);
+      }
+
+      // 全局点击与滚动自动收起 Tab 右键快捷菜单
+      window.addEventListener('click', closeTabContextMenu);
+      window.addEventListener('scroll', closeTabContextMenu, true);
+
+      // 3. 定时刷新 22:00 倒计时 (轻量轮询)
+      setInterval(fetchSchedulerStatus, 5000);
+
+      // 4. 【后台静默预热 (Idle Prewarm)】：在首屏完全呈现 1.5 秒后，在浏览器空闲时后台静默拉取基础概览，绝不卡顿主界面
+      setTimeout(() => {
+        Promise.allSettled([
+          fetchAllModulesOverview(),
+          fetchReportList(),
+          fetchDailyPointsInfo(),
+          fetchPrimeCompositeData(),
+          fetchPsychologicalGameData(),
+          fetchSpatialPointsMatrix()
+        ]);
+      }, 1500);
     });
 
     onBeforeUnmount(() => {
       if (logPollTimer) clearInterval(logPollTimer);
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('click', closeTabContextMenu);
+      window.removeEventListener('scroll', closeTabContextMenu, true);
     });
 
     return {
+      isMobile,
+      isDesktop,
       isSidebarCollapsed,
+      isMobileSidebarOpen,
+      toggleMobileSidebar,
+      handleSidebarToggle,
       themes,
       currentTheme,
       currentThemeObj,
@@ -2537,19 +3787,64 @@ const App = {
       menuGroups,
       tabs,
       activeTab,
+      isGroupActive,
       toggleGroup,
+      toggleAllGroups,
       openTab,
       switchTab,
+      openModuleHistory,
+      tabContextMenu,
+      openTabContextMenu,
+      closeTabContextMenu,
       closeTab,
       closeOtherTabs,
+      closeRightTabs,
+      closeLeftTabs,
       closeAllTabs,
+      refreshCurrentTab,
       systemStatus,
       prediction,
       matrixData,
+      hitLeaderboard,
+      hitLoading,
+      hitRange,
+      hitSortKey,
+      hitSortedModules,
+      hitRateOf,
+      hitColor,
+      hitRateOfColor,
+      fetchHitLeaderboard,
       tailStats,
       zoneStats,
       trendStats,
       activeFilter,
+      activeFilters,
+      matrixFilterMode,
+      matrixMorphFilters,
+      hasMatrixFilter,
+      toggleMatrixFilter,
+      isMatrixFilterActive,
+      toggleMatrixMorph,
+      isMatrixMorphActive,
+      clearMatrixMorphFilters,
+      matrixDimOverlay,
+      matrixDimGroups,
+      matrixFilterCounts,
+      isMatrixFilterMatch,
+      matrixBallZone,
+      matrixBallRoad,
+      matrixBallPrimeKind,
+      matrixDimLabel,
+      matrixDimCellClass,
+      matrixCellAttrTags,
+      matrixAttrTagMap,
+      setMatrixDimOverlay,
+      primeCompositeData,
+      primeCompositeLoading,
+      fetchPrimeCompositeData,
+      psychologicalGameData,
+      psychologicalGameLoading,
+      fetchPsychologicalGameData,
       // 衍生与视图计算属性
       filteredMatrix,
       purePoolDetailed,
@@ -2578,9 +3873,23 @@ const App = {
       handleCustomLimitSubmit,
       toggleHighlightBall,
       handleSearchBallHighlight,
+      // 全模块预测共识叠加 (2026-10-22)
+      consensusData,
+      consensusEnabled,
+      consensusLoading,
+      consensusLegendOpen,
+      consensusModuleMap,
+      consensusByBall,
+      fetchModuleConsensus,
+      toggleConsensusModule,
+      selectAllConsensusModules,
+      selectStrongConsensusModules,
+      clearConsensusModules,
       // 历史表格与研报
       historyTable,
       reportList,
+      reportFilter,
+      filteredReportList,
       currentReport,
       selectedBall,
       showBallModal,
@@ -2590,8 +3899,13 @@ const App = {
       isRunning,
       autoScroll,
       openBallDetail,
+      focusMatrixFromBallTag,
       openReportContent,
       fetchHistoryTable,
+      histRoad,
+      histPrime,
+      histBallRoadClass,
+      histBallTip,
       runPipeline,
       syncData,
       clearLogs,
@@ -2660,19 +3974,30 @@ const App = {
       fetchSuppressionReview,
       fetchSuppressionPatterns,
       triggerSuppressionRun,
-      // KillSeeker 杀号决策
-      killSummary,
-      killReview,
-      killLogs,
-      selectedKillLog,
-      killLogDetail,
-      killLoading,
-      killReviewPeriods,
-      fetchKillSummary,
-      fetchKillReview,
-      fetchKillLogs,
-      selectKillLog,
-      triggerKillRun,
+      // 点位+遗漏号深度研判驾驶舱
+      pointOmissionSummary,
+      pointOmissionReport,
+      pointOmissionReportHtml,
+      pointOmissionBacktest,
+      pointOmissionHitLedger,
+      pointOmissionLoading,
+      pointOmissionLedgerLoading,
+      pointOmissionSubTab,
+      getMethodChineseName,
+      fetchPointOmissionSummary,
+      fetchPointOmissionReport,
+      fetchPointOmissionBacktest,
+      fetchPointOmissionHitLedger,
+      seedPointOmissionHitLedger,
+      triggerPointOmissionRun,
+      setPointOmissionSubTab,
+      isPointOmissionCore,
+      isPointOmissionExpanded,
+      isPointOmissionTop5,
+      isPointOmissionDefensive,
+      getPointOmissionNumScore,
+      getPointOmissionNumMiss,
+      getPointOmissionMatrixClass,
       // 定金选2决策
       goldPick2Summary,
       goldPick2Review,
@@ -2701,7 +4026,7 @@ const App = {
       fetchGeminiHistory,
       selectGeminiReport,
       triggerGeminiRun,
-      // 终审数据汇总复盘
+      // 策略汇总复盘
       aggCockpit,
       aggHistory,
       selectedAggReport,
@@ -2719,12 +4044,34 @@ const App = {
       selectedSixteenReport,
       sixteenReportDetail,
       sixteenLoading,
+      sixteenMatrixFilter,
+      filteredSixteenMatrix,
+      setSixteenMatrixFilter,
+      scrollToSixteenMatrixReview,
       fetchSixteenSummary,
+      sixteenDisplayTop5,
+      sixteenDisplayTop12,
+      sixteenTip3Text,
+      sixteenDisplayRebound,
+      sixteenDisplayPairs,
+      sixteenBallChipClass,
+      sixteenOpsPointsSet,
+      formatSixteenKillHits,
       fetchSixteenReview,
       fetchSixteenHistory,
       selectSixteenReport,
       triggerSixteenRun,
       updateSixteenDistChart,
+      applySixteenBucketConfig,
+      isSixteenBucketHit,
+      sixteenBucketLookback,
+      fetchSixteenBucketLookback,
+      clearSixteenBucketLookback,
+      copySixteenWechatBrief,
+      sixteenBucketAdvanced,
+      sixteenBucketSortCompare,
+      fetchSixteenBucketSortCompare,
+      applyBestBucketSort,
       // 双层LSTM深度学习
       lstmSummary,
       lstmReview,
@@ -2742,6 +4089,59 @@ const App = {
       jingleReviewPeriods,
       jingleLoading,
       fetchJingleReviewEnhanced,
+      // 数据源1×2 深层关联推演
+      datasourceSummary,
+      datasourceReview,
+      datasourceLogs,
+      selectedDatasourceLog,
+      datasourceLogDetail,
+      datasourceLoading,
+      datasourceReviewPeriods,
+      fetchDatasourceSummary,
+      fetchDatasourceReview,
+      fetchDatasourceLogs,
+      selectDatasourceLog,
+      triggerDatasourceRun,
+      // 数据源1与数据源2 原始阵列全景
+      datasourceMatrixData,
+      datasourceMatrixLoading,
+      datasourceMatrixSelectedPeriod,
+      currentMatrixHighlightMode,
+      matrixHighlightModes,
+      canPrevDatasourcePeriod,
+      canNextDatasourcePeriod,
+      fetchDatasourceMatrix,
+      prevDatasourcePeriod,
+      nextDatasourcePeriod,
+      isCrossIntersection,
+      getMatrixCellClass,
+      // 三高特征 (重复高/边高/冷高)
+      triHighSubTab,
+      triHighHistoryRows,
+      triHighSummaryData,
+      triHighInputPeriod,
+      triHighInputDate,
+      triHighRepeatText,
+      triHighRepeatBalls,
+      triHighEdgeLeftText,
+      triHighEdgeLeftBalls,
+      triHighEdgeRightText,
+      triHighEdgeRightBalls,
+      triHighColdText,
+      triHighColdBalls,
+      triHighSaving,
+      parseTriHighRepeat,
+      parseTriHighEdgeLeft,
+      parseTriHighEdgeRight,
+      parseTriHighCold,
+      clearTriHighInputs,
+      getUnionTriHighCount,
+      getResonanceWithDailyPoints,
+      fetchTriHighHistory,
+      fetchTriHighSummary,
+      saveTriHighRecord,
+      triggerTriHighRun,
+      selectTriHighQuickPeriod,
       // 每日自学习复盘总账本 & 全模块总览
       reviewsLedgerData,
       reviewsLedgerLimit,
@@ -2753,7 +4153,188 @@ const App = {
       closeReviewDetailModal,
       modulesOverviewData,
       modulesOverviewLoading,
-      fetchAllModulesOverview
+      fetchAllModulesOverview,
+      // 5 大新增量化决策与风控资产 (Meta-Gold / 三级漏斗 / 宏观环境 / FDR审计 / 模拟盘)
+      metaGoldSummary,
+      metaGoldReview,
+      metaGoldReviewPeriods,
+      metaGoldLoading,
+      fetchMetaGoldSummary,
+      fetchMetaGoldReview,
+      funnelSummary,
+      funnelReview,
+      funnelReviewPeriods,
+      funnelLoading,
+      fetchFunnelSummary,
+      fetchFunnelReview,
+      envRegimeSummary,
+      fdrAuditSummary,
+      fdrAuditLoading,
+      moduleCount,
+      winningCount,
+      baselineRate,
+      baselinePct,
+      pct,
+      qClass,
+      freshness,
+      freshnessExpanded,
+      freshnessLoading,
+      freshnessBadCount,
+      freshnessMark,
+      freshnessStateText,
+      freshnessLagText,
+      fetchFreshness,
+      moduleRegistry,
+      moduleRegistryLoading,
+      weeklyAdvice,
+      weeklyAdviceLoading,
+      fetchModuleRegistry,
+      fetchWeeklyAdvice,
+      moduleStatusOf,
+      moduleDisposition,
+      primeCompositeGate,
+      psychGameGate,
+      byModuleRows,
+      voteWeightSum,
+      registryRows,
+      paperTradingSummary,
+      fdrAuditPeriods,
+      paperTradingRolling,
+      fetchEnvRegimeSummary,
+      fetchFdrAuditSummary,
+      fetchPaperTradingSummary,
+      // 22:00 夜间全自动流水线 / 全模块复盘 / 自动进化
+      schedulerStatus,
+      schedulerLoading,
+      fetchSchedulerStatus,
+      triggerNightlyRun,
+      masterReviewData,
+      masterReviewLoading,
+      masterReviewPeriods,
+      fetchMasterReview,
+      triggerMasterReviewRun,
+      evolutionData,
+      evolutionHistory,
+      evolutionHistoryStale,
+      evolutionLoading,
+      fetchEvolutionStatus,
+      triggerEvolutionRun,
+      selectedEvolutionItem,
+      showEvolutionModal,
+      openEvolutionDetail,
+      closeEvolutionDetail,
+      // 全栈统一决策主脑 (无加权)
+      unifiedBrainData,
+      unifiedBrainLoading,
+      fetchUnifiedBrain,
+      triggerUnifiedBrainRun,
+      // 质合数与心理博弈量化推演 & 样本外滚动回测
+      primeCompositeData,
+      primeCompositeLoading,
+      primeCompositeRefreshMsg,
+      fetchPrimeCompositeData,
+      triggerPrimeCompositeRun,
+      psychologicalGameData,
+      psychologicalGameLoading,
+      fetchPsychologicalGameData,
+      triggerPsychologicalGameRun,
+      psychologicalGameBacktest,
+      psychologicalGameBacktestLoading,
+      psychologicalGameBacktestWindow,
+      activePsychologicalBacktest,
+      fetchPsychologicalGameBacktest,
+      triggerPsychologicalGameBacktestRun,
+      // 09. 遗传算法自进化推演战区
+      geneticData,
+      geneticReviewData,
+      isGeneticRunning,
+      fetchGeneticData,
+      fetchGeneticReview,
+      triggerGeneticEvolution,
+      initGeneticConvergenceChart,
+      initGeneticRadarChart,
+      // 10. 线性代数空间投影量化推演
+      linearAlgebraData,
+      linearAlgebraReviewData,
+      linearAlgebraLoading,
+      isLinearAlgebraRunning,
+      fetchLinearAlgebraData,
+      fetchLinearAlgebraReview,
+      triggerLinearAlgebraRun,
+      // 随机森林号码预测
+      randomForestData,
+      randomForestReviewData,
+      randomForestLoading,
+      isRandomForestRunning,
+      fetchRandomForestData,
+      fetchRandomForestReview,
+      triggerRandomForestRun,
+      // 残差改错 GBDT
+      errorCorrectionData,
+      errorCorrectionReviewData,
+      errorCorrectionLoading,
+      isErrorCorrectionRunning,
+      fetchErrorCorrectionData,
+      fetchErrorCorrectionReview,
+      triggerErrorCorrectionRun,
+      // 一胆拖三盾 · 选2组合拳 (2026-10-22)
+      spearShieldData,
+      spearShieldReviewData,
+      spearShieldLoading,
+      spearShieldRerunning,
+      fetchSpearShieldData,
+      fetchSpearShieldReview,
+      rerunSpearShieldReview,
+      // 点位012偏态压缩器 (2026-10-22)
+      pointRoadData,
+      pointRoadReviewData,
+      pointRoadLoading,
+      fetchPointRoadData,
+      // 11. 动态时间规整 DTW 推演
+      dtwData,
+      dtwReviewData,
+      dtwLoading,
+      fetchDTWData,
+      fetchDTWReview,
+      triggerDTWRun,
+      // 12. Transformer 全局自注意力推演
+      transformerData,
+      transformerReviewData,
+      transformerLoading,
+      fetchTransformerData,
+      fetchTransformerReview,
+      triggerTransformerRun,
+      // 13. 矩阵轮廓 Matrix Profile 查重
+      matrixProfileData,
+      matrixProfileReviewData,
+      matrixProfileLoading,
+      fetchMatrixProfileData,
+      fetchMatrixProfileReview,
+      triggerMatrixProfileRun,
+      // 14. 拓扑数据分析 TDA 持续同调
+      tdaData,
+      tdaReviewData,
+      tdaLoading,
+      fetchTDAData,
+      fetchTDAReview,
+      triggerTDARun,
+      // 六大高维数学与AI超级共识
+      aiMathConsensus,
+      aiMathConsensusReviewData,
+      fetchAiMathConsensusReview,
+      aiResonanceSortMode,
+      sortedAiResonanceList,
+      activeAiModelCount,
+      aiMathLoading,
+      fetchAllAiMathModels,
+      // 经典量化七大子模块汇总
+      classicLoading,
+      classicConsensus,
+      classicResonanceSortMode,
+      sortedClassicResonanceList,
+      activeClassicModelCount,
+      fetchAllClassicModels,
+      runAllClassicModels
     };
   }
 };

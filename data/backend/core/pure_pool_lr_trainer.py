@@ -8,6 +8,7 @@ Walk-Forward 学习特征权重 → cache/pure_pool_lr_weights.json
 T(n): 训窗样本行数线性；S(n): O(特征维 × 行数)
 """
 from __future__ import annotations
+from backend.utils.paths import get_cache_dir
 
 import json
 import math
@@ -27,7 +28,7 @@ _PROJ = get_project_root()
 
 from core.pure_pool_scorer import load_b_zone_data, score_pure_pool
 
-WEIGHTS_PATH = os.path.join(_PROJ, 'cache', 'pure_pool_lr_weights.json')
+WEIGHTS_PATH = os.path.join(get_cache_dir(), 'pure_pool_lr_weights.json')
 FEATURE_NAMES = [
     'omission', 'log_omis', 'consecutive', 'dual_source', 'recent_hits', 'consec_ge2'
 ]

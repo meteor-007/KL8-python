@@ -1,0 +1,324 @@
+<div v-show="activeTab === 'classic_overview'" class="space-y-6">
+  <!-- ═════════════════ 1. 顶栏总览卡 ═════════════════ -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
+    <div class="space-y-1">
+      <div class="flex items-center gap-3 flex-wrap">
+        <span class="text-2xl">⚡</span>
+        <h2 class="text-lg font-bold text-white tracking-wide">经典量化推演 · 预测层汇总大盘</h2>
+        <span class="cyber-badge cyber-badge-cyan font-mono">第 {{ systemStatus.target_period }} 期</span>
+      </div>
+      <p class="text-xs text-slate-400">
+        开奖侧可自动：定胆选2 / 极简选2 / 顺口溜 / 心理博弈；需点位手工：数据源 / 未开点位 / 点位遗漏 / HE5。
+      </p>
+    </div>
+    <div class="flex items-center gap-3 flex-wrap">
+      <button @click="fetchAllClassicModels(true)" :disabled="classicLoading || isRunning" class="cyber-btn cyber-btn-cyan text-xs">
+        <span v-if="classicLoading && !isRunning" class="animate-spin">⚙️</span>
+        <span v-else>🔄</span>
+        <span>{{ classicLoading && !isRunning ? '正在汇聚摘要...' : '实时汇总刷新' }}</span>
+      </button>
+      <button @click="runAllClassicModels" :disabled="classicLoading || isRunning" class="cyber-btn cyber-btn-gold text-xs">
+        <span v-if="isRunning" class="animate-spin">⚙️</span>
+        <span v-else>⚡</span>
+        <span>{{ isRunning ? '开奖侧推演中...' : '一键推演开奖侧（不含点位）' }}</span>
+      </button>
+      <button @click="openModuleHistory('classic_overview')" class="cyber-btn text-xs flex items-center gap-1 bg-purple-500/15 text-purple-200 border border-purple-400/40 hover:border-purple-300/70">
+        <span>📜</span> 历史研报总库
+      </button>
+    </div>
+  </div>
+
+  <!-- ═════════════════ 2. 经典子系统超级共识 ═════════════════ -->
+  <div class="glass-panel p-6 space-y-5 border-l-4 border-fuchsia-400 shadow-[0_0_20px_rgba(232,121,249,0.12)]">
+    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xl">👑</span>
+        <div>
+          <h3 class="text-base font-bold text-fuchsia-300 flex items-center gap-2 flex-wrap">
+            <span>经典量化子系统 · 交叉共识核心决策</span>
+            <span class="cyber-badge text-[10px] font-mono" style="background: rgba(232,121,249,0.15); color: #f0abfc; border: 1px solid rgba(232,121,249,0.35);">开奖侧共振</span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">
+            大白话：把六个经典子模块的做多结果放到同一桌投票，重合越高越稳；仅展示最优3码与选2搭档共识。
+          </p>
+        </div>
+      </div>
+      <div class="text-xs font-mono text-slate-400 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>已就绪: <b class="text-cyan-300">{{ activeClassicModelCount }}/6</b></span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="p-4 rounded-xl bg-slate-900/80 border border-amber-500/40 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-amber-300 font-bold flex items-center gap-1.5">
+            <span>🌟</span> 交叉共识金胆 (最优3码)
+          </span>
+          <span class="text-[10px] text-amber-400/80 font-mono">多模块共振</span>
+        </div>
+        <div class="flex flex-wrap gap-2 items-center">
+          <div v-for="item in classicConsensus.top5.slice(0, 3)" :key="'c-top3-' + item.ball" class="flex flex-col items-center">
+            <span class="lottery-ball ball-gold w-9 h-9 text-sm font-black">{{ String(item.ball).padStart(2, '0') }}</span>
+            <span class="text-[10px] text-amber-300 font-mono font-bold mt-1">{{ item.vote_count }}票</span>
+          </div>
+          <div v-if="!classicConsensus.top5.length" class="text-xs text-slate-500 py-2">汇总刷新后生成…</div>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-xl bg-slate-900/80 border border-purple-500/40 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs text-purple-300 font-bold flex items-center gap-1.5">
+            <span>💎</span> 黄金选2搭档
+          </span>
+          <span class="text-[10px] text-purple-400/80 font-mono">双码</span>
+        </div>
+        <div class="space-y-1.5 font-mono text-xs">
+          <div v-for="(pairItem, idx) in classicConsensus.pairs.slice(0, 3)" :key="'c-pair-' + idx"
+               class="flex items-center justify-between p-1.5 rounded bg-slate-950/80 border border-purple-500/30 text-purple-200">
+            <span class="font-bold flex items-center gap-1">
+              <span class="lottery-ball ball-gold w-5 h-5 text-[10px]">{{ String(pairItem.pair[0]).padStart(2, '0') }}</span>
+              <span class="text-slate-400">+</span>
+              <span class="lottery-ball ball-purple w-5 h-5 text-[10px]">{{ String(pairItem.pair[1]).padStart(2, '0') }}</span>
+            </span>
+            <span class="text-[10px] text-purple-300 truncate max-w-[7rem]">{{ pairItem.sources }}</span>
+          </div>
+          <div v-if="!classicConsensus.pairs.length" class="text-xs text-slate-500 py-2">暂无搭档</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═════════════════ 3. 六大经典子模块卡片 ═════════════════ -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+    <!-- 数据源 -->
+    <div class="glass-panel p-5 space-y-3 border-l-4 border-emerald-400 flex flex-col justify-between">
+      <div class="space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <span class="font-bold text-sm text-emerald-300 flex items-center gap-2"><span>🧬</span> 数据源1×2 关联</span>
+          <span class="text-[10px] font-mono text-amber-400">需点位</span>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400 block mb-1">精选爆发最优3码:</span>
+          <div class="flex flex-wrap gap-1">
+            <span v-for="n in (datasourceSummary?.top_hot_numbers || []).slice(0, 3)" :key="'ds-t-'+n"
+                  class="lottery-ball ball-gold w-6 h-6 text-[11px]">{{ String(n).padStart(2,'0') }}</span>
+            <span v-if="!(datasourceSummary?.top_hot_numbers || []).length" class="text-xs text-slate-500">未加载</span>
+          </div>
+        </div>
+        <p class="text-[11px] text-slate-400 leading-relaxed">做多侧已退役；本卡仅保留爆发最优3码历史存档供对账。</p>
+      </div>
+      <button @click="openTab('datasource_cockpit')" class="text-xs text-emerald-400 hover:underline text-right">进入数据源驾驶舱 →</button>
+    </div>
+
+    <!-- 定胆选2 -->
+    <div class="glass-panel p-5 space-y-3 border-l-4 border-amber-400 flex flex-col justify-between">
+      <div class="space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <span class="font-bold text-sm text-amber-300 flex items-center gap-2"><span>💎</span> 定胆选2</span>
+          <span class="cyber-badge cyber-badge-amber text-[10px]">双核金胆</span>
+        </div>
+        <div class="flex items-center gap-3 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
+          <div class="text-center">
+            <div class="text-[10px] text-slate-500">核心金胆</div>
+            <span class="lottery-ball ball-gold w-8 h-8 text-sm font-bold">{{ goldPick2Summary?.golden != null ? String(goldPick2Summary.golden).padStart(2,'0') : '--' }}</span>
+          </div>
+          <div class="text-center">
+            <div class="text-[10px] text-slate-500">热号金胆</div>
+            <span class="lottery-ball ball-cyan w-8 h-8 text-sm font-bold">{{ goldPick2Summary?.hot != null ? String(goldPick2Summary.hot).padStart(2,'0') : '--' }}</span>
+          </div>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400 block mb-1">Top 配对:</span>
+          <div class="space-y-1 text-xs font-mono">
+            <div v-for="(p, i) in (goldPick2Summary?.top5_golden || []).slice(0, 2)" :key="'gp-'+i" class="text-amber-200/90">
+              {{ String(p.pair[0]).padStart(2,'0') }} + {{ String(p.pair[1]).padStart(2,'0') }}
+            </div>
+            <div v-if="!(goldPick2Summary?.top5_golden || []).length" class="text-slate-500">未加载</div>
+          </div>
+        </div>
+      </div>
+      <button @click="openTab('gold_pick2_cockpit')" class="text-xs text-amber-400 hover:underline text-right">进入定胆选2 →</button>
+    </div>
+
+    <!-- 顺口溜 -->
+    <div class="glass-panel p-5 space-y-3 border-l-4 border-cyan-400 flex flex-col justify-between">
+      <div class="space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <span class="font-bold text-sm text-cyan-300 flex items-center gap-2"><span>📜</span> 顺口溜口诀</span>
+          <span class="text-[10px] font-mono text-cyan-400">触发 {{ jingleSummary?.fired_count || 0 }} 条</span>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <span v-for="(n, idx) in (jingleSummary?.recommended_numbers || []).slice(0, 8)" :key="'jg-'+n"
+                class="lottery-ball w-6 h-6 text-[11px] font-bold" :class="idx < 2 ? 'ball-gold' : 'ball-cyan'">
+            {{ String(n).padStart(2,'0') }}
+          </span>
+          <span v-if="!(jingleSummary?.recommended_numbers || []).length" class="text-xs text-slate-500">未加载</span>
+        </div>
+        <p class="text-[11px] text-slate-400">口诀命中池推荐号码，参与共识投票。</p>
+      </div>
+      <button @click="openTab('jingle_cockpit')" class="text-xs text-cyan-400 hover:underline text-right">进入顺口溜 →</button>
+    </div>
+
+    <!-- 未开点位 -->
+    <div class="glass-panel p-5 space-y-3 border-l-4 border-sky-400 flex flex-col justify-between">
+      <div class="space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <span class="font-bold text-sm text-sky-300 flex items-center gap-2"><span>🪞</span> 未开点位反弹</span>
+          <span class="text-[10px] font-mono text-amber-400">需点位 · 候选 {{ suppressionSummary?.total_candidates || 0 }}</span>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <div v-for="(c, idx) in (suppressionSummary?.top3 || [])" :key="'sp-'+c.num" class="flex flex-col items-center">
+            <span class="lottery-ball w-7 h-7 text-xs font-bold" :class="idx === 0 ? 'ball-gold' : 'ball-cyan'">{{ String(c.num).padStart(2,'0') }}</span>
+            <span class="text-[9px] text-slate-500 font-mono">压{{ c.k_suppression }}</span>
+          </div>
+          <span v-if="!(suppressionSummary?.top3 || []).length" class="text-xs text-slate-500">未加载</span>
+        </div>
+      </div>
+      <button @click="openTab('suppression_cockpit')" class="text-xs text-sky-400 hover:underline text-right">进入未开点位 →</button>
+    </div>
+
+    <!-- 心理博弈 -->
+    <div class="glass-panel p-5 space-y-3 border-l-4 border-indigo-400 flex flex-col justify-between">
+      <div class="space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <span class="font-bold text-sm text-indigo-300 flex items-center gap-2"><span>🧠</span> 心理博弈</span>
+          <span class="text-[10px] font-mono text-indigo-400">逆向均值</span>
+        </div>
+        <div>
+          <span class="text-xs text-slate-400 block mb-1">最优 3 码:</span>
+          <div class="flex flex-wrap gap-1.5">
+            <span v-for="(n, idx) in (psychologicalGameData?.top3_gold || psychologicalGameData?.top5_assault || [])" :key="'pg-'+n"
+                  class="lottery-ball w-6 h-6 text-[11px] font-bold" :class="idx === 0 ? 'ball-gold' : 'ball-cyan'">
+              {{ String(n).padStart(2,'0') }}
+            </span>
+            <span v-if="!(psychologicalGameData?.top5_assault || []).length" class="text-xs text-slate-500">未加载</span>
+          </div>
+        </div>
+      </div>
+      <button @click="openTab('psychological_game')" class="text-xs text-indigo-400 hover:underline text-right">进入心理博弈 →</button>
+    </div>
+
+    <!-- 极简选2 -->
+    <div class="glass-panel p-5 space-y-3 border-l-4 border-yellow-400 flex flex-col justify-between">
+      <div class="space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <span class="font-bold text-sm text-yellow-300 flex items-center gap-2"><span>👑</span> 极简选2</span>
+          <span class="text-[10px] font-mono text-yellow-400">同源定胆选2</span>
+        </div>
+        <div class="flex items-center justify-center gap-3 py-2" v-if="prediction?.golden_pair?.length === 2">
+          <span class="lottery-ball ball-gold w-8 h-8 text-sm font-bold">{{ String(prediction.golden_pair[0]).padStart(2,'0') }}</span>
+          <span class="text-amber-400 font-bold">+</span>
+          <span class="lottery-ball ball-gold w-8 h-8 text-sm font-bold">{{ String(prediction.golden_pair[1]).padStart(2,'0') }}</span>
+        </div>
+        <div v-else class="text-xs text-slate-500">未解析到选2（可先跑定胆选2）</div>
+      </div>
+      <button @click="openTab('gold_pairs')" class="text-xs text-yellow-400 hover:underline text-right">进入极简选2 →</button>
+    </div>
+
+    <!-- Hidden Energy -->
+    <div class="glass-panel p-5 space-y-3 border-l-4 border-purple-400 flex flex-col justify-between">
+      <div class="space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <span class="font-bold text-sm text-purple-300 flex items-center gap-2"><span>🌟</span> Hidden Energy 5</span>
+          <span class="text-[10px] font-mono text-amber-400">需点位/研报</span>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <span v-for="n in (prediction?.hidden_energy_5 || [])" :key="'he-'+n"
+                class="lottery-ball ball-purple w-6 h-6 text-[11px] font-bold">{{ String(n).padStart(2,'0') }}</span>
+          <span v-if="!(prediction?.hidden_energy_5 || []).length" class="text-xs text-slate-500">待点位后出号</span>
+        </div>
+      </div>
+      <button @click="openTab('hidden_energy')" class="text-xs text-purple-400 hover:underline text-right">进入 HE5 →</button>
+    </div>
+
+    <!-- 点位遗漏 -->
+    <div class="glass-panel p-5 space-y-3 border-l-4 border-violet-400 flex flex-col justify-between">
+      <div class="space-y-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <span class="font-bold text-sm text-violet-300 flex items-center gap-2"><span>🎯</span> 点位与遗漏</span>
+          <span class="text-[10px] font-mono text-amber-400">需点位</span>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <span v-for="(it, idx) in (pointOmissionSummary?.top5 || []).slice(0, 3)" :key="'po-'+it.number"
+                class="lottery-ball w-6 h-6 text-[11px] font-bold" :class="idx === 0 ? 'ball-gold' : 'ball-cyan'">
+            {{ String(it.number).padStart(2,'0') }}
+          </span>
+          <span v-if="!(pointOmissionSummary?.top5 || []).length" class="text-xs text-slate-500">未加载</span>
+        </div>
+        <p class="text-[11px] text-slate-400">综合分领先号进入共识金胆投票。</p>
+      </div>
+      <button @click="openTab('point_omission_cockpit')" class="text-xs text-violet-400 hover:underline text-right">进入点位遗漏 →</button>
+    </div>
+  </div>
+
+  <!-- ═════════════════ 4. 80 码经典共振排行 ═════════════════ -->
+  <div class="glass-panel p-5 space-y-4 border-l-4 border-fuchsia-400">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <h3 class="text-sm font-bold text-white">80 码经典子系统共振总分排行</h3>
+        <p class="text-[11px] text-slate-400 mt-0.5">综合六大经典模块做多投票，可按得分或球号排序</p>
+      </div>
+      <div class="flex items-center gap-2 text-xs">
+        <button @click="classicResonanceSortMode = 'score'" class="cyber-btn cyber-btn-dark !py-1 !px-2.5" :class="{'!border-fuchsia-400 !text-fuchsia-300': classicResonanceSortMode === 'score'}">按得分</button>
+        <button @click="classicResonanceSortMode = 'num'" class="cyber-btn cyber-btn-dark !py-1 !px-2.5" :class="{'!border-fuchsia-400 !text-fuchsia-300': classicResonanceSortMode === 'num'}">按球号</button>
+      </div>
+    </div>
+    <div class="overflow-x-auto max-h-80">
+      <table class="cyber-table w-full text-left text-xs font-mono">
+        <thead>
+          <tr class="bg-slate-900/80 text-slate-400">
+            <th class="py-2 px-3">排名</th>
+            <th class="py-2 px-3">球号</th>
+            <th class="py-2 px-3">得分</th>
+            <th class="py-2 px-3">票数</th>
+            <th class="py-2 px-3">来源</th>
+            <th class="py-2 px-3">定级</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800/60">
+          <tr v-for="(item, idx) in sortedClassicResonanceList.filter(x => x.vote_count > 0).slice(0, 40)"
+              :key="'cres-' + item.ball" class="hover:bg-slate-800/40">
+            <td class="py-2 px-3 font-bold" :class="idx < 5 ? 'text-amber-400' : (idx < 12 ? 'text-cyan-400' : 'text-slate-500')">
+              #{{ String(idx + 1).padStart(2, '0') }}
+            </td>
+            <td class="py-2 px-3">
+              <span class="lottery-ball w-6 h-6 text-xs font-bold"
+                    :class="item.is_gold ? 'ball-gold' : (item.in_top12 ? 'ball-cyan' : 'ball-dark')">
+                {{ String(item.ball).padStart(2, '0') }}
+              </span>
+            </td>
+            <td class="py-2 px-3 text-white font-bold">{{ (item.score || 0).toFixed(2) }}</td>
+            <td class="py-2 px-3">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold"
+                    :class="item.vote_count >= 3 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : (item.vote_count >= 2 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40' : 'text-slate-500')">
+                {{ item.vote_count }}/6
+              </span>
+            </td>
+            <td class="py-2 px-3 text-[10px] text-slate-300">{{ (item.sources || []).join(' · ') || '-' }}</td>
+            <td class="py-2 px-3">
+              <span v-if="item.is_gold" class="cyber-badge cyber-badge-amber text-[10px]">金胆</span>
+              <span v-else-if="item.in_top12" class="cyber-badge cyber-badge-cyan text-[10px]">精锐</span>
+              <span v-else class="text-[10px] text-slate-600">候选</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═════════════════ 5. 子模块快捷入口 ═════════════════ -->
+  <div class="glass-panel p-4 flex flex-wrap gap-2 items-center">
+    <span class="text-xs text-slate-400 mr-1">快捷进入子模块:</span>
+    <button @click="openTab('datasource_cockpit')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">🧬 数据源</button>
+    <button @click="openTab('gold_pick2_cockpit')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">💎 定胆选2</button>
+    <button @click="openTab('gold_pairs')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">👑 极简选2</button>
+    <button @click="openTab('hidden_energy')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">🌟 HE5</button>
+    <button @click="openTab('jingle_cockpit')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">📜 顺口溜</button>
+    <button @click="openTab('suppression_cockpit')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">🪞 未开点位</button>
+    <button @click="openTab('psychological_game')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">🧠 心理博弈</button>
+    <button @click="openTab('point_omission_cockpit')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">🎯 点位遗漏</button>
+  </div>
+</div>

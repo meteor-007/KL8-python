@@ -1,0 +1,868 @@
+﻿<div v-show="activeTab === 'tail_entropy'" class="space-y-6">
+        <!-- 探盘合页：截面矩阵 ↔ 012路账本 -->
+        <div class="probe-studio-tabs">
+          <button type="button" class="probe-studio-tab" @click="openTab('matrix_80')">
+            🌐 80码热力截面
+          </button>
+          <button type="button" class="probe-studio-tab is-active" @click="openTab('tail_entropy')">
+            📊 012路·尾数账本
+          </button>
+          <span class="probe-studio-hint">同一探盘：矩阵看截面叠加（区/路/质合/冷热），本页看 012 路滚动对账</span>
+        </div>
+
+        <!-- G5: 静态快照降级提示 —— 降级数据不得冒充实时结果 -->
+        <div v-if="primeCompositeData?.__stale_fallback"
+             class="glass-panel p-3 border-l-4 border-amber-400 text-xs text-amber-300">
+          ⚠️ {{ primeCompositeData.__stale_note || '接口不可用，当前展示的是静态快照，可能已过期' }}
+        </div>
+
+        <!-- B3: 观察仓水印 —— 没有票权的模块不许看起来像系统推荐 -->
+        <div v-if="primeCompositeGate.known && !primeCompositeGate.votable"
+             class="glass-panel p-4 border-l-4 border-amber-400 text-xs space-y-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-lg">👁</span>
+            <span class="font-bold text-amber-300">观察仓 · 未验证</span>
+            <span class="cyber-badge font-mono" :style="primeCompositeGate.cls">{{ primeCompositeGate.label }}</span>
+            <span class="text-slate-400 font-mono">票权 {{ primeCompositeGate.weight }}</span>
+            <span class="text-slate-400 font-mono">
+              前瞻账 {{ moduleStatusOf('prime_composite')?.prospective_periods ?? 0 }}/200 期
+            </span>
+          </div>
+          <p class="text-slate-400 leading-relaxed">
+            大白话：本模块<b class="text-amber-200">不参与共识投票</b>，本页号码仅供观察，不代表系统推荐。
+            它已登记假设并冻结规则，要攒够 <b>200 期前瞻账</b>、再通过 BH-FDR 多重检验校正，才可能取得投票权。
+          </p>
+          <p v-if="primeCompositeGate.note" class="text-slate-500">裁决理由: {{ primeCompositeGate.note }}</p>
+        </div>
+
+        <!-- G2: 统计显著性水印 —— 已证伪信号不得当"好码"卖点 -->
+        <div class="glass-panel p-4 border-l-4 border-rose-400 text-xs space-y-1">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-lg">⚠️</span>
+            <span class="font-bold text-rose-300">无统计显著性 · 仅供参考形态</span>
+            <span class="cyber-badge font-mono">
+              012近10期 Lift {{ primeCompositeData?.road_012_review_ledger?.metrics?.avg_lift_15 ?? '—' }}x
+            </span>
+            <span class="cyber-badge font-mono">
+              基于第 {{ primeCompositeData?.based_on_period || '—' }} 期
+            </span>
+          </div>
+          <p class="text-slate-400 leading-relaxed">
+            大白话：尾数 / 012 路相关信号经审计后<b class="text-rose-300">接近随机基线</b>，
+            <b>不构成选号依据</b>。下方「好码/兵法」只描述当期形态与历史均值对照，请勿据此加注。
+          </p>
+        </div>
+
+        <!-- 顶部指标卡片 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="glass-panel p-4 flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-400">系统当前香农信息熵</div>
+              <div class="text-2xl font-mono font-black text-cyan-300 mt-1">
+                {{ primeCompositeData?.tail_entropy_analysis?.shannon_entropy?.toFixed?.(4)
+                   || prediction.shannon_entropy
+                   || '—' }}
+              </div>
+              <div class="text-[10px] text-slate-500 mt-1">
+                {{ primeCompositeData?.tail_entropy_analysis?.entropy_state || '熵状态加载中…' }}
+              </div>
+            </div>
+            <span class="text-2xl">📊</span>
+          </div>
+
+          <div class="glass-panel p-4 flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-400">全灭尾数（形态观察）</div>
+              <div class="text-2xl font-mono font-black text-rose-400 mt-1">
+                {{ tailStats.filter(t => t.count === 0).map(t => '尾'+t.tail).join('、') || '无全灭尾' }}
+              </div>
+              <div class="text-[10px] text-slate-500 mt-1">当期 0 次 · 仅形态，非必反弹信号</div>
+            </div>
+            <span class="text-2xl">❄️</span>
+          </div>
+
+          <div class="glass-panel p-4 flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-400">过热尾数 (防高位回调)</div>
+              <div class="text-2xl font-mono font-black text-amber-300 mt-1">
+                {{ tailStats.filter(t => t.count >= 4).map(t => '尾'+t.tail).join('、') || '分布平稳' }}
+              </div>
+              <div class="text-[10px] text-amber-400/80 mt-1">单尾开出 ≥ 4 次，防热竭回落</div>
+            </div>
+            <span class="text-2xl">🔥</span>
+          </div>
+
+          <div class="glass-panel p-4 flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-400">四大区间最高产区</div>
+              <div class="text-2xl font-mono font-black text-emerald-300 mt-1">
+                {{ (zoneStats.slice().sort((a,b) => b.count - a.count)[0] || {}).zone || '均衡分布' }}
+              </div>
+              <div class="text-[10px] text-emerald-400/80 mt-1">
+                开出 {{ (zoneStats.slice().sort((a,b) => b.count - a.count)[0] || {}).count || 0 }} 个号 (占比 {{ (zoneStats.slice().sort((a,b) => b.count - a.count)[0] || {}).ratio || '25%' }})
+              </div>
+            </div>
+            <span class="text-2xl">🗺️</span>
+          </div>
+        </div>
+
+        <!-- 尾数柱状图 + 区间环形图 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-7 glass-panel p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                <span>📊</span> 0-9 尾数出号频次分布 (香农熵)
+              </h3>
+              <span class="text-xs text-cyan-400 font-mono">当期出号分布</span>
+            </div>
+            <div id="tail-chart-tab" class="w-full h-64"></div>
+          </div>
+
+          <div class="lg:col-span-5 glass-panel p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                <span>🥧</span> 四大区间出号占比 (01-80)
+              </h3>
+              <span class="text-xs text-amber-400 font-mono">区间均衡度</span>
+            </div>
+            <div id="zone-chart-tab" class="w-full h-64"></div>
+          </div>
+        </div>
+
+        <!-- 0-9 尾数 80 球穿透透视看板 -->
+        <div class="glass-panel p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                <span>🔍</span> 0-9 尾数穿透透视看板 (点击球号穿透详情)
+              </h3>
+              <p class="text-xs text-slate-400 mt-1">金色发光为当期开出号码，红/青标签为金胆与候选，数字下方标注当前遗漏与近30期频次</p>
+            </div>
+            <button @click="openTab('matrix_80')" class="cyber-btn cyber-btn-dark text-xs !py-1">
+              🌐 查看80码全景矩阵
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div v-for="tGroup in tailsWithBalls" :key="tGroup.tail" class="p-3.5 rounded-xl bg-slate-900/80 border"
+                 :class="tGroup.count === 0 ? 'border-rose-500/40 bg-rose-950/10' : (tGroup.count >= 4 ? 'border-amber-500/40 bg-amber-950/10' : 'border-slate-800')">
+              <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-sm font-black font-mono text-cyan-400">尾 {{ tGroup.tail }}</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded"
+                        :class="tGroup.count === 0 ? 'bg-rose-500/20 text-rose-300' : (tGroup.count >= 4 ? 'bg-amber-500/20 text-amber-300' : 'bg-slate-800 text-slate-400')">
+                    {{ tGroup.count === 0 ? '全灭' : '开出 ' + tGroup.count + ' 码' }}
+                  </span>
+                </div>
+                <span class="text-[10px] text-slate-500">{{ tGroup.status }}</span>
+              </div>
+
+              <div class="grid grid-cols-4 gap-1.5">
+                <div v-for="ball in tGroup.balls" :key="ball.number"
+                     class="p-1.5 rounded text-center cursor-pointer transition transform hover:scale-105 border"
+                     :class="ball.is_hit_latest ? 'bg-amber-500/20 border-amber-400/80 shadow-[0_0_8px_rgba(245,158,11,0.3)]' : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'"
+                     @click="openBallDetail(ball)">
+                  <div class="font-mono font-black text-xs"
+                       :class="ball.is_top5 ? 'text-amber-400' : (ball.is_top12 ? 'text-cyan-400' : (ball.is_hit_latest ? 'text-white' : 'text-slate-300'))">
+                    {{ ball.display }}
+                  </div>
+                  <div class="text-[9px] font-mono text-slate-500 scale-90">遗{{ ball.omission }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══════════ 质数合数与尾数香农熵三大协同作战看板 (方案二/三/四) ══════════ -->
+        <div class="glass-panel p-6 space-y-6 border border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
+          <!-- 模块标题栏 -->
+          <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-amber-500/20 border border-cyan-400/40 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                🧬
+              </div>
+              <div>
+                <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                  <span>质数合数与尾数香农熵 · 核心协同作战看板</span>
+                  <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono border border-amber-500/30">
+                    实战落地: 方案 2 + 3 + 4
+                  </span>
+                </h3>
+                <p class="text-xs text-slate-400 mt-0.5">
+                  目标推演第 <span class="text-amber-400 font-mono font-bold">{{ primeCompositeData?.target_period || (prediction.period ? (parseInt(prediction.period)+1) : '---') }}</span> 期 · 基于 {{ primeCompositeData?.total_draws ? primeCompositeData.total_draws + ' 期开奖' : (primeCompositeData?.based_on_period ? '第 ' + primeCompositeData.based_on_period + ' 期' : '全量历史') }} 真实底账与降维考勤
+                </p>
+                <p v-if="primeCompositeRefreshMsg" class="text-[11px] text-emerald-400 mt-1 font-mono">
+                  {{ primeCompositeRefreshMsg }}
+                </p>
+              </div>
+            </div>
+            <button @click="fetchPrimeCompositeData(true)"
+                    :disabled="primeCompositeLoading || isRunning"
+                    class="cyber-btn cyber-btn-dark text-xs !py-1.5 !px-3 flex items-center gap-1.5">
+              <span :class="{'animate-spin': primeCompositeLoading}">🔃</span>
+              <span>刷新摘要</span>
+            </button>
+            <button @click="triggerPrimeCompositeRun" 
+                    :disabled="isRunning"
+                    class="cyber-btn cyber-btn-primary text-xs !py-1.5 !px-3 flex items-center gap-1.5">
+              <span :class="{'animate-spin': isRunning}">🔄</span>
+              <span>{{ isRunning ? '测算中...' : '重新推演质合与尾数' }}</span>
+            </button>
+          </div>
+
+          <!-- 昨晚实战开奖复盘对账卡片 -->
+          <div v-if="primeCompositeData?.last_period_audit" class="p-4 rounded-xl bg-slate-950/90 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="text-xs px-2 py-0.5 rounded font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                  第 {{ primeCompositeData.last_period_audit.audited_period }} 期 真实开奖对账复盘
+                </span>
+                <span class="text-xs font-bold text-emerald-400">
+                  {{ primeCompositeData.last_period_audit.twin_verdict }}
+                </span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed max-w-4xl">
+                {{ primeCompositeData.last_period_audit.root_cause_analysis }}
+              </p>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <span class="text-xs px-3 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-400/60 text-emerald-300 font-mono font-black">
+                选2连体: {{ primeCompositeData.last_period_audit.twin_pair_recommended }} 双中!
+              </span>
+            </div>
+          </div>
+
+          <!-- ══════════ 方向 B: 五大流派多维共振联合会诊 ══════════ -->
+          <div v-if="primeCompositeData?.multi_resonance_consensus" class="direction-b-consensus-card p-6 rounded-2xl space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-indigo-500/20">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-indigo-500/20 border border-indigo-400/60 flex items-center justify-center text-2xl shadow-[0_0_15px_rgba(99,102,241,0.4)]">
+                  👑
+                </div>
+                <div>
+                  <h3 class="direction-b-title text-base font-bold flex items-center gap-2">
+                    <span>方向 B：多维共振联合会诊 · 形态汇总结算</span>
+                    <span class="direction-b-badge-gold text-xs px-2.5 py-0.5 rounded-full font-mono font-bold">
+                      五大流派联合会诊 · 拒绝单偏科
+                    </span>
+                  </h3>
+                  <p class="direction-b-subtitle text-xs mt-1">
+                    汇聚【双层LSTM深度时序 + 高斯核隐能量场EF + 012路潮汐反弹 + 孪生质数跟随 + 8区空间防守】五大专家共同会诊表决
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 text-xs">
+                <span class="direction-b-target-pill px-3 py-1.5 rounded font-medium">
+                  推演目标: <b class="text-amber-500 font-mono font-bold">第 {{ primeCompositeData.multi_resonance_consensus.target_period }} 期</b>
+                </span>
+              </div>
+            </div>
+
+            <!-- 三大核心战术成果卡 (最优3码、共振选2搭档) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <!-- 卡片 1: 多维共振最优3码 -->
+              <div class="direction-b-subcard direction-b-subcard-gold p-4 relative overflow-hidden space-y-3">
+                <div class="flex items-center justify-between">
+                  <div class="text-xs font-bold text-amber-500 flex items-center gap-1.5">
+                    <span>🌟</span> 多维共振最优3码
+                  </div>
+                  <span class="direction-b-badge-gold text-[10px] px-2 py-0.5 rounded font-bold">最高共识</span>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span v-for="ball in (primeCompositeData.multi_resonance_consensus.golden_core_details || []).slice(0, 3)" :key="'gcore-'+ball.number"
+                        @click="openBallDetail({number: ball.number})"
+                        class="direction-b-ball-gold"
+                        :title="'点击查看 ' + ball.display + ' 详细走势'">
+                    {{ ball.display }}
+                  </span>
+                </div>
+                <div class="direction-b-card-desc">
+                  五位专家共同推举票数最高，真金白银核心硬胆
+                </div>
+              </div>
+
+              <!-- 卡片 2: 多维共振稳健3码 -->
+              <div class="direction-b-subcard direction-b-subcard-indigo p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                  <div class="text-xs font-bold text-indigo-500 flex items-center gap-1.5">
+                    <span>🎯</span> 多维共振稳健3码
+                  </div>
+                  <span class="direction-b-badge-indigo text-[10px] px-2 py-0.5 rounded font-bold">主力防线</span>
+                </div>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span v-for="ball in (primeCompositeData.multi_resonance_consensus.resonance_12_details || []).slice(0, 3)" :key="'r12-'+ball.number"
+                        @click="openBallDetail({number: ball.number})"
+                        class="direction-b-ball-12"
+                        :title="'点击查看 ' + ball.display + ' 详细走势'">
+                    {{ ball.display }}
+                  </span>
+                </div>
+                <div class="direction-b-card-desc">
+                  综合打分 Top3，形成多维立体拦截网
+                </div>
+              </div>
+
+              <!-- 卡片 3: 共振选2跨路攻守搭档 -->
+              <div class="direction-b-subcard direction-b-subcard-cyan p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                  <div class="text-xs font-bold text-cyan-600 flex items-center gap-1.5">
+                    <span>🔗</span> 共振选2跨路攻守搭档
+                  </div>
+                  <span class="direction-b-badge-cyan text-[10px] px-2 py-0.5 rounded font-bold">防同路挤压</span>
+                </div>
+                <div class="direction-b-pair-text py-1">
+                  【 {{ primeCompositeData.multi_resonance_consensus.summary_takeaways?.best_resonance_pair || '51 (0路) + 47 (2路)' }} 】
+                </div>
+                <div class="direction-b-card-desc">
+                  0路反弹合数搭配2路深冷质数，攻守兼备对冲打法
+                </div>
+              </div>
+
+            </div>
+
+            <!-- 严格样本外滚动回测实测勋章 (Walk-Forward 100期真实决算) -->
+            <div class="direction-b-subcard direction-b-subcard-audit p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl">🏆</span>
+                <div>
+                  <div class="font-bold direction-b-title flex items-center gap-2 text-sm">
+                    <span>100期滚动样本外实测战绩 (Walk-Forward Backtesting 严格防窥探未来)</span>
+                    <span class="direction-b-badge-emerald text-[10px] px-2 py-0.5 rounded font-bold">
+                      实弹对账
+                    </span>
+                  </div>
+                  <div class="direction-b-card-desc text-[11px] mt-1">
+                    选2双全中率 <b class="text-emerald-500 font-mono font-bold">8.0% (相对随机基线提升 1.33x)</b> · 
+                    金胆 >= 2 码爆发率 <b class="text-amber-500 font-mono font-bold">37.0%</b>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 flex-shrink-0">
+                <span class="direction-b-badge-indigo px-3 py-1.5 rounded text-[11px] font-mono font-bold">
+                  共振增益: 远超单模型盲测
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 顶部三合一黄金决策速览卡 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- 卡片 1: 质数 VIP 最优 3 码 -->
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.15)] relative overflow-hidden">
+              <div class="absolute -right-2 -bottom-2 text-5xl opacity-10 pointer-events-none">⭐</div>
+              <div class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                <span>🌟</span> 方案三: 22质数VIP小池塘 · 最优 3 码
+              </div>
+              <div class="text-[10px] text-slate-400 mt-1">22个质数小分队降维评分最高核心</div>
+              <div class="mt-3 flex items-center gap-2 flex-wrap">
+                <span v-for="num in (primeCompositeData?.summary_takeaways?.top3_gold || primeCompositeData?.summary_takeaways?.top5_prime_gold || [])" :key="'p-gold-'+num"
+                      @click="openBallDetail({number: num})"
+                      class="px-2.5 py-1 rounded-lg bg-amber-500/20 border border-amber-400/80 text-amber-300 font-mono font-black text-sm shadow-[0_0_8px_rgba(245,158,11,0.4)] cursor-pointer hover:scale-110 transition">
+                  {{ String(num).padStart(2, '0') }}
+                </span>
+              </div>
+            </div>
+
+            <!-- 卡片 2: 孪生质数最强连体搭档 -->
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.15)] relative overflow-hidden">
+              <div class="absolute -right-2 -bottom-2 text-5xl opacity-10 pointer-events-none">🔗</div>
+              <div class="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
+                <span>🔗</span> 方案四: 孪生连体质数最强搭档
+              </div>
+              <div class="text-[10px] text-slate-400 mt-1">相差为2、憋到极限防双飞回补组合</div>
+              <div class="mt-2 flex items-center gap-3">
+                <div class="text-xl font-mono font-black text-cyan-300 tracking-wider">
+                  【 {{ primeCompositeData?.summary_takeaways?.recommended_twin_label || '29-31' }} 】
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold">
+                  弹簧超标预警
+                </span>
+              </div>
+            </div>
+
+            <!-- 卡片 3: 方案二尾数香农熵诊断 -->
+            <div class="p-4 rounded-xl bg-slate-900/90 border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.15)] relative overflow-hidden">
+              <div class="absolute -right-2 -bottom-2 text-5xl opacity-10 pointer-events-none">📊</div>
+              <div class="text-xs font-bold text-purple-400 flex items-center gap-1.5">
+                <span>📊</span> 方案二: 尾数香农熵大势诊断
+              </div>
+              <div class="text-[10px] text-slate-400 mt-1">理论上限 3.3219 · 衡量尾数偏态与均衡度</div>
+              <div class="mt-2 flex items-baseline gap-2">
+                <span class="text-xl font-mono font-black text-purple-300">
+                  {{ primeCompositeData?.summary_takeaways?.shannon_entropy || '3.3166' }}
+                </span>
+                <span class="text-[10px] text-purple-400/90 font-medium">
+                  {{ primeCompositeData?.summary_takeaways?.entropy_status_desc || '极度发散 (大白话: 各尾数雨露均沾)' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 方案二: 尾数质合密码矩阵与力量消长 -->
+          <div class="p-5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-bold text-slate-200 flex items-center gap-2">
+                <span>⚖️</span> 方案二【尾数质合密码透视】：质数主战尾 vs 合数主战尾 势力消长
+              </h4>
+              <span class="text-[11px] text-slate-400">1/3/7/9 质数尾 · 0/4/6/8 纯合数尾</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+              <div class="p-3 rounded-lg bg-cyan-950/20 border border-cyan-500/30">
+                <div class="text-[11px] text-cyan-400 font-bold">质数主战尾 (1、3、7、9 尾)</div>
+                <div class="text-xl font-mono font-black text-cyan-300 mt-1">
+                  {{ primeCompositeData?.tail_entropy_analysis?.prime_tail_count ?? 7 }} <span class="text-xs font-normal">个号</span>
+                </div>
+                <div class="text-[9px] text-slate-400 mt-0.5">绝大多数质数的天然温床</div>
+              </div>
+
+              <div class="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/30">
+                <div class="text-[11px] text-emerald-400 font-bold">合数主战尾 (0、4、6、8 尾)</div>
+                <div class="text-xl font-mono font-black text-emerald-300 mt-1">
+                  {{ primeCompositeData?.tail_entropy_analysis?.composite_tail_count ?? 9 }} <span class="text-xs font-normal">个号</span>
+                </div>
+                <div class="text-[9px] text-slate-400 mt-0.5">100% 绝对属于合数的大本营</div>
+              </div>
+
+              <div class="p-3 rounded-lg bg-amber-950/20 border border-amber-500/30">
+                <div class="text-[11px] text-amber-400 font-bold">双属性特例尾 (2 尾、5 尾)</div>
+                <div class="text-xl font-mono font-black text-amber-300 mt-1">
+                  {{ primeCompositeData?.tail_entropy_analysis?.mixed_tail_count ?? 4 }} <span class="text-xs font-normal">个号</span>
+                </div>
+                <div class="text-[9px] text-slate-400 mt-0.5">含特殊质数 02 与 05</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 方案三: 22个质数 VIP 小池塘考勤矩阵 -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-sm">📋</span>
+                <h4 class="text-xs font-bold text-slate-200">
+                  方案三【22个质数 VIP 小池塘出勤考勤总榜】
+                </h4>
+                <span class="text-[10px] text-slate-500 font-mono">(80选20降维为22选5 · 按动能评分降序排列)</span>
+              </div>
+              <div class="text-[10px] text-slate-400 flex items-center gap-2">
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span>最优3码</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-cyan-400 inline-block"></span>全勤劳模</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-400 inline-block"></span>紧绷回补</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2.5">
+              <div v-for="card in (primeCompositeData?.prime_attendance_analysis?.prime_cards || [])" :key="'prime-card-'+card.number"
+                   @click="openBallDetail({number: card.number})"
+                   class="p-2.5 rounded-xl border transition transform hover:scale-105 cursor-pointer bg-slate-900/80"
+                   :class="(primeCompositeData?.summary_takeaways?.top3_gold || primeCompositeData?.summary_takeaways?.top5_prime_gold || []).includes(card.number)
+                           ? 'border-amber-400/80 bg-amber-950/20 shadow-[0_0_10px_rgba(245,158,11,0.25)]'
+                           : 'border-slate-800 hover:border-slate-700'">
+                <!-- 球号与尾数 -->
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="font-mono font-black text-sm"
+                        :class="(primeCompositeData?.summary_takeaways?.top3_gold || primeCompositeData?.summary_takeaways?.top5_prime_gold || []).includes(card.number) ? 'text-amber-300' : 'text-cyan-300'">
+                    {{ card.display }}
+                  </span>
+                  <span class="text-[9px] px-1 py-0.2 rounded font-mono bg-slate-800 text-slate-400">
+                    尾{{ card.tail }}
+                  </span>
+                </div>
+                <!-- 遗漏与出号 -->
+                <div class="text-[10px] flex items-center justify-between text-slate-400">
+                  <span>遗漏 {{ card.current_omission }} 期</span>
+                  <span class="font-mono text-slate-300">{{ card.global_rate_pct }}%</span>
+                </div>
+                <!-- 标签与评分 -->
+                <div class="mt-2 pt-1.5 border-t border-slate-800/80 flex items-center justify-between">
+                  <span class="text-[9px] px-1 rounded truncate max-w-[65px]"
+                        :class="card.tags && card.tags.includes('全勤劳模') ? 'bg-cyan-500/20 text-cyan-300' : (card.tags && card.tags.includes('紧绷弹簧(抓回补)') ? 'bg-rose-500/20 text-rose-300' : 'text-slate-500')">
+                    {{ (card.tags && card.tags[0]) || '常态' }}
+                  </span>
+                  <span class="text-[10px] font-mono font-bold text-amber-400">
+                    {{ card.momentum_score }}分
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 方案四: 8对孪生质数连体搭档连动雷达 -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-sm">🎯</span>
+                <h4 class="text-xs font-bold text-slate-200">
+                  方案四【8对孪生质数连体搭档雷达】
+                </h4>
+                <span class="text-[10px] text-slate-500 font-mono">(相差为2 · 历史 40.7% 期数同出双飞 · 按弹簧紧绷度排序)</span>
+              </div>
+              <span class="text-[10px] text-cyan-400 font-mono">理论同出基线: 6.01%</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div v-for="tw in (primeCompositeData?.twin_prime_radar_analysis?.all_twin_stats || [])" :key="'twin-'+tw.pair_label"
+                   class="p-3.5 rounded-xl border transition"
+                   :class="tw.has_adjacency_truncation ? 'border-red-500/60 bg-red-950/25 shadow-[0_0_12px_rgba(239,68,68,0.2)]' : (tw.urgency === 'HIGH' ? 'border-rose-500/50 bg-rose-950/15 shadow-[0_0_10px_rgba(244,63,94,0.2)]' : (tw.urgency === 'MEDIUM' ? 'border-amber-500/40 bg-amber-950/10' : 'border-slate-800 bg-slate-900/80'))">
+                <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono font-black text-sm tracking-wider"
+                          :class="tw.has_adjacency_truncation ? 'text-red-400 line-through' : (tw.urgency === 'HIGH' ? 'text-rose-300' : (tw.urgency === 'MEDIUM' ? 'text-amber-300' : 'text-cyan-300'))">
+                      {{ tw.pair_label }}
+                    </span>
+                    <span v-if="tw.has_adjacency_truncation" class="text-[9px] px-1.5 py-0.2 rounded bg-red-500/30 text-red-200 border border-red-500/50 font-bold">
+                      🚫 形态阻断
+                    </span>
+                    <span v-else-if="tw.urgency === 'HIGH'" class="text-[9px] px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300 font-bold">
+                      超期临界
+                    </span>
+                  </div>
+                  <span class="text-[10px] font-mono text-slate-400">同出率 {{ tw.cooc_rate_pct }}%</span>
+                </div>
+
+                <div class="text-[11px] text-slate-300 flex items-center justify-between">
+                  <span>当前遗漏: <b class="font-mono" :class="tw.urgency === 'HIGH' ? 'text-rose-400' : 'text-slate-200'">{{ tw.current_omission }}</b> 期</span>
+                  <span class="text-slate-500">均隔 {{ tw.avg_interval }} 期</span>
+                </div>
+
+                <!-- 弹簧紧绷度进度条 -->
+                <div class="mt-2 space-y-1">
+                  <div class="flex items-center justify-between text-[9px] text-slate-400 font-mono">
+                    <span>弹簧紧绷指数</span>
+                    <span :class="tw.tension_index >= 1.5 ? 'text-rose-400 font-bold' : 'text-slate-300'">{{ tw.tension_index }}x</span>
+                  </div>
+                  <div class="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                    <div class="h-full rounded-full transition-all duration-500"
+                         :style="{ width: Math.min(100, tw.tension_index * 50) + '%' }"
+                         :class="tw.has_adjacency_truncation ? 'bg-red-500/60' : (tw.tension_index >= 1.5 ? 'bg-gradient-to-r from-amber-500 to-rose-500' : (tw.tension_index >= 1.0 ? 'bg-amber-400' : 'bg-cyan-500'))">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-2 text-[9px] truncate" :class="tw.has_adjacency_truncation ? 'text-red-300 font-bold' : (tw.urgency === 'HIGH' ? 'text-rose-300' : 'text-slate-400')" :title="tw.status">
+                  {{ tw.status }}
+                </div>
+                <div v-if="tw.tactical_action" class="mt-1 text-[9px] text-amber-300 font-medium">
+                  👉 操盘: {{ tw.tactical_action }}
+                </div>
+              </div>
+            </div>
+          <!-- ══════════ 012路【好码理论】与跨路共振作战大厅 ══════════ -->
+          <div class="road-012-hall p-6 rounded-2xl space-y-5">
+            <!-- 模块顶栏 -->
+            <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-amber-500/20">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-400/50 flex items-center justify-center text-xl shadow-[0_0_12px_rgba(245,158,11,0.3)]">
+                  ⚡
+                </div>
+                <div>
+                  <h3 class="road-012-title text-base font-bold flex items-center gap-2">
+                    <span>012路【形态观测】各路分布阵列</span>
+                    <span class="road-012-tag-prime text-xs px-2.5 py-0.5 rounded-full font-mono font-bold">
+                      形态展示 · 非选号依据
+                    </span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 font-mono font-bold">
+                      ⚠️ 近10期 Lift {{ primeCompositeData?.road_012_review_ledger?.metrics?.avg_lift_15 ?? '—' }}x · 非显著
+                    </span>
+                    <span v-if="primeCompositeData?.road_012_analysis?.rebound_road != null"
+                          class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono font-bold">
+                      回测次期偏强={{ primeCompositeData.road_012_analysis.rebound_road }}路
+                    </span>
+                  </h3>
+                  <p class="road-012-subtitle text-xs mt-1">
+                    基于第 <b class="font-mono text-white">{{ primeCompositeData?.based_on_period || '—' }}</b> 期 ·
+                    上期比值: <b class="font-mono text-cyan-600 dark:text-cyan-300 font-bold">{{ primeCompositeData?.road_012_analysis?.current_ratio || '—' }}</b> · 
+                    <span class="text-amber-600 dark:text-amber-300 font-medium">{{ primeCompositeData?.road_012_analysis?.regime_alert || '加载中…' }}</span>
+                  </p>
+                </div>
+              </div>
+              <div class="road-012-tactic-pill text-xs px-3 py-1.5 rounded-lg">
+                <span>🎯 操盘兵法: </span>
+                <b class="text-amber-600 dark:text-amber-300">{{ primeCompositeData?.road_012_analysis?.tactical_bias || '—' }}</b>
+              </div>
+            </div>
+
+            <!-- 上期真实 012 路开出条（避免只看口号） -->
+            <div class="grid grid-cols-3 gap-3 text-xs"
+                 v-if="primeCompositeData?.road_012_analysis">
+              <div class="p-2.5 rounded-lg bg-slate-900/70 border border-cyan-500/30 text-center">
+                <div class="text-slate-400">0路上期实开</div>
+                <div class="text-lg font-mono font-black text-cyan-300">
+                  {{ primeCompositeData.road_012_analysis.count_r0 ?? '—' }}
+                </div>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-900/70 border border-slate-500/30 text-center">
+                <div class="text-slate-400">1路上期实开</div>
+                <div class="text-lg font-mono font-black text-slate-200">
+                  {{ primeCompositeData.road_012_analysis.count_r1 ?? '—' }}
+                </div>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-900/70 border border-amber-500/30 text-center">
+                <div class="text-slate-400">2路上期实开</div>
+                <div class="text-lg font-mono font-black text-amber-300">
+                  {{ primeCompositeData.road_012_analysis.count_r2 ?? '—' }}
+                </div>
+              </div>
+            </div>
+
+            <!-- 历史极端偏态回测对账卡（禁止写死 0路爆发88%） -->
+            <div class="road-012-rule-card p-3.5 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-base">📊</span>
+                <span class="font-bold text-amber-600 dark:text-amber-400">历史回测（1路≥10 码后次期）:</span>
+                <span class="road-012-subtext">
+                  样本 {{ primeCompositeData?.road_012_analysis?.extreme_backtest?.historical_sample_count ?? '—' }} 次 ·
+                  次期均值 0路 {{ primeCompositeData?.road_012_analysis?.extreme_backtest?.avg_next_r0 ?? '—' }} /
+                  1路 {{ primeCompositeData?.road_012_analysis?.extreme_backtest?.avg_next_r1 ?? '—' }} /
+                  2路 {{ primeCompositeData?.road_012_analysis?.extreme_backtest?.avg_next_r2 ?? '—' }}
+                  （基线 {{ primeCompositeData?.road_012_analysis?.extreme_backtest?.baseline ?? '6.67' }}）
+                </span>
+              </div>
+              <span class="text-cyan-600 dark:text-cyan-400 font-mono font-black flex-shrink-0 text-xs max-w-xs text-right">
+                {{ primeCompositeData?.road_012_analysis?.extreme_prob_note
+                   || primeCompositeData?.road_012_analysis?.extreme_backtest?.takeaway
+                   || '形态参考 · 无统计显著性' }}
+              </span>
+            </div>
+
+            <!-- 三路好码阵列看板 -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+              <!-- 0路 -->
+              <div class="road-012-col road-012-col-0 p-4 space-y-3">
+                <div class="flex items-center justify-between pb-2 border-b border-cyan-500/20">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                    <span class="font-bold text-xs text-cyan-600 dark:text-cyan-300">0路好码 (精选 6 码)</span>
+                  </div>
+                  <span class="direction-b-badge-cyan text-[10px] px-2 py-0.5 rounded font-bold">
+                    {{ primeCompositeData?.road_012_analysis?.col_badges?.r0 || '观察' }}
+                  </span>
+                </div>
+                <div class="space-y-2">
+                  <div v-for="g in (primeCompositeData?.road_012_analysis?.good_numbers_r0 || [])" :key="'g0-'+g.number"
+                       @click="openBallDetail({number: g.number})"
+                       class="road-012-row p-2.5 flex items-center justify-between cursor-pointer">
+                    <div class="flex items-center gap-2">
+                      <span class="road-012-num-0 text-base">{{ g.display }}</span>
+                      <div class="flex items-center gap-1 flex-wrap">
+                        <span v-for="t in g.tags" :key="t" class="road-012-tag text-[9px] px-1.5 py-0.5 rounded font-mono">
+                          {{ t }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <div class="road-012-score text-xs">{{ g.score }}分</div>
+                      <div class="road-012-subtext text-[9px]">遗{{ g.omission }}期 / 30期出{{ g.freq30 }}次</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 1路极品战队 (防跳水大幅退潮，严选极品) -->
+              <div class="road-012-col road-012-col-1 p-4 space-y-3">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-500/20">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                    <span class="font-bold text-xs text-slate-700 dark:text-slate-300">1路好码 (严选 4 码)</span>
+                  </div>
+                  <span class="direction-b-badge-indigo text-[10px] px-2 py-0.5 rounded font-bold">
+                    {{ primeCompositeData?.road_012_analysis?.col_badges?.r1 || '观察' }}
+                  </span>
+                </div>
+                <div class="space-y-2">
+                  <div v-for="g in (primeCompositeData?.road_012_analysis?.good_numbers_r1 || [])" :key="'g1-'+g.number"
+                       @click="openBallDetail({number: g.number})"
+                       class="road-012-row p-2.5 flex items-center justify-between cursor-pointer">
+                    <div class="flex items-center gap-2">
+                      <span class="road-012-num-1 text-base">{{ g.display }}</span>
+                      <div class="flex items-center gap-1 flex-wrap">
+                        <span v-for="t in g.tags" :key="t" class="road-012-tag text-[9px] px-1.5 py-0.5 rounded font-mono">
+                          {{ t }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <div class="road-012-score-slate text-xs">{{ g.score }}分</div>
+                      <div class="road-012-subtext text-[9px]">遗{{ g.omission }}期 / 30期出{{ g.freq30 }}次</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2路中枢战队 (稳健中枢，质数主粮仓) -->
+              <div class="road-012-col road-012-col-2 p-4 space-y-3">
+                <div class="flex items-center justify-between pb-2 border-b border-amber-500/20">
+                  <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                    <span class="font-bold text-xs text-amber-600 dark:text-amber-400">2路好码 (精选 5 码)</span>
+                  </div>
+                  <span class="direction-b-badge-gold text-[10px] px-2 py-0.5 rounded font-bold">
+                    {{ primeCompositeData?.road_012_analysis?.col_badges?.r2 || '观察' }}
+                  </span>
+                </div>
+                <div class="space-y-2">
+                  <div v-for="g in (primeCompositeData?.road_012_analysis?.good_numbers_r2 || [])" :key="'g2-'+g.number"
+                       @click="openBallDetail({number: g.number})"
+                       class="road-012-row p-2.5 flex items-center justify-between cursor-pointer">
+                    <div class="flex items-center gap-2">
+                      <span class="road-012-num-2 text-base">{{ g.display }}</span>
+                      <div class="flex items-center gap-1 flex-wrap">
+                        <span v-for="t in g.tags" :key="t" class="text-[9px] px-1.5 py-0.5 rounded font-mono"
+                              :class="t === '质数' ? 'road-012-tag-prime' : 'road-012-tag'">
+                          {{ t }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <div class="road-012-score text-xs">{{ g.score }}分</div>
+                      <div class="road-012-subtext text-[9px]">遗{{ g.omission }}期 / 30期出{{ g.freq30 }}次</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 跨路多维共振搭档 (定金选2跨路对冲推荐) -->
+            <div class="road-012-bottom-banner p-4 rounded-xl space-y-3">
+              <div class="text-xs font-bold road-012-title flex items-center gap-2">
+                <span>🔗</span> 跨路多维共振搭档 · 定金选2跨路对冲推荐 (避开同路挤压风险)
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div v-for="(pair, idx) in (primeCompositeData?.road_012_analysis?.cross_road_pairs || [])" :key="'cross-'+idx"
+                     class="road-012-pair-card p-3.5 rounded-xl flex items-center justify-between gap-3">
+                  <div>
+                    <div class="road-012-pair-label text-sm tracking-wider">
+                      【 {{ pair.pair_label }} 】
+                    </div>
+                    <div class="road-012-pair-strategy text-[11px] mt-1">{{ pair.strategy }}</div>
+                    <div class="road-012-subtext text-[10px] mt-0.5">{{ pair.reason }}</div>
+                  </div>
+                  <span class="direction-b-badge-cyan text-xs px-2.5 py-1 rounded font-bold flex-shrink-0">
+                    推荐组合
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ══════════ 012路好码逐期实战命中复盘对账台账 (近10期样本外对账) ══════════ -->
+            <div class="road-012-review-section p-5 rounded-xl border border-cyan-500/30 bg-slate-950/80 space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-xl">📋</span>
+                  <div>
+                    <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                      012路好码 · 近10期逐期实战命中复盘对账台账
+                      <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                        Walk-Forward 严格样本外
+                      </span>
+                    </h4>
+                    <p class="text-[11px] text-slate-400 mt-0.5">红球发光为真实命中的精选好码，真实对账 0路(6码)、1路(4码)、2路(5码)及跨路选2组合实战表现</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-mono flex-wrap">
+                  <span class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300">
+                    15码总均命中: <b class="text-emerald-400">{{ primeCompositeData?.road_012_review_ledger?.metrics?.avg_total_15 || '---' }}/15</b>
+                  </span>
+                  <span class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300">
+                    Lift: <b class="text-amber-400">{{ primeCompositeData?.road_012_review_ledger?.metrics?.avg_lift_15 || '---' }}x</b>
+                  </span>
+                  <span class="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300">
+                    选2双全中率: <b class="text-cyan-400">{{ primeCompositeData?.road_012_review_ledger?.metrics?.both_win_rate ?? '---' }}%</b>
+                  </span>
+                </div>
+              </div>
+
+              <!-- 逐期对账流水表格 -->
+              <div class="overflow-x-auto">
+                <table class="cyber-table w-full text-left text-xs">
+                  <thead>
+                    <tr class="bg-slate-900/90 text-slate-400 font-mono">
+                      <th class="py-2.5 px-3">期号</th>
+                      <th class="py-2.5 px-3">0路精选 6码 (命中/推)</th>
+                      <th class="py-2.5 px-3">1路精选 4码 (命中/推)</th>
+                      <th class="py-2.5 px-3">2路精选 5码 (命中/推)</th>
+                      <th class="py-2.5 px-3 text-center">15码总命中</th>
+                      <th class="py-2.5 px-3">跨路选2搭档对账</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-800/60 font-mono">
+                    <tr v-for="rec in (primeCompositeData?.road_012_review_ledger?.records || [])" :key="'road-rev-'+rec.period"
+                        class="hover:bg-slate-800/30 transition">
+                      <td class="py-2.5 px-3 font-bold text-cyan-400">{{ rec.period }}</td>
+                      <!-- 0路 -->
+                      <td class="py-2.5 px-3">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                          <span v-for="num in rec.r0.picks" :key="'r0-'+rec.period+'-'+num"
+                                class="w-6 h-6 rounded-full inline-flex items-center justify-center text-[11px] font-bold"
+                                :class="rec.r0.hit_balls.includes(num) ? 'bg-rose-600 text-white font-black shadow-[0_0_8px_rgba(225,29,72,0.7)]' : 'bg-slate-800/80 text-slate-400'">
+                            {{ String(num).padStart(2, '0') }}
+                          </span>
+                          <span class="text-[11px] font-bold ml-1" :class="rec.r0.hits >= 2 ? 'text-emerald-400' : (rec.r0.hits === 1 ? 'text-cyan-400' : 'text-slate-500')">
+                            ({{ rec.r0.hits }}/6)
+                          </span>
+                        </div>
+                      </td>
+                      <!-- 1路 -->
+                      <td class="py-2.5 px-3">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                          <span v-for="num in rec.r1.picks" :key="'r1-'+rec.period+'-'+num"
+                                class="w-6 h-6 rounded-full inline-flex items-center justify-center text-[11px] font-bold"
+                                :class="rec.r1.hit_balls.includes(num) ? 'bg-rose-600 text-white font-black shadow-[0_0_8px_rgba(225,29,72,0.7)]' : 'bg-slate-800/80 text-slate-400'">
+                            {{ String(num).padStart(2, '0') }}
+                          </span>
+                          <span class="text-[11px] font-bold ml-1" :class="rec.r1.hits >= 2 ? 'text-emerald-400' : (rec.r1.hits === 1 ? 'text-cyan-400' : 'text-slate-500')">
+                            ({{ rec.r1.hits }}/4)
+                          </span>
+                        </div>
+                      </td>
+                      <!-- 2路 -->
+                      <td class="py-2.5 px-3">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                          <span v-for="num in rec.r2.picks" :key="'r2-'+rec.period+'-'+num"
+                                class="w-6 h-6 rounded-full inline-flex items-center justify-center text-[11px] font-bold"
+                                :class="rec.r2.hit_balls.includes(num) ? 'bg-rose-600 text-white font-black shadow-[0_0_8px_rgba(225,29,72,0.7)]' : 'bg-slate-800/80 text-slate-400'">
+                            {{ String(num).padStart(2, '0') }}
+                          </span>
+                          <span class="text-[11px] font-bold ml-1" :class="rec.r2.hits >= 2 ? 'text-emerald-400' : (rec.r2.hits === 1 ? 'text-cyan-400' : 'text-slate-500')">
+                            ({{ rec.r2.hits }}/5)
+                          </span>
+                        </div>
+                      </td>
+                      <!-- 15码总命中 -->
+                      <td class="py-2.5 px-3 text-center">
+                        <span class="text-sm font-black" :class="rec.total_15.hits >= 5 ? 'text-emerald-400' : (rec.total_15.hits >= 4 ? 'text-cyan-300' : 'text-slate-400')">
+                          {{ rec.total_15.hits }} / 15
+                        </span>
+                        <span class="text-[10px] text-slate-500 ml-1">({{ rec.total_15.lift }}x)</span>
+                      </td>
+                      <!-- 选2对账 -->
+                      <td class="py-2.5 px-3">
+                        <div class="flex items-center gap-2">
+                          <span class="font-bold font-mono" :class="rec.cross_pair.hits === 2 ? 'text-amber-400' : (rec.cross_pair.hits === 1 ? 'text-emerald-300' : 'text-slate-400')">
+                            【 {{ rec.cross_pair.pair_label }} 】
+                          </span>
+                          <span class="px-2 py-0.5 rounded text-[10px] font-bold"
+                                :class="rec.cross_pair.hits === 2 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : (rec.cross_pair.hits === 1 ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-500')">
+                            {{ rec.cross_pair.hits === 2 ? '🎉 双全中 (2/2)' : (rec.cross_pair.hits === 1 ? '单中 (1/2)' : '未中 (0/2)') }}
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 操盘大白话指南 -->
+        <div class="glass-panel p-5 bg-slate-950/70 border border-slate-800">
+          <h4 class="text-xs font-bold text-amber-300 mb-2 flex items-center gap-2">
+            <span>🧬</span> 老派量化操盘手 · 尾数分布与香农熵实战心法
+          </h4>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            ✨ <strong>香农信息熵 (大白话：看号码是雨露均沾还是扎堆)：</strong> 快乐8 开出 20 个号码，当熵值大于 6.2 时，表示号码在 0-9 尾数间分散非常均衡；若某尾数当期出现 0 次（全灭），下一期该尾数往往具有极高的“抓冷门回补”期望；若单尾开出 4-5 码（过热），则需防止下一期出现冷竭回调。
+          </p>
+        </div>
+      </div>
+      </div>

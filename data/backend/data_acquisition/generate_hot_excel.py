@@ -32,8 +32,8 @@ if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
 from utils.paths import get_project_root, data_path, _ensure_project_path
 _ensure_project_path()
 _PROJ = get_project_root()
-HISTORY_FILE = os.path.join(_PROJ, 'kl8_history_final.txt')
-POINTS_FILE = os.path.join(_PROJ, 'daily_points.txt')
+HISTORY_FILE = data_path('kl8_history_final.txt')
+POINTS_FILE = data_path('daily_points.txt')
 OUTPUT_DIR = data_path('热码统计')
 
 NUM_TOTAL = 80

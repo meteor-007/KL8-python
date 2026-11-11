@@ -18,6 +18,7 @@
   Layer 6: 跟随星号验证 — Excel星号号码的命中率回测
   Final:   综合精选 — 多层信号叠加，输出5个最优稳定命中
 """
+from backend.utils.paths import get_reports_dir
 import sys
 import os
 import re
@@ -849,7 +850,7 @@ def run():
     )
 
     # 输出到文件
-    output_path = os.path.join(_data_dir, 'reports', 'deep_association_mining_report.md')
+    output_path = os.path.join(get_reports_dir(), 'deep_association_mining_report.md')
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(report)

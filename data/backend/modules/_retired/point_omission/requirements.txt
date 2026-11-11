@@ -1,0 +1,7 @@
+# 运行依赖（§11.1，Python 3.11+）。采用上界锁定，精确版本见 requirements.lock。
+# 说明：规格 §11.1 另列了 pandas，但当前代码库未 import pandas，故不纳入。
+# 不引入：statsmodels / arch / networkx / hmmlearn / scikit-learn（GARCH/HMM/Louvain 均自研）。
+numpy>=1.26,<3.0
+scipy>=1.11,<2.0
+requests>=2.31,<3.0
+PyYAML>=6.0,<7.0

@@ -1,0 +1,289 @@
+﻿<div v-show="activeTab === 'lstm_cockpit'" class="space-y-6">
+        <!-- B1: LSTM 已退役 —— 保留历史查询, 但页面必须说真话 -->
+        <div class="glass-panel p-4 border-l-4 border-rose-500 text-xs space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">⏹</span>
+            <span class="font-bold text-rose-300">本模块已退役 (2026-09-10)</span>
+            <span class="cyber-badge font-mono" style="background: rgba(244,63,94,0.15); color: #fda4af; border: 1px solid rgba(244,63,94,0.4);">只存档 · 不投票</span>
+          </div>
+          <p class="text-slate-400 leading-relaxed">
+            大白话：双层 LSTM 在 <b class="text-rose-300">30 期</b>样本外实测里，Top10 的 Lift 只有 <b class="text-rose-300">0.98x</b>
+            （低于随机大盘的 1.00x）。所以它的<b>投票权已真归零</b>（module_gate <code>vote_weight = 0.0</code>），
+            不再参与共识决策，也不再进入主推荐。
+          </p>
+          <p class="text-slate-500">
+            补充说明（口径诚实）：上述 0.98x 出自 2026-09-10 审计种子，注册表对此标注
+            <em>「未经 100 期榜刷新，权重为审计种子值」</em> —— 也就是说这是一个审计证据，不是长期定论。
+            还值得一提的是，此前所谓"已剥夺出号权"只停留在文案层，金胆权重 2.5 实际是全系统最高，本次才真正归零。
+          </p>
+          <p class="text-slate-500">
+            本页保留下来，是为了让历史推演记录仍可查阅对账 —— 页面上的数字是历史存档，<b>不是</b>当前推荐依据。
+            下面的「研究复现」按钮保留仅用于研究复现，日常流水线已不再调用它。
+          </p>
+        </div>
+
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
+          <div class="space-y-1">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">🧠</span>
+              <h2 class="text-lg font-bold text-white tracking-wide">双层LSTM深度学习 · 时序决策大屏</h2>
+              <span class="cyber-badge font-mono" style="background: rgba(100,116,139,0.2); color: #cbd5e1; border: 1px solid rgba(100,116,139,0.4);">历史存档 · 已退役</span>
+            </div>
+            <p class="text-xs text-slate-400">
+              基于过去 30 期独热向量与 80 码状态空间，多头输出 80 球概率 + 8 分区分布 + 10 尾数偏好
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button @click="fetchLstmSummary" class="cyber-btn cyber-btn-cyan text-xs">
+              <span>🔄 刷新存档</span>
+            </button>
+            <button @click="triggerLstmRun" :disabled="isRunning" class="cyber-btn text-xs"
+                    style="background: rgba(100,116,139,0.15); color: #cbd5e1; border: 1px solid rgba(100,116,139,0.4);">
+              <span>🧠 研究复现: 重新训练/推演</span>
+            </button>
+            <button @click="openModuleHistory('lstm_cockpit')" class="cyber-btn text-xs flex items-center gap-1 bg-purple-500/15 text-purple-200 border border-purple-400/40 hover:border-purple-300/70">
+              <span>📜</span> 历史复盘记录
+            </button>
+          </div>
+        </div>
+
+        <!-- LSTM 核心金银铜大卡片 -->
+        <div v-if="lstmSummary && lstmSummary.prediction" class="glass-panel p-6 space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div class="flex items-center gap-3">
+              <span class="text-sm font-bold text-slate-300">目标研判期号:</span>
+              <span class="text-xl font-bold font-mono text-cyan-400">{{ lstmSummary.prediction.period }} 期</span>
+            </div>
+            <div class="flex items-center gap-4 text-xs font-mono">
+              <span class="text-slate-400">一致性评分: <strong class="text-emerald-400">{{ lstmSummary.prediction.consistency }}</strong></span>
+              <span class="text-slate-400">验证Loss: <strong class="text-cyan-400">{{ lstmSummary.prediction.val_loss }}</strong></span>
+              <span class="text-slate-400">Top10概率极差: <strong class="text-amber-400">{{ lstmSummary.prediction.prob_range }}</strong></span>
+            </div>
+          </div>
+
+          <!-- 金银铜三胆 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-4 rounded-xl bg-gradient-to-br from-amber-500/10 to-amber-900/20 border border-amber-500/30 flex items-center gap-4">
+              <div class="w-14 h-14 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-xl font-bold font-mono text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.4)]">
+                {{ String(lstmSummary.prediction.gold).padStart(2, '0') }}
+              </div>
+              <div>
+                <span class="text-xs text-amber-400 font-bold uppercase tracking-wider block">💎 首席金胆 (Gold Pick)</span>
+                <span class="text-[11px] text-slate-400">时序概率输出第一名</span>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-gradient-to-br from-cyan-500/10 to-cyan-900/20 border border-cyan-500/30 flex items-center gap-4">
+              <div class="w-14 h-14 rounded-full bg-cyan-500/20 border-2 border-cyan-400 flex items-center justify-center text-xl font-bold font-mono text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.4)]">
+                {{ String(lstmSummary.prediction.silver).padStart(2, '0') }}
+              </div>
+              <div>
+                <span class="text-xs text-cyan-400 font-bold uppercase tracking-wider block">🥈 次席银胆 (Silver Pick)</span>
+                <span class="text-[11px] text-slate-400">时序概率输出第二名</span>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-gradient-to-br from-emerald-500/10 to-emerald-900/20 border border-emerald-500/30 flex items-center gap-4">
+              <div class="w-14 h-14 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center text-xl font-bold font-mono text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.4)]">
+                {{ String(lstmSummary.prediction.bronze).padStart(2, '0') }}
+              </div>
+              <div>
+                <span class="text-xs text-emerald-400 font-bold uppercase tracking-wider block">🥉 三席铜胆 (Bronze Pick)</span>
+                <span class="text-[11px] text-slate-400">时序概率输出第三名</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top 10 大名单 -->
+          <div class="space-y-3 pt-2">
+            <span class="text-sm font-bold text-white flex items-center gap-2">
+              <span>📋</span> LSTM AI 海选团推荐 Top 10 精排大名单:
+            </span>
+            <div class="grid grid-cols-2 sm:grid-cols-5 md:grid-cols-10 gap-3">
+              <div v-for="(num, idx) in lstmSummary.prediction.top10" :key="num"
+                   class="p-3 rounded-lg bg-slate-900/80 border border-slate-800 flex flex-col items-center gap-1.5 hover:border-magenta-500/50 transition">
+                <span class="text-[10px] font-mono text-slate-500">#{{ idx + 1 }}</span>
+                <span class="lottery-ball w-10 h-10 text-sm font-bold font-mono"
+                      :class="idx === 0 ? 'ball-gold' : (idx === 1 ? 'ball-cyan' : (idx === 2 ? 'ball-emerald' : 'ball-slate'))">
+                  {{ String(num).padStart(2, '0') }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 近 10 期实战复盘小表 -->
+        <div v-if="lstmSummary && lstmSummary.review_rows" class="glass-panel p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <span>📊</span> LSTM 最近 10 期样本外实战对账 (均命中: {{ lstmSummary.review_summary?.avg_hit }} / 10 | Lift: {{ lstmSummary.review_summary?.lift }}x)
+            </h3>
+            <button @click="openTab('lstm_review')" class="text-xs text-cyan-400 hover:underline">查看完整样本外流水 →</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="cyber-table w-full text-left text-xs">
+              <thead>
+                <tr>
+                  <th class="py-2.5 px-3">期号</th>
+                  <th class="py-2.5 px-3">金银铜胆</th>
+                  <th class="py-2.5 px-3">Top 10 命中数</th>
+                  <th class="py-2.5 px-3">命中号码清单</th>
+                  <th class="py-2.5 px-3">金胆命中</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in lstmSummary.review_rows" :key="row.period" class="hover:bg-slate-800/40">
+                  <td class="py-2 px-3 font-mono font-bold text-cyan-400">{{ row.period }}</td>
+                  <td class="py-2 px-3 font-mono text-slate-300">{{ row.gold_silver_bronze }}</td>
+                  <td class="py-2 px-3 font-mono font-bold" :class="row.hit >= 3 ? 'text-emerald-400' : (row.hit >= 2 ? 'text-cyan-400' : 'text-slate-500')">
+                    {{ row.hit }} / 10
+                  </td>
+                  <td class="py-2 px-3 font-mono text-slate-300">
+                    <span v-for="n in row.hit_numbers" :key="n" class="lottery-ball ball-cyan w-5 h-5 text-[10px] inline-flex mr-1">{{ String(n).padStart(2, '0') }}</span>
+                  </td>
+                  <td class="py-2 px-3">
+                    <span v-if="row.gold_hit" class="text-emerald-400 font-bold font-mono">✅ 命中金胆</span>
+                    <span v-else class="text-slate-600 font-mono">-</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═════════════════ 双层LSTM：样本外滚动复盘审计 ═════════════════ -->
+
+      <div v-show="activeTab === 'lstm_review'" class="space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
+          <div class="space-y-1">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">📊</span>
+              <h2 class="text-lg font-bold text-white tracking-wide">双层LSTM · 样本外滚动复盘审计 (Walk-Forward Validation)</h2>
+              <span class="cyber-badge cyber-badge-magenta font-mono">前瞻样本外真对账</span>
+            </div>
+            <p class="text-xs text-slate-400">
+              每期仅用该期之前的数据进行时序推演，绝无未来数据污染，计算 Top 10 命中数与金银铜表现
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button @click="fetchLstmReview(10)" :class="{'cyber-btn-cyan': lstmReviewPeriods === 10, 'cyber-btn-slate': lstmReviewPeriods !== 10}" class="cyber-btn text-xs py-1 px-3">近10期</button>
+            <button @click="fetchLstmReview(15)" :class="{'cyber-btn-cyan': lstmReviewPeriods === 15, 'cyber-btn-slate': lstmReviewPeriods !== 15}" class="cyber-btn text-xs py-1 px-3">近15期</button>
+            <button @click="fetchLstmReview(30)" :class="{'cyber-btn-cyan': lstmReviewPeriods === 30, 'cyber-btn-slate': lstmReviewPeriods !== 30}" class="cyber-btn text-xs py-1 px-3">近30期</button>
+          </div>
+        </div>
+
+        <!-- 指标卡片 -->
+        <div v-if="lstmReview" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="glass-panel p-4 space-y-1">
+            <span class="text-xs text-slate-400">样本外复盘期数</span>
+            <div class="text-2xl font-bold font-mono text-cyan-400">{{ lstmReview.count }} 期</div>
+          </div>
+          <div class="glass-panel p-4 space-y-1">
+            <span class="text-xs text-slate-400">Top 10 平均命中</span>
+            <div class="text-2xl font-bold font-mono text-emerald-400">{{ lstmReview.avg_hit }} <span class="text-xs text-slate-400">/10</span></div>
+            <span class="text-[10px] text-slate-500">基准期望: 2.50</span>
+          </div>
+          <div class="glass-panel p-4 space-y-1">
+            <span class="text-xs text-slate-400">提升度 (Lift)</span>
+            <div class="text-2xl font-bold font-mono text-amber-400">{{ lstmReview.lift }}x</div>
+            <span class="text-[10px]" :class="(lstmReview?.lift ?? 0) >= 1.0 ? 'text-slate-400' : 'text-rose-300'">
+              {{ (lstmReview?.lift ?? 0) >= 1.0 ? '对照 1.00x 随机基线（未做显著性检验）' : '低于 1.00x 随机基线（负贡献，该模块已退役）' }}
+            </span>
+          </div>
+          <div class="glass-panel p-4 space-y-1">
+            <span class="text-xs text-slate-400">金胆命中总次数</span>
+            <div class="text-2xl font-bold font-mono text-magenta-400">{{ lstmReview.gold_hit_count }} 次</div>
+          </div>
+        </div>
+
+        <!-- 详细流水表 -->
+        <div v-if="lstmReview" class="glass-panel p-6 space-y-4">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <span>📋</span> 样本外各期推演对账流水
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="cyber-table w-full text-left text-xs">
+              <thead>
+                <tr>
+                  <th class="py-2.5 px-3">期号</th>
+                  <th class="py-2.5 px-3">金银铜胆</th>
+                  <th class="py-2.5 px-3">Top 10 命中数</th>
+                  <th class="py-2.5 px-3">命中号码清单</th>
+                  <th class="py-2.5 px-3">金胆命中</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in lstmReview.rows" :key="row.period" class="hover:bg-slate-800/40">
+                  <td class="py-2 px-3 font-mono font-bold text-cyan-400">{{ row.period }}</td>
+                  <td class="py-2 px-3 font-mono text-slate-300">{{ row.gold_silver_bronze }}</td>
+                  <td class="py-2 px-3 font-mono font-bold" :class="row.hit >= 3 ? 'text-emerald-400' : (row.hit >= 2 ? 'text-cyan-400' : 'text-slate-500')">
+                    {{ row.hit }} / 10
+                  </td>
+                  <td class="py-2 px-3 font-mono text-slate-300">
+                    <span v-for="n in row.hit_numbers" :key="n" class="lottery-ball ball-cyan w-5 h-5 text-[10px] inline-flex mr-1">{{ String(n).padStart(2, '0') }}</span>
+                  </td>
+                  <td class="py-2 px-3">
+                    <span v-if="row.gold_hit" class="text-emerald-400 font-bold font-mono">✅ 命中金胆</span>
+                    <span v-else class="text-slate-600 font-mono">-</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═════════════════ 双层LSTM：深度时序研报库 ═════════════════ -->
+
+      <div v-show="activeTab === 'lstm_reports'" class="space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
+          <div class="space-y-1">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">📑</span>
+              <h2 class="text-lg font-bold text-white tracking-wide">双层LSTM · 深度时序研报总库</h2>
+              <span class="cyber-badge cyber-badge-cyan font-mono">历史推演底稿</span>
+            </div>
+            <p class="text-xs text-slate-400">
+              在线查阅 outputs/reports/ 与 outputs/predictions/ 目录下的历史 LSTM 研报全文与历史推演单
+            </p>
+          </div>
+          <button @click="fetchLstmReports" class="cyber-btn cyber-btn-cyan text-xs">
+            <span>🔄 刷新研报列表</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="glass-panel p-4 space-y-3">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">历史研报与推演单列表</h3>
+            <div class="space-y-2 max-h-[600px] overflow-y-auto pr-1">
+              <div v-for="rep in lstmReports" :key="rep.filename"
+                   @click="selectLstmReport(rep)"
+                   class="p-3 rounded-lg border transition cursor-pointer"
+                   :class="selectedLstmReport?.filename === rep.filename ? 'bg-cyan-500/20 border-cyan-400' : 'bg-slate-900/60 border-slate-800 hover:border-slate-700'">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-xs text-white">{{ rep.title }}</span>
+                  <span class="text-[10px] font-mono text-cyan-400">{{ rep.type.toUpperCase() }}</span>
+                </div>
+                <div class="flex items-center justify-between text-[10px] text-slate-500 font-mono mt-1">
+                  <span>期号: {{ rep.period }}</span>
+                  <span>{{ rep.updated_at }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-panel p-6 lg:col-span-2 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-bold text-white">{{ selectedLstmReport?.title || '请选择研报' }}</span>
+                <span v-if="selectedLstmReport" class="text-xs text-slate-500 font-mono">({{ selectedLstmReport.filename }})</span>
+              </div>
+            </div>
+            <div v-if="lstmReportDetail" class="markdown-body p-4 bg-slate-900/50 rounded-lg text-xs leading-relaxed font-mono whitespace-pre-wrap max-h-[600px] overflow-y-auto">
+              {{ lstmReportDetail.content }}
+            </div>
+            <div v-else class="text-slate-500 text-xs text-center py-20">正在加载或暂未选择研报...</div>
+          </div>
+        </div>
+      </div>

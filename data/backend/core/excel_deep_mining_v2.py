@@ -16,7 +16,11 @@ Excel跟随号码统计表 深层关联挖掘引擎 V2
   Col 0-3 (左右各4列)
 """
 import sys, os, re, collections, itertools, math
-sys.stdout.reconfigure(encoding='utf-8')
+try:
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8')
+except Exception:
+    pass
 
 import openpyxl
 

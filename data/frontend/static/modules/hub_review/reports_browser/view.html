@@ -1,0 +1,63 @@
+<div v-show="activeTab === 'reports_browser'" class="space-y-4">
+        <div class="glass-panel p-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800">
+            <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+              <span>📑</span> 历史量化研判与复盘审计报告库 (共 {{ reportList.length }} 篇 · 当前筛选 {{ filteredReportList.length }} 篇)
+            </h2>
+            <!-- G4: 新旧口径版本分栏筛选 -->
+            <div class="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-lg border border-slate-800 text-xs font-mono">
+              <button @click="reportFilter = 'all'" 
+                      class="px-2.5 py-1 rounded transition" 
+                      :class="reportFilter === 'all' ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40' : 'text-slate-400 hover:text-slate-200'">
+                全部 ({{ reportList.length }})
+              </button>
+              <button @click="reportFilter = 'honest'" 
+                      class="px-2.5 py-1 rounded transition flex items-center gap-1" 
+                      :class="reportFilter === 'honest' ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.2)]' : 'text-slate-400 hover:text-emerald-400'">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span>v3.0 诚实新口径 ({{ reportList.filter(r => r.is_honest_caliber).length }})</span>
+              </button>
+              <button @click="reportFilter = 'legacy'" 
+                      class="px-2.5 py-1 rounded transition" 
+                      :class="reportFilter === 'legacy' ? 'bg-slate-700/50 text-slate-200 font-bold border border-slate-600' : 'text-slate-400 hover:text-slate-200'">
+                历史旧口径 ({{ reportList.filter(r => !r.is_honest_caliber).length }})
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 min-h-[650px]">
+            <!-- 左侧报告列表 -->
+            <div class="md:col-span-4 border-r border-slate-800 pr-3 overflow-y-auto max-h-[620px] space-y-2">
+              <div v-for="rep in filteredReportList" :key="rep.raw_date"
+                   @click="openReportContent(rep)"
+                   class="p-3 rounded-lg cursor-pointer transition text-xs border"
+                   :class="currentReport.date === rep.date ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.2)]' : 'bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800'">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-bold font-mono text-sm">{{ rep.date }} (第{{ rep.period }}期)</span>
+                  <span class="text-[10px] px-1.5 py-0.5 rounded font-mono font-bold"
+                        :class="rep.is_honest_caliber ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-slate-800 text-slate-400 border border-slate-700/50'">
+                    {{ rep.caliber_version || (rep.is_honest_caliber ? 'v3.0 诚实口径' : '历史旧口径') }}
+                  </span>
+                </div>
+                <div class="text-[10px] text-slate-500 mt-1 flex items-center justify-between gap-2 truncate">
+                  <span class="truncate">{{ rep.filename }}</span>
+                  <span class="text-[9px] text-slate-400 shrink-0 font-mono">{{ rep.caliber_desc || '' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 右侧报告全文 Markdown 渲染 -->
+            <div class="md:col-span-8 overflow-y-auto max-h-[620px] p-5 bg-slate-950/80 rounded-xl border border-slate-800 text-xs text-slate-300 leading-relaxed font-mono whitespace-pre-wrap">
+              <div v-if="currentReport.content">
+                <h3 class="text-base font-bold text-amber-300 mb-4 pb-2 border-b border-slate-800 flex items-center justify-between">
+                  <span>{{ currentReport.title }}</span>
+                </h3>
+                <div>{{ currentReport.content }}</div>
+              </div>
+              <div v-else class="text-center py-40 text-slate-600">
+                👈 请在左侧选择一份报告以进行深度复盘研判
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>

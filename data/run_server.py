@@ -93,14 +93,16 @@ class ServiceSafeUvicornServer(uvicorn.Server):
 
 
 def main():
-    # 动态适配云端部署（如 Render / Railway / Docker 等平台）与本地开发环境
-    is_cloud = bool(os.environ.get("RENDER") or os.environ.get("PORT"))
-    default_host = "0.0.0.0" if is_cloud else "127.0.0.1"
-    host = os.environ.get("HOST", default_host)
+    # 默认绑定 0.0.0.0，支持本机、局域网手机及外网穿透通道同时访问
+    host = os.environ.get("HOST", "0.0.0.0")
     port = int(os.environ.get("PORT", 8000))
     url = f"http://{'127.0.0.1' if host == '0.0.0.0' else host}:{port}"
     
     is_daemon = "--daemon" in sys.argv
+    # 云端/PaaS 环境不弹浏览器（该环境没有桌面），本机与局域网照常自动打开
+    is_cloud = any(os.environ.get(_k) for _k in (
+        "RENDER", "SPACE_ID", "DYNO", "K_SERVICE", "WEBSITE_SITE_NAME",
+    ))
     auto_open = "--no-browser" not in sys.argv and not is_daemon and not is_cloud
 
     print("=" * 70)

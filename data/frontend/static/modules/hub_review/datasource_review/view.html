@@ -1,0 +1,21 @@
+<div v-show="activeTab === 'datasource_cockpit'" id="module-review-datasource" class="space-y-4">
+  <div class="glass-panel p-5 border border-emerald-500/30">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xl">📊</span>
+          <h3 class="text-sm font-bold text-emerald-300">样本外滚动复盘已迁入「数据源1×2 原始阵列」</h3>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-mono">无未来 · Walk-Forward</span>
+        </div>
+        <p class="text-[11px] text-slate-400 mt-1.5 leading-relaxed max-w-2xl">
+          逐期对账明细、窗口切换、与阵列期号联动快照，统一在原始阵列页底部查看。
+          预测目标期 T 仅使用 T-1/T-2 结构，再与 T 真实开奖对账。
+        </p>
+      </div>
+      <button @click="openModuleHistory('datasource_cockpit')"
+              class="cyber-btn cyber-btn-emerald text-xs flex items-center gap-1.5 shrink-0">
+        <span>🧬</span> 打开阵列页复盘
+      </button>
+    </div>
+  </div>
+</div>

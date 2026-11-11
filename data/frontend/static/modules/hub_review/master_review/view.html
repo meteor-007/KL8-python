@@ -1,0 +1,189 @@
+<div v-show="activeTab === 'master_review_cockpit'" class="space-y-6">
+        <div class="glass-panel p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">🏆</span>
+            <div>
+              <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                各模块样本外实战表现（滚动100期）
+                <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">Master Review Ledger</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">严格遵循「无未来函数」Walk-Forward 滚动样本外对账，标明样本量、赢家诅咒收缩 Lift 与 BH-FDR 显著性校准，绝无粉饰。</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 flex-wrap">
+            <div class="flex items-center gap-1 text-xs font-mono">
+              <span class="text-slate-400">对账期数:</span>
+              <button v-for="n in [10, 20, 30, 50]" :key="n" @click="fetchMasterReview(n)"
+                      class="px-2.5 py-1 rounded transition"
+                      :class="masterReviewPeriods === n ? 'bg-cyan-500 text-slate-950 font-bold' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'">
+                {{ n }}期
+              </button>
+            </div>
+            <button @click="triggerMasterReviewRun" :disabled="isRunning" class="cyber-btn cyber-btn-cyan text-xs font-bold px-3.5 py-1.5">
+              <span>🔄 重新对账复盘</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 天梯榜表格 -->
+        <div class="glass-panel overflow-hidden border border-slate-800">
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-900/90 text-slate-400 font-mono border-b border-slate-800">
+                <tr>
+                  <th class="p-3 text-center">排名</th>
+                  <th class="p-3">预测子系统名称</th>
+                  <th class="p-3 text-center">模式类型</th>
+                  <th class="p-3 text-center">单期推荐规模</th>
+                  <th class="p-3 text-center">均命中球数 / 表现</th>
+                  <th class="p-3 text-center">实际命中率 / 回避率</th>
+                  <th class="p-3 text-center">提升度 (Lift)</th>
+                  <th class="p-3 text-center">势头动向 (大白话)</th>
+                  <th class="p-3 text-center">实战状态</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono">
+                <tr v-for="(item, idx) in masterReviewData?.leaderboard" :key="item.id"
+                    class="hover:bg-slate-800/40 transition">
+                  <td class="p-3 text-center font-bold">
+                    <span class="w-6 h-6 rounded-full inline-flex items-center justify-center text-xs"
+                          :class="idx === 0 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' : (idx === 1 ? 'bg-slate-400/20 text-slate-200' : (idx === 2 ? 'bg-amber-700/20 text-amber-600' : 'text-slate-500'))">
+                      {{ idx + 1 }}
+                    </span>
+                  </td>
+                  <td class="p-3 font-sans font-bold text-white text-sm">
+                    {{ item.name }}
+                  </td>
+                  <td class="p-3 text-center">
+                    <span class="px-2 py-0.5 rounded text-[10px]"
+                          :class="item.type === 'pick_set' ? 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/20' : 'bg-amber-500/10 text-amber-300 border border-amber-500/20'">
+                      {{ item.type === 'pick_set' ? '🎯 胆码精选' : '👑 选2搭档' }}
+                    </span>
+                  </td>
+                  <td class="p-3 text-center text-slate-300">
+                    {{ item.picks_per_period ? item.picks_per_period + ' 码' : (item.type === 'pick2_pair' ? '2 码组合' : '—') }}
+                  </td>
+                  <td class="p-3 text-center font-bold text-white">
+                    {{ item.type === 'pick_set' ? item.mean_hits + ' / ' + item.picks_per_period : ('双中 ' + item.both_hits + ' 次') }}
+                  </td>
+                  <td class="p-3 text-center font-bold"
+                      :class="item.actual_rate >= 25 || item.both_rate >= 6 ? 'text-emerald-400' : 'text-rose-400'">
+                    {{ item.type === 'pick2_pair' ? '双全中率 ' + item.both_rate + '%' : item.actual_rate + '% (基线25%)' }}
+                  </td>
+                  <td class="p-3 text-center font-black text-sm"
+                      :class="item.lift >= 1.25 ? 'text-emerald-400' : (item.lift >= 1.0 ? 'text-amber-400' : 'text-rose-400')">
+                    {{ item.lift }}x
+                  </td>
+                  <td class="p-3 text-center font-sans text-xs">
+                    {{ item.momentum || '⚡ 运行平稳' }}
+                  </td>
+                  <td class="p-3 text-center">
+                    <span class="px-2 py-0.5 rounded text-[11px] font-sans font-bold"
+                          :class="item.status_tag?.includes('超强') || item.status_tag?.includes('黄金') || item.status_tag?.includes('铁血') ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : (item.status_tag?.includes('稳健') || item.status_tag?.includes('达标') ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'bg-rose-500/20 text-rose-300 border border-rose-500/40')">
+                      {{ item.status_tag }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 最近 10 期实战命中明细矩阵 -->
+        <div class="glass-panel p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <h3 class="font-bold text-white text-sm flex items-center gap-2">
+              <span>📋</span>
+              <span>最近 10 期逐期实战开奖命中对账台账</span>
+            </h3>
+            <span class="text-xs text-slate-400 font-mono">红球为命中的号码</span>
+          </div>
+
+          <div class="space-y-2.5">
+            <div v-for="row in masterReviewData?.detailed_ledger" :key="row.period"
+                 class="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800/80 space-y-2">
+              <div class="flex items-center justify-between text-xs font-mono">
+                <span class="font-bold text-cyan-400">第 {{ row.period }} 期 对账实况</span>
+                <span class="text-slate-400">开出 20 个号码</span>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+                <!-- Trinity 最优3码 -->
+                <div v-if="row.modules?.trinity_top5" class="p-2 rounded bg-slate-950/60 border border-slate-800">
+                  <div class="text-[10px] text-slate-400 mb-1 flex justify-between">
+                    <span>Trinity 最优3码</span>
+                    <span class="font-bold text-emerald-400" title="3 码随机期望命中 0.75 码；单期数字不构成显著性证据，请看上方汇总表的 Lift 与 CI。">命中 {{ Math.min(row.modules.trinity_top5.hits, 3) }}/3 <span class="text-slate-500 font-mono">· 基线 0.75</span></span>
+                  </div>
+                  <div class="flex gap-1 flex-wrap font-mono font-bold">
+                    <span v-for="num in (row.modules.trinity_top5.picks || []).slice(0, 3)" :key="num"
+                          class="w-6 h-6 rounded-full inline-flex items-center justify-center text-[11px]"
+                          :class="row.modules.trinity_top5.hit_balls.includes(num) ? 'bg-rose-600 text-white shadow-[0_0_8px_rgba(225,29,72,0.6)] font-black' : 'bg-slate-800 text-slate-400'">
+                      {{ String(num).padStart(2, '0') }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Hidden Energy 5 -->
+                <div v-if="row.modules?.hidden_energy5" class="p-2 rounded bg-slate-950/60 border border-slate-800">
+                  <div class="text-[10px] text-slate-400 mb-1 flex justify-between">
+                    <span>Hidden Energy 5</span>
+                    <span class="font-bold text-emerald-400" title="5 码随机期望命中 1.25 码；单期数字不构成显著性证据，请看上方汇总表的 Lift 与 CI。">命中 {{ row.modules.hidden_energy5.hits }}/5 <span class="text-slate-500 font-mono">· 基线 1.25</span></span>
+                  </div>
+                  <div class="flex gap-1 flex-wrap font-mono font-bold">
+                    <span v-for="num in row.modules.hidden_energy5.picks" :key="num"
+                          class="w-6 h-6 rounded-full inline-flex items-center justify-center text-[11px]"
+                          :class="row.modules.hidden_energy5.hit_balls.includes(num) ? 'bg-rose-600 text-white shadow-[0_0_8px_rgba(225,29,72,0.6)] font-black' : 'bg-slate-800 text-slate-400'">
+                      {{ String(num).padStart(2, '0') }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- 顺口溜口诀 / 未开反弹 -->
+                <div v-if="row.modules?.formula_jingle" class="p-2 rounded bg-slate-950/60 border border-slate-800">
+                  <div class="text-[10px] text-slate-400 mb-1 flex justify-between">
+                    <span>顺口溜精英口诀</span>
+                    <span class="font-bold text-emerald-400" title="随机期望命中 = 码数 × 0.25；单期数字不构成显著性证据，请看上方汇总表的 Lift 与 CI。">命中 {{ row.modules.formula_jingle.hits }}/{{ row.modules.formula_jingle.total }} <span class="text-slate-500 font-mono">· 基线 {{ (row.modules.formula_jingle.total * 0.25).toFixed(2) }}</span></span>
+                  </div>
+                  <div class="flex gap-1 flex-wrap font-mono font-bold">
+                    <span v-for="num in row.modules.formula_jingle.picks" :key="num"
+                          class="w-6 h-6 rounded-full inline-flex items-center justify-center text-[11px]"
+                          :class="row.modules.formula_jingle.hit_balls.includes(num) ? 'bg-rose-600 text-white shadow-[0_0_8px_rgba(225,29,72,0.6)] font-black' : 'bg-slate-800 text-slate-400'">
+                      {{ String(num).padStart(2, '0') }}
+                    </span>
+                  </div>
+                </div>
+                <div v-else-if="row.modules?.point_suppression" class="p-2 rounded bg-slate-950/60 border border-slate-800">
+                  <div class="text-[10px] text-slate-400 mb-1 flex justify-between">
+                    <span>未开高压反弹</span>
+                    <span class="font-bold text-emerald-400" title="随机期望命中 = 码数 × 0.25；单期数字不构成显著性证据，请看上方汇总表的 Lift 与 CI。">命中 {{ row.modules.point_suppression.hits }}/{{ row.modules.point_suppression.total }} <span class="text-slate-500 font-mono">· 基线 {{ (row.modules.point_suppression.total * 0.25).toFixed(2) }}</span></span>
+                  </div>
+                  <div class="flex gap-1 flex-wrap font-mono font-bold">
+                    <span v-for="num in row.modules.point_suppression.picks" :key="num"
+                          class="w-6 h-6 rounded-full inline-flex items-center justify-center text-[11px]"
+                          :class="row.modules.point_suppression.hit_balls.includes(num) ? 'bg-rose-600 text-white shadow-[0_0_8px_rgba(225,29,72,0.6)] font-black' : 'bg-slate-800 text-slate-400'">
+                      {{ String(num).padStart(2, '0') }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- 黄金选2 -->
+                <div v-if="row.modules?.gold_pick2" class="p-2 rounded bg-slate-950/60 border border-slate-800">
+                  <div class="text-[10px] text-slate-400 mb-1 flex justify-between">
+                    <span>黄金定胆选2</span>
+                    <span class="font-bold" :class="row.modules.gold_pick2.hits === 2 ? 'text-amber-400 font-black' : (row.modules.gold_pick2.hits === 1 ? 'text-emerald-400' : 'text-slate-500')">
+                      {{ row.modules.gold_pick2.hits === 2 ? '🎉 双全中 (2/2)' : (row.modules.gold_pick2.hits === 1 ? '单中 (1/2)' : '未中 (0/2)') }}
+                    </span>
+                  </div>
+                  <div class="flex gap-1 font-mono font-bold">
+                    <span v-for="num in row.modules.gold_pick2.pair" :key="num"
+                          class="px-2 py-0.5 rounded text-xs"
+                          :class="row.modules.gold_pick2.hits >= 1 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'bg-slate-800 text-slate-400'">
+                      {{ String(num).padStart(2, '0') }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>

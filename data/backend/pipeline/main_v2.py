@@ -6,6 +6,7 @@ Daily 默认: FO 主推荐
 Weekly: EF/RW/MK/EO/BAYES/MC 通道 Lift 监控 (--weekly-monitor)
 自学习: WF Lift > 1.0 (learning_gate 单点阈值) 解锁 (当前冻结)
 """
+from backend.utils.paths import get_cache_dir
 import os
 import sys
 import re
@@ -185,7 +186,7 @@ def compute_raw_scores(history, quiet=False, history_only=False, mode='daily'):
 
     if mode == 'full':
         try:
-            cache_dir = os.path.join(_PROJ, 'cache')
+            cache_dir = os.path.join(get_cache_dir())
             os.makedirs(cache_dir, exist_ok=True)
             control_snapshot = {
                 ch: {str(n): round(all_scores.get(ch, {}).get(n, 0), 6) for n in range(1, 81)}

@@ -1,0 +1,28 @@
+{
+  "follow": {
+    "n_count": 30,
+    "avg_rep_hits": 1.37,
+    "rep_lift": 1.093,
+    "rep_z": 0.66,
+    "avg_inf_hits": 1.47,
+    "inf_lift": 0.978,
+    "inf_z": -0.17,
+    "avg_cf_hits": 1.8,
+    "cf_lift": 0.9,
+    "cf_z": -0.89,
+    "sum_inter_hits": 5,
+    "status": "ok"
+  },
+  "gemini": {
+    "status": "ok",
+    "n_periods": 30,
+    "gold_hit_rate": 26.7,
+    "gold_lift": 1.07,
+    "avg_dan_hits": 0.73,
+    "dan_lift": 0.97,
+    "avg_core4_hits": 1.07,
+    "core4_lift": 1.07,
+    "avg_def5_hits": 1.43,
+    "def5_lift": 1.14
+  }
+}

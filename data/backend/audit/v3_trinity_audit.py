@@ -26,6 +26,29 @@ import numpy as np
 from core.feature_optimizer import load_all_data
 from core.algorithm_optimizer import plan7_markov_integration
 
+
+class WeightsWithSource(dict):
+    """权重字典 + 来源说明 (D2, 2026-09-10)。
+
+    大白话: 三位一体权重到底哪来的——是学习引擎算的, 还是门控冻结后用波动率
+    静态兜底的? 以前没人说得清, 界面只能假装它在学习。现在权重字典自己带一张
+    "身份证"(weights_source / weights_note), 但仍是 dict 子类, 老的
+    `weights['EF']` / `dict(weights)` / `sum(weights.values())` 全部照常工作。
+    """
+
+    def __init__(self, *args, source: str = "unknown", note: str = "", **kwargs):
+        super().__init__(*args, **kwargs)
+        self.weights_source = source
+        self.weights_note = note
+
+
+def weights_source_of(weights) -> dict:
+    """取任意权重对象的来源说明; 没有身份证的返回 'unknown'。"""
+    return {
+        "weights_source": getattr(weights, "weights_source", "unknown"),
+        "weights_note": getattr(weights, "weights_note", ""),
+    }
+
 # ── 兼容性: 保留旧接口，内部委托到 core/energy_field.py ──
 
 def calc_energy_field(history, decay_rate=0.5, diffusion_factor=0.4):
@@ -120,6 +143,15 @@ def _load_learner_weights():
                 state = json.load(f)
             pw = state.get('pentagon_weights', {})
             if pw and all(k in pw for k in ('EF', 'RW', 'FO')):
+                # 2026-11-10：AutonomousLearner 已退役，该状态文件不再更新。
+                # 过期权重不得参与打分，展示口径也一并失效 —— 超过 30 天判为无效。
+                try:
+                    from datetime import datetime as _dtm
+                    _upd = str(state.get('updated_at') or '')[:19]
+                    if (_dtm.now() - _dtm.strptime(_upd, '%Y-%m-%d %H:%M:%S')).days > 30:
+                        return None
+                except Exception:
+                    return None
                 # v4.0: 仅需EF/RW/FO三维键, MK/EO已移除
                 return pw
     except Exception:
@@ -127,19 +159,28 @@ def _load_learner_weights():
     return None
 
 
-def dynamic_meta_fusion(history):
+def dynamic_meta_fusion(history, environment: str = 'balanced'):
     """动态元融合: 自动检测最佳权重 (v4.0 - 三维融合EF/RW/FO)
+
+    Args:
+        history: 历史开奖
+        environment: 环境键 (hot_burst/cold_rebound/balanced/trend_accel/chaotic)。
+            2026-10-22 一致性修复 (Bug#4)：原先硬编码 'balanced'，环境识别结果
+            从未参与真正打分 —— 现在调用方把识别出的环境传进来，环境自适应才真正生效。
 
     优先级:
       1. learner_state.json中的学习权重 (闭环连通)
-      2. 基于波动率的环境自适应权重
+      2. 环境自适应权重 (ScoreComposer 按 environment 档位取 YAML environment_overrides)
       3. 默认权重
 
     v4.0: MK/EO已移除, 仅使用EF/RW/FO三维
     v3.0: 统一使用 ScoreComposer 管线，消除双重评分。
     """
     if len(history) < 10:
-        return collections.Counter(), {'EF': 0.40, 'RW': 0.30, 'FO': 0.30}
+        return (collections.Counter(),
+                WeightsWithSource({'EF': 0.40, 'RW': 0.30, 'FO': 0.30},
+                                  source="default_insufficient_history",
+                                  note=f"历史不足10期 (实际{len(history)}期), 用默认权重兜底"))
 
     from core.energy_field import calc_energy_field, calc_omission_sigmoid
     from core.score_composer import ScoreComposer
@@ -163,25 +204,53 @@ def dynamic_meta_fusion(history):
     # 确定当前使用的权重（用于返回值）
     learner_weights = _load_learner_weights()
     if learner_weights:
-        best = dict(learner_weights)
+        best = WeightsWithSource(learner_weights, source="learner",
+                                 note="权重来自 learner_state.json 学习权重 (门控开启, 参数在学)")
     else:
-        # 基于波动率的环境自适应权重
-        recent = history[:10]
-        avg_vol = sum(
-            sum((1 if n in h['numbers'] else 0) - 0.25 for n in range(1, 81)) ** 2 / 80
-            for h in recent
-        ) / len(recent) if recent else 0
+        # 2026-10-22 死逻辑清除 (Bug#3)：原「波动率分档」公式为
+        #   avg_vol = Σ_periods ( Σ_balls (1[ball∈draw] − 0.25) )² / 80 / n
+        # 而每期恰开 20/80 码，内层 Σ = 20×0.75 − 60×0.25 ≡ 0（恒等式，与开奖内容无关），
+        # 故 avg_vol 永远是 0.000，三档阈值 (>0.25 / <0.1 / else) 永远只命中「低波动」档。
+        # 这是一条数学上不可能 Discriminate 的死分支，却长期把「EF:0.50 RW:0.20 FO:0.30」
+        # 冒充环境自适应权重展示给复盘 —— 已移除。
+        # 现按传入的环境档位取 ScoreComposer 的 environment_overrides (与真正打分同源)，
+        # 下方仍统一以 composer.last_weights 为最终回显准绳。
+        try:
+            _wt = ScoreComposer()._get_env_weights(environment)
+            _env_note = f"环境={environment} 自适应权重"
+        except Exception:
+            _wt = {'EF': 0.40, 'RW': 0.30, 'FO': 0.30}
+            _env_note = "默认权重 (环境权重读取失败)"
 
-        if avg_vol > 0.25:
-            best = {'EF': 0.30, 'RW': 0.35, 'FO': 0.35}
-        elif avg_vol < 0.1:
-            best = {'EF': 0.50, 'RW': 0.20, 'FO': 0.30}
-        else:
-            best = {'EF': 0.40, 'RW': 0.30, 'FO': 0.30}
+        _gate_frozen = True
+        try:
+            from core.learning_gate import is_learning_enabled
+            _gate_frozen = not is_learning_enabled()
+        except Exception:
+            pass
+        _src = "env_static_gate_frozen" if _gate_frozen else "env_static"
+        _note = (f"权重来自{_env_note}"
+                 + (", 自学习被门控冻结 (WF 95%CI下界<1.0), 这套权重不在学习" if _gate_frozen else ""))
+        best = WeightsWithSource(_wt, source=_src, note=_note)
 
-    # 统一使用 ScoreComposer 管线
+    # 统一使用 ScoreComposer 管线 (环境键透传，环境自适应真正生效)
     composer = ScoreComposer()
-    final_scores = composer.compose(raw_scores, environment='balanced', volatility=0.15)
+    final_scores = composer.compose(raw_scores, environment=environment, volatility=0.15)
+
+    # 2026-10-22 一致性修复 (Bug#2)：上面算出来的 best 只是「展示用权重」，
+    # 而 compose 内部按 learner/Loss/环境+波动率自行决定真正打分权重。
+    # 历史事故：报告显示 EF:0.50 RW:0.20 FO:0.30，实际打分却是 balanced 0.40/0.30/0.30，
+    # 复盘归因与「调参是否合理」的判断全部建立在从未生效的权重上。
+    # 现以 composer 实际使用的权重为准回显（拿不到时才退回推算值并如实标注）。
+    used = getattr(composer, 'last_weights', None)
+    if used and all(k in used for k in ('EF', 'RW', 'FO')):
+        if dict(best) != {k: round(float(used[k]), 4) for k in ('EF', 'RW', 'FO')}:
+            best = WeightsWithSource(
+                {k: used[k] for k in ('EF', 'RW', 'FO')},
+                source=best.weights_source + "->composer_actual",
+                note=(f"权重以 ScoreComposer 实际打分权重为准 (环境={environment}, volatility=0.15)。"
+                      f"原推算显示为 {dict(best)}，与计算不一致已纠正。" + best.weights_note),
+            )
 
     return final_scores, best
 

@@ -1,163 +1,48 @@
 # -*- coding: utf-8 -*-
 """
-K8-Quant Windows Service Manager
-将 K8-Quant Web 终端封装为标准的 Windows 系统服务
-实现后台无人值守、关闭窗口不停止、开机自启与状态监管
+Compatibility entry for Windows service registration.
+
+pywin32 registers: <project_root>\\windows_service.K8QuantWebService
+Implementation lives in scripts/ops/windows_service.py after layout migration.
 """
-import os
+from __future__ import annotations
+
+import importlib.util
 import sys
-
-if sys.stdout is not None and hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-if sys.stderr is not None and hasattr(sys.stderr, "reconfigure"):
-    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
-
-import time
-import logging
-import threading
 from pathlib import Path
 
-# 确保项目根目录在 sys.path 中
-_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
-_BACKEND_DIR = os.path.join(_PROJ_DIR, "backend")
-for _p in [_BACKEND_DIR, _PROJ_DIR]:
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
+_OPS_SVC = Path(__file__).resolve().parent / "scripts" / "ops" / "windows_service.py"
+if not _OPS_SVC.is_file():
+    raise FileNotFoundError(f"Missing Windows service implementation: {_OPS_SVC}")
 
-# 确保 logs 目录存在
-_LOG_DIR = os.path.join(_PROJ_DIR, "logs")
-os.makedirs(_LOG_DIR, exist_ok=True)
-_LOG_FILE = os.path.join(_LOG_DIR, "web_service.log")
+_spec = importlib.util.spec_from_file_location("k8_windows_service_impl", _OPS_SVC)
+if _spec is None or _spec.loader is None:
+    raise ImportError(f"Cannot load Windows service module: {_OPS_SVC}")
 
-# 配置日志记录器
-logging.basicConfig(
-    filename=_LOG_FILE,
-    level=logging.INFO,
-    format="[%(asctime)s] [%(levelname)s] [PID:%(process)d] %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-    encoding="utf-8"
-)
+_mod = importlib.util.module_from_spec(_spec)
+# Keep a stable module name for pywin32 class lookup on this shim file.
+sys.modules.setdefault("k8_windows_service_impl", _mod)
+_spec.loader.exec_module(_mod)
 
-try:
-    import win32serviceutil
-    import win32service
-    import win32event
-    import servicemanager
-    import winerror
-except ImportError:
-    win32serviceutil = None
-    win32service = None
-    win32event = None
-    servicemanager = None
-
-
-class K8QuantWebService(win32serviceutil.ServiceFramework if win32serviceutil else object):
-    """K8-Quant Web 决策大屏 Windows 后台守护服务"""
-    _svc_name_ = "K8QuantWebService"
-    _svc_display_name_ = "K8-QUANT 智能量化操盘决策终端 Web 服务"
-    _svc_description_ = "K8-Quant 智能量化决策系统 Web 终端守护服务 (FastAPI Uvicorn 8000端口)"
-
-    def __init__(self, args):
-        if win32serviceutil:
-            super().__init__(args)
-            self.hWaitStop = win32event.CreateEvent(None, 0, 0, None)
-        self.is_running = True
-        self.server = None
-        self.host = "127.0.0.1"
-        self.port = 8000
-
-    def SvcStop(self):
-        """服务停止通知"""
-        logging.info("收到 Windows 服务停止 (SvcStop) 指令，正在安全退出...")
-        if win32service:
-            self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
-        self.is_running = False
-        if self.server:
-            self.server.should_exit = True
-        if win32serviceutil and self.hWaitStop:
-            win32event.SetEvent(self.hWaitStop)
-
-    def SvcDoRun(self):
-        """服务运行主入口"""
-        logging.info("=" * 60)
-        logging.info("🚀 K8QuantWebService Windows 服务正式启动中...")
-        logging.info(f"项目根目录: {_PROJ_DIR}")
-        logging.info(f"监听地址: http://{self.host}:{self.port}")
-        
-        # 切换工作目录至项目根目录
-        os.chdir(_PROJ_DIR)
-        
-        if servicemanager:
-            try:
-                servicemanager.LogMsg(
-                    servicemanager.EVENTLOG_INFORMATION_TYPE,
-                    servicemanager.PYS_SERVICE_STARTED,
-                    (self._svc_name_, "")
-                )
-            except Exception:
-                pass
-
-        try:
-            self.run_web_server()
-        except Exception as e:
-            logging.exception(f"❌ Web 服务运行异常崩溃: {e}")
-        finally:
-            logging.info("🛑 K8QuantWebService Windows 服务已安全停止")
-            logging.info("=" * 60)
-
-    def run_web_server(self):
-        """启动 Uvicorn FastAPI 服务"""
-        import uvicorn
-        
-        # 导入 API 应用
-        try:
-            from backend.api.api_server import app
-        except Exception as e:
-            logging.exception(f"导入 backend.api.api_server 失败: {e}")
-            raise e
-
-        # 配置 Uvicorn
-        config = uvicorn.Config(
-            app=app,
-            host=self.host,
-            port=self.port,
-            log_level="info",
-            access_log=False,
-            reload=False
-        )
-        self.server = uvicorn.Server(config)
-        self.server.install_signal_handlers = lambda: None
-        
-        logging.info(f"✅ Uvicorn 服务器正在监听 {self.host}:{self.port}")
-        self.server.run()
-
-
-def run_standalone():
-    """非服务模式下的直接运行（用于本地测试）"""
-    print(f"🧬 以独立模式启动 K8-Quant Web 服务...")
-    print(f"日志输出至: {_LOG_FILE}")
-    import uvicorn
-    os.chdir(_PROJ_DIR)
-    from backend.api.api_server import app
-    uvicorn.run(app, host="127.0.0.1", port=8000, reload=False)
-
+K8QuantWebService = _mod.K8QuantWebService
+run_standalone = _mod.run_standalone
 
 if __name__ == "__main__":
+    # Forward install/start/stop/remove to the real implementation.
+    sys.argv[0] = str(_OPS_SVC)
     if len(sys.argv) == 1:
-        if servicemanager:
+        if getattr(_mod, "servicemanager", None):
             try:
-                servicemanager.Initialize()
-                servicemanager.PrepareToHostSingle(K8QuantWebService)
-                servicemanager.StartServiceCtrlDispatcher()
-            except Exception as e:
-                # 可能是非服务控制台直接运行双击
+                _mod.servicemanager.Initialize()
+                _mod.servicemanager.PrepareToHostSingle(K8QuantWebService)
+                _mod.servicemanager.StartServiceCtrlDispatcher()
+            except Exception:
                 run_standalone()
         else:
             run_standalone()
+    elif sys.argv[1].lower() == "standalone":
+        run_standalone()
+    elif getattr(_mod, "win32serviceutil", None):
+        _mod.win32serviceutil.HandleCommandLine(K8QuantWebService)
     else:
-        if sys.argv[1].lower() == "standalone":
-            run_standalone()
-        elif win32serviceutil:
-            win32serviceutil.HandleCommandLine(K8QuantWebService)
-        else:
-            print("❌ 未安装 pywin32 模块，无法管理 Windows 服务。")
+        print("未安装 pywin32 模块，无法管理 Windows 服务。")

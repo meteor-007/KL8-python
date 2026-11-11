@@ -1,0 +1,66 @@
+{
+  "spatial_points": {
+    "core5_hits": 1.2,
+    "core5_lift": 0.96,
+    "top10_hits": 2.6,
+    "top10_lift": 1.04,
+    "confidence": {
+      "level": 3,
+      "badge": "🔴 无置信 (Level 3)",
+      "description": "🔴 无置信 (Level 3) - 等权降级防守 (z=0.40)",
+      "z_score": 0.4,
+      "is_significant": false
+    }
+  },
+  "point_suppression": {
+    "top1_rate": 0.3667,
+    "top1_lift": 1.467,
+    "top3_hits": 1.17,
+    "top3_any_hit_rate": 0.8
+  },
+  "follow_track": {
+    "mean_hits": null,
+    "hit_rate": null,
+    "lift": null
+  },
+  "gold_pick2": {
+    "both_rate": null,
+    "one_rate": null,
+    "both_count": null,
+    "total": null,
+    "lift": 0
+  },
+  "gemini_pick2": {},
+  "killseeker": {
+    "kill_accuracy": 77.6,
+    "kill_lift": 1.03,
+    "baseline": 75.0
+  },
+  "sixteen_hot": {
+    "n_periods": 30,
+    "gold_hit_count": 9,
+    "gold_hit_rate": 30.0,
+    "gold_lift": 1.2,
+    "silver_hit_count": 12,
+    "silver_hit_rate": 40.0,
+    "silver_lift": 1.6,
+    "top5_avg_hits": 1.53,
+    "top5_lift": 1.22,
+    "top10_avg_hits": 2.67,
+    "top10_lift": 1.07,
+    "top1_both_count": 2,
+    "top1_both_rate": 6.67,
+    "top1_both_lift": 1.11,
+    "top1_one_count": 17,
+    "top1_one_rate": 56.67,
+    "med_pool_hit_rate": 24.78,
+    "base_single_rate": 25.0,
+    "base_pair_rate": 6.01
+  },
+  "lstm_deep": {
+    "top5_hits": null,
+    "top5_lift": null,
+    "top10_hits": null,
+    "top10_lift": null
+  }
+}

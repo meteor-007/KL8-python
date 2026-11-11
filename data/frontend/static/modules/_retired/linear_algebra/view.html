@@ -1,0 +1,449 @@
+<div v-show="activeTab === 'linear_algebra_cockpit'" class="space-y-6">
+  <!-- ══════════ 线性代数空间投影量化推演看板 ══════════ -->
+  <div class="glass-panel p-6 space-y-6 border border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
+    <!-- 模块标题栏 -->
+    <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-400/40 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+          📐
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
+            <span>10. 线性代数空间投影 · 核心决策驾驶舱</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono border border-cyan-500/30">
+              近100期等权 · 冷热对冲选2
+            </span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">
+            目标推演第 <span class="text-cyan-400 font-mono font-bold">{{ linearAlgebraData?.target_issue || '---' }}</span> 期 · 基于第 <span class="text-slate-200 font-mono">{{ linearAlgebraData?.latest_issue || '---' }}</span> 期 · 近 <span class="text-cyan-300 font-mono">{{ linearAlgebraData?.history_used || linearAlgebraData?.total_historical_draws || 0 }}</span>/<span class="text-cyan-300 font-mono">{{ linearAlgebraData?.train_window || 100 }}</span> 期 · 主推热胆×甜区(7~13)两组选2
+          </p>
+        </div>
+      </div>
+      <button @click="triggerLinearAlgebraRun" 
+              :disabled="isLinearAlgebraRunning"
+              class="cyber-btn cyber-btn-primary text-xs !py-1.5 !px-3 flex items-center gap-1.5">
+        <span :class="{'animate-spin': isLinearAlgebraRunning}">🔄</span>
+        <span>{{ isLinearAlgebraRunning ? '矩阵解算中...' : '重新执行线性代数推演' }}</span>
+      </button>
+    </div>
+
+    <!-- 主推：两组最优选2 -->
+    <div class="glass-panel p-5 space-y-4 border border-cyan-500/40">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="text-sm font-bold flex items-center gap-2" style="color: var(--text-main);">
+          <span>💎</span>
+          <span>两组最优选2（冷热对冲主推）</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded font-mono font-normal border border-cyan-500/40 bg-cyan-500/10 text-cyan-600 dark:text-cyan-300">
+            热胆×甜区7~13 · 互不重叠
+          </span>
+        </div>
+        <div class="text-[10px] font-mono" style="color: var(--text-muted);">第1组热+温 · 第2组次席热+甜 · LA融合辅助</div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div v-for="(p, pIdx) in (linearAlgebraData?.gold_pairs || []).slice(0, 2)" :key="'la-main-pair-'+pIdx"
+             class="p-4 rounded-xl border flex items-center justify-between gap-3"
+             style="background: var(--bg-card-inner); border-color: var(--border-subtle);">
+          <div class="min-w-0">
+            <div class="text-[10px] font-mono mb-1.5 truncate" style="color: var(--text-muted);">
+              第 {{ p.rank || (pIdx + 1) }} 组 · {{ p.desc || '选2' }}
+            </div>
+            <div class="font-mono font-black text-3xl tracking-widest text-amber-600 dark:text-amber-300">
+              {{ p.pair }}
+            </div>
+          </div>
+          <div class="text-right text-[11px] font-mono shrink-0 space-y-1" style="color: var(--text-sub);">
+            <div>对子分 <b class="text-cyan-600 dark:text-cyan-300">{{ p.pair_score ?? p.affinity_score }}</b></div>
+            <div>同开 {{ p.cooccur_count }} 次</div>
+            <div style="color: var(--text-muted);">遗漏 {{ p.gap_a ?? '-' }}/{{ p.gap_b ?? '-' }}</div>
+          </div>
+        </div>
+        <div v-if="!(linearAlgebraData?.gold_pairs || []).length" class="text-xs col-span-2" style="color: var(--text-muted);">暂无选2结果，请先执行推演</div>
+      </div>
+    </div>
+
+    <!-- 旁路：Top3（与主推同套 glass 风格） -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="glass-panel p-4 border border-amber-500/35">
+        <div class="text-xs font-bold text-amber-600 dark:text-amber-300 flex items-center gap-1.5">
+          <span>👑</span> 旁路 Top 3
+        </div>
+        <div class="mt-3 flex items-center gap-2 flex-wrap">
+          <span v-for="num in (linearAlgebraData?.top3_gold || [])" :key="'la-top5-'+num"
+                @click="openBallDetail({number: num})"
+                class="px-2.5 py-1 rounded-lg border border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-200 font-mono font-bold text-sm cursor-pointer hover:scale-105 transition">
+            {{ String(num).padStart(2, '0') }}
+          </span>
+        </div>
+      </div>
+
+      <div class="glass-panel p-4 border border-cyan-500/35">
+        <div class="text-xs font-bold text-cyan-600 dark:text-cyan-300 flex items-center gap-1.5">
+          <span>🛡️</span> 旁路 Top 3（同主推）
+        </div>
+        <div class="mt-3 flex items-center gap-1.5 flex-wrap">
+          <span v-for="num in (linearAlgebraData?.top3_gold || [])" :key="'la-top12-'+num"
+                @click="openBallDetail({number: num})"
+                class="px-2 py-0.5 rounded border border-cyan-500/45 bg-cyan-500/10 text-cyan-700 dark:text-cyan-200 font-mono text-xs cursor-pointer hover:scale-105 transition">
+            {{ String(num).padStart(2, '0') }}
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 中部两栏：历史走势余弦镜像匹配 + SVD 主成分分解 -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- 左栏 2/3: 历史走势余弦镜像匹配 (找历史孪生兄弟) -->
+      <div class="lg:col-span-2 glass-panel p-5 space-y-4 border border-slate-700/50">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🧬</span>
+            <h4 class="text-sm font-bold text-slate-200">历史走势余弦镜像匹配 (以史为鉴)</h4>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">滑动窗口 W=5</span>
+          </div>
+          <span class="text-xs text-slate-400 font-mono">从近 {{ linearAlgebraData?.history_used || linearAlgebraData?.total_historical_draws || 0 }} 期中提取 Top 3 孪生切片</span>
+        </div>
+        <p class="text-xs text-slate-400">
+          💡 <b>大白话原理</b>：在过去几千期开奖中，找出与“近 5 期开奖矩阵”夹角最小、走势最像的历史切片，看看当年下一期真实开出了什么号码：
+        </p>
+
+        <div class="space-y-3">
+          <div v-for="(m, mIdx) in (linearAlgebraData?.top_historical_matches || [])" :key="'la-match-'+mIdx"
+               class="p-3 rounded-lg bg-slate-900/80 border border-slate-800 hover:border-cyan-500/40 transition space-y-2">
+            <div class="flex flex-wrap items-center justify-between text-xs">
+              <div class="flex items-center gap-2">
+                <span class="px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold font-mono">Top {{ mIdx + 1 }}</span>
+                <span class="text-slate-200 font-medium">历史走势区间: <b class="font-mono text-cyan-400">{{ m.period_range }}</b></span>
+                <span class="text-slate-400 font-mono">➡️ 目标第 {{ m.target_issue }} 期</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-emerald-400 font-mono font-bold">相似度: {{ m.similarity_pct }}%</span>
+                <span class="text-slate-400 font-mono text-[11px]">融合权重: {{ m.ensemble_weight }}%</span>
+              </div>
+            </div>
+
+            <!-- 当年实际开出号码 -->
+            <div class="text-[11px] flex items-center gap-2 flex-wrap">
+              <span class="text-slate-400">当年开出:</span>
+              <span v-for="b in m.next_numbers" :key="'m-b-'+b"
+                    :class="{'text-cyan-300 font-bold bg-cyan-950/60 border border-cyan-500/40 px-1 rounded': (m.overlap_with_top12 || []).includes(b), 'text-slate-400': !(m.overlap_with_top12 || []).includes(b)}"
+                    class="font-mono text-[11px]">
+                {{ String(b).padStart(2, '0') }}
+              </span>
+            </div>
+
+            <!-- 与当期Top12重合共振 -->
+            <div v-if="(m.overlap_with_top12 || []).length > 0" class="text-[11px] flex items-center gap-2 text-amber-300/90 pt-1 border-t border-slate-800/60">
+              <span>⚡ 与当期 Top 3 共振 ({{ m.overlap_count }} 码):</span>
+              <span class="font-mono font-bold text-amber-300">{{ m.overlap_with_top12.map(x => String(x).padStart(2, '0')).join(' ') }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右栏 1/3: SVD 主成分分解 & 算法权重 -->
+      <div class="space-y-4">
+        <!-- SVD 能量卡片 -->
+        <div class="glass-panel p-5 space-y-4 border border-slate-700/50">
+          <div class="flex items-center gap-2 pb-2 border-b border-slate-800">
+            <span class="text-lg">📊</span>
+            <h4 class="text-sm font-bold text-slate-200">SVD 主成分子空间能量</h4>
+          </div>
+          <div class="space-y-2 text-xs">
+            <div class="flex justify-between text-slate-300">
+              <span>提取主成分数</span>
+              <span class="font-mono font-bold text-cyan-400">{{ linearAlgebraData?.pca_meta?.n_components_used || 8 }} 维</span>
+            </div>
+            <div class="flex justify-between text-slate-300">
+              <span>累计方差解释率</span>
+              <span class="font-mono font-bold text-emerald-400">{{ linearAlgebraData?.pca_meta?.cumulative_variance_ratio || 0 }}%</span>
+            </div>
+            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden mt-1">
+              <div class="bg-gradient-to-r from-cyan-500 to-emerald-400 h-full rounded-full transition-all duration-500"
+                   :style="{ width: (linearAlgebraData?.pca_meta?.cumulative_variance_ratio || 0) + '%' }"></div>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">
+              💡 <b>大白话</b>：主成分已提取了全盘主要的出号主心骨能量，将杂乱的随机噪音剥离。
+            </p>
+          </div>
+        </div>
+
+        <!-- 四大融合权重卡片 -->
+        <div class="glass-panel p-5 space-y-3 border border-slate-700/50">
+          <div class="flex items-center gap-2 pb-2 border-b border-slate-800">
+            <span class="text-lg">⚙️</span>
+            <h4 class="text-sm font-bold text-slate-200">四维空间融合矩阵权重</h4>
+          </div>
+          <div class="space-y-2 text-xs">
+            <div class="flex justify-between">
+              <span class="text-slate-400">1. SVD 主成分空间能量</span>
+              <span class="font-mono text-cyan-300">25.0%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">2. 80阶马尔可夫状态转移</span>
+              <span class="font-mono text-amber-300">30.0%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">3. 余弦镜像孪生切片投影</span>
+              <span class="font-mono text-emerald-300">30.0%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">4. 图拉普拉斯共现亲和</span>
+              <span class="font-mono text-purple-300">15.0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部：80 码空间能量打分全景表 -->
+    <div class="glass-panel p-5 space-y-4 border border-slate-700/50">
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-slate-800">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🌐</span>
+          <h4 class="text-sm font-bold text-slate-200">80 码空间投影多维打分全景天梯表</h4>
+          <span class="text-xs text-slate-400">(点击号码查看详情)</span>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto custom-scrollbar max-h-96">
+        <table class="w-full text-left text-xs border-collapse font-sans">
+          <thead>
+            <tr class="border-b border-slate-800 text-slate-400 bg-slate-900/50 sticky top-0 z-10">
+              <th class="py-2.5 px-3">排名 / 号码</th>
+              <th class="py-2.5 px-3">综合空间能量得分</th>
+              <th class="py-2.5 px-3">SVD主成分分</th>
+              <th class="py-2.5 px-3">马尔可夫转移分</th>
+              <th class="py-2.5 px-3">余弦镜像分</th>
+              <th class="py-2.5 px-3">图共现亲和分</th>
+              <th class="py-2.5 px-3 text-right">当期状态</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/60">
+            <tr v-for="(item, idx) in (linearAlgebraData?.ball_details || [])" :key="'la-ball-'+item.ball"
+                class="hover:bg-slate-800/40 transition group">
+              <td class="py-2 px-3 flex items-center gap-2">
+                <span class="font-mono text-[11px] text-slate-500 w-5">#{{ idx + 1 }}</span>
+                <span @click="openBallDetail({number: item.ball})"
+                      :class="{'bg-amber-500/20 text-amber-300 border-amber-400/80 font-bold shadow-[0_0_6px_rgba(245,158,11,0.3)]': idx < 5, 'bg-cyan-500/10 text-cyan-300 border-cyan-400/40': idx >= 5 && idx < 12, 'bg-slate-800 text-slate-300 border-slate-700': idx >= 12}"
+                      class="px-2 py-0.5 rounded border font-mono text-xs cursor-pointer hover:scale-110 transition">
+                  {{ item.ball_str }}
+                </span>
+                <span v-if="idx < 5" class="text-[10px] text-amber-400 font-bold">金胆</span>
+                <span v-else-if="idx < 12" class="text-[10px] text-cyan-400">优选</span>
+              </td>
+              <td class="py-2 px-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-24 bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-gradient-to-r from-cyan-500 to-amber-400 h-full rounded-full"
+                         :style="{ width: item.final_score + '%' }"></div>
+                  </div>
+                  <span class="font-mono font-bold text-slate-200">{{ item.final_score }}</span>
+                </div>
+              </td>
+              <td class="py-2 px-3 font-mono text-slate-400">{{ item.pca_score }}</td>
+              <td class="py-2 px-3 font-mono text-slate-400">{{ item.markov_score }}</td>
+              <td class="py-2 px-3 font-mono text-slate-400">{{ item.cosine_score }}</td>
+              <td class="py-2 px-3 font-mono text-slate-400">{{ item.cooccur_score }}</td>
+              <td class="py-2 px-3 text-right font-mono">
+                <span v-if="item.is_recent_open" class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px]">上期已出</span>
+                <span v-else class="text-slate-500 text-[10px]">待出</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════ 样本外实战滚动对账战报 (历史命中详情全景展开大图) ══════════ -->
+    <div id="module-review-linear_algebra" class="glass-panel p-5 border border-cyan-500/40 rounded-xl space-y-5 shadow-[0_0_15px_rgba(6,182,212,0.1)]">
+      <!-- 战报标题栏 -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-base">
+            🏆
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+              <span>线性代数空间投影 · 样本外滚动实战对账总账</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold border border-emerald-500/30">
+                近 {{ linearAlgebraReviewData?.n_periods || 30 }} 期 Walk-Forward 严谨实测
+              </span>
+            </h4>
+            <p class="text-[11px] text-slate-400">无未来函数 · 两组最优选2 Walk-Forward；主指标：至少一组双中（随机基线 ≈11.6%）</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-slate-400 font-mono">命中标记说明:</span>
+          <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-400 text-emerald-300 font-mono text-[10px] font-bold">✓ 双中</span>
+          <span class="px-1.5 py-0.5 rounded bg-slate-800/80 border border-slate-700 text-slate-400 font-mono text-[10px]">未双中</span>
+        </div>
+      </div>
+
+      <!-- 核心指标：选2主 + 旁路次要 -->
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 text-center">
+        <div class="p-3 rounded-xl bg-slate-900/90 border border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.2)] col-span-2">
+          <div class="text-xs text-emerald-300/90">至少一组双中（主指标）</div>
+          <div class="text-2xl font-black font-mono text-emerald-300 mt-1">
+            {{ linearAlgebraReviewData?.stats?.any_pair_double_rate ?? '--' }}%
+          </div>
+          <div class="text-[10px] text-emerald-400 font-mono mt-0.5">
+            均中 {{ linearAlgebraReviewData?.stats?.any_pair_lift ?? '--' }}x · 基线 11.6%
+          </div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-900/90 border border-purple-500/40">
+          <div class="text-xs text-slate-400">第1组双中</div>
+          <div class="text-xl font-black font-mono text-purple-300 mt-1">
+            {{ linearAlgebraReviewData?.stats?.pair1_double_rate ?? '--' }}%
+          </div>
+          <div class="text-[10px] text-slate-400 font-mono mt-0.5">均中 {{ linearAlgebraReviewData?.stats?.pair1_lift ?? '--' }}x · 基线 6.0%</div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-900/90 border border-purple-500/40">
+          <div class="text-xs text-slate-400">第2组双中</div>
+          <div class="text-xl font-black font-mono text-purple-300 mt-1">
+            {{ linearAlgebraReviewData?.stats?.pair2_double_rate ?? '--' }}%
+          </div>
+          <div class="text-[10px] text-slate-400 font-mono mt-0.5">均中 {{ linearAlgebraReviewData?.stats?.pair2_lift ?? '--' }}x · 基线 6.0%</div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-700/60">
+          <div class="text-xs text-slate-500">两组都双中</div>
+          <div class="text-xl font-black font-mono text-slate-300 mt-1">
+            {{ linearAlgebraReviewData?.stats?.both_pairs_double_rate ?? '--' }}%
+          </div>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-700/60">
+          <div class="text-xs text-slate-500">旁路 Top3 均中</div>
+          <div class="text-xl font-black font-mono text-slate-400 mt-1">
+            {{ linearAlgebraReviewData?.stats?.avg_top3_hit || '--' }}
+          </div>
+          
+        </div>
+      </div>
+
+      <!-- 逐期展开大图对账流水明细 -->
+      <div class="space-y-3 max-h-[600px] overflow-y-auto cyber-scrollbar pr-1">
+        <div v-for="rec in (linearAlgebraReviewData?.records || [])" :key="'la-wf-rec-'+rec.period"
+             class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 transition-all space-y-3 shadow-sm">
+          
+          <!-- 期号头部行 -->
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800/80">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-sm font-black text-cyan-300">第 {{ rec.period }} 期</span>
+              <span v-if="rec.draw_date" class="text-xs text-slate-400 font-mono">({{ rec.draw_date }})</span>
+              <span v-if="rec.any_pair_double" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold border border-emerald-500/40">
+                💎 至少一组双中
+              </span>
+              <span v-if="rec.pair1_double" class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono text-xs font-bold border border-purple-500/40">
+                第1组双中
+              </span>
+              <span v-if="rec.pair2_double" class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono text-xs font-bold border border-purple-500/40">
+                第2组双中
+              </span>
+              <span v-else-if="rec.gold_pair_hits === 1 && !rec.any_pair_double" class="px-2 py-0.5 rounded bg-slate-800 text-cyan-400 font-mono text-xs">
+                选2中1
+              </span>
+            </div>
+
+            <div class="flex items-center gap-3 font-mono text-xs">
+              <span class="px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/40 text-cyan-300">
+                Top3: <b class="text-sm font-black text-white">{{ (rec.top3_hits ?? rec.top5_hits) }}</b>/3 码
+              </span>
+            </div>
+          </div>
+
+          <!-- 当期实际开奖 20 码 -->
+          <div class="space-y-1">
+            <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+              <span>🎱</span> 当期实际开奖 (20 码):
+            </div>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span v-for="num in (rec.actual_draw || [])" :key="'la-actual-'+rec.period+'-'+num"
+                    class="w-7 h-7 rounded-lg bg-slate-800/90 border border-slate-700 text-slate-200 font-mono text-xs flex items-center justify-center font-bold">
+                {{ String(num).padStart(2, '0') }}
+              </span>
+            </div>
+          </div>
+
+          <!-- 推荐 Top 3 与 Top 3 命中高亮 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+            <!-- Top 3 突击主力 -->
+            <div class="p-2.5 rounded-lg bg-slate-950/60 border border-slate-800 space-y-1.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-amber-400 flex items-center gap-1">
+                  <span>👑</span> Top 3 空间金胆 (命中: {{ rec.top3_hits || (rec.top3_hits ?? rec.top5_hits) }}/3)
+                </span>
+                <span class="text-[10px] font-mono" :class="(rec.top3_hits ?? rec.top5_hits) >= 2 ? 'text-emerald-400 font-bold' : 'text-slate-400'">
+                  命中率 {{ ((rec.top3_hits || (rec.top3_hits ?? rec.top5_hits)) / 3 * 100).toFixed(0) }}%
+                </span>
+              </div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span v-for="num in (rec.top5 || [])" :key="'la-top5-hit-'+rec.period+'-'+num"
+                      class="px-2 py-1 rounded-lg font-mono text-xs flex items-center gap-1 font-bold"
+                      :class="(rec.actual_draw || []).includes(num)
+                        ? 'bg-amber-500/30 text-amber-200 border-2 border-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.5)]'
+                        : 'bg-slate-900 text-slate-400 border border-slate-800'">
+                  {{ String(num).padStart(2, '0') }}
+                  <span v-if="(rec.actual_draw || []).includes(num)" class="text-[10px]">✓</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Top 3 核心大底 -->
+            <div class="p-2.5 rounded-lg bg-slate-950/60 border border-slate-800 space-y-1.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-cyan-400 flex items-center gap-1">
+                  <span>🛡️</span> Top 3 空间大底 (命中: {{ rec.top3_hits || (rec.top3_hits ?? rec.top12_hits) }}/3)
+                </span>
+                <span class="text-[10px] font-mono" :class="(rec.top3_hits ?? rec.top12_hits) >= 4 ? 'text-emerald-400 font-bold' : 'text-slate-400'">
+                  命中率 {{ ((rec.top3_hits || (rec.top3_hits ?? rec.top12_hits)) / 3 * 100).toFixed(0) }}%
+                </span>
+              </div>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span v-for="num in (rec.top12 || [])" :key="'la-top12-hit-'+rec.period+'-'+num"
+                      class="px-1.5 py-0.5 rounded font-mono text-[11px] flex items-center gap-0.5"
+                      :class="(rec.actual_draw || []).includes(num)
+                        ? 'bg-cyan-500/30 text-cyan-200 border border-cyan-400 font-bold shadow-[0_0_6px_rgba(6,182,212,0.4)]'
+                        : 'bg-slate-900 text-slate-400 border border-slate-800'">
+                  {{ String(num).padStart(2, '0') }}
+                  <span v-if="(rec.actual_draw || []).includes(num)" class="text-[9px] text-emerald-300">✓</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 金胆与选2详情 -->
+          <div class="flex flex-wrap items-center gap-2 text-xs pt-1 border-t border-slate-800/60 text-slate-300">
+            <div class="flex items-center gap-4 flex-wrap">
+              <!-- 两组选2 -->
+              <div class="flex items-center gap-3 flex-wrap">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-purple-400 font-bold">💎 第1组:</span>
+                  <span v-for="pn in (rec.pair1 || rec.gold_pair || [])" :key="'la-p1-'+rec.period+'-'+pn"
+                        class="font-mono font-bold px-1.5 py-0.5 rounded text-[11px]"
+                        :class="(rec.actual_draw || []).includes(pn) ? 'bg-purple-500/25 text-purple-200 border border-purple-400' : 'bg-slate-800 text-slate-400'">
+                    {{ String(pn).padStart(2, '0') }}
+                  </span>
+                  <span class="text-[10px] font-mono" :class="rec.pair1_double ? 'text-emerald-400' : 'text-slate-500'">
+                    {{ rec.pair1_double ? '双中' : ((rec.pair1_hits || 0) + '/2') }}
+                  </span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-purple-400 font-bold">第2组:</span>
+                  <span v-for="pn in (rec.pair2 || [])" :key="'la-p2-'+rec.period+'-'+pn"
+                        class="font-mono font-bold px-1.5 py-0.5 rounded text-[11px]"
+                        :class="(rec.actual_draw || []).includes(pn) ? 'bg-purple-500/25 text-purple-200 border border-purple-400' : 'bg-slate-800 text-slate-400'">
+                    {{ String(pn).padStart(2, '0') }}
+                  </span>
+                  <span class="text-[10px] font-mono" :class="rec.pair2_double ? 'text-emerald-400' : 'text-slate-500'">
+                    {{ rec.pair2_double ? '双中' : ((rec.pair2_hits || 0) + '/2') }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

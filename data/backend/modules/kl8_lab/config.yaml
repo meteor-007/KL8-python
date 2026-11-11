@@ -1,0 +1,74 @@
+# 快乐8 点位+遗漏号分析 · 配置（K8-QUANT 整合版）
+# 原独立项目"点位+遗漏号分析"于 2026-09-10 迁入本仓库 backend/core/kl8_lab/。
+# 路径解析顺序：显式配置 > 环境变量 KL8_DATA_DIR > 默认相对路径
+# 本文件所在目录 = backend/modules/kl8_lab，故 "../../.." 即本仓库根目录。
+
+# ── 路径 ──
+data:
+  python_project:
+    enabled: true
+    dir: "${KL8_DATA_DIR:-../../..}"   # 共享数据目录 = 本仓库根
+    points_file: "storage/raw/daily_points.txt"
+    history_file: "storage/raw/kl8_history_final.txt"
+    mode: read_only          # read_only(默认) | read_write；默认不改动主系统点位档案
+  upload_dir: "../../../storage/cache/kl8_lab/uploads"
+  seed_dir: "../../../storage/cache/kl8_lab/seed"
+  cache_dir: "../../../storage/cache/kl8_lab"
+  state_dir: "../../../storage/cache/kl8_lab/state"
+  log_dir: "../../../storage/logs/kl8_lab"
+
+fetch:
+  enabled: true
+  sources: ["cwl", "17500"]
+  timeout_sec: 10
+  per_source_limit: 150
+  backup_before_write: true
+
+# ── 集中式阈值 ──
+thresholds:
+  norm_method: "rank"          # rank | minmax | sigmoid
+  signal_strong: 0.70
+  signal_medium: 0.40
+  contrarian_gate_z: 0.5
+  contrarian_veto: 0.75
+  adversarial_refute_max: 0.5
+  cyclic_alpha: 0.05
+  cyclic_correction: "bonferroni"   # bonferroni | fdr_bh
+  remainder_z_alert: 2.0
+  entropy_low_quantile: 0.10
+  alpha: 0.05
+  fdr_method: "bh"
+  staleness_days_warn: 2
+  staleness_days_critical: 4
+
+scoring:
+  weights:
+    H1: 0.18   # 热度
+    H2: 0.18   # 遗漏反弹
+    H3: 0.14   # 集群
+    H4: 0.14   # 周期/波动
+    H5: 0.12   # 共现/图
+    H6: 0.12   # 马尔可夫
+    H7: 0.12   # 熵/均衡
+  top_n: 5
+  diversity_guard: true
+  diversity_max_per_zone: 3
+
+report:
+  out_dir: "../../../storage/outputs/kl8_lab"
+
+backtest:
+  default_n: 60
+  warmup_periods: 60          # 每期回测所需的最小历史期数
+  random_baseline_iters: 1000
+  random_seed: 42
+
+online_learner:
+  state_file: "../../../storage/cache/kl8_lab/state/online_learner_state.json"
+  algorithm: "exp3"
+  warmup_periods: 60
+  gamma: 0.1
+  weight_floor: 0.01          # 不置 0，保证可恢复
+
+reproducibility:
+  seed: 42

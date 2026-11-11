@@ -1,0 +1,214 @@
+﻿<div v-show="activeTab === 'theme_gallery' || activeTab === 'model_tuning'" class="space-y-6">
+
+        <!-- 🎨 系统界面主题外观设置展厅 -->
+        <div class="glass-panel p-6 max-w-2xl mx-auto">
+          <h2 class="text-base font-bold text-slate-100 mb-2 flex items-center gap-2">
+            <span>🎨</span> 系统主题界面样式展厅
+          </h2>
+          <p class="text-xs text-slate-400 mb-4">随心切换 6 大操盘视觉风格，支持暗夜极客、黑金机构、极光星河、矩阵代码雨及日间白昼模式，实时响应图表与数据看板。</p>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div v-for="thm in themes" :key="thm.id"
+                 @click="setTheme(thm.id)"
+                 class="p-3.5 rounded-xl border cursor-pointer transition transform hover:scale-[1.02] flex flex-col justify-between"
+                 :class="currentTheme === thm.id ? 'border-cyan-400 bg-cyan-500/10 shadow-[0_0_15px_rgba(6,182,212,0.25)]' : 'border-slate-800 bg-slate-900/60 hover:border-slate-700'">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-lg">{{ thm.icon }}</span>
+                <span class="theme-color-dot" :style="{ backgroundColor: thm.dotColor, color: thm.dotColor }"></span>
+              </div>
+              <div>
+                <div class="text-xs font-bold text-slate-100 flex items-center gap-1">
+                  <span>{{ thm.name }}</span>
+                  <span v-if="currentTheme === thm.id" class="text-[10px] text-amber-400">●</span>
+                </div>
+                <div class="text-[10px] text-slate-400 mt-0.5">{{ thm.desc }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ TAB: EF/RW/FO 动能雷达 ═══════════ -->
+
+      <div v-show="activeTab === 'radar_view'" class="space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- 左侧大雷达图 -->
+          <div class="lg:col-span-5 glass-panel p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-base font-bold text-cyan-300 flex items-center gap-2">
+                <span>🧭</span> 三维量化动能全景雷达
+              </h2>
+              <span class="text-xs text-slate-400 font-mono">五维一体打分</span>
+            </div>
+            <div id="radar-chart-tab" class="w-full h-80"></div>
+            
+            <div class="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between text-xs">
+              <span class="text-slate-400">当前动态赋权：</span>
+              <span class="font-mono text-cyan-400 font-bold">{{ prediction.weights_plain }}</span>
+            </div>
+            <div class="mt-3 p-2.5 rounded-lg bg-slate-900/60 border border-slate-800 text-[11px] text-slate-400 flex items-center gap-2">
+              <span>⚠️</span>
+              <span>{{ prediction.weights_source || '权重来源未标注' }} —— 原表述"由后台自适应微调"与实现不符，已更正。</span>
+            </div>
+          </div>
+
+          <!-- 右侧三大维度深度解析卡片 -->
+          <div class="lg:col-span-7 space-y-4">
+            <!-- EF 隐能量场 -->
+            <div class="glass-panel p-5 border-l-4 border-l-cyan-400">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-sm font-bold text-cyan-300 flex items-center gap-2">
+                  <span>⚡</span> 隐能量场 (EF) · 蹭热度维度
+                </h3>
+                <span class="text-xs font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300">
+                  权重: {{ prediction.weights?.EF != null ? Math.round(prediction.weights.EF*100) : '--' }}%
+                </span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                <strong>老派操盘大白话：</strong> 看最近哪片区域号开得多、热力足，就在高能邻域附近找机会。利用高斯流能场计算各点位能量势能，专挑具有连出爆发势头的热点。
+              </p>
+              <div class="p-3 bg-slate-900/80 rounded-lg border border-slate-800 flex items-center justify-between">
+                <span class="text-xs text-slate-400">代表搭档:</span>
+                <span class="text-xs font-bold text-cyan-300">{{ prediction.sub_pairs && prediction.sub_pairs[0] ? prediction.sub_pairs[0].name : '能量双子星' }}: [{{ prediction.sub_pairs && prediction.sub_pairs[0] ? prediction.sub_pairs[0].pair.join(', ') : '41, 47' }}]</span>
+              </div>
+            </div>
+
+            <!-- RW 遗漏回补 -->
+            <div class="glass-panel p-5 border-l-4 border-l-purple-400">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-sm font-bold text-purple-300 flex items-center gap-2">
+                  <span>❄️</span> 遗漏回补 (RW) · 抓冷门维度
+                </h3>
+                <span class="text-xs font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">
+                  权重: {{ prediction.weights?.RW != null ? Math.round(prediction.weights.RW*100) : '--' }}%
+                </span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                <strong>老派操盘大白话：</strong> 剔除死寂号，专门挑憋了很久但近期已有回暖迹象的临界冷号，赌它触底反弹回补。
+              </p>
+              <div class="p-3 bg-slate-900/80 rounded-lg border border-slate-800 flex items-center justify-between">
+                <span class="text-xs text-slate-400">代表搭档:</span>
+                <span class="text-xs font-bold text-purple-300">{{ prediction.sub_pairs && prediction.sub_pairs[1] ? prediction.sub_pairs[1].name : '冷热弹簧搭档' }}: [{{ prediction.sub_pairs && prediction.sub_pairs[1] ? prediction.sub_pairs[1].pair.join(', ') : '11, 14' }}]</span>
+              </div>
+            </div>
+
+            <!-- FO 周期谐波 -->
+            <div class="glass-panel p-5 border-l-4 border-l-amber-400">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-sm font-bold text-amber-300 flex items-center gap-2">
+                  <span>🌊</span> 周期特征 (FO) · 找周期维度
+                </h3>
+                <span class="text-xs font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">
+                  权重: {{ prediction.weights?.FO != null ? Math.round(prediction.weights.FO*100) : '--' }}%
+                </span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                <strong>老派操盘大白话：</strong> 用傅里叶频谱和相干态外推，算出某些号码是不是每隔固定天数开一次，精准捕捉节奏点。
+              </p>
+              <div class="p-3 bg-slate-900/80 rounded-lg border border-slate-800 flex items-center justify-between">
+                <span class="text-xs text-slate-400">代表搭档:</span>
+                <span class="text-xs font-bold text-amber-300">{{ prediction.sub_pairs && prediction.sub_pairs[2] ? prediction.sub_pairs[2].name : '特征状元榜眼' }}: [{{ prediction.sub_pairs && prediction.sub_pairs[2] ? prediction.sub_pairs[2].pair.join(', ') : '12, 15' }}]</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ TAB: 纯净池与LR定胆分析 ═══════════ -->
+
+      <div v-show="activeTab === 'hit_rate_trends'" class="space-y-6">
+        <!-- 顶部回测 KPI 卡片 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="glass-panel p-4 flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-400">最优3码长期平均命中</div>
+              <div class="text-2xl font-mono font-black text-amber-300 mt-1">{{ trendStats?.avg_top5_hit || '2.12' }} <span class="text-xs font-normal text-slate-400">码/期</span></div>
+              <div class="text-[10px] text-emerald-400 mt-1">高于均线基准 2.0 码</div>
+            </div>
+            <span class="text-2xl">👑</span>
+          </div>
+
+          <div class="glass-panel p-4 flex items-center justify-between border border-slate-800/80">
+            <div>
+              <div class="text-xs text-slate-500">已取消独立 Top12</div>
+              <div class="text-sm font-mono text-slate-400 mt-1 leading-snug">产品面已收口为最优3码，不再单独追踪 Top12 命中</div>
+            </div>
+            <span class="text-2xl opacity-40">📌</span>
+          </div>
+
+          <div class="glass-panel p-4 flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-400">系统胜率信标状态</div>
+              <div class="text-2xl font-mono font-black text-emerald-300 mt-1">NORMAL</div>
+              <div class="text-[10px] text-slate-400 mt-1">信标稳定 · 无熔断警报</div>
+            </div>
+            <span class="text-2xl">🛡️</span>
+          </div>
+
+          <div class="glass-panel p-4 flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-400">回测样本覆盖</div>
+              <div class="text-2xl font-mono font-black text-purple-300 mt-1">{{ trendDetailedList.length }} <span class="text-xs font-normal text-slate-400">期</span></div>
+              <div class="text-[10px] text-slate-400 mt-1">连续实战样本对账</div>
+            </div>
+            <span class="text-2xl">📈</span>
+          </div>
+        </div>
+
+        <!-- 历史命中率折线大图 -->
+        <div class="glass-panel p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+              <span>📉</span> 历史 25 期命中率走势与基准对比
+            </h2>
+            <span class="text-xs text-amber-400 font-mono">均值稳定在 2.0 码以上</span>
+          </div>
+          <div id="trend-chart-tab" class="w-full h-80"></div>
+        </div>
+
+        <!-- 逐期复盘明细表格 -->
+        <div class="glass-panel p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+              <span>📋</span> 近 25 期模型命中实战复盘明细
+            </h3>
+            <button @click="openTab('reports_browser')" class="cyber-btn cyber-btn-dark text-xs !py-1">
+              📑 查看每日研报库
+            </button>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-slate-800 max-h-[400px]">
+            <table class="cyber-table">
+              <thead>
+                <tr>
+                  <th style="width: 120px;">开奖期号</th>
+                  <th style="width: 120px;">开奖日期</th>
+                  <th style="width: 140px;">最优3码命中表现</th>
+                  <th style="width: 90px;">开奖和值</th>
+                  <th style="width: 90px;">奇数占比</th>
+                  <th>复盘评估</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in trendDetailedList" :key="row.period">
+                  <td class="font-mono font-bold text-cyan-400">{{ row.period }}</td>
+                  <td class="font-mono text-slate-400">{{ row.date }}</td>
+                  <td>
+                    <span class="px-2 py-0.5 rounded font-mono font-bold text-xs"
+                          :class="row.top5_hit >= 2 ? 'bg-amber-500/30 text-amber-300 border border-amber-500/50' : (row.top5_hit >= 1 ? 'bg-cyan-500/20 text-cyan-300' : 'bg-slate-800 text-slate-400')">
+                      🎯 命中 {{ Math.min(row.top5_hit, 3) }} / 3 码 <span class="text-slate-500">(基线 0.75)</span>
+                    </span>
+                  </td>
+                  <td class="font-mono text-amber-300 font-bold">{{ row.sum }}</td>
+                  <td class="font-mono text-slate-300">{{ row.odd_ratio }}</td>
+                  <td class="text-xs text-slate-400">
+                    <span v-if="row.top5_hit >= 3" class="text-amber-400 font-bold">🔥 爆发命中 (大获全胜)</span>
+                    <span v-else-if="row.top5_hit >= 2" class="text-cyan-400">✅ 达成基准均值</span>
+                    <span v-else class="text-slate-500">平稳对冲</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>

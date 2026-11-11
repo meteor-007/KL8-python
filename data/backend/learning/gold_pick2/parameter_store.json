@@ -1,14 +1,17 @@
 {
   "weights": {
-    "markov": 0.226,
-    "graph": 0.431,
-    "omission": 0.133,
-    "bollinger": 0.13,
-    "trend": 0.048,
-    "signal": 0.032
+    "omission": 0.55,
+    "markov": 0.15,
+    "graph": 0.10,
+    "bollinger": 0.10,
+    "trend": 0.05,
+    "signal": 0.05
   },
+  "frozen": true,
+  "frozen_reason": "2026-09-10 整改 B4: 共现 graph 维度经418项挖掘证伪 (Lift≈1.008), 权重 0.431→0.10; 遗漏 omission 为全系统唯一样本外正信号, 0.133→0.55。全局自学习门控冻结 (WF CI下界<1.0), 参数锁定, 待200期前瞻账满后再议。",
+  "frozen_since": "2026-09-10",
   "total_reviews": 0,
   "consecutive_low_performance": 0,
   "last_review_date": "2026-08-29",
-  "last_updated": "2026-08-29T16:44:42.621637"
+  "last_updated": "2026-09-10T00:00:00"
 }

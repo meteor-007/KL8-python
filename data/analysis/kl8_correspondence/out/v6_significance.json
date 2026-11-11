@@ -1,0 +1,169 @@
+{
+ "tag": "real",
+ "n_periods": 2101,
+ "attrs": {
+  "r012": {
+   "n_rules": 3240,
+   "base_rate": 0.3333333333333333,
+   "mean_rate": 0.33254,
+   "sd_rate": 0.01045,
+   "theoretical_sd": 0.01028,
+   "max_z": 3.456,
+   "min_z": -3.949,
+   "n_p_below_005": 164,
+   "expected_nominal_under_H0": 162.0,
+   "n_significant_BH_FDR": 0,
+   "bh_threshold": null,
+   "min_p": 7.3e-05,
+   "best_rule": {
+    "idx": 577,
+    "rate": 0.36887
+   },
+   "worst_rule": {
+    "idx": 1265,
+    "rate": 0.29272
+   }
+  },
+  "tailsize": {
+   "n_rules": 3240,
+   "base_rate": 0.5,
+   "mean_rate": 0.49904,
+   "sd_rate": 0.01102,
+   "theoretical_sd": 0.01091,
+   "max_z": 3.6,
+   "min_z": -4.56,
+   "n_p_below_005": 169,
+   "expected_nominal_under_H0": 162.0,
+   "n_significant_BH_FDR": 2,
+   "bh_threshold": 3.08641975308642e-05,
+   "min_p": 6e-06,
+   "best_rule": {
+    "idx": 3190,
+    "rate": 0.53927
+   },
+   "worst_rule": {
+    "idx": 2517,
+    "rate": 0.45026
+   }
+  }
+ },
+ "random_control": {
+  "tag": "random1",
+  "n_periods": 2101,
+  "attrs": {
+   "r012": {
+    "n_rules": 3240,
+    "base_rate": 0.3333333333333333,
+    "mean_rate": 0.33269,
+    "sd_rate": 0.01021,
+    "theoretical_sd": 0.01028,
+    "max_z": 3.733,
+    "min_z": -3.625,
+    "n_p_below_005": 157,
+    "expected_nominal_under_H0": 162.0,
+    "n_significant_BH_FDR": 0,
+    "bh_threshold": null,
+    "min_p": 0.000233,
+    "best_rule": {
+     "idx": 2001,
+     "rate": 0.37173
+    },
+    "worst_rule": {
+     "idx": 928,
+     "rate": 0.29605
+    }
+   },
+   "tailsize": {
+    "n_rules": 3240,
+    "base_rate": 0.5,
+    "mean_rate": 0.49916,
+    "sd_rate": 0.01119,
+    "theoretical_sd": 0.01091,
+    "max_z": 3.425,
+    "min_z": -5.04,
+    "n_p_below_005": 192,
+    "expected_nominal_under_H0": 162.0,
+    "n_significant_BH_FDR": 2,
+    "bh_threshold": 3.08641975308642e-05,
+    "min_p": 1e-06,
+    "best_rule": {
+     "idx": 2497,
+     "rate": 0.53736
+    },
+    "worst_rule": {
+     "idx": 2162,
+     "rate": 0.44503
+    }
+   }
+  }
+ },
+ "single_rules": {
+  "ruleA_fixed": {
+   "attr": "r012",
+   "purple_pos": 1,
+   "rows": [
+    1,
+    2,
+    2
+   ],
+   "opos": [
+    3,
+    2,
+    4
+   ],
+   "n": 1893,
+   "hits": 640,
+   "rate": 0.33809,
+   "base": 0.3333333333333333,
+   "z": 0.439,
+   "p_two_sided": 0.6769,
+   "max_run": 5,
+   "significant_at_005": false
+  },
+  "ruleB_fixed": {
+   "attr": "tailsize",
+   "purple_pos": 2,
+   "rows": [
+    1,
+    2,
+    2
+   ],
+   "opos": [
+    3,
+    2,
+    4
+   ],
+   "n": 1893,
+   "hits": 943,
+   "rate": 0.49815,
+   "base": 0.5,
+   "z": -0.161,
+   "p_two_sided": 0.8903,
+   "max_run": 8,
+   "significant_at_005": false
+  },
+  "ruleA_screenshot_geom": {
+   "attr": "r012",
+   "purple_pos": 1,
+   "rows": [
+    -2,
+    -1,
+    -1
+   ],
+   "opos": [
+    3,
+    2,
+    4
+   ],
+   "n": 1894,
+   "hits": 634,
+   "rate": 0.33474,
+   "base": 0.3333333333333333,
+   "z": 0.13,
+   "p_two_sided": 0.9138,
+   "max_run": 7,
+   "significant_at_005": false
+  }
+ },
+ "note": "BH-FDR alpha=0.05；p 为精确双侧二项检验；候选规则 = 20位次×18窗口×9期差"
+}

@@ -1,0 +1,5 @@
+# 精确版本锁定（实测环境：Python 3.11.6 / Windows x64，2026-09-10）
+numpy==2.4.6
+scipy==1.17.1
+requests==2.34.2
+PyYAML==6.0.3

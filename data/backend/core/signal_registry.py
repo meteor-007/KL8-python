@@ -5,6 +5,7 @@
 基于 Walk-Forward 单通道 Lift + FDR 校正，选出 1-2 个主信号，
 其余通道仅作对照追踪，不参与 ScoreComposer 融合。
 """
+from backend.utils.paths import get_cache_dir
 import os
 import json
 import math
@@ -20,7 +21,7 @@ if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
 from utils.paths import get_project_root, data_path, _ensure_project_path
 _ensure_project_path()
 _PROJ = get_project_root()
-VALIDATION_CACHE = os.path.join(_PROJ, 'cache', 'signal_validation.json')
+VALIDATION_CACHE = os.path.join(get_cache_dir(), 'signal_validation.json')
 
 CORE_CHANNELS = ('EF', 'RW', 'FO')
 AUX_CHANNELS = ('MK', 'EO', 'BAYES', 'MC')

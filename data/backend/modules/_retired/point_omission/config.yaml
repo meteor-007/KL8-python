@@ -1,0 +1,75 @@
+# 快乐8 点位+遗漏号分析系统 · 配置
+# 路径解析顺序：显式配置 > 环境变量 KL8_DATA_DIR > 默认相对路径
+
+# ── 路径 ──
+data:
+  python_project:
+    enabled: true
+    # 相对 point_omission 包根(backend/modules/_retired/point_omission) → 项目 data/；文件在 storage/raw/
+    dir: "${KL8_DATA_DIR:-../../../..}"
+    points_file: "storage/raw/daily_points.txt"
+    history_file: "storage/raw/kl8_history_final.txt"
+    mode: read_only          # read_only(默认) | read_write
+  upload_dir: "data/uploads"
+  seed_dir: "data/seed"
+  cache_dir: "data/cache"
+  state_dir: "data/state"
+  log_dir: "data/logs"
+
+fetch:
+  enabled: true
+  sources: ["17500", "cwl"]
+  timeout_sec: 10
+  per_source_limit: 150
+  backup_before_write: true
+
+# ── 集中式阈值 ──
+thresholds:
+  norm_method: "rank"          # rank | minmax | sigmoid
+  signal_strong: 0.70
+  signal_medium: 0.40
+  contrarian_gate_z: 0.5
+  contrarian_veto: 0.75
+  adversarial_refute_max: 0.5
+  cyclic_alpha: 0.05
+  cyclic_correction: "bonferroni"   # bonferroni | fdr_bh
+  remainder_z_alert: 2.0
+  entropy_low_quantile: 0.10
+  alpha: 0.05
+  fdr_method: "bh"
+  staleness_days_warn: 2
+  staleness_days_critical: 4
+
+scoring:
+  weights:
+    H1: 0.18   # 热度
+    H2: 0.18   # 遗漏反弹
+    H3: 0.14   # 集群
+    H4: 0.14   # 周期/波动
+    H5: 0.12   # 共现/图
+    H6: 0.12   # 马尔可夫
+    H7: 0.12   # 熵/均衡
+  top_n: 5
+  diversity_guard: true
+  diversity_max_per_zone: 3
+
+report:
+  # 相对 point_omission 包根 → 项目 data/storage/outputs/point_omission
+  out_dir: "../../../../storage/outputs/point_omission"
+  defensive_picks: 2
+
+backtest:
+  default_n: 60
+  warmup_periods: 60          # 每期回测所需的最小历史期数
+  random_baseline_iters: 1000
+  random_seed: 42
+
+online_learner:
+  state_file: "../../../../storage/cache/point_omission/online_learner_state.json"
+  algorithm: "exp3"
+  warmup_periods: 60
+  gamma: 0.1
+  weight_floor: 0.01          # 不置 0，保证可恢复
+
+reproducibility:
+  seed: 42

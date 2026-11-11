@@ -1,0 +1,657 @@
+{
+  "module_code": "tda_engine",
+  "module_name": "14. 拓扑数据分析TDA推演引擎 (V2.0 深度优化版)",
+  "target_issue": "2026274",
+  "latest_issue": "2026273",
+  "latest_numbers": [
+    9,
+    10,
+    12,
+    14,
+    23,
+    24,
+    27,
+    31,
+    35,
+    38,
+    49,
+    51,
+    52,
+    54,
+    55,
+    58,
+    61,
+    63,
+    65,
+    76
+  ],
+  "total_historical_draws": 2094,
+  "betti_0": 110,
+  "betti_1": 9,
+  "top3_gold": [
+    2,
+    7,
+    11
+  ],
+  "top5_gold": [
+    2,
+    7,
+    11
+  ],
+  "top12_elite": [
+    2,
+    7,
+    11
+  ],
+  "gold_pairs": [
+    {
+      "pair": "02-07",
+      "affinity_score": 94.7
+    },
+    {
+      "pair": "02-11",
+      "affinity_score": 89.3
+    },
+    {
+      "pair": "02-32",
+      "affinity_score": 87.7
+    },
+    {
+      "pair": "07-11",
+      "affinity_score": 84.0
+    },
+    {
+      "pair": "07-32",
+      "affinity_score": 82.4
+    }
+  ],
+  "attractor_issues": [
+    {
+      "issue": "2026180",
+      "density_degree": 987,
+      "numbers": [
+        1,
+        2,
+        5,
+        12,
+        19,
+        23,
+        36,
+        37,
+        41,
+        42,
+        50,
+        53,
+        56,
+        59,
+        64,
+        68,
+        72,
+        73,
+        74,
+        77
+      ]
+    },
+    {
+      "issue": "2026204",
+      "density_degree": 942,
+      "numbers": [
+        3,
+        10,
+        13,
+        21,
+        22,
+        24,
+        28,
+        37,
+        38,
+        46,
+        51,
+        52,
+        54,
+        56,
+        59,
+        60,
+        65,
+        66,
+        70,
+        73
+      ]
+    },
+    {
+      "issue": "2026219",
+      "density_degree": 936,
+      "numbers": [
+        2,
+        3,
+        5,
+        6,
+        13,
+        15,
+        20,
+        35,
+        36,
+        39,
+        47,
+        48,
+        51,
+        58,
+        65,
+        67,
+        72,
+        73,
+        79,
+        80
+      ]
+    },
+    {
+      "issue": "2026263",
+      "density_degree": 915,
+      "numbers": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        13,
+        22,
+        24,
+        25,
+        26,
+        31,
+        33,
+        37,
+        45,
+        50,
+        51,
+        62,
+        67,
+        70,
+        80
+      ]
+    }
+  ],
+  "ball_details": [
+    {
+      "ball": 2,
+      "ball_str": "02",
+      "tda_score": 100.0,
+      "is_recent_open": false
+    },
+    {
+      "ball": 7,
+      "ball_str": "07",
+      "tda_score": 89.39,
+      "is_recent_open": false
+    },
+    {
+      "ball": 11,
+      "ball_str": "11",
+      "tda_score": 78.55,
+      "is_recent_open": false
+    },
+    {
+      "ball": 32,
+      "ball_str": "32",
+      "tda_score": 75.36,
+      "is_recent_open": false
+    },
+    {
+      "ball": 18,
+      "ball_str": "18",
+      "tda_score": 73.18,
+      "is_recent_open": false
+    },
+    {
+      "ball": 24,
+      "ball_str": "24",
+      "tda_score": 71.71,
+      "is_recent_open": true
+    },
+    {
+      "ball": 38,
+      "ball_str": "38",
+      "tda_score": 71.22,
+      "is_recent_open": true
+    },
+    {
+      "ball": 35,
+      "ball_str": "35",
+      "tda_score": 70.29,
+      "is_recent_open": true
+    },
+    {
+      "ball": 21,
+      "ball_str": "21",
+      "tda_score": 69.27,
+      "is_recent_open": false
+    },
+    {
+      "ball": 33,
+      "ball_str": "33",
+      "tda_score": 65.69,
+      "is_recent_open": false
+    },
+    {
+      "ball": 59,
+      "ball_str": "59",
+      "tda_score": 63.69,
+      "is_recent_open": false
+    },
+    {
+      "ball": 51,
+      "ball_str": "51",
+      "tda_score": 63.18,
+      "is_recent_open": true
+    },
+    {
+      "ball": 52,
+      "ball_str": "52",
+      "tda_score": 62.27,
+      "is_recent_open": true
+    },
+    {
+      "ball": 63,
+      "ball_str": "63",
+      "tda_score": 61.6,
+      "is_recent_open": true
+    },
+    {
+      "ball": 3,
+      "ball_str": "03",
+      "tda_score": 61.51,
+      "is_recent_open": false
+    },
+    {
+      "ball": 31,
+      "ball_str": "31",
+      "tda_score": 60.78,
+      "is_recent_open": true
+    },
+    {
+      "ball": 27,
+      "ball_str": "27",
+      "tda_score": 56.33,
+      "is_recent_open": true
+    },
+    {
+      "ball": 1,
+      "ball_str": "01",
+      "tda_score": 56.13,
+      "is_recent_open": false
+    },
+    {
+      "ball": 67,
+      "ball_str": "67",
+      "tda_score": 54.6,
+      "is_recent_open": false
+    },
+    {
+      "ball": 10,
+      "ball_str": "10",
+      "tda_score": 52.22,
+      "is_recent_open": true
+    },
+    {
+      "ball": 54,
+      "ball_str": "54",
+      "tda_score": 52.18,
+      "is_recent_open": true
+    },
+    {
+      "ball": 17,
+      "ball_str": "17",
+      "tda_score": 52.0,
+      "is_recent_open": false
+    },
+    {
+      "ball": 23,
+      "ball_str": "23",
+      "tda_score": 51.93,
+      "is_recent_open": true
+    },
+    {
+      "ball": 41,
+      "ball_str": "41",
+      "tda_score": 50.06,
+      "is_recent_open": false
+    },
+    {
+      "ball": 12,
+      "ball_str": "12",
+      "tda_score": 48.64,
+      "is_recent_open": true
+    },
+    {
+      "ball": 49,
+      "ball_str": "49",
+      "tda_score": 47.46,
+      "is_recent_open": true
+    },
+    {
+      "ball": 45,
+      "ball_str": "45",
+      "tda_score": 47.27,
+      "is_recent_open": false
+    },
+    {
+      "ball": 57,
+      "ball_str": "57",
+      "tda_score": 46.87,
+      "is_recent_open": false
+    },
+    {
+      "ball": 25,
+      "ball_str": "25",
+      "tda_score": 45.0,
+      "is_recent_open": false
+    },
+    {
+      "ball": 28,
+      "ball_str": "28",
+      "tda_score": 44.33,
+      "is_recent_open": false
+    },
+    {
+      "ball": 19,
+      "ball_str": "19",
+      "tda_score": 43.5,
+      "is_recent_open": false
+    },
+    {
+      "ball": 78,
+      "ball_str": "78",
+      "tda_score": 43.26,
+      "is_recent_open": false
+    },
+    {
+      "ball": 37,
+      "ball_str": "37",
+      "tda_score": 43.21,
+      "is_recent_open": false
+    },
+    {
+      "ball": 13,
+      "ball_str": "13",
+      "tda_score": 43.11,
+      "is_recent_open": false
+    },
+    {
+      "ball": 62,
+      "ball_str": "62",
+      "tda_score": 42.69,
+      "is_recent_open": false
+    },
+    {
+      "ball": 60,
+      "ball_str": "60",
+      "tda_score": 41.97,
+      "is_recent_open": false
+    },
+    {
+      "ball": 50,
+      "ball_str": "50",
+      "tda_score": 41.38,
+      "is_recent_open": false
+    },
+    {
+      "ball": 30,
+      "ball_str": "30",
+      "tda_score": 38.23,
+      "is_recent_open": false
+    },
+    {
+      "ball": 34,
+      "ball_str": "34",
+      "tda_score": 36.92,
+      "is_recent_open": false
+    },
+    {
+      "ball": 69,
+      "ball_str": "69",
+      "tda_score": 36.92,
+      "is_recent_open": false
+    },
+    {
+      "ball": 9,
+      "ball_str": "09",
+      "tda_score": 36.71,
+      "is_recent_open": true
+    },
+    {
+      "ball": 73,
+      "ball_str": "73",
+      "tda_score": 36.61,
+      "is_recent_open": false
+    },
+    {
+      "ball": 6,
+      "ball_str": "06",
+      "tda_score": 35.97,
+      "is_recent_open": false
+    },
+    {
+      "ball": 46,
+      "ball_str": "46",
+      "tda_score": 35.3,
+      "is_recent_open": false
+    },
+    {
+      "ball": 40,
+      "ball_str": "40",
+      "tda_score": 34.61,
+      "is_recent_open": false
+    },
+    {
+      "ball": 72,
+      "ball_str": "72",
+      "tda_score": 34.01,
+      "is_recent_open": false
+    },
+    {
+      "ball": 71,
+      "ball_str": "71",
+      "tda_score": 33.99,
+      "is_recent_open": false
+    },
+    {
+      "ball": 75,
+      "ball_str": "75",
+      "tda_score": 33.75,
+      "is_recent_open": false
+    },
+    {
+      "ball": 65,
+      "ball_str": "65",
+      "tda_score": 33.52,
+      "is_recent_open": true
+    },
+    {
+      "ball": 16,
+      "ball_str": "16",
+      "tda_score": 31.67,
+      "is_recent_open": false
+    },
+    {
+      "ball": 14,
+      "ball_str": "14",
+      "tda_score": 31.5,
+      "is_recent_open": true
+    },
+    {
+      "ball": 42,
+      "ball_str": "42",
+      "tda_score": 30.51,
+      "is_recent_open": false
+    },
+    {
+      "ball": 4,
+      "ball_str": "04",
+      "tda_score": 29.48,
+      "is_recent_open": false
+    },
+    {
+      "ball": 80,
+      "ball_str": "80",
+      "tda_score": 29.16,
+      "is_recent_open": false
+    },
+    {
+      "ball": 76,
+      "ball_str": "76",
+      "tda_score": 28.81,
+      "is_recent_open": true
+    },
+    {
+      "ball": 53,
+      "ball_str": "53",
+      "tda_score": 27.77,
+      "is_recent_open": false
+    },
+    {
+      "ball": 8,
+      "ball_str": "08",
+      "tda_score": 27.56,
+      "is_recent_open": false
+    },
+    {
+      "ball": 64,
+      "ball_str": "64",
+      "tda_score": 25.79,
+      "is_recent_open": false
+    },
+    {
+      "ball": 15,
+      "ball_str": "15",
+      "tda_score": 24.42,
+      "is_recent_open": false
+    },
+    {
+      "ball": 47,
+      "ball_str": "47",
+      "tda_score": 24.17,
+      "is_recent_open": false
+    },
+    {
+      "ball": 20,
+      "ball_str": "20",
+      "tda_score": 21.28,
+      "is_recent_open": false
+    },
+    {
+      "ball": 22,
+      "ball_str": "22",
+      "tda_score": 20.65,
+      "is_recent_open": false
+    },
+    {
+      "ball": 74,
+      "ball_str": "74",
+      "tda_score": 19.58,
+      "is_recent_open": false
+    },
+    {
+      "ball": 61,
+      "ball_str": "61",
+      "tda_score": 15.95,
+      "is_recent_open": true
+    },
+    {
+      "ball": 79,
+      "ball_str": "79",
+      "tda_score": 15.28,
+      "is_recent_open": false
+    },
+    {
+      "ball": 36,
+      "ball_str": "36",
+      "tda_score": 15.18,
+      "is_recent_open": false
+    },
+    {
+      "ball": 5,
+      "ball_str": "05",
+      "tda_score": 13.4,
+      "is_recent_open": false
+    },
+    {
+      "ball": 44,
+      "ball_str": "44",
+      "tda_score": 12.85,
+      "is_recent_open": false
+    },
+    {
+      "ball": 39,
+      "ball_str": "39",
+      "tda_score": 12.14,
+      "is_recent_open": false
+    },
+    {
+      "ball": 43,
+      "ball_str": "43",
+      "tda_score": 11.91,
+      "is_recent_open": false
+    },
+    {
+      "ball": 70,
+      "ball_str": "70",
+      "tda_score": 11.83,
+      "is_recent_open": false
+    },
+    {
+      "ball": 77,
+      "ball_str": "77",
+      "tda_score": 11.71,
+      "is_recent_open": false
+    },
+    {
+      "ball": 48,
+      "ball_str": "48",
+      "tda_score": 10.16,
+      "is_recent_open": false
+    },
+    {
+      "ball": 55,
+      "ball_str": "55",
+      "tda_score": 8.86,
+      "is_recent_open": true
+    },
+    {
+      "ball": 58,
+      "ball_str": "58",
+      "tda_score": 6.97,
+      "is_recent_open": true
+    },
+    {
+      "ball": 56,
+      "ball_str": "56",
+      "tda_score": 6.58,
+      "is_recent_open": false
+    },
+    {
+      "ball": 26,
+      "ball_str": "26",
+      "tda_score": 4.0,
+      "is_recent_open": false
+    },
+    {
+      "ball": 68,
+      "ball_str": "68",
+      "tda_score": 2.57,
+      "is_recent_open": false
+    },
+    {
+      "ball": 29,
+      "ball_str": "29",
+      "tda_score": 1.07,
+      "is_recent_open": false
+    },
+    {
+      "ball": 66,
+      "ball_str": "66",
+      "tda_score": 0.0,
+      "is_recent_open": false
+    }
+  ],
+  "generated_at": "2026-10-15 14:01:57"
+}

@@ -1,0 +1,2543 @@
+[
+  {
+    "generation": 70,
+    "evolved_at": "2026-11-10 21:05:42",
+    "last_drawn_period": "2026299",
+    "last_drawn_date": "2026-11-10",
+    "target_period": "2026300",
+    "target_date": "次日",
+    "target_display": "第 2026300 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "point_suppression",
+      "trinity_top5",
+      "trinity_top12"
+    ],
+    "active_display": [
+      "点位高压反弹",
+      "Trinity Top 5",
+      "Trinity Top 12"
+    ],
+    "active_count": 3,
+    "muted_subsystems": [
+      "sixteen_hot",
+      "gold_pick2"
+    ],
+    "muted_display": [
+      "16期中热",
+      "gold_pick2"
+    ],
+    "muted_count": 2,
+    "rationales": [
+      "🟡 【空间高压反弹与影子追踪】实测 Lift=1.60x (收缩 1.09x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【Trinity 三维融合 Top 5】实测 Lift=1.28x (收缩 1.04x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🔭 【终审共识 Stable Top 10】观察仓: 实测 Lift=1.28x (收缩 1.04x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.20x (收缩 1.03x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🔴 【16期中热号出窗进窗推演】实测 Lift=0.80x (收缩 0.97x, n=5) 落后基线，触发【一票静音机制】，本代自动休眠！",
+      "🔭 【Hidden Energy 5 首席特供】观察仓: 实测 Lift=0.64x (收缩 0.95x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🔴 【黄金定胆选2搭档】实测 Lift=0.00x (收缩 0.86x, n=5) 落后基线，触发【一票静音机制】，本代自动休眠！",
+      "🛡️ 大盘未达统计显著顺风 (超强信标<3路)，门禁维持【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟡 【空间高压反弹与影子追踪】实测 Lift=1.60x (收缩 1.09x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+    "n_reviewed": 5
+  },
+  {
+    "generation": 61,
+    "evolved_at": "2026-11-07 17:56:47",
+    "last_drawn_period": "2026296",
+    "last_drawn_date": "2026-11-07",
+    "target_period": "2026297",
+    "target_date": "次日",
+    "target_display": "第 2026297 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "point_suppression",
+      "trinity_top12"
+    ],
+    "active_display": [
+      "点位高压反弹",
+      "Trinity Top 12"
+    ],
+    "active_count": 2,
+    "muted_subsystems": [
+      "trinity_top5",
+      "sixteen_hot"
+    ],
+    "muted_display": [
+      "Trinity Top 5",
+      "16期中热"
+    ],
+    "muted_count": 2,
+    "rationales": [
+      "🟡 【空间高压反弹与影子追踪】实测 Lift=2.40x (收缩 1.20x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.13x (收缩 1.02x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🔴 【Trinity 三维融合 Top 5】实测 Lift=0.96x (收缩 0.99x, n=5) 落后基线，触发【一票静音机制】，本代自动休眠！",
+      "🔴 【16期中热号出窗进窗推演】实测 Lift=0.80x (收缩 0.97x, n=5) 落后基线，触发【一票静音机制】，本代自动休眠！",
+      "🔭 【终审共识 Stable Top 10】观察仓: 实测 Lift=0.80x (收缩 0.97x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🔭 【Hidden Energy 5 首席特供】观察仓: 实测 Lift=0.64x (收缩 0.95x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🔭 【黄金定胆选2搭档】观察仓: 实测 Lift=0.00x (收缩 0.86x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🛡️ 大盘未达统计显著顺风 (超强信标<3路)，门禁维持【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟡 【空间高压反弹与影子追踪】实测 Lift=2.40x (收缩 1.20x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+    "n_reviewed": 5
+  },
+  {
+    "generation": 60,
+    "evolved_at": "2026-11-06 21:32:27",
+    "last_drawn_period": "2026295",
+    "last_drawn_date": "2026-11-06",
+    "target_period": "2026296",
+    "target_date": "次日",
+    "target_display": "第 2026296 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "point_suppression",
+      "trinity_top5",
+      "trinity_top12",
+      "sixteen_hot"
+    ],
+    "active_display": [
+      "点位高压反弹",
+      "Trinity Top 5",
+      "Trinity Top 12",
+      "16期中热"
+    ],
+    "active_count": 4,
+    "muted_subsystems": [],
+    "muted_display": [],
+    "muted_count": 0,
+    "rationales": [
+      "🟡 【空间高压反弹与影子追踪】实测 Lift=2.40x (收缩 1.20x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【Trinity 三维融合 Top 5】实测 Lift=1.28x (收缩 1.04x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.27x (收缩 1.04x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【16期中热号出窗进窗推演】实测 Lift=1.07x (收缩 1.01x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🔭 【Hidden Energy 5 首席特供】观察仓: 实测 Lift=0.80x (收缩 0.97x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🔭 【终审共识 Stable Top 10】观察仓: 实测 Lift=0.80x (收缩 0.97x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🔭 【黄金定胆选2搭档】观察仓: 实测 Lift=0.00x (收缩 0.86x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🛡️ 大盘未达统计显著顺风 (超强信标<3路)，门禁维持【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟡 【空间高压反弹与影子追踪】实测 Lift=2.40x (收缩 1.20x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+    "n_reviewed": 5
+  },
+  {
+    "generation": 59,
+    "evolved_at": "2026-10-22 20:29:10",
+    "last_drawn_period": "2026280",
+    "last_drawn_date": "2026-10-22",
+    "target_period": "2026281",
+    "target_date": "次日",
+    "target_display": "第 2026281 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "point_suppression",
+      "trinity_top12",
+      "trinity_top5",
+      "sixteen_hot"
+    ],
+    "active_display": [
+      "点位高压反弹",
+      "Trinity Top 12",
+      "Trinity Top 5",
+      "16期中热"
+    ],
+    "active_count": 4,
+    "muted_subsystems": [
+      "aggregation_stable10"
+    ],
+    "muted_display": [
+      "终审稳健 Top 10"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🔭 【Hidden Energy 5 首席特供】观察仓: 实测 Lift=1.60x (收缩 1.09x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🟡 【空间高压反弹与影子追踪】实测 Lift=1.60x (收缩 1.09x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.67x (收缩 1.02x, n=1)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【Trinity 三维融合 Top 5】实测 Lift=1.60x (收缩 1.02x, n=1)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【16期中热号出窗进窗推演】实测 Lift=1.07x (收缩 1.01x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🔴 【终审共识 Stable Top 10】实测 Lift=0.96x (收缩 0.99x, n=5) 落后基线，触发【一票静音机制】，本代自动休眠！",
+      "🔭 【黄金定胆选2搭档】观察仓: 实测 Lift=0.00x (收缩 0.86x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🛡️ 大盘未达统计显著顺风 (超强信标<3路)，门禁维持【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🔭 【Hidden Energy 5 首席特供】观察仓: 实测 Lift=1.60x (收缩 1.09x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+    "n_reviewed": 5
+  },
+  {
+    "generation": 50,
+    "evolved_at": "2026-10-21 20:07:35",
+    "last_drawn_period": "2026279",
+    "last_drawn_date": "2026-10-21",
+    "target_period": "2026280",
+    "target_date": "次日",
+    "target_display": "第 2026280 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "point_suppression"
+    ],
+    "active_display": [
+      "点位高压反弹"
+    ],
+    "active_count": 1,
+    "muted_subsystems": [
+      "aggregation_stable10",
+      "sixteen_hot"
+    ],
+    "muted_display": [
+      "终审稳健 Top 10",
+      "16期中热"
+    ],
+    "muted_count": 2,
+    "rationales": [
+      "🟡 【空间高压反弹与影子追踪】实测 Lift=1.60x (收缩 1.09x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🔭 【Hidden Energy 5 首席特供】观察仓: 实测 Lift=1.28x (收缩 1.04x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🔴 【终审共识 Stable Top 10】实测 Lift=0.96x (收缩 0.99x, n=5) 落后基线，触发【一票静音机制】，本代自动休眠！",
+      "🔴 【16期中热号出窗进窗推演】实测 Lift=0.53x (收缩 0.93x, n=5) 落后基线，触发【一票静音机制】，本代自动休眠！",
+      "🔭 【黄金定胆选2搭档】观察仓: 实测 Lift=0.00x (收缩 0.86x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🛡️ 大盘未达统计显著顺风 (超强信标<3路)，门禁维持【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟡 【空间高压反弹与影子追踪】实测 Lift=1.60x (收缩 1.09x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+    "n_reviewed": 5
+  },
+  {
+    "generation": 48,
+    "evolved_at": "2026-10-19 11:06:49",
+    "last_drawn_period": "2026277",
+    "last_drawn_date": "2026-10-19",
+    "target_period": "2026278",
+    "target_date": "次日",
+    "target_display": "第 2026278 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "gold_pick2",
+      "aggregation_stable10",
+      "sixteen_hot"
+    ],
+    "active_display": [
+      "gold_pick2",
+      "终审稳健 Top 10",
+      "16期中热"
+    ],
+    "active_count": 3,
+    "muted_subsystems": [],
+    "muted_display": [],
+    "muted_count": 0,
+    "rationales": [
+      "🟡 【黄金定胆选2搭档】实测 Lift=3.29x (收缩 1.33x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🔭 【Hidden Energy 5 首席特供】观察仓: 实测 Lift=1.12x (收缩 1.02x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🟡 【终审共识 Stable Top 10】实测 Lift=1.12x (收缩 1.02x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【16期中热号出窗进窗推演】实测 Lift=1.07x (收缩 1.01x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🔭 【空间高压反弹与影子追踪】观察仓: 实测 Lift=0.00x (收缩 0.86x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🛡️ 大盘未达统计显著顺风 (超强信标<3路)，门禁维持【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟡 【黄金定胆选2搭档】实测 Lift=3.29x (收缩 1.33x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+    "n_reviewed": 5
+  },
+  {
+    "generation": 47,
+    "evolved_at": "2026-09-18 16:41:03",
+    "last_drawn_period": "2026250",
+    "last_drawn_date": "2026-09-18",
+    "target_period": "2026251",
+    "target_date": "次日",
+    "target_display": "第 2026251 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "gold_pick2",
+      "point_suppression",
+      "sixteen_hot"
+    ],
+    "active_display": [
+      "gold_pick2",
+      "点位高压反弹",
+      "16期中热"
+    ],
+    "active_count": 3,
+    "muted_subsystems": [
+      "aggregation_stable10"
+    ],
+    "muted_display": [
+      "终审稳健 Top 10"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟡 【黄金定胆选2搭档】实测 Lift=3.29x (收缩 1.33x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【空间高压反弹与影子追踪】实测 Lift=1.60x (收缩 1.09x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【16期中热号出窗进窗推演】实测 Lift=1.60x (收缩 1.09x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🔭 【Hidden Energy 5 首席特供】观察仓: 实测 Lift=0.80x (收缩 0.99x, n=1)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🔴 【终审共识 Stable Top 10】实测 Lift=0.72x (收缩 0.96x, n=5) 落后基线，触发【一票静音机制】，本代自动休眠！",
+      "🛡️ 大盘未达统计显著顺风 (超强信标<3路)，门禁维持【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟡 【黄金定胆选2搭档】实测 Lift=3.29x (收缩 1.33x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+    "n_reviewed": 5
+  },
+  {
+    "generation": 42,
+    "evolved_at": "2026-09-11 22:01:09",
+    "last_drawn_period": "2026244",
+    "last_drawn_date": "2026-09-11",
+    "target_period": "2026245",
+    "target_date": "次日",
+    "target_display": "第 2026245 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⏰ 22:00 夜间定时",
+    "trigger_badge": "scheduled",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "gold_pick2",
+      "sixteen_hot",
+      "point_suppression",
+      "trinity_top12",
+      "aggregation_stable10",
+      "trinity_top5"
+    ],
+    "active_display": [
+      "gold_pick2",
+      "16期中热",
+      "点位高压反弹",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "Trinity Top 5"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [],
+    "muted_display": [],
+    "muted_count": 0,
+    "rationales": [
+      "🟡 【黄金定胆选2搭档】实测 Lift=1.48x (收缩 1.37x, n=100)，未证显著 (p=0.110)，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【16期中热号出窗进窗推演】实测 Lift=1.16x (收缩 1.12x, n=100)，未证显著 (p=0.019)，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【空间高压反弹与影子追踪】实测 Lift=1.12x (收缩 1.09x, n=100)，未证显著 (p=0.244)，保留【共振表决权】但不得授予一级决议权。",
+      "🔭 【Hidden Energy 5 首席特供】观察仓: 实测 Lift=1.20x (收缩 1.06x, n=14)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.18x (收缩 1.06x, n=14)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【终审共识 Stable Top 10】实测 Lift=1.09x (收缩 1.03x, n=14)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🔭 【数据源1×2 高回避杀号池】观察仓: 实测 Lift=1.02x (收缩 1.01x, n=86)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🟡 【Trinity 三维融合 Top 5】实测 Lift=1.00x (收缩 1.00x, n=14)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🔭 【KillSeeker 极致防守杀号】观察仓: 实测 Lift=0.99x (收缩 0.99x, n=70)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🛡️ 大盘未达统计显著顺风 (超强信标<3路)，门禁维持【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟡 【黄金定胆选2搭档】实测 Lift=1.48x (收缩 1.37x, n=100)，未证显著 (p=0.110)，保留【共振表决权】但不得授予一级决议权。",
+    "n_reviewed": 100
+  },
+  {
+    "generation": 41,
+    "evolved_at": "2026-09-10 22:01:20",
+    "last_drawn_period": "2026243",
+    "last_drawn_date": "2026-09-10",
+    "target_period": "2026244",
+    "target_date": "次日",
+    "target_display": "第 2026244 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⏰ 22:00 夜间定时",
+    "trigger_badge": "scheduled",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "gold_pick2",
+      "sixteen_hot",
+      "point_suppression",
+      "aggregation_stable10",
+      "trinity_top12",
+      "trinity_top5"
+    ],
+    "active_display": [
+      "gold_pick2",
+      "16期中热",
+      "点位高压反弹",
+      "终审稳健 Top 10",
+      "Trinity Top 12",
+      "Trinity Top 5"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [],
+    "muted_display": [],
+    "muted_count": 0,
+    "rationales": [
+      "🟡 【黄金定胆选2搭档】实测 Lift=1.48x (收缩 1.37x, n=100)，未证显著 (p=0.110)，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【16期中热号出窗进窗推演】实测 Lift=1.15x (收缩 1.12x, n=100)，未证显著 (p=0.025)，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【空间高压反弹与影子追踪】实测 Lift=1.12x (收缩 1.09x, n=100)，未证显著 (p=0.244)，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【终审共识 Stable Top 10】实测 Lift=1.20x (收缩 1.06x, n=14)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.13x (收缩 1.04x, n=14)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🔭 【Hidden Energy 5 首席特供】观察仓: 实测 Lift=1.09x (收缩 1.03x, n=14)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🔭 【数据源1×2 高回避杀号池】观察仓: 实测 Lift=1.02x (收缩 1.01x, n=86)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🟡 【Trinity 三维融合 Top 5】实测 Lift=1.00x (收缩 1.00x, n=14)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🔭 【KillSeeker 极致防守杀号】观察仓: 实测 Lift=0.99x (收缩 0.99x, n=69)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🛡️ 大盘未达统计显著顺风 (超强信标<3路)，门禁维持【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟡 【黄金定胆选2搭档】实测 Lift=1.48x (收缩 1.37x, n=100)，未证显著 (p=0.110)，保留【共振表决权】但不得授予一级决议权。",
+    "n_reviewed": 100
+  },
+  {
+    "generation": 40,
+    "evolved_at": "2026-09-10 18:01:34",
+    "last_drawn_period": "2026242",
+    "last_drawn_date": "2026-09-10",
+    "target_period": "2026243",
+    "target_date": "次日",
+    "target_display": "第 2026243 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 18,
+    "active_subsystems": [
+      "sixteen_hot",
+      "trinity_top5",
+      "trinity_top12",
+      "aggregation_stable10"
+    ],
+    "active_display": [
+      "16期中热",
+      "Trinity Top 5",
+      "Trinity Top 12",
+      "终审稳健 Top 10"
+    ],
+    "active_count": 4,
+    "muted_subsystems": [
+      "point_suppression",
+      "gold_pick2"
+    ],
+    "muted_display": [
+      "点位高压反弹",
+      "gold_pick2"
+    ],
+    "muted_count": 2,
+    "rationales": [
+      "🔭 【Hidden Energy 5 首席特供】观察仓: 实测 Lift=1.44x (收缩 1.06x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🟡 【16期中热号出窗进窗推演】实测 Lift=1.28x (收缩 1.04x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【Trinity 三维融合 Top 5】实测 Lift=1.12x (收缩 1.02x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.07x (收缩 1.01x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【终审共识 Stable Top 10】实测 Lift=1.04x (收缩 1.01x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🔴 【空间高压反弹与影子追踪】实测 Lift=0.80x (收缩 0.97x, n=5) 落后基线，触发【一票静音机制】，本代自动休眠！",
+      "🔴 【黄金定胆选2搭档】实测 Lift=0.00x (收缩 0.86x, n=5) 落后基线，触发【一票静音机制】，本代自动休眠！",
+      "🛡️ 大盘未达统计显著顺风 (超强信标<3路)，门禁维持【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎回避率高达 78%+，动态扩张防守杀号硬拦截池至【18码一票否决】。"
+    ],
+    "summary_rationale": "🔭 【Hidden Energy 5 首席特供】观察仓: 实测 Lift=1.44x (收缩 1.06x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+    "n_reviewed": 5
+  },
+  {
+    "generation": 39,
+    "evolved_at": "2026-09-10 14:25:36",
+    "last_drawn_period": "2026242",
+    "last_drawn_date": "2026-09-10",
+    "target_period": "2026243",
+    "target_date": "次日",
+    "target_display": "第 2026243 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "gold_pick2",
+      "point_suppression",
+      "sixteen_hot",
+      "trinity_top12",
+      "trinity_top5",
+      "aggregation_stable10"
+    ],
+    "active_display": [
+      "gold_pick2",
+      "点位高压反弹",
+      "16期中热",
+      "Trinity Top 12",
+      "Trinity Top 5",
+      "终审稳健 Top 10"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [],
+    "muted_display": [],
+    "muted_count": 0,
+    "rationales": [
+      "🟡 【黄金定胆选2搭档】实测 Lift=1.48x (收缩 1.37x, n=100)，未证显著 (p=0.110)，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【空间高压反弹与影子追踪】实测 Lift=1.20x (收缩 1.15x, n=100)，未证显著 (p=0.124)，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【16期中热号出窗进窗推演】实测 Lift=1.16x (收缩 1.12x, n=100)，未证显著 (p=0.019)，保留【共振表决权】但不得授予一级决议权。",
+      "🔭 【Hidden Energy 5 首席特供】观察仓: 实测 Lift=1.27x (收缩 1.08x, n=12)，小样本未证显著，撤销决议权，继续记账观察。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.21x (收缩 1.06x, n=12)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【Trinity 三维融合 Top 5】实测 Lift=1.03x (收缩 1.01x, n=12)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🟡 【终审共识 Stable Top 10】实测 Lift=1.00x (收缩 1.00x, n=12)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+      "🛡️ 大盘未达统计显著顺风 (超强信标<3路)，门禁维持【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟡 【黄金定胆选2搭档】实测 Lift=1.48x (收缩 1.37x, n=100)，未证显著 (p=0.110)，保留【共振表决权】但不得授予一级决议权。",
+    "n_reviewed": 100
+  },
+  {
+    "generation": 38,
+    "evolved_at": "2026-09-09 22:00:45",
+    "last_drawn_period": "2026241",
+    "last_drawn_date": "2026-09-09",
+    "target_period": "2026242",
+    "target_date": "次日",
+    "target_display": "第 2026242 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⏰ 22:00 夜间定时",
+    "trigger_badge": "scheduled",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 2,
+    "kill_defense_size": 18,
+    "active_subsystems": [
+      "gold_pick2",
+      "hidden_energy5",
+      "sixteen_hot",
+      "trinity_top12",
+      "point_suppression",
+      "aggregation_stable10",
+      "trinity_top5",
+      "formula_jingle"
+    ],
+    "active_display": [
+      "gold_pick2",
+      "Hidden Energy 5 (首席特供)",
+      "16期中热",
+      "Trinity Top 12",
+      "点位高压反弹",
+      "终审稳健 Top 10",
+      "Trinity Top 5",
+      "顺口溜口诀"
+    ],
+    "active_count": 8,
+    "muted_subsystems": [
+      "datasource_1x2_hot"
+    ],
+    "muted_display": [
+      "数据源1×2 爆发码"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【黄金定胆选2搭档】实测 Lift=1.65x (超强信标)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测 Lift=1.31x (超强信标)，授予【一级共振决议权】。",
+      "🟢 【16期中热号出窗进窗推演】实测 Lift=1.25x (超强信标)，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.22x (达标)，保留【共振表决权】。",
+      "🟡 【空间高压反弹与影子追踪】实测 Lift=1.20x (达标)，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】实测 Lift=1.13x (达标)，保留【共振表决权】。",
+      "🟡 【Trinity 三维融合 Top 5】实测 Lift=1.12x (达标)，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x (达标)，保留【共振表决权】。",
+      "🔴 【数据源1×2 爆发 Top 5】实测 Lift=0.96x (落后基线)，触发【一票静音机制】，本代自动休眠！",
+      "🔥 大盘处于强信号顺风期 (3+路子系统爆发)，共振门禁设定为【2路物理共振】即锁定金胆。",
+      "🛡️ 杀号引擎回避率高达 78%+，动态扩张防守杀号硬拦截池至【18码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【黄金定胆选2搭档】实测 Lift=1.65x (超强信标)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 37,
+    "evolved_at": "2026-09-08 22:00:44",
+    "last_drawn_period": "2026240",
+    "last_drawn_date": "2026-09-08",
+    "target_period": "2026241",
+    "target_date": "次日",
+    "target_display": "第 2026241 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⏰ 22:00 夜间定时",
+    "trigger_badge": "scheduled",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 2,
+    "kill_defense_size": 18,
+    "active_subsystems": [
+      "gold_pick2",
+      "sixteen_hot",
+      "hidden_energy5",
+      "point_suppression",
+      "aggregation_stable10",
+      "trinity_top12",
+      "formula_jingle"
+    ],
+    "active_display": [
+      "gold_pick2",
+      "16期中热",
+      "Hidden Energy 5 (首席特供)",
+      "点位高压反弹",
+      "终审稳健 Top 10",
+      "Trinity Top 12",
+      "顺口溜口诀"
+    ],
+    "active_count": 7,
+    "muted_subsystems": [
+      "datasource_1x2_hot",
+      "trinity_top5"
+    ],
+    "muted_display": [
+      "数据源1×2 爆发码",
+      "Trinity Top 5"
+    ],
+    "muted_count": 2,
+    "rationales": [
+      "🟢 【黄金定胆选2搭档】实测 Lift=1.65x (超强信标)，授予【一级共振决议权】。",
+      "🟢 【16期中热号出窗进窗推演】实测 Lift=1.25x (超强信标)，授予【一级共振决议权】。",
+      "🟡 【Hidden Energy 5 首席特供】实测 Lift=1.20x (达标)，保留【共振表决权】。",
+      "🟡 【空间高压反弹与影子追踪】实测 Lift=1.20x (达标)，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】实测 Lift=1.13x (达标)，保留【共振表决权】。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.10x (达标)，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x (达标)，保留【共振表决权】。",
+      "🔴 【数据源1×2 爆发 Top 5】实测 Lift=0.96x (落后基线)，触发【一票静音机制】，本代自动休眠！",
+      "🔴 【Trinity 三维融合 Top 5】实测 Lift=0.90x (落后基线)，触发【一票静音机制】，本代自动休眠！",
+      "🔥 大盘处于强信号顺风期 (3+路子系统爆发)，共振门禁设定为【2路物理共振】即锁定金胆。",
+      "🛡️ 杀号引擎回避率高达 78%+，动态扩张防守杀号硬拦截池至【18码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【黄金定胆选2搭档】实测 Lift=1.65x (超强信标)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 36,
+    "evolved_at": "2026-09-08 19:29:29",
+    "last_drawn_period": "2026240",
+    "last_drawn_date": "2026-09-08",
+    "target_period": "2026241",
+    "target_date": "次日",
+    "target_display": "第 2026241 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 2,
+    "kill_defense_size": 18,
+    "active_subsystems": [
+      "gold_pick2",
+      "sixteen_hot",
+      "hidden_energy5",
+      "point_suppression",
+      "aggregation_stable10",
+      "trinity_top12",
+      "formula_jingle"
+    ],
+    "active_display": [
+      "gold_pick2",
+      "16期中热",
+      "Hidden Energy 5 (首席特供)",
+      "点位高压反弹",
+      "终审稳健 Top 10",
+      "Trinity Top 12",
+      "顺口溜口诀"
+    ],
+    "active_count": 7,
+    "muted_subsystems": [
+      "datasource_1x2_hot",
+      "trinity_top5"
+    ],
+    "muted_display": [
+      "数据源1×2 爆发码",
+      "Trinity Top 5"
+    ],
+    "muted_count": 2,
+    "rationales": [
+      "🟢 【黄金定胆选2搭档】实测 Lift=1.65x (超强信标)，授予【一级共振决议权】。",
+      "🟢 【16期中热号出窗进窗推演】实测 Lift=1.25x (超强信标)，授予【一级共振决议权】。",
+      "🟡 【Hidden Energy 5 首席特供】实测 Lift=1.20x (达标)，保留【共振表决权】。",
+      "🟡 【空间高压反弹与影子追踪】实测 Lift=1.20x (达标)，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】实测 Lift=1.13x (达标)，保留【共振表决权】。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.10x (达标)，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x (达标)，保留【共振表决权】。",
+      "🔴 【数据源1×2 爆发 Top 5】实测 Lift=0.96x (落后基线)，触发【一票静音机制】，本代自动休眠！",
+      "🔴 【Trinity 三维融合 Top 5】实测 Lift=0.90x (落后基线)，触发【一票静音机制】，本代自动休眠！",
+      "🔥 大盘处于强信号顺风期 (3+路子系统爆发)，共振门禁设定为【2路物理共振】即锁定金胆。",
+      "🛡️ 杀号引擎回避率高达 78%+，动态扩张防守杀号硬拦截池至【18码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【黄金定胆选2搭档】实测 Lift=1.65x (超强信标)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 35,
+    "evolved_at": "2026-09-07 22:00:52",
+    "last_drawn_period": "2026240",
+    "last_drawn_date": "2026-09-07",
+    "target_period": "2026241",
+    "target_date": "次日",
+    "target_display": "第 2026241 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⏰ 22:00 夜间定时",
+    "trigger_badge": "scheduled",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 2,
+    "kill_defense_size": 18,
+    "active_subsystems": [
+      "gold_pick2",
+      "sixteen_hot",
+      "point_suppression",
+      "trinity_top12",
+      "hidden_energy5",
+      "aggregation_stable10",
+      "formula_jingle",
+      "trinity_top5"
+    ],
+    "active_display": [
+      "gold_pick2",
+      "16期中热",
+      "点位高压反弹",
+      "Trinity Top 12",
+      "Hidden Energy 5 (首席特供)",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "Trinity Top 5"
+    ],
+    "active_count": 8,
+    "muted_subsystems": [
+      "datasource_1x2_hot"
+    ],
+    "muted_display": [
+      "数据源1×2 爆发码"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【黄金定胆选2搭档】实测 Lift=1.65x (超强信标)，授予【一级共振决议权】。",
+      "🟢 【16期中热号出窗进窗推演】实测 Lift=1.25x (超强信标)，授予【一级共振决议权】。",
+      "🟡 【空间高压反弹与影子追踪】实测 Lift=1.20x (达标)，保留【共振表决权】。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.15x (达标)，保留【共振表决权】。",
+      "🟡 【Hidden Energy 5 首席特供】实测 Lift=1.14x (达标)，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】实测 Lift=1.13x (达标)，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x (达标)，保留【共振表决权】。",
+      "🟡 【Trinity 三维融合 Top 5】实测 Lift=1.00x (达标)，保留【共振表决权】。",
+      "🔴 【数据源1×2 爆发 Top 5】实测 Lift=0.96x (落后基线)，触发【一票静音机制】，本代自动休眠！",
+      "🔥 大盘处于强信号顺风期 (3+路子系统爆发)，共振门禁设定为【2路物理共振】即锁定金胆。",
+      "🛡️ 杀号引擎回避率高达 78%+，动态扩张防守杀号硬拦截池至【18码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【黄金定胆选2搭档】实测 Lift=1.65x (超强信标)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 34,
+    "evolved_at": "2026-09-06 22:00:51",
+    "last_drawn_period": "2026239",
+    "last_drawn_date": "2026-09-06",
+    "target_period": "2026240",
+    "target_date": "次日",
+    "target_display": "第 2026240 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⏰ 22:00 夜间定时",
+    "trigger_badge": "scheduled",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 2,
+    "kill_defense_size": 18,
+    "active_subsystems": [
+      "gold_pick2",
+      "hidden_energy5",
+      "point_suppression",
+      "sixteen_hot",
+      "trinity_top12",
+      "aggregation_stable10",
+      "trinity_top5",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "gold_pick2",
+      "Hidden Energy 5 (首席特供)",
+      "点位高压反弹",
+      "16期中热",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "Trinity Top 5",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 9,
+    "muted_subsystems": [],
+    "muted_display": [],
+    "muted_count": 0,
+    "rationales": [
+      "🟢 【黄金定胆选2搭档】实测 Lift=1.65x (超强信标)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测 Lift=1.25x (超强信标)，授予【一级共振决议权】。",
+      "🟡 【空间高压反弹与影子追踪】实测 Lift=1.20x (达标)，保留【共振表决权】。",
+      "🟡 【16期中热号出窗进窗推演】实测 Lift=1.20x (达标)，保留【共振表决权】。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.18x (达标)，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】实测 Lift=1.13x (达标)，保留【共振表决权】。",
+      "🟡 【Trinity 三维融合 Top 5】实测 Lift=1.12x (达标)，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x (达标)，保留【共振表决权】。",
+      "🟡 【数据源1×2 爆发 Top 5】实测 Lift=1.01x (达标)，保留【共振表决权】。",
+      "🔥 大盘处于强信号顺风期 (3+路子系统爆发)，共振门禁设定为【2路物理共振】即锁定金胆。",
+      "🛡️ 杀号引擎回避率高达 78%+，动态扩张防守杀号硬拦截池至【18码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【黄金定胆选2搭档】实测 Lift=1.65x (超强信标)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 33,
+    "evolved_at": "2026-09-05 22:00:50",
+    "last_drawn_period": "2026238",
+    "last_drawn_date": "2026-09-05",
+    "target_period": "2026239",
+    "target_date": "次日",
+    "target_display": "第 2026239 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⏰ 22:00 夜间定时",
+    "trigger_badge": "scheduled",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 2,
+    "kill_defense_size": 18,
+    "active_subsystems": [
+      "gold_pick2",
+      "point_suppression",
+      "hidden_energy5",
+      "sixteen_hot",
+      "trinity_top5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "gold_pick2",
+      "点位高压反弹",
+      "Hidden Energy 5 (首席特供)",
+      "16期中热",
+      "Trinity Top 5",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 9,
+    "muted_subsystems": [],
+    "muted_display": [],
+    "muted_count": 0,
+    "rationales": [
+      "🟢 【黄金定胆选2搭档】实测 Lift=1.65x (超强信标)，授予【一级共振决议权】。",
+      "🟢 【空间高压反弹与影子追踪】实测 Lift=1.47x (超强信标)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测 Lift=1.36x (超强信标)，授予【一级共振决议权】。",
+      "🟢 【16期中热号出窗进窗推演】实测 Lift=1.25x (超强信标)，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 5】实测 Lift=1.21x (达标)，保留【共振表决权】。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.19x (达标)，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】实测 Lift=1.13x (达标)，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x (达标)，保留【共振表决权】。",
+      "🟡 【数据源1×2 爆发 Top 5】实测 Lift=1.07x (达标)，保留【共振表决权】。",
+      "🔥 大盘处于强信号顺风期 (3+路子系统爆发)，共振门禁设定为【2路物理共振】即锁定金胆。",
+      "🛡️ 杀号引擎回避率高达 78%+，动态扩张防守杀号硬拦截池至【18码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【黄金定胆选2搭档】实测 Lift=1.65x (超强信标)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 32,
+    "evolved_at": "2026-09-05 17:14:39",
+    "last_drawn_period": "2026237",
+    "last_drawn_date": "2026-09-05",
+    "target_period": "2026238",
+    "target_date": "次日",
+    "target_display": "第 2026238 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 2,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "gold_pick2",
+      "point_suppression",
+      "trinity_top5",
+      "hidden_energy5",
+      "sixteen_hot",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "gold_pick2",
+      "点位高压反弹",
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "16期中热",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 9,
+    "muted_subsystems": [],
+    "muted_display": [],
+    "muted_count": 0,
+    "rationales": [
+      "🟢 【黄金定胆选2搭档】实测 Lift=1.65x (超强信标)，授予【一级共振决议权】。",
+      "🟢 【空间高压反弹与影子追踪】实测 Lift=1.47x (超强信标)，授予【一级共振决议权】。",
+      "🟢 【Trinity 三维融合 Top 5】实测 Lift=1.28x (超强信标)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测 Lift=1.26x (超强信标)，授予【一级共振决议权】。",
+      "🟡 【16期中热号出窗进窗推演】实测 Lift=1.20x (达标)，保留【共振表决权】。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.16x (达标)，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】实测 Lift=1.13x (达标)，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x (达标)，保留【共振表决权】。",
+      "🟡 【数据源1×2 爆发 Top 5】实测 Lift=1.07x (达标)，保留【共振表决权】。",
+      "🔥 大盘处于强信号顺风期 (3+路子系统爆发)，共振门禁设定为【2路物理共振】即锁定金胆。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【黄金定胆选2搭档】实测 Lift=1.65x (超强信标)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 31,
+    "evolved_at": "2026-09-04 22:00:43",
+    "last_drawn_period": "2026236",
+    "last_drawn_date": "2026-09-04",
+    "target_period": "2026237",
+    "target_date": "次日",
+    "target_display": "第 2026237 期",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⏰ 22:00 夜间定时",
+    "trigger_badge": "scheduled",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测 Lift=1.32x (超强信标)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测 Lift=1.30x (超强信标)，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.17x (达标)，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】实测 Lift=1.13x (达标)，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x (达标)，保留【共振表决权】。",
+      "🟡 【数据源1×2 爆发 Top 5】实测 Lift=1.04x (达标)，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】实测 Lift=0.80x (落后基线)，触发【一票静音机制】，本代自动休眠！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测 Lift=1.32x (超强信标)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 30,
+    "evolved_at": "2026-09-03 22:00:44",
+    "last_drawn_period": "2026236",
+    "last_drawn_date": "2026-09-03",
+    "target_period": "2026237",
+    "target_date": "2026-09-04",
+    "target_display": "第 2026237 期 (2026-09-04 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026236 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026236 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 29,
+    "evolved_at": "2026-09-02 22:00:43",
+    "last_drawn_period": "2026235",
+    "last_drawn_date": "2026-09-02",
+    "target_period": "2026236",
+    "target_date": "2026-09-03",
+    "target_display": "第 2026236 期 (2026-09-03 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026235 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026235 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 28,
+    "evolved_at": "2026-09-01 22:00:42",
+    "last_drawn_period": "2026234",
+    "last_drawn_date": "2026-09-01",
+    "target_period": "2026235",
+    "target_date": "2026-09-02",
+    "target_display": "第 2026235 期 (2026-09-02 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026234 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026234 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 27,
+    "evolved_at": "2026-08-31 22:00:41",
+    "last_drawn_period": "2026233",
+    "last_drawn_date": "2026-08-31",
+    "target_period": "2026234",
+    "target_date": "2026-09-01",
+    "target_display": "第 2026234 期 (2026-09-01 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026233 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026233 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 26,
+    "evolved_at": "2026-08-30 22:00:40",
+    "last_drawn_period": "2026232",
+    "last_drawn_date": "2026-08-30",
+    "target_period": "2026233",
+    "target_date": "2026-08-31",
+    "target_display": "第 2026233 期 (2026-08-31 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026232 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026232 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 25,
+    "evolved_at": "2026-08-29 22:00:39",
+    "last_drawn_period": "2026231",
+    "last_drawn_date": "2026-08-29",
+    "target_period": "2026232",
+    "target_date": "2026-08-30",
+    "target_display": "第 2026232 期 (2026-08-30 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026231 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026231 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 24,
+    "evolved_at": "2026-08-28 22:00:38",
+    "last_drawn_period": "2026230",
+    "last_drawn_date": "2026-08-28",
+    "target_period": "2026231",
+    "target_date": "2026-08-29",
+    "target_display": "第 2026231 期 (2026-08-29 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026230 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026230 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 23,
+    "evolved_at": "2026-08-27 22:00:37",
+    "last_drawn_period": "2026229",
+    "last_drawn_date": "2026-08-27",
+    "target_period": "2026230",
+    "target_date": "2026-08-28",
+    "target_display": "第 2026230 期 (2026-08-28 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026229 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026229 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 22,
+    "evolved_at": "2026-08-26 22:00:36",
+    "last_drawn_period": "2026228",
+    "last_drawn_date": "2026-08-26",
+    "target_period": "2026229",
+    "target_date": "2026-08-27",
+    "target_display": "第 2026229 期 (2026-08-27 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026228 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026228 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 21,
+    "evolved_at": "2026-08-25 22:00:35",
+    "last_drawn_period": "2026227",
+    "last_drawn_date": "2026-08-25",
+    "target_period": "2026228",
+    "target_date": "2026-08-26",
+    "target_display": "第 2026228 期 (2026-08-26 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026227 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026227 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 20,
+    "evolved_at": "2026-08-24 22:00:34",
+    "last_drawn_period": "2026226",
+    "last_drawn_date": "2026-08-24",
+    "target_period": "2026227",
+    "target_date": "2026-08-25",
+    "target_display": "第 2026227 期 (2026-08-25 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026226 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026226 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 19,
+    "evolved_at": "2026-08-23 22:00:33",
+    "last_drawn_period": "2026225",
+    "last_drawn_date": "2026-08-23",
+    "target_period": "2026226",
+    "target_date": "2026-08-24",
+    "target_display": "第 2026226 期 (2026-08-24 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026225 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026225 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 18,
+    "evolved_at": "2026-08-22 22:00:32",
+    "last_drawn_period": "2026224",
+    "last_drawn_date": "2026-08-22",
+    "target_period": "2026225",
+    "target_date": "2026-08-23",
+    "target_display": "第 2026225 期 (2026-08-23 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026224 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026224 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 17,
+    "evolved_at": "2026-08-21 22:00:31",
+    "last_drawn_period": "2026223",
+    "last_drawn_date": "2026-08-21",
+    "target_period": "2026224",
+    "target_date": "2026-08-22",
+    "target_display": "第 2026224 期 (2026-08-22 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026223 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026223 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 16,
+    "evolved_at": "2026-08-20 22:00:30",
+    "last_drawn_period": "2026222",
+    "last_drawn_date": "2026-08-20",
+    "target_period": "2026223",
+    "target_date": "2026-08-21",
+    "target_display": "第 2026223 期 (2026-08-21 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026222 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026222 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 15,
+    "evolved_at": "2026-08-19 22:00:29",
+    "last_drawn_period": "2026221",
+    "last_drawn_date": "2026-08-19",
+    "target_period": "2026222",
+    "target_date": "2026-08-20",
+    "target_display": "第 2026222 期 (2026-08-20 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026221 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026221 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 14,
+    "evolved_at": "2026-08-18 22:00:28",
+    "last_drawn_period": "2026220",
+    "last_drawn_date": "2026-08-18",
+    "target_period": "2026221",
+    "target_date": "2026-08-19",
+    "target_display": "第 2026221 期 (2026-08-19 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026220 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026220 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 13,
+    "evolved_at": "2026-08-17 22:00:27",
+    "last_drawn_period": "2026219",
+    "last_drawn_date": "2026-08-17",
+    "target_period": "2026220",
+    "target_date": "2026-08-18",
+    "target_display": "第 2026220 期 (2026-08-18 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026219 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026219 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 12,
+    "evolved_at": "2026-08-16 22:00:26",
+    "last_drawn_period": "2026218",
+    "last_drawn_date": "2026-08-16",
+    "target_period": "2026219",
+    "target_date": "2026-08-17",
+    "target_display": "第 2026219 期 (2026-08-17 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026218 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026218 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 11,
+    "evolved_at": "2026-08-15 22:00:25",
+    "last_drawn_period": "2026217",
+    "last_drawn_date": "2026-08-15",
+    "target_period": "2026218",
+    "target_date": "2026-08-16",
+    "target_display": "第 2026218 期 (2026-08-16 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026217 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026217 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 10,
+    "evolved_at": "2026-08-14 22:00:24",
+    "last_drawn_period": "2026216",
+    "last_drawn_date": "2026-08-14",
+    "target_period": "2026217",
+    "target_date": "2026-08-15",
+    "target_display": "第 2026217 期 (2026-08-15 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026216 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026216 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 9,
+    "evolved_at": "2026-08-13 22:00:23",
+    "last_drawn_period": "2026215",
+    "last_drawn_date": "2026-08-13",
+    "target_period": "2026216",
+    "target_date": "2026-08-14",
+    "target_display": "第 2026216 期 (2026-08-14 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026215 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026215 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 8,
+    "evolved_at": "2026-08-12 22:00:22",
+    "last_drawn_period": "2026214",
+    "last_drawn_date": "2026-08-12",
+    "target_period": "2026215",
+    "target_date": "2026-08-13",
+    "target_display": "第 2026215 期 (2026-08-13 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026214 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026214 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 7,
+    "evolved_at": "2026-08-11 22:00:21",
+    "last_drawn_period": "2026213",
+    "last_drawn_date": "2026-08-11",
+    "target_period": "2026214",
+    "target_date": "2026-08-12",
+    "target_display": "第 2026214 期 (2026-08-12 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026213 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026213 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 6,
+    "evolved_at": "2026-08-10 22:00:20",
+    "last_drawn_period": "2026212",
+    "last_drawn_date": "2026-08-10",
+    "target_period": "2026213",
+    "target_date": "2026-08-11",
+    "target_display": "第 2026213 期 (2026-08-11 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026212 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026212 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 5,
+    "evolved_at": "2026-08-09 22:00:19",
+    "last_drawn_period": "2026211",
+    "last_drawn_date": "2026-08-09",
+    "target_period": "2026212",
+    "target_date": "2026-08-10",
+    "target_display": "第 2026212 期 (2026-08-10 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026211 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026211 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 4,
+    "evolved_at": "2026-08-08 22:00:18",
+    "last_drawn_period": "2026210",
+    "last_drawn_date": "2026-08-08",
+    "target_period": "2026211",
+    "target_date": "2026-08-09",
+    "target_display": "第 2026211 期 (2026-08-09 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026210 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026210 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 3,
+    "evolved_at": "2026-08-07 22:00:17",
+    "last_drawn_period": "2026209",
+    "last_drawn_date": "2026-08-07",
+    "target_period": "2026210",
+    "target_date": "2026-08-08",
+    "target_display": "第 2026210 期 (2026-08-08 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026209 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026209 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 2,
+    "evolved_at": "2026-08-06 22:00:16",
+    "last_drawn_period": "2026208",
+    "last_drawn_date": "2026-08-06",
+    "target_period": "2026209",
+    "target_date": "2026-08-07",
+    "target_display": "第 2026209 期 (2026-08-07 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026208 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026208 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  },
+  {
+    "generation": 1,
+    "evolved_at": "2026-08-05 22:00:15",
+    "last_drawn_period": "2026207",
+    "last_drawn_date": "2026-08-05",
+    "target_period": "2026208",
+    "target_date": "2026-08-06",
+    "target_display": "第 2026208 期 (2026-08-06 开奖)",
+    "architecture": "Zero-Weight Pure Resonance & Hard Gate Pipeline",
+    "trigger_type": "⚡ 手动立即执行",
+    "trigger_badge": "manual",
+    "status": "SUCCESS",
+    "status_label": "✅ 执行圆满成功",
+    "resonance_threshold": 3,
+    "kill_defense_size": 14,
+    "active_subsystems": [
+      "trinity_top5",
+      "hidden_energy5",
+      "trinity_top12",
+      "aggregation_stable10",
+      "formula_jingle",
+      "datasource_1x2_hot"
+    ],
+    "active_display": [
+      "Trinity Top 5",
+      "Hidden Energy 5 (首席特供)",
+      "Trinity Top 12",
+      "终审稳健 Top 10",
+      "顺口溜口诀",
+      "数据源1×2 爆发码"
+    ],
+    "active_count": 6,
+    "muted_subsystems": [
+      "pure_pool"
+    ],
+    "muted_display": [
+      "纯净池定胆 (冷号)"
+    ],
+    "muted_count": 1,
+    "rationales": [
+      "🟢 【Trinity 三维融合 Top 5】实测第 2026207 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+      "🟢 【Hidden Energy 5 首席特供】实测表现稳定，授予【一级共振决议权】。",
+      "🟡 【Trinity 三维融合 Top 12】近30期覆盖率稳定，保留【共振表决权】。",
+      "🟡 【终审共识 Stable Top 10】多维系统交集达标，保留【共振表决权】。",
+      "🟡 【顺口溜 90 条精英口诀】实测 Lift=1.07x，保留【共振表决权】。",
+      "🔴 【纯净池定胆 (冷号回补)】近期落后基准，触发【一票静音机制】，本代自动休眠防拖累！",
+      "🛡️ 大盘处于混沌震荡期，自动收紧门禁为【3路及以上共振】才准出票，坚决防洗盘。",
+      "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
+    ],
+    "summary_rationale": "🟢 【Trinity 三维融合 Top 5】实测第 2026207 期表现超强 (Lift≥1.25x)，授予【一级共振决议权】。",
+    "n_reviewed": 30
+  }
+]

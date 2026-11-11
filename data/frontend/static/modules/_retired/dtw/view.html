@@ -1,0 +1,303 @@
+<div v-show="activeTab === 'dtw_cockpit'" class="space-y-6">
+  <!-- ══════════ 动态时间规整 DTW 量化推演看板 ══════════ -->
+  <div class="glass-panel p-6 space-y-6 border border-teal-500/30 shadow-[0_0_20px_rgba(20,184,166,0.15)]">
+    <!-- 模块标题栏 -->
+    <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500/20 to-emerald-500/20 border border-teal-400/40 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(20,184,166,0.3)]">
+          🌊
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
+            <span>11. 动态时间规整 DTW · 弹性走势推演驾驶舱</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono border border-teal-500/30">
+              弹性时间轴 · 动态规划对齐
+            </span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">
+            目标推演第 <span class="text-teal-400 font-mono font-bold">{{ dtwData?.target_issue || '---' }}</span> 期 · 基于第 <span class="text-slate-200 font-mono">{{ dtwData?.latest_issue || '---' }}</span> 期近 6 期走势与全量 {{ dtwData?.total_historical_draws || 0 }} 期弹性规整对账
+          </p>
+        </div>
+      </div>
+      <button @click="triggerDTWRun" 
+              :disabled="isRunning"
+              class="cyber-btn cyber-btn-primary text-xs !py-1.5 !px-3 flex items-center gap-1.5">
+        <span :class="{'animate-spin': isRunning}">🔄</span>
+        <span>{{ isRunning ? '规整解算中...' : '重新执行 DTW 弹性推演' }}</span>
+      </button>
+    </div>
+
+    <!-- 顶部四大实战决策核心卡 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- 卡片 1: 👑 金胆 Top 3 -->
+      <div class="p-4 rounded-xl bg-slate-900/90 border border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.15)] relative overflow-hidden">
+        <div class="absolute -right-2 -bottom-2 text-5xl opacity-10 pointer-events-none">👑</div>
+        <div class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+          <span>👑</span> DTW 金胆 Top 3
+        </div>
+        <div class="text-[10px] text-slate-400 mt-1">弹性规整路径逆距离权重最高</div>
+        <div class="mt-3 flex items-center gap-2 flex-wrap">
+          <span v-for="num in (dtwData?.top3_gold || [])" :key="'dtw-top5-'+num"
+                @click="openBallDetail({number: num})"
+                class="px-2.5 py-1 rounded-lg bg-amber-500/20 border border-amber-400/80 text-amber-300 font-mono font-black text-sm shadow-[0_0_8px_rgba(245,158,11,0.4)] cursor-pointer hover:scale-110 transition">
+            {{ String(num).padStart(2, '0') }}
+          </span>
+        </div>
+      </div>
+
+      <!-- 卡片 2: 🛡️ 核心大底 Top 3 -->
+      <div class="p-4 rounded-xl bg-slate-900/90 border border-teal-500/40 shadow-[0_0_12px_rgba(20,184,166,0.15)] relative overflow-hidden">
+        <div class="absolute -right-2 -bottom-2 text-5xl opacity-10 pointer-events-none">🛡️</div>
+        <div class="text-xs font-bold text-teal-400 flex items-center gap-1.5">
+          <span>🛡️</span> 主推 Top 3
+        </div>
+        <div class="text-[10px] text-slate-400 mt-1">跨尺度走势多胞胎加权回归</div>
+        <div class="mt-3 flex items-center gap-1.5 flex-wrap">
+          <span v-for="num in (dtwData?.top3_gold || [])" :key="'dtw-top12-'+num"
+                @click="openBallDetail({number: num})"
+                class="px-2 py-0.5 rounded bg-teal-500/10 border border-teal-400/50 text-teal-300 font-mono text-xs cursor-pointer hover:scale-105 transition">
+            {{ String(num).padStart(2, '0') }}
+          </span>
+        </div>
+      </div>
+
+      <!-- 卡片 3: 💎 黄金搭档选2 -->
+      <div class="p-4 rounded-xl bg-slate-900/90 border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.15)] relative overflow-hidden">
+        <div class="absolute -right-2 -bottom-2 text-5xl opacity-10 pointer-events-none">💎</div>
+        <div class="text-xs font-bold text-purple-400 flex items-center gap-1.5">
+          <span>💎</span> DTW 黄金选2搭档
+        </div>
+        <div class="text-[10px] text-slate-400 mt-1">走势规整同频连带搭档</div>
+        <div class="mt-3 space-y-1.5">
+          <div v-for="(p, pIdx) in (dtwData?.gold_pairs || []).slice(0, 2)" :key="'dtw-pair-'+pIdx"
+               class="flex items-center justify-between bg-purple-950/40 px-2 py-1 rounded border border-purple-500/20 text-xs">
+            <span class="font-mono font-bold text-purple-300">{{ p.pair }}</span>
+            <span class="text-[10px] text-purple-400 font-mono">规整亲和 {{ p.affinity_score }}分</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 中部：DTW 弹性匹配历史详情列表 -->
+    <div class="glass-panel p-5 space-y-4 border border-slate-700/50">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🧬</span>
+          <h4 class="text-sm font-bold text-slate-200">DTW 弹性时间轴最相似走势匹配 (Top 3 规整切片)</h4>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-teal-400 font-mono">跨度 4~8 期动态放缩</span>
+        </div>
+      </div>
+      <p class="text-xs text-slate-400">
+        💡 <b>大白话原理</b>：走势形态不受固定天数限制。DTW 在全量历史中寻找与近 6 期“涨跌节奏最相似”的历史切片（即使当年用了 4 天或 8 天走完）：
+      </p>
+
+      <div class="space-y-3">
+        <div v-for="(m, mIdx) in (dtwData?.top_historical_matches || [])" :key="'dtw-m-'+mIdx"
+             class="p-3 rounded-lg bg-slate-900/80 border border-slate-800 hover:border-teal-500/40 transition space-y-2">
+          <div class="flex flex-wrap items-center justify-between text-xs">
+            <div class="flex items-center gap-2">
+              <span class="px-1.5 py-0.5 rounded bg-teal-500/20 text-teal-300 font-bold font-mono">Top {{ mIdx + 1 }}</span>
+              <span class="text-slate-200 font-medium">历史区间: <b class="font-mono text-teal-400">{{ m.period_range }}</b></span>
+              <span class="text-slate-400 font-mono text-[11px]">(跨度 {{ m.span_len }} 期) ➡️ 目标第 {{ m.target_issue }} 期</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-teal-400 font-mono font-bold">弹性相似度: {{ m.elastic_similarity_pct }}%</span>
+              <span class="text-slate-400 font-mono text-[11px]">规整距离: {{ m.dtw_dist }}</span>
+              <span class="text-emerald-400 font-mono text-[11px]">融合权重: {{ m.ensemble_weight }}%</span>
+            </div>
+          </div>
+          <div class="text-[11px] flex items-center gap-2 flex-wrap">
+            <span class="text-slate-400">当年实际开奖:</span>
+            <span v-for="b in m.next_numbers" :key="'dtw-b-'+b"
+                  :class="{'text-teal-300 font-bold bg-teal-950/60 border border-teal-500/40 px-1 rounded': (m.overlap_with_top12 || []).includes(b), 'text-slate-400': !(m.overlap_with_top12 || []).includes(b)}"
+                  class="font-mono text-[11px]">
+              {{ String(b).padStart(2, '0') }}
+            </span>
+          </div>
+          <div v-if="(m.overlap_with_top12 || []).length > 0" class="text-[11px] flex items-center gap-2 text-amber-300/90 pt-1 border-t border-slate-800/60">
+            <span>⚡ 与当期 Top 3 共振 ({{ m.overlap_count }} 码):</span>
+            <span class="font-mono font-bold text-amber-300">{{ m.overlap_with_top12.map(x => String(x).padStart(2, '0')).join(' ') }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ 样本外实战滚动对账战报 (历史命中详情全景展开大图) ══════════ -->
+    <div id="module-review-dtw" class="glass-panel p-5 border border-teal-500/40 rounded-xl space-y-5 shadow-[0_0_15px_rgba(20,184,166,0.1)]">
+      <!-- 战报标题栏 -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-teal-500/20 border border-teal-400/40 flex items-center justify-center text-base">
+            🌊
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+              <span>动态时间规整 DTW · 样本外滚动实战对账总账</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono font-bold border border-teal-500/30">
+                近 {{ dtwReviewData?.n_periods || 30 }} 期 Walk-Forward 严谨实测
+              </span>
+            </h4>
+            <p class="text-[11px] text-slate-400">无任何未来函数：DTW弹性路径动态规整逐期样本外回测，实开球号与预测球号逐一比对标记</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-slate-400 font-mono">命中标记说明:</span>
+          <span class="px-1.5 py-0.5 rounded bg-teal-500/20 border border-teal-400 text-teal-300 font-mono text-[10px] font-bold">✓ 命中</span>
+          <span class="px-1.5 py-0.5 rounded bg-slate-800/80 border border-slate-700 text-slate-400 font-mono text-[10px]">未中</span>
+        </div>
+      </div>
+
+      <!-- 核心指标 4 栏大卡片 -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+        <div class="p-3 rounded-xl bg-slate-900/90 border border-teal-500/40 shadow-[0_0_10px_rgba(20,184,166,0.15)]">
+          <div class="text-xs text-slate-400">Top 3 均中</div>
+          <div class="text-xl font-black font-mono text-teal-300 mt-1">
+            {{ dtwReviewData?.stats?.avg_top3_hit || '--' }} <span class="text-xs font-normal text-slate-400">码/期</span>
+          </div>
+          <div class="text-[10px] text-emerald-400 font-mono mt-0.5">
+</div>
+        </div>
+
+        <div class="p-3 rounded-xl bg-slate-900/90 border border-indigo-500/40 shadow-[0_0_10px_rgba(99,102,241,0.15)]">
+          <div class="text-xs text-slate-400">Top 3 均中</div>
+          <div class="text-xl font-black font-mono text-indigo-300 mt-1">
+            {{ dtwReviewData?.stats?.avg_top3_hit || '--' }} <span class="text-xs font-normal text-slate-400">码/期</span>
+          </div>
+          <div class="text-[10px] text-emerald-400 font-mono mt-0.5">
+</div>
+        </div>
+
+        <div class="p-3 rounded-xl bg-slate-900/90 border border-amber-500/40 shadow-[0_0_10px_rgba(245,158,11,0.15)]">
+          <div class="text-xs text-slate-400">金胆命中率</div>
+          <div class="text-xl font-black font-mono text-amber-300 mt-1">
+            {{ dtwReviewData?.stats?.gold_hit_rate || '--' }}%
+          </div>
+          <div class="text-[10px] text-slate-400 font-mono mt-0.5">随机基准: 25.0%</div>
+        </div>
+
+        <div class="p-3 rounded-xl bg-slate-900/90 border border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.15)]">
+          <div class="text-xs text-slate-400">选2双中率</div>
+          <div class="text-xl font-black font-mono text-emerald-300 mt-1">
+            {{ dtwReviewData?.stats?.pair_double_rate || '--' }}%
+          </div>
+          <div class="text-[10px] text-slate-400 font-mono mt-0.5">（主口径 Top3，无随机基线对照）</div>
+        </div>
+      </div>
+
+      <!-- 逐期展开大图对账流水明细 -->
+      <div class="space-y-3 max-h-[600px] overflow-y-auto cyber-scrollbar pr-1">
+        <div v-for="rec in (dtwReviewData?.records || [])" :key="'dtw-wf-rec-'+rec.period"
+             class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-teal-500/50 transition-all space-y-3 shadow-sm">
+          
+          <!-- 期号头部行 -->
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800/80">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-sm font-black text-teal-300">第 {{ rec.period }} 期</span>
+              <span v-if="rec.draw_date" class="text-xs text-slate-400 font-mono">({{ rec.draw_date }})</span>
+              <span v-if="rec.gold_hit" class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono text-xs font-bold border border-amber-500/40">
+                👑 金胆命中
+              </span>
+              <span v-if="rec.gold_pair_hits === 2" class="px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 font-mono text-xs font-bold border border-teal-500/40">
+                💎 选2双全中
+              </span>
+              <span v-else-if="rec.gold_pair_hits === 1" class="px-2 py-0.5 rounded bg-slate-800 text-teal-400 font-mono text-xs">
+                选2中1
+              </span>
+            </div>
+
+            <div class="flex items-center gap-3 font-mono text-xs">
+              <span class="px-2 py-0.5 rounded bg-teal-950/60 border border-teal-500/40 text-teal-300">
+                Top3: <b class="text-sm font-black text-white">{{ (rec.top3_hits ?? rec.top5_hits) }}</b>/3 码
+              </span>
+            </div>
+          </div>
+
+          <!-- 当期实际开奖 20 码 -->
+          <div class="space-y-1">
+            <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+              <span>🎱</span> 当期实际开奖 (20 码):
+            </div>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span v-for="num in (rec.actual_draw || [])" :key="'dtw-actual-'+rec.period+'-'+num"
+                    class="w-7 h-7 rounded-lg bg-slate-800/90 border border-slate-700 text-slate-200 font-mono text-xs flex items-center justify-center font-bold">
+                {{ String(num).padStart(2, '0') }}
+              </span>
+            </div>
+          </div>
+
+          <!-- 推荐 Top 3 与 Top 3 命中高亮 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+            <!-- Top 3 突击主力 -->
+            <div class="p-2.5 rounded-lg bg-slate-950/60 border border-slate-800 space-y-1.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-amber-400 flex items-center gap-1">
+                  <span>👑</span> Top 3 DTW金胆 (命中: {{ rec.top3_hits || (rec.top3_hits ?? rec.top5_hits) }}/3)
+                </span>
+                <span class="text-[10px] font-mono" :class="(rec.top3_hits ?? rec.top5_hits) >= 2 ? 'text-teal-400 font-bold' : 'text-slate-400'">
+                  命中率 {{ ((rec.top3_hits || (rec.top3_hits ?? rec.top5_hits)) / 3 * 100).toFixed(0) }}%
+                </span>
+              </div>
+              <div class="flex items-center gap-2 flex-wrap">
+                <span v-for="num in (rec.top5 || [])" :key="'dtw-top5-hit-'+rec.period+'-'+num"
+                      class="px-2 py-1 rounded-lg font-mono text-xs flex items-center gap-1 font-bold"
+                      :class="(rec.actual_draw || []).includes(num)
+                        ? 'bg-amber-500/30 text-amber-200 border-2 border-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.5)]'
+                        : 'bg-slate-900 text-slate-400 border border-slate-800'">
+                  {{ String(num).padStart(2, '0') }}
+                  <span v-if="(rec.actual_draw || []).includes(num)" class="text-[10px]">✓</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- Top 3 核心大底 -->
+            <div class="p-2.5 rounded-lg bg-slate-950/60 border border-slate-800 space-y-1.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-teal-400 flex items-center gap-1">
+                  <span>🛡️</span> Top 3 核心大底 (命中: {{ rec.top3_hits || (rec.top3_hits ?? rec.top12_hits) }}/3)
+                </span>
+                <span class="text-[10px] font-mono" :class="(rec.top3_hits ?? rec.top12_hits) >= 4 ? 'text-teal-400 font-bold' : 'text-slate-400'">
+                  命中率 {{ ((rec.top3_hits || (rec.top3_hits ?? rec.top12_hits)) / 3 * 100).toFixed(0) }}%
+                </span>
+              </div>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span v-for="num in (rec.top12 || [])" :key="'dtw-top12-hit-'+rec.period+'-'+num"
+                      class="px-1.5 py-0.5 rounded font-mono text-[11px] flex items-center gap-0.5"
+                      :class="(rec.actual_draw || []).includes(num)
+                        ? 'bg-teal-500/30 text-teal-200 border border-teal-400 font-bold shadow-[0_0_6px_rgba(20,184,166,0.4)]'
+                        : 'bg-slate-900 text-slate-400 border border-slate-800'">
+                  {{ String(num).padStart(2, '0') }}
+                  <span v-if="(rec.actual_draw || []).includes(num)" class="text-[9px] text-emerald-300">✓</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 金胆与选2详情 -->
+          <div class="flex flex-wrap items-center gap-2 text-xs pt-1 border-t border-slate-800/60 text-slate-300">
+            <div class="flex items-center gap-4 flex-wrap">
+              <!-- 金胆 -->
+              <div class="flex items-center gap-1.5">
+                <span class="text-amber-400 font-bold">👑 金胆:</span>
+                <span class="font-mono font-bold px-1.5 py-0.5 rounded"
+                      :class="rec.gold_hit ? 'bg-amber-500/20 text-amber-300 border border-amber-400' : 'bg-slate-800 text-slate-400'">
+                  {{ String(rec.gold_core).padStart(2, '0') }} ({{ rec.gold_hit ? '命中' : '未中' }})
+                </span>
+              </div>
+
+              <!-- 选2搭档 -->
+              <div class="flex items-center gap-1.5">
+                <span class="text-teal-400 font-bold">💎 黄金选2:</span>
+                <span v-for="pn in (rec.gold_pair || [])" :key="'dtw-gp-'+rec.period+'-'+pn"
+                      class="font-mono font-bold px-1.5 py-0.5 rounded text-[11px]"
+                      :class="(rec.actual_draw || []).includes(pn) ? 'bg-teal-500/20 text-teal-300 border border-teal-400' : 'bg-slate-800 text-slate-400'">
+                  {{ String(pn).padStart(2, '0') }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

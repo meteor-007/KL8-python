@@ -56,7 +56,7 @@ def load_history(history_file: Optional[str] = None, limit: Optional[int] = None
                 numbers = sorted(int(x) for x in num_str.split('-') if x.isdigit())
                 if len(numbers) >= 15:
                     # 尝试提取日期
-                    date_m = re.search(r'date:(\S+)', line)
+                    date_m = re.search(r'date:([^,\s]+)', line)
                     entry = {'issue': issue, 'numbers': numbers}
                     # 原始出球顺序 (供 deep_optimizer 序列熵使用; numbers 已被升序排序)
                     entry['draw_order'] = [int(x) for x in num_str.split('-') if x.isdigit()]

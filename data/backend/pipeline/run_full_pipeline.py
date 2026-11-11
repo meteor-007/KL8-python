@@ -3,9 +3,12 @@
 """
 快乐8 每日全流程一键执行器 v4.3
 =================================
-用法：在项目 data 目录下执行 python run_full_pipeline.py
+用法：在项目 data 目录下执行 python -m backend.pipeline.run_full_pipeline
 功能：完整执行分析脚本中的所有任务，输出美观详细的控制台报告
 """
+from backend.utils.paths import (
+    get_cache_dir, get_outputs_dir, get_reports_dir, find_module_script,
+)
 import os, sys, json, re, datetime, collections, math, traceback, time, subprocess, shutil
 
 if hasattr(sys.stdout, 'reconfigure'):
@@ -28,7 +31,7 @@ for _p in [_BACKEND_DIR, PROJ]:
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from utils.paths import data_path
+from utils.paths import data_path, get_python_runner
 
 # ── ANSI 颜色代码 (Windows 10+ 支持) ──
 C = {
@@ -78,12 +81,15 @@ def _resolve_backend_script(*subpath_parts):
 
 def run_py(script, *args, cwd=None):
     """运行 Python 子脚本，实时打印输出 (带 -u 无缓冲标志)"""
-    cmd = [sys.executable, "-u", script] + list(args)
+    python_runner = get_python_runner()
+    cmd = [python_runner, "-u", script] + list(args)
     cwd = cwd or PROJ
+    env = os.environ.copy()
+    env["PYTHONPATH"] = f"{PROJ};{_BACKEND_DIR}" + (";" + env.get("PYTHONPATH", "") if env.get("PYTHONPATH") else "")
     print(c(f'  ▶ python {os.path.basename(script)} {" ".join(args)}', 'gray'))
     try:
         proc = subprocess.Popen(
-            cmd, cwd=cwd,
+            cmd, cwd=cwd, env=env,
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
             text=True, encoding='utf-8', errors='replace'
         )
@@ -115,8 +121,8 @@ def task0_env_check():
     
     # 检查关键文件
     key_files = [
-        'kl8_history_final.txt',
-        'daily_points.txt',
+        data_path('kl8_history_final.txt'),
+        data_path('daily_points.txt'),
         _resolve_backend_script('core', 'pair_selector.py'),
         _resolve_backend_script('pipeline', 'auto_generate_daily_report.py'),
         _resolve_backend_script('data_acquisition', 'generate_hot_excel.py'),
@@ -154,8 +160,8 @@ def task11_fetch():
     else:
         warn('fetch_kl8_history.py 未找到，跳过')
     
-    # 读取最新期号
-    hist_file = os.path.join(PROJ, 'kl8_history_final.txt')
+    # 读取最新期号 (活数据在 storage/raw/, 之前指向项目根目录会永远读不到)
+    hist_file = data_path('kl8_history_final.txt')
     try:
         with open(hist_file, 'r', encoding='utf-8') as f:
             first = f.readline().strip()
@@ -208,6 +214,11 @@ def task13_15_sync():
         step('1.3', '历史数据同步到Excel')
         run_py(sync)
     
+    roads_prime_sync = _resolve_backend_script('data_acquisition', 'generate_roads_and_prime_stats.py')
+    if os.path.exists(roads_prime_sync):
+        step('1.4', '012路与质合汇总表同步 (kl8_012_roads_summary.csv & kl8_prime_composite_summary.csv)')
+        run_py(roads_prime_sync)
+
     if os.path.exists(fmt):
         step('1.5', 'Excel增量格式化')
         run_py(fmt)
@@ -221,7 +232,7 @@ def task2_review():
     banner('任务2：深度复盘 + 命中率统计 (近10期)')
     
     # 读取历史数据
-    hist_file = os.path.join(PROJ, 'kl8_history_final.txt')
+    hist_file = data_path('kl8_history_final.txt')
     history = []
     try:
         with open(hist_file, 'r', encoding='utf-8') as f:
@@ -237,7 +248,7 @@ def task2_review():
         return
     
     # 读取自学习记忆
-    mem_file = os.path.join(PROJ, 'cache', 'self_learning_state.json')
+    mem_file = os.path.join(get_cache_dir(), 'self_learning_state.json')
     records = []
     try:
         with open(mem_file, 'r', encoding='utf-8') as f:
@@ -259,40 +270,48 @@ def task2_review():
     print(c('  ╚══════════════════════════════════════════════════════════╝', 'cyan'))
     print()
     
-    header = f"  {'期号':^8} │ {'目标期':^8} │ {'选2命中':^6} │ {'T5命中':^6} │ {'T12命中':^7} │ {'HE5命中':^7} │ {'纯净池':^6} │ {'方案2爆发':^9}"
-    sep    = '  ' + '─'*8 + '┼' + '─'*8 + '┼' + '─'*8 + '┼' + '─'*7 + '┼' + '─'*8 + '┼' + '─'*8 + '┼' + '─'*7 + '┼' + '─'*10
+    header = f"  {'期号':^8} │ {'目标期':^8} │ {'选2命中':^6} │ {'T5命中':^6} │ {'T12命中':^7} │ {'HE5命中':^7} │ {'方案2爆发':^9}"
+    sep    = '  ' + '─'*8 + '┼' + '─'*8 + '┼' + '─'*8 + '┼' + '─'*7 + '┼' + '─'*8 + '┼' + '─'*8 + '┼' + '─'*10
     
     print(c(header, 'white', 'bold'))
     print(c(sep, 'gray'))
     
-    trinity_hits5, trinity_hits12, he5_hits, pure_hits, deep_hits = [], [], [], [], []
+    trinity_hits5, trinity_hits12, he5_hits, deep_hits = [], [], [], []
     row_count = 0
-    
+    seen_targets = set()
+
     for rec in records[:10]:
         target = str(rec.get('target_issue', ''))
         actual = hist_map.get(target, None)
         if actual is None:
             continue
+        # 2026-10-21 统计诚信修复 (Bug#4)：自学习记忆存在同一目标期的重复记录
+        # (同一天跑两次全流程即追加两条)，重复行会把同一期命中数算两遍、扭曲均值。
+        # 目标期为主键，重复期只保留首次(最新)一条。
+        if target in seen_targets:
+            warn(f'跳过重复记录: 目标期 {target} 已在表中')
+            continue
+        seen_targets.add(target)
         
         row_count += 1
         p2  = rec.get('optimal_pick2', [])
         t5  = sorted(rec.get('top5', []))
         t12 = sorted(rec.get('top12', []))
         he5 = sorted(rec.get('b3_final5', []))
-        pure = sorted(rec.get('pure_pool_top', []))
         dpicks = sorted(rec.get('deep_picks', []))
         
         hp2 = len(set(p2) & actual) if (p2 and len(p2)==2) else 0
         h5  = len(set(t5)  & actual)
         h12 = len(set(t12) & actual)
         hhe5 = len(set(he5) & actual)
-        hpure = len(set(pure) & actual)
         hdp  = len(set(dpicks) & actual)
-        
-        trinity_hits5.append(h5)
-        trinity_hits12.append(h12)
-        he5_hits.append(hhe5)
-        pure_hits.append(hpure)
+
+        # 2026-10-21 统计诚信修复 (Bug#2 的连带口径问题)：
+        # 熔断曾把 top5/top12 抹成空表，空表既不是「推荐了 5 码全没中」也不是有效样本。
+        # 空列表一律记 N/A 不入均值，避免把 Lift 假压成 0.00x 触发莫须有的防守模式。
+        if t5:   trinity_hits5.append(h5)
+        if t12:  trinity_hits12.append(h12)
+        if he5:  he5_hits.append(hhe5)
         if dpicks: deep_hits.append(hdp)
         
         def fmt_hit(h, total, threshold=1):
@@ -303,12 +322,16 @@ def task2_review():
         
         latest = str(rec.get('latest_issue', ''))
         dp_str = fmt_hit(hdp, len(dpicks)) if dpicks else c('N/A', 'gray')
-        
+
+        # 空推荐 = 无有效样本，显示 N/A 而非假的 0/5 红字
+        t5_str   = fmt_hit(h5, 5)          if t5   else c(' N/A ', 'gray')
+        t12_str  = fmt_hit(h12, 12, 2)     if t12  else c(' N/A  ', 'gray')
+        he5_str  = fmt_hit(hhe5, 5)        if he5  else c(' N/A  ', 'gray')
+
         p2_str = fmt_hit(hp2, 2, threshold=1) if (p2 and len(p2)==2) else c('N/A', 'gray')
         row = (f"  {latest:^8} │ {target:^8} │ "
-               f" {p2_str:^6} │  {fmt_hit(h5,5)}   │  {fmt_hit(h12,12,2)}   │"
-               f"  {fmt_hit(hhe5,5)}   │ {fmt_hit(hpure, len(pure) if pure else 5)}"
-               f"  │  {dp_str}")
+               f" {p2_str:^6} │  {t5_str}   │  {t12_str}   │"
+               f"  {he5_str}   │  {dp_str}")
         print(row)
     
     print(c(sep, 'gray'))
@@ -317,7 +340,6 @@ def task2_review():
         avg5  = sum(trinity_hits5) / len(trinity_hits5)
         avg12 = sum(trinity_hits12) / len(trinity_hits12)
         avghh = sum(he5_hits) / len(he5_hits) if he5_hits else 0
-        avgp  = sum(pure_hits) / len(pure_hits) if pure_hits else 0
         avgd  = sum(deep_hits) / len(deep_hits) if deep_hits else 0
         
         lift5  = avg5  / (5  * 20/80)
@@ -336,7 +358,6 @@ def task2_review():
         print(f"  三维融合 Top5  : 均命中 {avg5:.2f}/5  | Lift={c(f'{lift5:.2f}x', lift_color(lift5), 'bold')}")
         print(f"  三维融合 Top12 : 均命中 {avg12:.2f}/12 | Lift={c(f'{lift12:.2f}x', lift_color(lift12), 'bold')}")
         print(f"  Hidden Energy 5: 均命中 {avghh:.2f}/5  | Lift={c(f'{liftHE:.2f}x', lift_color(liftHE), 'bold')}")
-        print(f"  纯净池定胆     : 均命中 {avgp:.2f}      |")
         if deep_hits:
             print(f"  方案2爆发码    : 均命中 {avgd:.2f}      |")
         
@@ -359,29 +380,16 @@ def task2_review():
             print(c('  当前架构已科学合理，继续增加复杂度可能引入过拟合。维持现状，持续监控。', 'white'))
         else:
             print(c('  系统运行良好，当前三维架构已是最优精简版，无需调整。', 'green'))
-
-# ══════════════════════════════════════════════════════════
-# SECTION 3.5: 双层LSTM 深度学习推演与回测
-# ══════════════════════════════════════════════════════════
-def task35_lstm_engine():
-    banner('任务3.5：🧠 双层LSTM 深度学习时序推演与复盘', 'magenta')
-    try:
-        from models.lstm.lstm_service import LSTMService
-        res = LSTMService.run_daily_pipeline(backfill_n=5, verbose=True)
-        info_data = res.get('prediction')
-        if info_data:
-            ok(f"双层LSTM推演完成 | 目标期 {info_data['period']} | 💎金胆 {info_data['gold']:02d} 🥈银胆 {info_data['silver']:02d} 🥉铜胆 {info_data['bronze']:02d}")
-        else:
-            warn("双层LSTM推演未返回有效结果")
-    except Exception as e:
-        warn(f"双层LSTM推演过程提示: {e}")
+    else:
+        warn('近 10 期自学习记忆中 Trinity top5/top12 均为空表，无可信样本 —— '
+             '不据此判定防守模式 (旧版曾因熔断抹零而误报 Lift=0.00x)。')
 
 # ══════════════════════════════════════════════════════════
 # SECTION 3.6: 顺口溜口诀规律与组合带出分析
 # ══════════════════════════════════════════════════════════
 def task36_formula_jingle():
     banner('任务3.6：📜 顺口溜口诀规律与组合带出分析 (90条精英规则)', 'cyan')
-    jingle_script = os.path.join(PROJ, 'run_jingle_daily.py')
+    jingle_script = find_module_script('run_jingle_daily.py')
     if os.path.exists(jingle_script):
         run_py(jingle_script, '20')
     else:
@@ -403,34 +411,17 @@ def task36_formula_jingle():
             warn(f"顺口溜推演异常: {je}")
 
 # ══════════════════════════════════════════════════════════
-# SECTION 3.7: 空间重点点位分析与精排 (4维可解释打分)
-# ══════════════════════════════════════════════════════════
-def task37_spatial_points():
-    banner('任务3.7：🔮 空间重点点位分析与精排 (4维透明打分 + Walk-Forward 评级)', 'yellow')
-    points_script = os.path.join(PROJ, 'run_points_daily.py')
-    if os.path.exists(points_script):
-        run_py(points_script, '30')
-    else:
-        warn('run_points_daily.py 未找到，尝试内置算法引擎推演')
-        try:
-            from run_points_daily import run_points_pipeline
-            res = run_points_pipeline(n_review=30, verbose=False)
-            ok(f"重点点位分析完成 | 目标期 {res.get('target_period')} | 核心五码: {res['picks']['core5_str']}")
-        except Exception as pe:
-            warn(f"重点点位推演异常: {pe}")
-
-# ══════════════════════════════════════════════════════════
 # SECTION 3.8: 未开点位高压反弹与空间关联追踪
 # ══════════════════════════════════════════════════════════
 def task38_point_suppression():
     banner('任务3.8：🪞 未开点位高压反弹与空间关联追踪 (弹簧压制 + 影子替身)', 'magenta')
-    supp_script = os.path.join(PROJ, 'run_suppression_daily.py')
+    supp_script = find_module_script('run_suppression_daily.py')
     if os.path.exists(supp_script):
         run_py(supp_script, '30')
     else:
         warn('run_suppression_daily.py 未找到，尝试内置算法引擎推演')
         try:
-            from run_suppression_daily import run_suppression_pipeline
+            from backend.modules.point_suppression.run_daily import run_suppression_pipeline
             res = run_suppression_pipeline(n_review=30, verbose=False)
             top1 = res.get('top1', {})
             ok(f"未开点位反弹推演完成 | 目标期 {res.get('target_period')} | 首重反弹胆: {top1.get('num', 0):02d}")
@@ -442,95 +433,354 @@ def task38_point_suppression():
 # ══════════════════════════════════════════════════════════
 def task39_gold_pick2():
     banner('任务3.9：💎 定金选2决策推演 (双重金胆法 + 7维特征加权 + 条件共现)', 'cyan')
-    pick2_script = os.path.join(PROJ, 'run_pick2_daily.py')
+    pick2_script = find_module_script('run_pick2_daily.py')
     if os.path.exists(pick2_script):
         run_py(pick2_script, '30')
     else:
         warn('run_pick2_daily.py 未找到，尝试内置算法引擎推演')
         try:
-            from run_pick2_daily import run_pick2_pipeline
+            from backend.modules._retired.gold_pick2.run_daily import run_pick2_pipeline
             res = run_pick2_pipeline(n_review=30, verbose=False)
             ok(f"定金选2分析完成 | 目标期 {res.get('target_period')} | 核心金胆: {res.get('golden'):02d} | 热胆: {res.get('hot'):02d}")
         except Exception as pe:
             warn(f"定金选2推演异常: {pe}")
 
 # ══════════════════════════════════════════════════════════
-# SECTION 3.91: 跟随分析 (重复号追踪与多窗条件跟随)
-# ══════════════════════════════════════════════════════════
-def task391_follow_analysis():
-    banner('任务3.91：🔗 跟随分析 (重复号追踪 + 搭档跟随 + 多窗条件跟随)', 'magenta')
-    follow_script = os.path.join(PROJ, 'run_follow_daily.py')
-    if os.path.exists(follow_script):
-        run_py(follow_script, '30')
-    else:
-        warn('run_follow_daily.py 未找到，跳过跟随分析')
-
-# ══════════════════════════════════════════════════════════
-# SECTION 3.92: Gemini 选2预测 (5大物理算子量化研判)
-# ══════════════════════════════════════════════════════════
-def task392_gemini_pick2():
-    banner('任务3.92：💎 Gemini 选2预测 (空间张力 + 尾数熵 + 扩散 + 共现社区 + 动量)', 'cyan')
-    gemini_script = os.path.join(PROJ, 'run_geminixuan2_daily.py')
-    if os.path.exists(gemini_script):
-        run_py(gemini_script, '30')
-    else:
-        warn('run_geminixuan2_daily.py 未找到，跳过Gemini选2')
-
-# ══════════════════════════════════════════════════════════
-# SECTION 3.93: KillSeeker 极致杀号与五维反哺
-# ══════════════════════════════════════════════════════════
-def task393_killseeker():
-    banner('任务3.93：🚫 KillSeeker 极致杀号与反哺防御 (5大引擎协同排除)', 'red')
-    kill_script = os.path.join(PROJ, 'run_killseeker_daily.py')
-    if os.path.exists(kill_script):
-        run_py(kill_script)
-    else:
-        warn('run_killseeker_daily.py 未找到，跳过KillSeeker')
-
-# ══════════════════════════════════════════════════════════
 # SECTION 3.94: 16期中热号频次动态推演与组合决策
 # ══════════════════════════════════════════════════════════
 def task394_sixteen_period():
-    banner('任务3.94：🔥 16期中热号频次动态推演与组合决策 (大盘光谱 + 出窗进窗推演 + 选2/3)', 'yellow')
-    sixteen_script = os.path.join(PROJ, 'run_sixteen_daily.py')
+    banner('任务3.94: 16期中热号频次动态推演与组合决策 (大盘光谱 + 出窗进窗推演 + 选2/3)', 'yellow')
+    sixteen_script = find_module_script('run_sixteen_daily.py')
     if os.path.exists(sixteen_script):
         run_py(sixteen_script, '30')
     else:
         warn('run_sixteen_daily.py 未找到，跳过16期中热推演')
+
+    # 16 窗工作簿生成后, 合并为「全合一终极量化驾驶舱」(含跟随看板/死党榜/全历史矩阵)
+    cockpit = _resolve_backend_script('modules', 'build_unified_master_excel.py')
+    if os.path.exists(cockpit):
+        run_py(cockpit)
+    else:
+        warn('build_unified_master_excel.py 未找到，跳过全合一驾驶舱合并')
 
 # ══════════════════════════════════════════════════════════
 # SECTION 3.95: 终审共识与数据汇总复盘 (多路子系统多维共振 + 8区空间平衡)
 # ══════════════════════════════════════════════════════════
 def task395_aggregation():
     banner('任务3.95：🧬 终审共识与数据汇总复盘 (多路子系统多维共振 + 8区空间平衡 + 稳健号)', 'magenta')
-    agg_script = os.path.join(PROJ, 'run_aggregation_daily.py')
+    agg_script = find_module_script('run_aggregation_daily.py')
     if os.path.exists(agg_script):
         run_py(agg_script, '--force')
     else:
         warn('run_aggregation_daily.py 未找到，跳过终审汇总')
 
 # ══════════════════════════════════════════════════════════
+# SECTION 3.955: 模块前瞻账对账与门禁刷新 (C5/C6/D4)
+# ══════════════════════════════════════════════════════════
+def task3955_module_reconcile():
+    banner('任务3.955：📊 模块前瞻账对账 + 门禁权重 live 刷新 (C5/C6/D4)', 'blue')
+    try:
+        from core.module_gate import (
+            reconcile_module_ledger, module_ledger_report, ModuleGate,
+        )
+    except Exception as e:
+        warn(f'module_gate 导入失败，跳过对账: {e}')
+        return
+
+    # 1) 开奖后: 把已开奖期补上 actual/hits (C5 前瞻账)
+    try:
+        filled = reconcile_module_ledger(limit_periods=400)
+        info(f'前瞻账新对账 {filled} 条')
+    except Exception as e:
+        err(f'前瞻账对账失败: {e}')
+        return
+
+    # 2) 门禁注册表权重 live 重算 (shrink_lift + BH-FDR, 读 master_review_ledger)
+    try:
+        gate = ModuleGate()
+        reg, changes = gate.refresh_from_master_ledger()
+        if changes:
+            ok(f'门禁权重已刷新 ({len(changes)} 项变更):')
+            for ch in changes:
+                sub(ch)
+        else:
+            info('门禁权重无变更 (各模块水位稳定)')
+    except Exception as e:
+        warn(f'门禁刷新失败: {e}')
+
+    # 3) 落盘每模块前瞻账报告 (走 wf_hit_engine 同口径: lift/CI/p/BH-FDR)
+    try:
+        report = module_ledger_report(min_n=30)
+        out_dir = os.path.join(get_outputs_dir(), 'reports')
+        os.makedirs(out_dir, exist_ok=True)
+        out_file = os.path.join(out_dir, 'module_ledger_report_latest.json')
+        with open(out_file, 'w', encoding='utf-8') as f:
+            json.dump(report, f, ensure_ascii=False, indent=2)
+        ok(f'模块前瞻账报告已落盘: outputs/reports/module_ledger_report_latest.json')
+        # 2026-10-22 修复 (Bug#8)：入账但尚未开奖 / 样本为 0 的模块，其 lift、CI、p、bh_q 均为 None，
+        # 直接 f"{None:.3f}" 抛 "unsupported format string passed to NoneType.__format__"。
+        # 且异常发生在 json.dump 之后的打印循环里 —— 报告其实已落盘却被误报「前瞻账报告生成失败」。
+        # 现统一走安全格式化，并对退役模块给出如实标注。
+        def _fmt3(v):
+            return f'{v:.3f}' if isinstance(v, (int, float)) else ' —  '
+        for mid, m in report.get('modules', {}).items():
+            # 2026-10-21 统计诚信修复 (Bug#7)：这里原先读 `significant`
+            # (单模块未校正判据: n≥min_n 且 CI下界>1 且 p≤α) 却打成「✓FDR显著」。
+            # 跨 37 个模块做 BH 校正后 trinity_top5 的 q=0.713 根本不过门槛，
+            # 展示层却宣称 FDR 显著 —— 属于「拿未校正当 FDR 结论」的假显著。
+            # 现改为读真正的 BH-FDR 位 (bh_significant / winner)。
+            bh_ok = bool(m.get('bh_significant'))
+            if m.get('retired'):
+                sig = '已退役(不参校正)'
+            elif bh_ok:
+                sig = '✓BH-FDR显著'
+            else:
+                sig = '样本不足' if m.get('insufficient') else '未过BH-FDR(原始p可能<0.05)'
+            sub(f"{m.get('name', mid):16s} n={m['n_periods']:>3} Lift={_fmt3(m.get('lift'))} "
+                f"CI_lo={_fmt3(m.get('lift_ci_lo'))} p={_fmt3(m.get('p_value'))} q={_fmt3(m.get('bh_q'))} {sig} [{m.get('gate_progress', '?')}]")
+    except Exception as e:
+        warn(f'前瞻账报告生成失败: {e}')
+
+    # 4) 统一对账：开奖后 settle + 刷新 Markdown 日报
+    # 2026-11-09 修复：过去只 settle 从不 snapshot，settle 便永远"无预测快照"而 skip，
+    # 且只打 INFO 不告警 —— unified_daily_audit 自 2026281 起已静默断档 18 期。
+    # 现改为：先结算上一期，再立刻为本期建立快照，次日即可正常结算。
+    try:
+        from backend.modules.unified_audit.run_daily import run_settle, run_snapshot
+        ua = run_settle()
+        if ua.get("status") == "ok":
+            ok(f"统一对账已结算: 目标期 {ua.get('target_period')} → {ua.get('report')}")
+        else:
+            warn(f"统一对账 settle 未结算: {ua.get('status')} {ua.get('message')}")
+        try:
+            _snap = run_snapshot()
+            if _snap.get("status") == "ok":
+                ok(f"统一对账快照已建立: 目标期 {_snap.get('target_period')}")
+            else:
+                warn(f"统一对账 snapshot 未建立: {_snap.get('message')}")
+        except Exception as _e:
+            warn(f'统一对账 snapshot 失败: {_e}')
+    except Exception as e:
+        warn(f'统一对账 settle 失败: {e}')
+
+# ══════════════════════════════════════════════════════════
+# SECTION 3.951: 跟随统计推演 (1码×70期窗口, 精确检验版)
+# ══════════════════════════════════════════════════════════
+def task3951_follow_rank():
+    banner('任务3.951：🔗 跟随统计推演 (上期号码下期跟随 + 精确加权伯努利检验)', 'blue')
+    script = _resolve_backend_script('modules', 'calc_follow_stats.py')
+    if not os.path.exists(script):
+        warn('calc_follow_stats.py 未找到, 跳过跟随统计推演')
+        return
+    run_py(script, '--window', '70')
+
+
+# ══════════════════════════════════════════════════════════
+# SECTION 3.952: 逐模块预测收割 (C5 前瞻账: 各模块当期推荐入库)
+# ══════════════════════════════════════════════════════════
+def task3952_harvest():
+    banner('任务3.952：📥 逐模块预测收割 (各模块当期推荐 → 追加式前瞻账)', 'blue')
+    try:
+        from backend.modules.daily_review.harvester import harvest
+        res = harvest(verbose=True)
+        ok(f"收割完成 | 目标期 {res.get('target_period')} | 收到 {res.get('recorded_count')} 个模块 "
+           f"(新入账 {res.get('newly_added')} 条, 重收 {res.get('refreshed')} 条, 未收割 {res.get('skipped_count')} 个)")
+        if res.get('skipped_count'):
+            info('未收割模块详见 storage/reviews/harvest/ 明细 (产物缺失/目标期未刷新/抽不到号码)')
+    except Exception as e:
+        warn(f'逐模块预测收割失败: {e}')
+
+
+# ══════════════════════════════════════════════════════════
+# SECTION 3.953: 30码大底方案滚动回测 (研报动态证据源, OOF + BH-FDR)
+# ══════════════════════════════════════════════════════════
+def task3953_thirty_ball_benchmark():
+    banner('任务3.953：🎲 30码大底多方案滚动回测 (证据 JSON 供研报动态引用)', 'blue')
+    try:
+        script = _resolve_backend_script('modules', 'spear_shield_portfolio', 'thirty_ball_benchmark.py')
+        if not os.path.exists(script):
+            warn('thirty_ball_benchmark.py 未找到, 跳过 30码大底回测')
+            return
+        run_py(script, '--periods', '1000')
+    except Exception as e:
+        warn(f'30码大底回测失败: {e}')
+
+
+# ══════════════════════════════════════════════════════════
+# SECTION 3.956: 逐模块逐期复盘 (每模块这一期中了几码)
+# ══════════════════════════════════════════════════════════
+def task3956_period_review():
+    banner('任务3.956：🔍 逐模块逐期复盘 (上期各模块命中明细)', 'green')
+    try:
+        from backend.modules.daily_review.reviewer import review_period
+        res = review_period(verbose=True)
+        ok(f"复盘完成 | 期号 {res.get('period')} | 有前瞻账模块 {res.get('modules_reviewed')} 个, "
+           f"命中 {res.get('total_hits')}/{res.get('total_picks')} 票, "
+           f"池化命中率 {(res.get('pooled_rate') or 0) * 100:.1f}% | 无法复盘 {res.get('modules_unreviewed')} 个")
+        sub(f"报告: {res.get('report_file')}")
+    except Exception as e:
+        warn(f'逐模块逐期复盘失败: {e}')
+
+
+# ══════════════════════════════════════════════════════════
+# SECTION 3.96: 质数合数与尾数香农熵三大协同推演
+# ══════════════════════════════════════════════════════════
+def task396_prime_tail():
+    banner('任务3.96：🔢 质合数与尾数香农熵三大协同推演 (方案二/三/四)', 'blue')
+    try:
+        from backend.core.prime_composite_engine import run_prime_tail_analysis_pipeline
+        res = run_prime_tail_analysis_pipeline()
+        ok(f"质合与尾数协同推演完成 | 目标期 {res.get('target_period')}")
+    except Exception as e:
+        warn(f"质合与尾数推演异常: {e}")
+
+# ══════════════════════════════════════════════════════════
+# SECTION 3.97: 心理博弈论与逆向均值回归量化推演
+# ══════════════════════════════════════════════════════════
+def task397_psychological_game():
+    banner('任务3.97：🧠 心理博弈论与逆向均值回归量化推演 (四大心理支柱)', 'cyan')
+    try:
+        from backend.core.psychological_game_engine import run_psychological_game_pipeline
+        res = run_psychological_game_pipeline()
+        ok(f"心理博弈推演完成 | 目标期 {res.get('target_period')}")
+        from backend.audit.backtest_psychological_game_theory import PsychologicalGameTheoryAuditor
+        auditor = PsychologicalGameTheoryAuditor()
+        auditor.generate_full_audit_ledger_and_report()
+        ok("心理博弈滚动回测对账账本已同步刷新")
+    except Exception as e:
+        warn(f"心理博弈推演/回测异常: {e}")
+
+# ══════════════════════════════════════════════════════════
+# SECTION 3.98: 三高特征 (重复高/边高/冷高) × 每日点位深度共振推演
+# ══════════════════════════════════════════════════════════
+def task398_tri_high():
+    banner('任务3.98：🧬 三高特征 (重复高/边高/冷高) × 每日点位深度共振推演', 'yellow')
+    try:
+        from backend.core.tri_high_engine import run_tri_high_pipeline
+        res = run_tri_high_pipeline()
+        ok(f"三高×点位深度共振推演完成 | 目标期 {res.get('target_period')}")
+    except Exception as e:
+        warn(f"三高×点位推演异常: {e}")
+
+# ══════════════════════════════════════════════════════════
+# SECTION 3.991: 三维交集共识 / 一胆拖三盾 (此前无人调用, 产物长期缺当期)
+# ══════════════════════════════════════════════════════════
+def task3991_straddle_spear():
+    banner('任务3.991：🧬 三维交集共识定胆 + 一胆拖三盾选2组合拳', 'magenta')
+    for label, sub in [
+        ('三维交集共识 (consensus_straddle)', ('modules', '_retired', 'consensus_straddle', 'run_daily.py')),
+        ('一胆拖三盾 (spear_shield)', ('modules', 'spear_shield_portfolio', 'run_daily.py')),
+    ]:
+        script = _resolve_backend_script(*sub)
+        if os.path.exists(script):
+            ok_flag = run_py(script)
+            ok(f'{label} 推演{"完成" if ok_flag else "退出码非0，请查上方输出"}')
+        else:
+            warn(f'{label} 入口脚本未找到: {script}')
+
+
+# ══════════════════════════════════════════════════════════
+# SECTION 3.992: 点位正负2引力展开 × 012路偏态剪枝压缩
+# ══════════════════════════════════════════════════════════
+def task3992_point_road_compressor():
+    banner('任务3.992：🧬 点位012偏态压缩器 (点位锚定重心 + 正负2半径展开 + 012路偏态剪枝)', 'yellow')
+    script = _resolve_backend_script('modules', 'point_road_compressor', 'run_daily.py')
+    if os.path.exists(script):
+        run_py(script)
+    else:
+        warn(f'point_road_compressor 入口未找到: {script}')
+
+
+# ══════════════════════════════════════════════════════════
+# SECTION 3.993: 数据源1×2 / 点位与遗漏 / 多维共振 —— 日常舱补挂
+# ══════════════════════════════════════════════════════════
+# 2026-10-21 Bug#3 修复：这三个模块在 docs/MODULE_INDEX.md 里登记为 **daily（日常舱）**，
+# 收割器也按 daily 口径向它们索取当期产物，但 run_full_pipeline 从未调用过它们，
+# 导致前瞻账每天如实报「当期产物不存在 / 产物目标期不符(未刷新)」而永久漏账。
+# 现按同一 run_py 模式补挂，与其余日常模块同源同口径。
+def task3993_daily_gap_modules():
+    banner('任务3.993：🧩 日常舱漏挂模块补齐 (数据源1×2 / 点位+遗漏 / 多维共振)', 'cyan')
+    for label, logical, argv in [
+        # 注意各入口的参数契约不同：datasource 位置参 = n_review(期数),
+        # point_omission 位置参 = period(期号!)，误传 '30' 会把目标期当成 30 期，
+        # 因此 point_omission / multi_resonance 一律留空由模块自行推断目标期。
+        ('数据源1×2 深层关联', 'run_datasource_daily.py', ['30']),
+        ('点位+遗漏', 'run_omission_daily.py', ['--no-fetch']),
+        ('多维共振', 'run_multi_resonance_daily.py', []),
+    ]:
+        script = find_module_script(logical)
+        if os.path.exists(script):
+            if run_py(script, *argv):
+                ok(f'{label} 推演完成')
+            else:
+                warn(f'{label} 退出码非 0，请查上方输出')
+        else:
+            warn(f'{label} 入口未找到: {logical} -> {script}')
+
+
+# ══════════════════════════════════════════════════════════
+# SECTION 3.994: 决策树 012路 × 质合多梯度缩水 (TPRD v2.0)
+# ══════════════════════════════════════════════════════════
+def task3994_road_prime_shrink():
+    banner('任务3.994：🌲 决策树 012路 × 质合多梯度智能缩水 (AI海选团 + 20/25/30码实战矩阵)', 'cyan')
+    script = _resolve_backend_script('modules', 'road_prime_shrink', 'run_daily.py')
+    if os.path.exists(script):
+        run_py(script)
+    else:
+        warn(f'road_prime_shrink 入口未找到: {script}')
+
+
+# ══════════════════════════════════════════════════════════
+# SECTION 3.99: 残差改错预测与错题纠偏推演 (LightGBM 错题本纠偏)
+# ══════════════════════════════════════════════════════════
+def task399_error_correction():
+    banner('任务3.99：🧬 残差改错预测与错题纠偏推演 (专攻错题本的 AI 改错裁判)', 'green')
+    ec_script = find_module_script('run_error_correction_daily.py')
+    if os.path.exists(ec_script):
+        run_py(ec_script)
+    else:
+        warn('run_error_correction_daily.py 未找到，跳过残差改错推演')
+
+# ══════════════════════════════════════════════════════════
 # SECTION 4: 生成今日完整分析报告
 # ══════════════════════════════════════════════════════════
+def task4a_daily_report():
+    """工业级日报先行: Trinity / HiddenEnergy5 / 传统AI 等模块只在日报里留档,
+    必须先产出, 收割器才能按同一口径记账 (否则台账与最终报告会各说各话)。"""
+    banner('任务4-A：🏭 生成工业级日报 (供收割器按同一口径记账)', 'green')
+    report_script = _resolve_backend_script('pipeline', 'auto_generate_daily_report.py')
+    if not os.path.exists(report_script):
+        err('auto_generate_daily_report.py 未找到！')
+        return None
+    _ok = run_py(report_script)
+    today = datetime.datetime.now().strftime('%Y%m%d')
+    report_path = os.path.join(get_reports_dir(), f'daily_analysis_report_{today}.md')
+    # 2026-11-10 修复：原实现只看"文件是否存在"，而生成器是边算边写的 ——
+    # 中途抛异常会留下一个**截断的文件**，于是崩溃被当成成功（实测 NameError
+    # 让日报停在第 6 节，管线仍打印 ✅）。现改为以子进程退出码为准，并提示截断风险。
+    if not _ok:
+        err('auto_generate_daily_report.py 执行失败 —— 日报可能不完整，请查看上方日志')
+        return None
+    return report_path if os.path.exists(report_path) else None
+
+
 def task4_generate_report():
     banner('任务4：🚀 生成今日完整分析报告', 'green')
-    
+
     print()
     print(c('  ████████████████████████████████████████', 'magenta'))
     print(c('  ██   正在启动核心量化推演引擎...       ██', 'magenta', 'bold'))
     print(c('  ██████████████████████══════════════════', 'magenta'))
     print()
-    
-    report_script = _resolve_backend_script('pipeline', 'auto_generate_daily_report.py')
-    if not os.path.exists(report_script):
-        err('auto_generate_daily_report.py 未找到！')
-        return None
-    
-    success = run_py(report_script)
-    
+
+    # 4.B: 生成全模块标准终极研报 (涵盖三维交集共识、顺口溜双轨、全模块明细与可复制微信格式)
+    std_report_script = _resolve_backend_script('pipeline', 'generate_standard_full_report.py')
+    if os.path.exists(std_report_script):
+        run_py(std_report_script)
+
     today = datetime.datetime.now().strftime('%Y%m%d')
-    report_path = os.path.join(PROJ, 'reports', f'daily_analysis_report_{today}.md')
-    
+    report_path = os.path.join(get_reports_dir(), f'daily_analysis_report_{today}.md')
+
     if os.path.exists(report_path):
         size = os.path.getsize(report_path)
         ok(f'报告已生成: reports/daily_analysis_report_{today}.md ({size:,} bytes)')
@@ -566,11 +816,10 @@ def print_report_summary(report_path):
         ('## 一、', '📅 复盘追溯', 'yellow'),
         ('### 0.', '🎯 今日极简选2 · 黄金搭档', 'green'),
         ('### 1.', '🛡️ 三维融合 极秘推荐', 'cyan'),
-        ('### 4.5.', '🧠 双层LSTM 深度学习研判', 'magenta'),
         ('### 4.6.', '📜 顺口溜口诀研判', 'cyan'),
         ('### 5.', '⭐ Hidden Energy 5', 'magenta'),
-        ('### 8.', '💎 纯净池定胆', 'blue'),
         ('### 10.', '🔗 方案2 深层关联分析', 'yellow'),
+        ('### 10.5.', '⚡ 全链路三级漏斗流水线', 'green'),
         ('### 11.', '⚖️  风险审计', 'red'),
     ]
     
@@ -601,9 +850,7 @@ def task5_verify(report_path):
         ('极简选2', '选2黄金搭档', '最优1组推荐'),
         ('Hidden Energy 5', '首席战略官特供', '5码精选'),
         ('Trinity', '三维融合', 'Top5/Top12'),
-        ('双层LSTM', '双层LSTM深度学习', 'AI时序建模与海选'),
         ('顺口溜', '顺口溜口诀', '组合带出推演'),
-        ('纯净池', '纯净池定胆', '高置信定胆'),
         ('方案2', '深层关联分析', '爆发码精选'),
         ('KL', '物理熔断', '安全监控'),
     ]
@@ -617,6 +864,73 @@ def task5_verify(report_path):
             all_pass = False
     
     return all_pass
+
+def print_module_board(target_period=None):
+    """收尾总览: 把当期各模块真实推荐与前瞻账水位打成一张看板。
+
+    数据源: 前瞻账 storage/cache/paper_trading_modules.jsonl (与复盘同源, 不再是各处自说自话)。
+    """
+    ledger = os.path.join(get_cache_dir(), 'paper_trading_modules.jsonl')
+    if not os.path.exists(ledger):
+        warn('前瞻账不存在，跳过全模块总览')
+        return
+
+    if not target_period:
+        latest = None
+        for line in open(data_path('kl8_history_final.txt'), 'r', encoding='utf-8'):
+            m = re.search(r'period:(\d+)', line)
+            if m:
+                latest = m.group(1)
+                break
+        target_period = str(int(latest) + 1) if latest else None
+    if not target_period:
+        return
+
+    rows, hist = [], {}
+    try:
+        with open(ledger, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                r = json.loads(line)
+                mid = r.get('module')
+                if r.get('hits') is not None and r.get('picks'):
+                    acc = hist.setdefault(mid, [0, 0])
+                    acc[0] += len(r['picks'])
+                    acc[1] += r['hits']
+                if str(r.get('period')) == str(target_period):
+                    rows.append(r)
+    except Exception as e:
+        warn(f'前瞻账读取失败: {e}')
+        return
+
+    if not rows:
+        warn(f'前瞻账无 {target_period} 期记录，跳过全模块总览')
+        return
+
+    rows.sort(key=lambda r: str(r.get('module')))
+
+    print()
+    banner(f'🎯 第 {target_period} 期 · 全模块推荐总览 ({len(rows)} 个模块)', 'cyan')
+    print(c('  模块                        推荐号码                                          前瞻水位', 'gray'))
+    print(c('  ' + '─' * 98, 'gray'))
+    for r in rows:
+        picks = ' '.join(f'{int(x):02d}' for x in r.get('picks', []))
+        acc = hist.get(r.get('module'))
+        if acc and acc[0]:
+            rate = acc[1] / acc[0]
+            lift = rate / 0.25
+            color = 'green' if lift >= 1.05 else ('red' if lift < 1.0 else 'yellow')
+            stat = c(f'{rate * 100:5.1f}%  {lift:5.2f}x', color)
+        else:
+            stat = c('   — 无前瞻账', 'gray')
+        print(f"  {r.get('module','')[:24]:<26}{picks:<48}{stat}")
+    print(c('  ' + '─' * 98, 'gray'))
+    total_picks = sum(len(r.get('picks', [])) for r in rows)
+    print(c(f'  合计 {total_picks} 票 ｜ 水位 = 该模块历史前瞻账命中率 ÷ 25% 随机基线（<1.00x 即跑输大盘）', 'gray'))
+    print(c('  ℹ  各模块口径不同，票数≠概率；未过统计显著门槛者仅作研究参考。', 'yellow'))
+
 
 def task6_cleanup():
     banner('任务6：清理 __pycache__ 防污染')
@@ -641,7 +955,7 @@ if __name__ == '__main__':
     
     start_time = time.time()
     
-    banner(f'快乐8预测系统 — 每日全流程推演引擎 v4.3  [{datetime.datetime.now():%Y-%m-%d %H:%M}]', 'cyan')
+    banner(f'快乐8预测系统 — 每日全流程推演引擎 v4.3 (精锐纯净版) [{datetime.datetime.now():%Y-%m-%d %H:%M}]', 'cyan')
     
     try:
         task0_env_check()
@@ -650,19 +964,31 @@ if __name__ == '__main__':
         task12_hot_numbers()
         task13_15_sync()
         task2_review()
-        task35_lstm_engine()
         task36_formula_jingle()
-        task37_spatial_points()
         task38_point_suppression()
         task39_gold_pick2()
-        task391_follow_analysis()
-        task392_gemini_pick2()
-        task393_killseeker()
         task394_sixteen_period()
+        # 全部分预测模块先跑完, 再收割 —— 否则收割时下游模块产物还停留在上一期,
+        # 会被判"目标期不符"整批漏账 (2026-10-09 顺序整改)。
+        task396_prime_tail()
+        task397_psychological_game()
+        task398_tri_high()
+        task399_error_correction()
+        task3991_straddle_spear()
+        task3992_point_road_compressor()
+        task3993_daily_gap_modules()
+        task3994_road_prime_shrink()
+        task4a_daily_report()
         task395_aggregation()
+        task3951_follow_rank()
+        task3952_harvest()
+        task3953_thirty_ball_benchmark()
+        task3955_module_reconcile()
+        task3956_period_review()
         report_path = task4_generate_report()
         print_report_summary(report_path)
         ok_report = task5_verify(report_path)
+        print_module_board()
         task6_cleanup()
     except KeyboardInterrupt:
         print()

@@ -1,0 +1,53 @@
+{
+ "S0_random": {
+  "n": 1901,
+  "hits": 601,
+  "rate": 0.31615,
+  "z_vs_1_3": -1.589
+ },
+ "S1_fixed_template": {
+  "n": 1901,
+  "hits": 608,
+  "rate": 0.31983,
+  "z_vs_1_3": -1.262,
+  "mean_chosen_streak": 0.455,
+  "max_chosen_streak": 5
+ },
+ "S2_chase_streak": {
+  "n": 1901,
+  "hits": 646,
+  "rate": 0.33982,
+  "z_vs_1_3": 0.597,
+  "mean_chosen_streak": 5.405,
+  "max_chosen_streak": 14
+ },
+ "S3_chase_hot": {
+  "n": 1901,
+  "hits": 627,
+  "rate": 0.32983,
+  "z_vs_1_3": -0.325,
+  "mean_chosen_streak": 0.572,
+  "max_chosen_streak": 8
+ },
+ "all_templates": {
+  "n": 360,
+  "best": {
+   "pos": 3,
+   "cols": 4,
+   "offset": -2,
+   "rate": 0.35718,
+   "n": 1901
+  },
+  "worst": {
+   "pos": 2,
+   "cols": 5,
+   "offset": -2,
+   "rate": 0.30405,
+   "n": 1901
+  },
+  "p05": 0.31684,
+  "median": 0.33316,
+  "p95": 0.34982
+ },
+ "note": "rate 为命中率；z_vs_1_3 越大越偏离 1/3；|z|<2 即与随机不可区分"
+}

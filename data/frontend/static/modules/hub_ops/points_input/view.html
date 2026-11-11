@@ -1,0 +1,393 @@
+﻿<div v-show="activeTab === 'points_input'" class="space-y-6">
+        <!-- 头部操作与指标状态卡 -->
+        <div class="glass-panel p-5">
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xl">📝</span>
+                <h2 class="text-lg font-bold text-amber-300">每日最新点位录入与全系统预测联动控制台</h2>
+                <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono border border-amber-500/40">
+                  单一真相源: daily_points.txt
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                💡 操盘手大白话：在此输入您今日获取的最新 20 个点位号码，系统将自动进行 8 分区特征画像、安全落盘备份，并一键联动热码加权、Excel粉色上色、空间重点点位及未开点位反弹等全部量化子系统。
+              </p>
+            </div>
+            <div class="flex items-center gap-3">
+              <button @click="openTab('tri_high_input')" class="cyber-btn text-xs !py-1.5 flex items-center gap-1 bg-amber-500/15 text-amber-300 border border-amber-500/40 hover:border-amber-400">
+                <span>📝</span> <span>三高录入与手账标黄 →</span>
+              </button>
+              <button @click="fetchDailyPointsInfo(); fetchDailyPointsHistory();" class="cyber-btn cyber-btn-cyan text-xs !py-1.5 flex items-center gap-1">
+                <span>🔄</span> <span>重新同步库数据</span>
+              </button>
+              <button @click="triggerDailyPointsSyncAll" :disabled="isRunning" class="cyber-btn cyber-btn-gold text-xs !py-1.5 flex items-center gap-1">
+                <span v-if="isRunning" class="animate-spin">⚙️</span>
+                <span v-else>🚀</span>
+                <span>全模块联动推演</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 快速状态指示 -->
+          <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-5 pt-4 border-t border-slate-800" v-if="dailyPointsInfo && dailyPointsInfo.target_info">
+            <div class="p-3 rounded bg-slate-900/60 border border-slate-800">
+              <div class="text-[11px] text-slate-400">历史开奖最新期</div>
+              <div class="text-lg font-bold font-mono text-cyan-400 mt-0.5">
+                {{ dailyPointsInfo.target_info.latest_history_period }} 期
+                <span class="text-xs font-normal text-slate-500">({{ dailyPointsInfo.target_info.latest_history_date }})</span>
+              </div>
+            </div>
+            <div class="p-3 rounded bg-slate-900/60 border border-slate-800">
+              <div class="text-[11px] text-slate-400">系统推荐目标研判期</div>
+              <div class="text-lg font-bold font-mono text-amber-300 mt-0.5">
+                {{ dailyPointsInfo.target_info.target_period }} 期
+                <span class="text-xs font-normal text-slate-500">({{ dailyPointsInfo.target_info.target_date }})</span>
+              </div>
+            </div>
+            <div class="p-3 rounded bg-slate-900/60 border border-slate-800">
+              <div class="text-[11px] text-slate-400">点位库总累计期数</div>
+              <div class="text-lg font-bold font-mono text-emerald-400 mt-0.5">
+                {{ dailyPointsInfo.total_records }} 期数据
+              </div>
+            </div>
+            <div class="p-3 rounded bg-slate-900/60 border border-slate-800">
+              <div class="text-[11px] text-slate-400">目标期录入状态</div>
+              <div class="text-lg font-bold font-mono mt-0.5 flex items-center gap-1.5"
+                   :class="dailyPointsInfo.target_info.already_input ? 'text-emerald-400' : 'text-amber-400'">
+                <span>{{ dailyPointsInfo.target_info.already_input ? '✅ 目标期点位已录入' : '⏳ 等待今日录入' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 核心录入与交互选号主面板 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- 左侧：录入与选号 (7列) -->
+          <div class="lg:col-span-7 space-y-5">
+            <!-- 目标期号与日期配置卡 -->
+            <div class="glass-panel p-5 space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                  <span>🎯</span> 目标研判期号与日期
+                </h3>
+                <span class="text-xs text-slate-400 font-mono">支持自定义或自动推断</span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-mono text-slate-400 mb-1.5">目标期号 (Period):</label>
+                  <input v-model="dailyPointsTargetPeriod" type="text"
+                         class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-700 focus:border-amber-400 text-amber-300 font-mono font-bold text-sm outline-none transition"
+                         placeholder="如 2026232">
+                </div>
+                <div>
+                  <label class="block text-xs font-mono text-slate-400 mb-1.5">开奖日期 (Date):</label>
+                  <input v-model="dailyPointsTargetDate" type="text"
+                         class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-700 focus:border-cyan-400 text-cyan-300 font-mono text-sm outline-none transition"
+                         placeholder="如 2026-08-30">
+                </div>
+              </div>
+
+              <!-- 快捷粘贴文本框 -->
+              <div class="pt-2">
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                    <span>📋</span> <span>直接粘贴 20 个点位号码:</span>
+                  </label>
+                  <div class="flex items-center gap-2 text-xs font-mono">
+                    <span :class="dailyPointsSelectedBalls.length === 20 ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'">
+                      已识别: {{ dailyPointsSelectedBalls.length }} / 20 码
+                    </span>
+                  </div>
+                </div>
+                <textarea v-model="dailyPointsInputText" @input="syncDailyPointsFromText" rows="3"
+                          class="w-full p-3 rounded-lg bg-slate-900/90 border border-slate-700 focus:border-amber-400 text-slate-100 font-mono text-sm leading-relaxed outline-none transition resize-none placeholder-slate-600"
+                          placeholder="可直接复制粘贴！支持空格、逗号、顿号、连字符、换行（例如：04 12 17 19 24 25 34 35 39 40 44 45 49 50 54 59 60 67 69 74）"></textarea>
+                <div class="flex items-center justify-between text-[11px] text-slate-500 mt-1">
+                  <span>输入时下方 80 码交互球盘将实时高亮同步</span>
+                  <div class="flex items-center gap-2">
+                    <button @click="clearDailyPointsInput" class="text-slate-400 hover:text-rose-400 transition">
+                      清空输入
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 80 码可视化交互点位盘 -->
+            <div class="glass-panel p-5 space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">🌐</span>
+                  <h3 class="text-sm font-bold text-slate-100">80 码全景交互点位选择盘</h3>
+                  <span class="text-xs px-2 py-0.5 rounded font-mono font-bold"
+                        :class="dailyPointsSelectedBalls.length === 20 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'">
+                    {{ dailyPointsSelectedBalls.length === 20 ? '✅ 已凑齐 20 码' : `待选择 ${20 - dailyPointsSelectedBalls.length} 码` }}
+                  </span>
+                </div>
+                <span class="text-xs text-slate-400">点击彩球快速选中/取消</span>
+              </div>
+
+              <!-- 80 个号码球网格 -->
+              <div class="grid grid-cols-10 gap-2 sm:gap-2.5 py-2">
+                <button v-for="num in 80" :key="num"
+                        @click="toggleDailyPointBall(num)"
+                        class="lottery-ball text-xs font-bold transition transform hover:scale-110 flex items-center justify-center cursor-pointer select-none"
+                        :class="dailyPointsSelectedBalls.includes(num) ? 'ball-gold pulse-gold shadow-lg ring-2 ring-amber-400' : 'bg-slate-900 border border-slate-800 text-slate-400 hover:border-slate-600 hover:text-slate-200'">
+                  {{ String(num).padStart(2, '0') }}
+                </button>
+              </div>
+
+              <!-- 选中的号码预览序列 -->
+              <div class="pt-3 border-t border-slate-800/80">
+                <div class="text-xs text-slate-400 mb-2 font-mono flex items-center justify-between">
+                  <span>当前已选点位序列 (按大小升序排列):</span>
+                  <span class="text-amber-300 font-bold">{{ dailyPointsSelectedBalls.length }} 码</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5 min-h-[36px] p-2 rounded bg-slate-900/60 border border-slate-800">
+                  <span v-for="b in dailyPointsSelectedBalls" :key="b"
+                        @click="toggleDailyPointBall(b)"
+                        class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-mono font-bold cursor-pointer hover:bg-rose-500/20 hover:text-rose-300 hover:border-rose-500/40 transition"
+                        title="点击取消此号码">
+                    {{ String(b).padStart(2, '0') }} ✕
+                  </span>
+                  <span v-if="!dailyPointsSelectedBalls.length" class="text-xs text-slate-600 self-center">
+                    暂未选择点位号码，请在上方输入框粘贴或直接点击上方彩球
+                  </span>
+                </div>
+              </div>
+
+              <!-- 提交与一键联动操作区 -->
+              <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-800">
+                <div class="flex items-center gap-2 text-xs text-slate-300">
+                  <input type="checkbox" id="chkAutoRun" v-model="dailyPointsAutoRun" class="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-0">
+                  <label for="chkAutoRun" class="cursor-pointer select-none">
+                    落盘后自动触发下游全系统预测联动
+                  </label>
+                </div>
+
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                  <button @click="submitDailyPointsForm(false)" :disabled="dailyPointsSubmitting || dailyPointsSelectedBalls.length !== 20"
+                          class="cyber-btn cyber-btn-cyan text-xs !py-2 flex-1 sm:flex-initial">
+                    💾 仅保存点位落盘
+                  </button>
+                  <button @click="submitDailyPointsForm(true)" :disabled="dailyPointsSubmitting || dailyPointsSelectedBalls.length !== 20"
+                          class="cyber-btn cyber-btn-gold text-xs !py-2 flex-1 sm:flex-initial shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                    <span v-if="dailyPointsSubmitting" class="animate-spin">⚙️</span>
+                    <span v-else>🚀</span>
+                    <span>保存并一键跑盘</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右侧：实时多维画像与大白话体检 (5列) -->
+          <div class="lg:col-span-5 space-y-5">
+            <!-- 特征画像卡片 -->
+            <div class="glass-panel p-5 space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <h3 class="text-sm font-bold text-amber-300 flex items-center gap-2">
+                  <span>📊</span> 点位多维特征画像 (实时体检)
+                </h3>
+                <span class="text-xs text-slate-400 font-mono">大白话体检</span>
+              </div>
+
+              <div v-if="dailyPointsAnalysis" class="space-y-4">
+                <!-- 核心四大基础指标 -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                  <div class="p-2.5 rounded bg-slate-900/80 border border-slate-800">
+                    <div class="text-[10px] text-slate-500">点位和值</div>
+                    <div class="text-lg font-black font-mono text-amber-300">{{ dailyPointsAnalysis.total_sum }}</div>
+                  </div>
+                  <div class="p-2.5 rounded bg-slate-900/80 border border-slate-800">
+                    <div class="text-[10px] text-slate-500">奇偶比例</div>
+                    <div class="text-lg font-black font-mono text-cyan-300">{{ dailyPointsAnalysis.odd_even_ratio }}</div>
+                  </div>
+                  <div class="p-2.5 rounded bg-slate-900/80 border border-slate-800">
+                    <div class="text-[10px] text-slate-500">大小分布</div>
+                    <div class="text-sm font-black font-mono text-emerald-300 pt-1">{{ dailyPointsAnalysis.big_small_ratio }}</div>
+                  </div>
+                  <div class="p-2.5 rounded bg-slate-900/80 border border-slate-800">
+                    <div class="text-[10px] text-slate-500">质数号码</div>
+                    <div class="text-lg font-black font-mono text-purple-300">{{ dailyPointsAnalysis.prime_count }} 个</div>
+                  </div>
+                </div>
+
+                <!-- 8 分区空间能量覆盖进度 -->
+                <div class="p-3.5 rounded-lg bg-slate-900/60 border border-slate-800 space-y-2">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="text-slate-300 font-bold">8 分区空间能量分布</span>
+                    <span class="text-xs font-mono font-bold"
+                          :class="dailyPointsAnalysis.is_zone_balanced ? 'text-emerald-400' : 'text-amber-400'">
+                      {{ dailyPointsAnalysis.is_zone_balanced ? '✅ 8分区全覆盖' : `⚠️ 轮空 ${dailyPointsAnalysis.missing_zones.length} 个分区` }}
+                    </span>
+                  </div>
+                  
+                  <div class="space-y-1.5 pt-1">
+                    <div v-for="(z, zName) in dailyPointsAnalysis.zone_dist" :key="zName" class="flex items-center gap-2 text-xs font-mono">
+                      <span class="w-20 text-slate-400 text-[11px] truncate">{{ zName }}:</span>
+                      <div class="flex-1 bg-slate-800 rounded-full h-2 overflow-hidden">
+                        <div class="h-2 rounded-full transition-all"
+                             :class="z.count >= 4 ? 'bg-rose-400' : (z.count >= 2 ? 'bg-cyan-400' : (z.count === 1 ? 'bg-amber-400' : 'bg-slate-700'))"
+                             :style="{ width: `${(z.count / 6) * 100}%` }"></div>
+                      </div>
+                      <span class="w-10 text-right font-bold"
+                            :class="z.count > 0 ? 'text-slate-200' : 'text-slate-600'">
+                        {{ z.count }} 码
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 连号搭档与热出尾数 -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div class="p-3 rounded bg-slate-900/60 border border-slate-800 space-y-1">
+                    <div class="text-[11px] text-slate-400 flex items-center justify-between">
+                      <span>🔗 连号/最佳搭档</span>
+                      <span class="font-mono text-amber-300">{{ dailyPointsAnalysis.consecutive_count }} 组</span>
+                    </div>
+                    <div class="font-mono font-bold text-amber-200">
+                      {{ dailyPointsAnalysis.consecutive_pairs && dailyPointsAnalysis.consecutive_pairs.length ? dailyPointsAnalysis.consecutive_pairs.map(p => `${String(p[0]).padStart(2,'0')}-${String(p[1]).padStart(2,'0')}`).join('、') : '无连号 (离散分布)' }}
+                    </div>
+                  </div>
+
+                  <div class="p-3 rounded bg-slate-900/60 border border-slate-800 space-y-1">
+                    <div class="text-[11px] text-slate-400">🎯 强势热出尾数</div>
+                    <div class="font-mono font-bold text-cyan-300 truncate">
+                      {{ dailyPointsAnalysis.hot_tails ? dailyPointsAnalysis.hot_tails.slice(0, 4).map(t => `${t[0]}尾(${t[1]}个)`).join(' · ') : '---' }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 与昨日点位/开奖重码对比 -->
+                <div class="p-3 rounded bg-slate-900/60 border border-slate-800 space-y-1.5 text-xs">
+                  <div class="flex items-center justify-between text-[11px] text-slate-400">
+                    <span>🔁 与昨日点位重码:</span>
+                    <span class="font-mono text-purple-300 font-bold">{{ dailyPointsAnalysis.repeat_from_prev_pts ? dailyPointsAnalysis.repeat_from_prev_pts.length : 0 }} 个</span>
+                  </div>
+                  <div class="flex flex-wrap gap-1 font-mono">
+                    <span v-for="rp in (dailyPointsAnalysis.repeat_from_prev_pts || [])" :key="rp" class="px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 text-[10px]">
+                      {{ String(rp).padStart(2, '0') }}
+                    </span>
+                    <span v-if="!dailyPointsAnalysis.repeat_from_prev_pts || !dailyPointsAnalysis.repeat_from_prev_pts.length" class="text-slate-600 text-[11px]">无重码</span>
+                  </div>
+                </div>
+              </div>
+
+              <div v-else class="text-center py-10 text-slate-500 text-xs">
+                <span>💡 请在左侧选择 20 个点位号码，实时画像将自动生成</span>
+              </div>
+            </div>
+
+            <!-- 下游联动系统状态卡片 -->
+            <div class="glass-panel p-5 space-y-3">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <h3 class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                  <span>⚡</span> 点位关联子系统一览
+                </h3>
+                <span class="text-[10px] text-emerald-400 font-mono">全链路已打通</span>
+              </div>
+
+              <div class="space-y-2 text-xs">
+                <div class="flex items-center justify-between p-2 rounded bg-slate-900/60 border border-slate-800/80">
+                  <div class="flex items-center gap-2">
+                    <span>📊</span>
+                    <span class="text-slate-200">Excel 格式化上色 (apply_formats.py)</span>
+                  </div>
+                  <span class="text-[11px] text-cyan-300 font-mono">粉色底色(FFFCE4EC)</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded bg-slate-900/60 border border-slate-800/80">
+                  <div class="flex items-center gap-2">
+                    <span>🔥</span>
+                    <span class="text-slate-200">热码加权统计 (generate_hot_excel.py)</span>
+                  </div>
+                  <span class="text-[11px] text-amber-300 font-mono">点位权重 0.3</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded bg-slate-900/60 border border-slate-800/80">
+                  <div class="flex items-center gap-2">
+                    <span>🧬</span>
+                    <span class="text-slate-200">写入跟随号码统计 (process_hot_numbers.py)</span>
+                  </div>
+                  <span class="text-[11px] text-cyan-300 font-mono">数据源矩阵期号</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded bg-slate-900/60 border border-slate-800/80">
+                  <div class="flex items-center gap-2">
+                    <span>🔮</span>
+                    <span class="text-slate-200">空间重点点位分析 (run_points_daily.py)</span>
+                  </div>
+                  <span class="text-[11px] text-emerald-300 font-mono">4维空间打分精排</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded bg-slate-900/60 border border-slate-800/80">
+                  <div class="flex items-center gap-2">
+                    <span>🪞</span>
+                    <span class="text-slate-200">未开点位反弹追踪 (run_suppression_daily.py)</span>
+                  </div>
+                  <span class="text-[11px] text-purple-300 font-mono">高压弹簧回补</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 历史点位记录与实测开奖对账表 -->
+        <div class="glass-panel p-5 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">📋</span>
+              <h3 class="text-sm font-bold text-slate-100">近 30 期历史点位记录与实测命中对账</h3>
+              <span class="text-xs text-slate-400 font-mono">(实测检验点位含金量)</span>
+            </div>
+            <button @click="fetchDailyPointsHistory(30)" class="text-xs text-cyan-400 hover:underline">
+              刷新对账明细
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="cyber-table w-full text-xs">
+              <thead>
+                <tr>
+                  <th class="w-24">期号</th>
+                  <th class="w-28">日期</th>
+                  <th>点位号码 (20 码)</th>
+                  <th class="w-24 text-center">开奖状态</th>
+                  <th class="w-24 text-center">命中数量</th>
+                  <th class="w-28 text-center">命中比率</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="row in dailyPointsHistory" :key="row.period">
+                  <td class="font-mono font-bold text-cyan-300">{{ row.period }}</td>
+                  <td class="font-mono text-slate-400">{{ row.date }}</td>
+                  <td>
+                    <div class="flex flex-wrap gap-1 font-mono">
+                      <span v-for="pt in row.points" :key="pt"
+                            class="px-1.5 py-0.2 rounded text-[11px]"
+                            :class="row.is_drawn && row.hit_numbers.includes(pt) ? 'bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 font-bold' : 'bg-slate-900 text-slate-400 border border-slate-800'">
+                        {{ String(pt).padStart(2, '0') }}
+                      </span>
+                    </div>
+                  </td>
+                  <td class="text-center font-mono">
+                    <span v-if="row.is_drawn" class="text-emerald-400 font-bold">已开奖</span>
+                    <span v-else class="text-amber-400 font-bold">待开奖(最新)</span>
+                  </td>
+                  <td class="text-center font-mono font-bold">
+                    <span v-if="row.is_drawn" :class="row.hits_count >= 5 ? 'text-emerald-400 text-sm' : (row.hits_count >= 4 ? 'text-amber-400' : 'text-slate-400')">
+                      {{ row.hits_count }} / 20
+                    </span>
+                    <span v-else class="text-slate-600">---</span>
+                  </td>
+                  <td class="text-center font-mono">
+                    <span v-if="row.is_drawn" :class="row.hits_count >= 5 ? 'text-emerald-400 font-bold' : 'text-slate-400'">
+                      {{ ((row.hits_count / 20) * 100).toFixed(1) }}%
+                    </span>
+                    <span v-else class="text-slate-600">---</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>

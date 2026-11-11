@@ -1,41 +1,15 @@
 # -*- coding: utf-8 -*-
-"""
-未开点位高压反弹与空间关联追踪引擎子系统 (Point Suppression System)
-"""
-from .suppression_engine import (
-    PointSuppressionAnalyzer,
-    load_draws_from_file,
-    region_of,
-    spillover_regions,
-    point_signals,
-    get_period_picks,
-    get_active_suppression_state,
-    SINGLE_BASE,
-    REGION_BASE,
-    PAIR_BASE,
-    NUM
-)
+"""Compatibility shim: backend.core.point_suppression -> backend.modules.point_suppression"""
+from __future__ import annotations
+import os as _os
 
-from .suppression_evaluator import (
-    evaluate_suppression_walk_forward
+_REAL = _os.path.abspath(
+    _os.path.join(_os.path.dirname(__file__), "..", "..", "modules", 'point_suppression')
 )
+__path__ = [_REAL]
 
-from .suppression_cross_validator import (
-    cross_validate_suppression_picks
-)
-
-__all__ = [
-    "PointSuppressionAnalyzer",
-    "load_draws_from_file",
-    "region_of",
-    "spillover_regions",
-    "point_signals",
-    "get_period_picks",
-    "get_active_suppression_state",
-    "SINGLE_BASE",
-    "REGION_BASE",
-    "PAIR_BASE",
-    "NUM",
-    "evaluate_suppression_walk_forward",
-    "cross_validate_suppression_picks",
-]
+_real_init = _os.path.join(_REAL, "__init__.py")
+if _os.path.isfile(_real_init):
+    with open(_real_init, "r", encoding="utf-8") as _f:
+        _code = compile(_f.read(), _real_init, "exec")
+    exec(_code, globals())

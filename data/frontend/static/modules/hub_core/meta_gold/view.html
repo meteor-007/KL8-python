@@ -1,0 +1,221 @@
+<div v-show="activeTab === 'meta_gold_cockpit'" class="space-y-6">
+        <!-- 头部 Header -->
+        <div class="glass-panel p-6 border-l-4 border-amber-400 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-[0_0_25px_rgba(245,158,11,0.15)]">
+          <div class="space-y-1">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">👑</span>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h2 class="text-xl font-bold text-white tracking-wide">各模块金胆对照表（16期 + 经典 + AI）</h2>
+                  <span class="cyber-badge cyber-badge-amber font-mono font-bold">第 {{ metaGoldSummary?.target_period || systemStatus.target_period }} 期</span>
+                </div>
+                <p class="text-xs text-slate-400">
+                  票权加权驱动（大白话：只认在 module_gate 注册表里具备票权的金牌裁判投票，不搞大锅饭平庸平均。票权阈值与样本门槛见注册表）
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <button @click="fetchMetaGoldSummary" class="cyber-btn cyber-btn-amber text-xs flex items-center gap-1">
+              <span>🔄 刷新金胆共识</span>
+            </button>
+            <button @click="openModuleHistory('meta_gold_cockpit')" class="cyber-btn text-xs flex items-center gap-1 bg-amber-500/15 text-amber-200 border border-amber-400/40 hover:border-amber-300">
+              <span>📜 历史战报总库</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 核心看板：至尊金胆 & 五维精排梯队 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- 至尊金胆独立大卡片 -->
+          <div class="glass-panel p-6 border-2 border-amber-400/80 bg-gradient-to-br from-amber-950/40 via-slate-900/90 to-slate-950 flex flex-col justify-between items-center text-center space-y-4 shadow-[0_0_35px_rgba(245,158,11,0.25)]">
+            <div class="w-full flex justify-between items-center border-b border-amber-500/30 pb-2">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">🌟 终极唯一核心金胆</span>
+              <span class="cyber-badge cyber-badge-amber text-[10px] font-mono">SUPREME GOLD</span>
+            </div>
+            
+            <div class="py-3 flex flex-col items-center">
+              <div class="lottery-ball ball-gold w-20 h-20 text-3xl font-black shadow-[0_0_30px_rgba(245,158,11,0.6)] animate-pulse">
+                {{ metaGoldSummary?.data?.supreme_gold != null ? String(metaGoldSummary.data.supreme_gold).padStart(2, '0') : '--' }}
+              </div>
+              <span class="mt-3 text-sm font-bold text-amber-300">号码 {{ metaGoldSummary?.data?.supreme_gold != null ? String(metaGoldSummary.data.supreme_gold).padStart(2, '0') : '--' }}</span>
+              <span class="text-xs text-slate-400 font-mono mt-0.5">共识得分: <strong class="text-amber-400 text-sm">{{ metaGoldSummary?.data?.supreme_gold_score != null ? metaGoldSummary.data.supreme_gold_score : '--' }}</strong></span>
+            </div>
+
+            <div v-if="(metaGoldSummary?.data?.supreme_gold_sources || []).length"
+                 class="w-full bg-slate-950/80 p-3 rounded-lg border border-amber-500/20 text-left space-y-1">
+              <span class="text-[11px] text-slate-400 font-bold block">金牌裁判联合背书:</span>
+              <div v-for="(src, idx) in metaGoldSummary.data.supreme_gold_sources" :key="idx"
+                   class="text-xs text-amber-300 flex items-center gap-1 font-mono truncate">
+                <span>🏅</span> {{ src }}
+              </div>
+            </div>
+            <div v-else class="w-full bg-slate-950/80 p-3 rounded-lg border border-slate-700 text-left">
+              <span class="text-[11px] text-slate-500">本期无金胆数据 (模块未出票或已停更), 不显示历史占位号码。</span>
+            </div>
+          </div>
+
+          <!-- 五维精排攻坚梯队 -->
+          <div class="glass-panel p-6 border-l-4 border-cyan-400 lg:col-span-2 space-y-4 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-3">
+                <span class="text-sm font-bold text-cyan-300 flex items-center gap-2">
+                  <span>🎯</span> 五维精排最优3码
+                </span>
+                <span class="text-xs text-slate-400 font-mono">高置信梯度出击</span>
+              </div>
+              <p class="text-xs text-slate-400 mb-4">
+                由具备票权的子系统按 module_gate 注册表 live 权重 (收缩 Lift − 1) 加权投票产生；
+                不足 3 码时如实显示缺口，不用顺序号补位。
+              </p>
+
+              <!-- 5 码大金球直出 -->
+              <div v-if="(metaGoldSummary?.data?.meta_gold_top5 || []).length"
+                   class="flex flex-wrap gap-4 items-center justify-center py-2">
+                <div v-for="(b, idx) in (metaGoldSummary.data.meta_gold_top5 || []).slice(0, 3)" :key="b"
+                     class="flex flex-col items-center gap-1">
+                  <span class="text-[10px] font-mono text-slate-400">#{{ idx + 1 }}</span>
+                  <div class="lottery-ball w-12 h-12 text-lg font-bold font-mono"
+                       :class="idx === 0 ? 'ball-gold ring-2 ring-amber-400/80 shadow-[0_0_15px_rgba(245,158,11,0.5)]' : 'ball-cyan'">
+                    {{ String(b).padStart(2, '0') }}
+                  </div>
+                  <span class="text-[11px] font-mono font-bold" :class="idx === 0 ? 'text-amber-400' : 'text-cyan-300'">
+                    {{ String(b).padStart(2, '0') }}
+                  </span>
+                </div>
+              </div>
+              <div v-else class="py-3 text-center text-xs text-slate-500">
+                本期无子系统出票 (或模块尚未运行)，不显示占位号码。
+              </div>
+              <div v-if="metaGoldSummary?.data?.meta_gold_top5_padded"
+                   class="text-[11px] text-amber-300 font-mono text-center pb-1">
+                ⚠️ 本期出票子系统不足 3 路，上表为实际全部得票号码 (未补位凑数)。
+              </div>
+            </div>
+
+            <!-- 金牌引擎举手投票明细 -->
+            <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-2">
+              <span class="text-xs text-slate-300 font-bold block">🏅 各金牌引擎投票明细与得分:</span>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs font-mono">
+                <div v-for="(info, num) in (metaGoldSummary?.data?.gold_votes_detail || {})" :key="num"
+                     class="p-2 rounded bg-slate-900 border border-slate-800 flex justify-between items-center">
+                  <div class="flex items-center gap-2">
+                    <span class="lottery-ball ball-slate w-6 h-6 text-[10px] font-bold">{{ String(num).padStart(2, '0') }}</span>
+                    <span class="text-slate-300 font-semibold">{{ info.sources?.join(', ') }}</span>
+                  </div>
+                  <span class="text-amber-400 font-bold">{{ info.score }}分</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meta-Gold 样本外实测逐期复盘总账本 -->
+        <div class="glass-panel p-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-base">📜</span>
+              <h3 class="text-sm font-bold text-white">Meta-Gold 至尊金胆 · 样本外滚动逐期命中实战复盘</h3>
+              <span class="cyber-badge cyber-badge-amber text-[10px] font-mono">WALK-FORWARD</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <select v-model="metaGoldReviewPeriods" @change="fetchMetaGoldReview(metaGoldReviewPeriods)"
+                      class="bg-slate-900 border border-slate-700 text-xs text-amber-300 rounded px-2.5 py-1">
+                <option :value="15">近 15 期实测</option>
+                <option :value="30">近 30 期实测</option>
+                <option :value="50">近 50 期实测</option>
+              </select>
+              <button @click="fetchMetaGoldReview(metaGoldReviewPeriods)" class="cyber-btn cyber-btn-amber text-xs px-2.5 py-1">
+                <span>🔄 刷新复盘</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 4 项复盘核心 KPI 卡片 -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 font-mono">
+            <div class="p-3 rounded-lg bg-slate-900/80 border border-amber-500/30 space-y-0.5">
+              <span class="text-[10px] text-slate-400 font-sans">至尊金胆命中次数</span>
+              <div class="text-lg font-black text-amber-400">{{ metaGoldReview?.summary?.supreme_hits !== undefined ? metaGoldReview.summary.supreme_hits : '--' }} <span class="text-xs text-slate-400">/ {{ metaGoldReview?.summary?.total_periods ?? metaGoldReviewPeriods }} 期</span></div>
+              <div class="text-[9px] text-slate-500">胜率 {{ metaGoldReview?.summary?.supreme_hit_rate != null ? ((metaGoldReview.summary.supreme_hit_rate) * 100).toFixed(1) + '%' : '--' }} (基线: 25.0%)</div>
+              <div v-if="metaGoldReview?.summary?.missing_periods?.length" class="text-[9px] text-amber-500/80">⚠️ {{ metaGoldReview.summary.missing_periods.length }} 期无前瞻产出，未纳入对账</div>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-900/80 border border-cyan-500/30 space-y-0.5">
+              <span class="text-[10px] text-slate-400 font-sans">五维精排平均单期命中</span>
+              <div class="text-lg font-black text-cyan-300">{{ metaGoldReview?.summary?.avg_top5_hits != null ? metaGoldReview.summary.avg_top5_hits : '--' }} <span class="text-xs text-slate-400">/ 3 码</span></div>
+              <div class="text-[9px] text-slate-500">单码胜率 {{ metaGoldReview?.summary?.top5_win_rate != null ? ((metaGoldReview.summary.top5_win_rate) * 100).toFixed(1) + '%' : '--' }}</div>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-900/80 border border-emerald-500/30 space-y-0.5">
+              <span class="text-[10px] text-slate-400 font-sans">超越随机基线提升度</span>
+              <div class="text-lg font-black text-emerald-400">{{ metaGoldReview?.summary?.overall_lift != null ? metaGoldReview.summary.overall_lift.toFixed(2) + 'x' : '--' }}</div>
+              <div class="text-[9px] text-slate-500">对照 1.00x 随机基线（未做显著性检验）</div>
+            </div>
+            <div class="p-3 rounded-lg bg-slate-900/80 border border-purple-500/30 space-y-0.5">
+              <span class="text-[10px] text-slate-400 font-sans">实战复盘总深度</span>
+              <div class="text-lg font-black text-purple-300">{{ metaGoldReview?.summary?.total_periods ?? metaGoldReviewPeriods }} 期</div>
+              <div class="text-[9px] text-slate-500">零未来数据真实盲测</div>
+            </div>
+          </div>
+
+          <!-- 逐期命中明细表格 -->
+          <div class="overflow-x-auto max-h-[500px] overflow-y-auto">
+            <table class="cyber-table w-full text-left text-xs font-mono">
+              <thead class="sticky top-0 bg-slate-900/95 backdrop-blur z-10">
+                <tr class="text-slate-400 border-b border-slate-800">
+                  <th class="py-2.5 px-3">目标期号</th>
+                  <th class="py-2.5 px-3">🌟 唯一至尊金胆</th>
+                  <th class="py-2.5 px-3">🎯 五维精排最优3码 (高亮已命中)</th>
+                  <th class="py-2.5 px-3">当期命中表现</th>
+                  <th class="py-2.5 px-3">Lift 提升度</th>
+                  <th class="py-2.5 px-3">对账实战判定</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60">
+                <tr v-if="(metaGoldReview?.rows || []).length === 0">
+                  <td colspan="6" class="text-center py-10 text-slate-500">
+                    <div class="space-y-2">
+                      <span class="text-2xl">⏳</span>
+                      <div v-if="metaGoldLoading" class="text-sm text-amber-300 animate-pulse">正在穿透解算样本外实战滚动命中账本...</div>
+                      <div v-else class="text-xs text-slate-400">暂未加载到实战复盘明细（若后台刚更新代码，请执行一键重启 Web 服务后刷新页面）</div>
+                    </div>
+                  </td>
+                </tr>
+                <tr v-for="r in (metaGoldReview?.rows || [])" :key="r.period" class="hover:bg-slate-800/40">
+                  <td class="py-2.5 px-3 font-bold text-amber-300">第 {{ r.period }} 期</td>
+                  <td class="py-2.5 px-3">
+                    <span class="lottery-ball w-7 h-7 text-xs font-bold inline-flex items-center justify-center"
+                          :class="r.supreme_hit ? 'ball-gold shadow-[0_0_10px_rgba(245,158,11,0.7)]' : 'ball-slate opacity-60'">
+                      {{ String(r.supreme_gold).padStart(2, '0') }}
+                    </span>
+                    <span v-if="r.supreme_hit" class="ml-1.5 text-[11px] text-amber-300 font-bold">🎯 命中!</span>
+                    <span v-else class="ml-1.5 text-[10px] text-slate-500">未出</span>
+                  </td>
+                  <td class="py-2.5 px-3">
+                    <div class="flex items-center gap-1.5 flex-wrap">
+                      <span v-for="b in (r.meta_top5 || []).slice(0, 3)" :key="b"
+                            class="lottery-ball w-6 h-6 text-[11px] font-bold inline-flex items-center justify-center"
+                            :class="r.actual_numbers?.includes(b) ? 'ball-cyan shadow-[0_0_8px_rgba(6,182,212,0.6)] ring-1 ring-cyan-300' : 'ball-slate opacity-40'">
+                        {{ String(b).padStart(2, '0') }}
+                      </span>
+                    </div>
+                  </td>
+                  <td class="py-2.5 px-3 font-bold text-sm" :class="r.hit_count >= 2 ? 'text-emerald-400' : (r.hit_count === 1 ? 'text-cyan-300' : 'text-slate-500')">
+                    {{ r.hit_count }} / {{ r.total_picks }}
+                    <span class="text-[10px] text-slate-500 font-normal">· 基线 {{ (r.total_picks * 0.25).toFixed(2) }}</span>
+                  </td>
+                  <td class="py-2.5 px-3 font-bold" :class="r.lift >= 1.4 ? 'text-amber-400' : 'text-slate-400'">
+                    {{ r.lift != null ? r.lift.toFixed(2) : '--' }}x
+                  </td>
+                  <td class="py-2.5 px-3">
+                    <!-- 2026-09-10 整改: 单期命中数不得宣称"显著超额"(后端已改为 view 口径, 此处同步) -->
+                    <span class="px-2 py-0.5 rounded border text-[11px] font-bold"
+                          :class="r.hit_count >= 2 ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : (r.hit_count === 1 ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' : 'bg-slate-800 text-slate-500 border-slate-700')"
+                          title="单期命中数不构成统计显著性证据；显著性请以汇总表的 Lift 与 CI 为准（基线 25%）。">
+                      {{ r.verdict || (r.hit_count >= 2 ? '🟢 高于单期期望' : '🔴 低于单期期望') }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>

@@ -1,0 +1,506 @@
+<div v-show="activeTab === 'tri_high_input'" class="space-y-6">
+  <!-- 头部总控与子选项卡切换 -->
+  <div class="glass-panel p-5">
+    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">📝</span>
+          <h2 class="text-lg font-bold bg-gradient-to-r from-amber-400 via-yellow-300 to-cyan-300 bg-clip-text text-transparent">
+            三高特征 (重复高/边高/冷高) × 每日点位 录入与量化共振系统
+          </h2>
+          <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono border border-amber-500/30">
+            实战手账 1:1 标黄 · 双重深度共振
+          </span>
+        </div>
+        <p class="text-xs text-slate-400 mt-1">
+          每日录入三大高频特征池（重复高、边高 4+4、冷高），系统自动对齐当期开奖并标黄核验，结合每日点位 (daily_points.txt) 解算三高共振金胆与黄金搭档选2。
+        </p>
+      </div>
+
+      <!-- 右侧控制区：子选项卡切换与一键执行/刷新按钮组 -->
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- 子选项卡切换按钮组 -->
+        <div class="flex items-center gap-1.5 bg-slate-950/80 p-1.5 rounded-xl border border-slate-800 text-xs">
+          <button @click="triHighSubTab = 'input'"
+                  class="px-3 py-1.5 rounded-lg transition font-bold flex items-center gap-1.5"
+                  :class="triHighSubTab === 'input' ? 'bg-amber-500 text-slate-950 shadow-lg' : 'text-slate-400 hover:text-slate-200'">
+            <span>✍️</span> 每日三高录入
+          </button>
+          <button @click="triHighSubTab = 'excel_view'"
+                  class="px-3 py-1.5 rounded-lg transition font-bold flex items-center gap-1.5"
+                  :class="triHighSubTab === 'excel_view' ? 'bg-amber-500 text-slate-950 shadow-lg' : 'text-slate-400 hover:text-slate-200'">
+            <span>📋</span> 1:1 手账标黄看板
+          </button>
+          <button @click="triHighSubTab = 'cockpit'"
+                  class="px-3 py-1.5 rounded-lg transition font-bold flex items-center gap-1.5"
+                  :class="triHighSubTab === 'cockpit' ? 'bg-cyan-500 text-slate-950 shadow-lg' : 'text-slate-400 hover:text-slate-200'">
+            <span>🚀</span> 三高×点位 共振驾驶舱
+          </button>
+        </div>
+
+        <!-- 独立操作按钮组 (重新执行推演 + 刷新) -->
+        <div class="flex items-center gap-2">
+          <button @click="triggerTriHighRun" :disabled="isRunning" class="cyber-btn cyber-btn-gold text-xs !py-1.5 flex items-center gap-1.5 shadow-md">
+            <span v-if="isRunning" class="animate-spin">⚙️</span>
+            <span v-else>⚡</span>
+            <span>{{ isRunning ? '推演中...' : '重新执行推演' }}</span>
+          </button>
+          <button @click="fetchTriHighHistory(); fetchTriHighSummary();" class="cyber-btn cyber-btn-cyan text-xs !py-1.5 flex items-center gap-1" title="刷新最新数据">
+            <span>🔄</span> <span>刷新数据</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 顶部状态指示栏 -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4 pt-3 border-t border-slate-800/80 text-xs font-mono" v-if="triHighSummaryData">
+      <div class="p-2.5 rounded bg-slate-900/60 border border-slate-800">
+        <span class="text-slate-400 text-[10px] block">历史手账已收录</span>
+        <span class="text-base font-bold text-amber-300">{{ triHighHistoryRows?.length || 0 }} 期数据</span>
+      </div>
+      <div class="p-2.5 rounded bg-slate-900/60 border border-slate-800">
+        <span class="text-slate-400 text-[10px] block">重复高平均命中</span>
+        <span class="text-base font-bold text-emerald-400">{{ triHighSummaryData.averages?.avg_repeat_hits || 0 }} 码 / 期</span>
+      </div>
+      <div class="p-2.5 rounded bg-slate-900/60 border border-slate-800">
+        <span class="text-slate-400 text-[10px] block">边高(4+4)平均命中</span>
+        <span class="text-base font-bold text-cyan-400">{{ triHighSummaryData.averages?.avg_edge_hits || 0 }} 码 / 期</span>
+      </div>
+      <div class="p-2.5 rounded bg-slate-900/60 border border-slate-800">
+        <span class="text-slate-400 text-[10px] block">冷高突袭平均命中</span>
+        <span class="text-base font-bold text-pink-400">{{ triHighSummaryData.averages?.avg_cold_hits || 0 }} 码 / 期</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═════════════════ SUB-TAB 1: 每日三高号码录入管理 ═════════════════ -->
+  <div v-show="triHighSubTab === 'input'" class="space-y-5">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- 录入表单区 (8列) -->
+      <div class="lg:col-span-8 glass-panel p-5 space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+          <h3 class="text-sm font-bold text-amber-300 flex items-center gap-2">
+            <span>🎯</span> 目标期号与三高特征分类录入
+          </h3>
+          <span class="text-xs text-slate-400 font-mono">支持文本框直接粘贴任意格式号码</span>
+        </div>
+
+        <!-- 智能自动推断与快捷期号切换 -->
+        <div class="p-3 rounded-xl bg-slate-950/80 border border-amber-500/20 space-y-2" v-if="triHighSummaryData?.input_target_info">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 animate-pulse">
+                ⚡ 期号与日期已自动推断预填
+              </span>
+              <span class="text-xs text-slate-300">
+                当前推荐：<span class="text-amber-300 font-bold font-mono">{{ triHighSummaryData.input_target_info.suggested_label }}</span>
+                (开奖日期：<span class="text-cyan-300 font-mono">{{ triHighSummaryData.input_target_info.suggested_date }}</span>)
+              </span>
+            </div>
+            <span class="text-[11px] text-slate-400">点击标签一键切换期号或反填复核：</span>
+          </div>
+
+          <!-- 快捷期号胶囊组 -->
+          <div class="flex flex-wrap items-center gap-2 pt-1">
+            <button v-for="opt in (triHighSummaryData.input_target_info.quick_options || [])"
+                    :key="opt.period"
+                    @click="selectTriHighQuickPeriod(opt)"
+                    type="button"
+                    class="px-2.5 py-1 rounded-lg text-xs font-mono transition flex items-center gap-1 border"
+                    :class="triHighInputPeriod === opt.period 
+                            ? 'bg-amber-500 text-slate-950 font-bold border-amber-400 shadow-md shadow-amber-500/20' 
+                            : (opt.is_recorded 
+                                ? 'bg-slate-900/90 text-slate-300 border-slate-700 hover:border-slate-500' 
+                                : 'bg-amber-950/40 text-amber-300 border-amber-500/40 hover:bg-amber-900/40')">
+              <span>{{ opt.is_recorded ? '✅' : '⏳' }}</span>
+              <span>{{ opt.label }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 期号与日期配置 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-mono text-slate-400">目标研判期号 (Period):</label>
+              <span class="text-[10px] text-emerald-400/90 font-mono">（系统自动联动填充）</span>
+            </div>
+            <input v-model="triHighInputPeriod" type="text"
+                   class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-700 focus:border-amber-400 text-amber-300 font-mono font-bold text-sm outline-none transition"
+                   placeholder="如 2026241">
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-xs font-mono text-slate-400">开奖日期 (Date):</label>
+              <span class="text-[10px] text-cyan-400/90 font-mono">（自动关联对应日期）</span>
+            </div>
+            <input v-model="triHighInputDate" type="text"
+                   class="w-full px-3 py-2 rounded bg-slate-900 border border-slate-700 focus:border-cyan-400 text-cyan-300 font-mono text-sm outline-none transition"
+                   placeholder="如 2026-09-07">
+          </div>
+        </div>
+
+        <!-- 分类 1: 重复高 -->
+        <div class="p-3.5 rounded-xl bg-slate-950/70 border border-amber-500/30 space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-amber-300 flex items-center gap-1.5">
+              <span>🔥</span> 【重复高】号码池 (连出惯性与高频连庄):
+            </label>
+            <span class="text-xs font-mono text-amber-400 font-bold">
+              已识别: {{ triHighRepeatBalls.length }} 码
+            </span>
+          </div>
+          <textarea v-model="triHighRepeatText" @input="parseTriHighRepeat" rows="2"
+                    class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 focus:border-amber-400 text-amber-200 font-mono text-xs leading-relaxed outline-none resize-none"
+                    placeholder="可直接粘贴！如：02 06 09 20 21 43 48 51 53 68 77"></textarea>
+          <div class="flex flex-wrap gap-1" v-if="triHighRepeatBalls.length">
+            <span v-for="b in triHighRepeatBalls" :key="'rep_' + b"
+                  class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] font-mono font-bold">
+              {{ String(b).padStart(2, '0') }}
+            </span>
+          </div>
+        </div>
+
+        <!-- 分类 2: 边高 (4+4 左右翼) -->
+        <div class="p-3.5 rounded-xl bg-slate-950/70 border border-cyan-500/30 space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
+              <span>📐</span> 【边高】号码池 (4+4 左右两翼邻位延伸):
+            </label>
+            <span class="text-xs font-mono text-cyan-400 font-bold">
+              已识别: {{ triHighEdgeLeftBalls.length + triHighEdgeRightBalls.length }} / 8 码
+            </span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <span class="text-[11px] text-cyan-400/80 font-mono block mb-1">左翼 (Left 4码):</span>
+              <input v-model="triHighEdgeLeftText" @input="parseTriHighEdgeLeft" type="text"
+                     class="w-full px-2.5 py-1.5 rounded bg-slate-900 border border-slate-700 focus:border-cyan-400 text-cyan-200 font-mono text-xs outline-none"
+                     placeholder="如：12 01 52 08">
+              <div class="flex flex-wrap gap-1 mt-1.5" v-if="triHighEdgeLeftBalls.length">
+                <span v-for="b in triHighEdgeLeftBalls" :key="'el_' + b" class="px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 text-[11px] font-mono font-bold">
+                  {{ String(b).padStart(2, '0') }}
+                </span>
+              </div>
+            </div>
+            <div>
+              <span class="text-[11px] text-cyan-400/80 font-mono block mb-1">右翼 (Right 4码):</span>
+              <input v-model="triHighEdgeRightText" @input="parseTriHighEdgeRight" type="text"
+                     class="w-full px-2.5 py-1.5 rounded bg-slate-900 border border-slate-700 focus:border-cyan-400 text-cyan-200 font-mono text-xs outline-none"
+                     placeholder="如：54 59 52 78">
+              <div class="flex flex-wrap gap-1 mt-1.5" v-if="triHighEdgeRightBalls.length">
+                <span v-for="b in triHighEdgeRightBalls" :key="'er_' + b" class="px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 text-[11px] font-mono font-bold">
+                  {{ String(b).padStart(2, '0') }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 分类 3: 冷高 -->
+        <div class="p-3.5 rounded-xl bg-slate-950/70 border border-pink-500/30 space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-pink-300 flex items-center gap-1.5">
+              <span>❄️</span> 【冷高】号码池 (极限遗漏冷号反弹突袭):
+            </label>
+            <span class="text-xs font-mono text-pink-400 font-bold">
+              已识别: {{ triHighColdBalls.length }} 码
+            </span>
+          </div>
+          <textarea v-model="triHighColdText" @input="parseTriHighCold" rows="2"
+                    class="w-full p-2.5 rounded bg-slate-900 border border-slate-700 focus:border-pink-400 text-pink-200 font-mono text-xs leading-relaxed outline-none resize-none"
+                    placeholder="可直接粘贴！如：54 69 12 23 47 40 04 22 49"></textarea>
+          <div class="flex flex-wrap gap-1" v-if="triHighColdBalls.length">
+            <span v-for="b in triHighColdBalls" :key="'cold_' + b"
+                  class="px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 border border-pink-500/40 text-[11px] font-mono font-bold">
+              {{ String(b).padStart(2, '0') }}
+            </span>
+          </div>
+        </div>
+
+        <!-- 保存与推演按钮 -->
+        <div class="flex items-center justify-between pt-2">
+          <button @click="clearTriHighInputs" class="text-xs text-slate-500 hover:text-rose-400 transition font-mono">
+            🗑️ 清空所有输入框
+          </button>
+          <button @click="saveTriHighRecord" :disabled="triHighSaving"
+                  class="cyber-btn cyber-btn-gold text-xs px-6 py-2 flex items-center gap-2">
+            <span>💾</span>
+            <span>{{ triHighSaving ? '正在保存并推演...' : '一键保存并触发三高×点位联动量化推演' }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 右侧：当前三高与点位共振预览 (4列) -->
+      <div class="lg:col-span-4 space-y-4">
+        <div class="glass-panel p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <h3 class="text-xs font-bold text-slate-200">🔍 录入实时三维交叉概览</h3>
+            <span class="text-[10px] text-cyan-400 font-mono font-bold">即时对齐</span>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div class="p-3 rounded bg-slate-900/80 border border-slate-800">
+              <span class="text-slate-400 text-[11px] block">三高去重合集码数:</span>
+              <span class="text-lg font-bold font-mono text-amber-400">
+                {{ getUnionTriHighCount() }} 码
+              </span>
+            </div>
+
+            <div class="p-3 rounded bg-slate-900/80 border border-slate-800">
+              <span class="text-slate-400 text-[11px] block">与每日点位(daily_points)共振重叠码:</span>
+              <div class="flex flex-wrap gap-1 mt-1">
+                <span v-for="num in getResonanceWithDailyPoints()" :key="'res_' + num"
+                      class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold text-[11px] border border-emerald-500/40">
+                  {{ String(num).padStart(2, '0') }} 🌟
+                </span>
+                <span v-if="!getResonanceWithDailyPoints().length" class="text-slate-500 text-[11px]">暂无重叠或未加载点位</span>
+              </div>
+            </div>
+
+            <div class="p-3 rounded bg-slate-900/80 border border-slate-800 text-[11px] text-slate-400 leading-relaxed">
+              💡 操盘法则：录入后系统会自动将该期与开奖库、点位库进行融合，生成具有强统计信标的尖刀金胆与选2搭档！
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═════════════════ SUB-TAB 2: 1:1 手账 Excel 标黄全景看板 ═════════════════ -->
+  <div v-show="triHighSubTab === 'excel_view'" class="space-y-4">
+    <div class="glass-panel p-5">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-4">
+        <div>
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <span>📋</span> 1:1 手账 Excel 逐期标黄实战看板
+          </h3>
+          <span class="text-xs text-slate-400 font-mono">
+            黄色高亮格 = 当期晚上真实开出中奖号码 (系统自动比对并实时标黄)
+          </span>
+        </div>
+        <div class="flex items-center gap-3 text-xs">
+          <span class="flex items-center gap-1.5">
+            <span class="w-4 h-4 rounded bg-amber-400 text-slate-950 font-bold text-[10px] flex items-center justify-center">01</span>
+            <span class="text-amber-300">标黄 (当期中奖)</span>
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-4 h-4 rounded bg-slate-900 border border-slate-700 text-slate-400 text-[10px] flex items-center justify-center">01</span>
+            <span class="text-slate-400">未开出</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- 表格区域 -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs font-mono border-collapse border border-slate-800 text-center">
+          <thead>
+            <tr class="bg-slate-900/90 text-slate-300 border-b border-slate-700 font-bold">
+              <th class="py-2.5 px-3 border-r border-slate-800 w-24">期号</th>
+              <th class="py-2.5 px-4 border-r border-slate-800 bg-amber-500/10 text-amber-300">
+                🔥 重复高 (连出连庄)
+              </th>
+              <th class="py-2.5 px-4 border-r border-slate-800 bg-cyan-500/10 text-cyan-300" colspan="2">
+                📐 边高 (4 + 4)
+              </th>
+              <th class="py-2.5 px-4 border-r border-slate-800 bg-pink-500/10 text-pink-300">
+                ❄️ 冷高 (反弹突袭)
+              </th>
+              <th class="py-2.5 px-3 bg-slate-900/90 text-emerald-400">
+                命中汇总
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/80">
+            <tr v-for="row in (triHighHistoryRows || [])" :key="'th_row_' + row.period" 
+                class="transition"
+                :class="!row.has_draw ? 'bg-amber-950/20 hover:bg-amber-900/30' : 'hover:bg-slate-800/40'">
+              <!-- 期号与日期 -->
+              <td class="py-2.5 px-3 border-r border-slate-800 font-bold text-amber-300 bg-slate-950/60">
+                <div class="text-xs font-bold text-amber-300">{{ row.period.slice(-3) }} 期</div>
+                <span class="text-[10px] text-slate-400 block font-normal font-mono">{{ row.date }}</span>
+                <span v-if="!row.has_draw" class="inline-block px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse mt-0.5">
+                  今晚预测·待开奖
+                </span>
+              </td>
+
+              <!-- 重复高 -->
+              <td class="py-2 px-3 border-r border-slate-800 text-left bg-slate-950/30">
+                <div class="flex flex-wrap gap-1">
+                  <span v-for="cell in row.repeat_high" :key="'rh_' + row.period + '_' + cell.num"
+                        class="px-1.5 py-0.5 rounded text-[11px] font-mono font-bold transition"
+                        :class="cell.is_win ? 'bg-amber-400 text-slate-950 shadow-[0_0_6px_rgba(251,191,36,0.6)] border border-amber-300' : 'bg-slate-900 text-slate-400 border border-slate-800'">
+                    {{ cell.num_str }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- 边高 Left -->
+              <td class="py-2 px-2 border-r border-slate-800/60 bg-slate-950/30">
+                <div class="flex gap-1 justify-center">
+                  <span v-for="cell in row.edge_high_left" :key="'ehl_' + row.period + '_' + cell.num"
+                        class="px-1.5 py-0.5 rounded text-[11px] font-mono font-bold transition"
+                        :class="cell.is_win ? 'bg-amber-400 text-slate-950 shadow-[0_0_6px_rgba(251,191,36,0.6)] border border-amber-300' : 'bg-slate-900 text-slate-400 border border-slate-800'">
+                    {{ cell.num_str }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- 边高 Right -->
+              <td class="py-2 px-2 border-r border-slate-800 bg-slate-950/30">
+                <div class="flex gap-1 justify-center">
+                  <span v-for="cell in row.edge_high_right" :key="'ehr_' + row.period + '_' + cell.num"
+                        class="px-1.5 py-0.5 rounded text-[11px] font-mono font-bold transition"
+                        :class="cell.is_win ? 'bg-amber-400 text-slate-950 shadow-[0_0_6px_rgba(251,191,36,0.6)] border border-amber-300' : 'bg-slate-900 text-slate-400 border border-slate-800'">
+                    {{ cell.num_str }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- 冷高 -->
+              <td class="py-2 px-3 border-r border-slate-800 text-left bg-slate-950/30">
+                <div class="flex flex-wrap gap-1">
+                  <span v-for="cell in row.cold_high" :key="'ch_' + row.period + '_' + cell.num"
+                        class="px-1.5 py-0.5 rounded text-[11px] font-mono font-bold transition"
+                        :class="cell.is_win ? 'bg-amber-400 text-slate-950 shadow-[0_0_6px_rgba(251,191,36,0.6)] border border-amber-300' : 'bg-slate-900 text-slate-400 border border-slate-800'">
+                    {{ cell.num_str }}
+                  </span>
+                </div>
+              </td>
+
+              <!-- 命中统计 -->
+              <td class="py-2 px-3 text-right bg-slate-950/60 font-mono">
+                <template v-if="row.has_draw">
+                  <div class="text-[11px] font-bold text-emerald-400">
+                    中 {{ row.stats?.union_hits || 0 }} / {{ row.stats?.union_count || 0 }} 码
+                  </div>
+                  <div class="text-[10px] text-slate-500"
+                       title="命中数必须对照随机基线：M 码的期望命中为 M×0.25；单期数字不构成显著性证据。">
+                    命中率 {{ ((row.stats?.union_hit_rate || 0) * 100).toFixed(0) }}%
+                    · 基线 {{ ((row.stats?.union_count || 0) * 0.25).toFixed(1) }} 码
+                    · Lift {{ row.stats?.union_count ? ((row.stats.union_hits || 0) / row.stats.union_count / 0.25).toFixed(2) + 'x' : '--' }}
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                    ⏳ 待今晚开奖
+                  </div>
+                  <div class="text-[10px] text-slate-400 mt-0.5">
+                    已收录 {{ row.stats?.union_count || 0 }} 码
+                  </div>
+                </template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═════════════════ SUB-TAB 3: 三高×点位 量化共振驾驶舱 ═════════════════ -->
+  <div v-show="triHighSubTab === 'cockpit'" class="space-y-6" v-if="triHighSummaryData">
+    <!-- 核心决策推演看板 -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- 做多进攻阵地 (7列) -->
+      <div class="lg:col-span-7 glass-panel p-5 space-y-4 border-t-2 border-amber-500">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">👑</span>
+            <h3 class="text-sm font-bold text-amber-300">三高×点位 深度共振做多阵列 (第 {{ triHighSummaryData.target_period }} 期)</h3>
+          </div>
+          <div class="flex items-center gap-2">
+            <button @click="triggerTriHighRun" :disabled="isRunning" class="cyber-btn cyber-btn-gold text-xs !py-1 flex items-center gap-1">
+              <span v-if="isRunning" class="animate-spin">⚙️</span>
+              <span v-else>⚡</span>
+              <span>{{ isRunning ? '推演中...' : '重新计算共振' }}</span>
+            </button>
+            <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono font-bold">进攻核</span>
+          </div>
+        </div>
+
+        <!-- 尖刀金胆 & 黄金选2搭档 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-amber-500/40 space-y-2">
+            <div class="flex items-center justify-between text-xs text-amber-300 font-bold">
+              <span>💎 尖刀共振金胆</span>
+              <span class="text-[10px] font-mono text-slate-400">三高×点位双激活</span>
+            </div>
+            <div class="flex items-center gap-3 pt-1">
+              <span class="lottery-ball ball-gold w-12 h-12 text-lg font-mono font-bold shadow-lg">
+                {{ triHighSummaryData.recommendations?.resonance_gold_single != null ? String(triHighSummaryData.recommendations?.resonance_gold_single).padStart(2, '0') : '--' }}
+              </span>
+              <div class="text-xs text-slate-300">
+                <span class="font-bold text-amber-400">超强共振得分最高</span>
+                <p class="text-[10px] text-slate-500">三高池与每日点位双重重叠</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-cyan-500/40 space-y-2">
+            <div class="flex items-center justify-between text-xs text-cyan-300 font-bold">
+              <span>👑 三高黄金选2搭档</span>
+              <span class="text-[10px] font-mono text-slate-400">最佳搭档</span>
+            </div>
+            <div class="flex items-center gap-2 pt-1">
+              <span v-for="num in (triHighSummaryData.recommendations?.gold_pair || [])" :key="'gp_' + num"
+                    class="lottery-ball ball-cyan w-10 h-10 text-sm font-mono font-bold">
+                {{ String(num).padStart(2, '0') }}
+              </span>
+              <span class="text-xs font-mono font-bold text-cyan-300">
+                [{{ (triHighSummaryData.recommendations?.gold_pair || []).map(x => String(x).padStart(2, '0')).join(' + ') }}]
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 最优 3 码 -->
+        <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-3">
+          <div>
+            <span class="text-xs font-bold text-slate-200 block mb-2">🎯 最优 3 码:</span>
+            <div class="flex flex-wrap gap-2">
+              <span v-for="(num, idx) in (triHighSummaryData.recommendations?.top3_gold || triHighSummaryData.recommendations?.top5 || [])" :key="'top3_' + num"
+                    class="lottery-ball w-9 h-9 text-xs font-mono font-bold"
+                    :class="idx === 0 ? 'ball-gold' : (idx === 1 ? 'ball-cyan' : 'ball-emerald')">
+                {{ String(num).padStart(2, '0') }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 做空防御与分类精选 (5列) -->
+      <div class="lg:col-span-5 glass-panel p-5 space-y-4 border-t-2 border-rose-500">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🛡️</span>
+            <h3 class="text-sm font-bold text-rose-300">分类突袭与防守排雷</h3>
+          </div>
+          <span class="text-xs px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 font-mono font-bold">防守/伏击</span>
+        </div>
+
+        <!-- 冷高突袭池 -->
+        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-pink-500/30 space-y-2">
+          <div class="flex items-center justify-between text-xs text-pink-300 font-bold">
+            <span>❄️ 冷高突袭伏击号 (临界爆发回补)</span>
+            <span class="text-[10px] font-mono text-pink-400">精选回补</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5 pt-1">
+            <span v-for="num in (triHighSummaryData.recommendations?.cold_strikes || [])" :key="'cs_' + num"
+                  class="px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 border border-pink-500/40 font-mono text-xs font-bold">
+              {{ String(num).padStart(2, '0') }}
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>

@@ -4,6 +4,7 @@
 ==============
 Walk-Forward 全局 Lift 未超过阈值前，禁止一切参数/权重自动微调。
 """
+from backend.utils.paths import get_cache_dir
 import os
 import json
 from typing import Dict, Optional
@@ -14,9 +15,9 @@ if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
 from utils.paths import get_project_root, data_path, _ensure_project_path
 _ensure_project_path()
 _PROJ = get_project_root()
-WF_RESULTS_FILE = os.path.join(_PROJ, 'cache', 'walk_forward_results.json')
+WF_RESULTS_FILE = os.path.join(get_cache_dir(), 'walk_forward_results.json')
 PARAM_STORE_FILE = data_path('param_store.json')
-GATE_STATE_FILE = os.path.join(_PROJ, 'cache', 'learning_gate_state.json')
+GATE_STATE_FILE = os.path.join(get_cache_dir(), 'learning_gate_state.json')
 
 DEFAULT_LIFT_THRESHOLD = 1.0  # 语义: Lift 多折 95%CI 下界 > 1.0 才视为可复现优势
 BASELINE_LIFT = 1.0            # 随机基线 Lift = 1.0

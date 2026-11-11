@@ -1,0 +1,142 @@
+<div v-show="activeTab === 'hit_leaderboard'" class="space-y-6">
+        <!-- 头部 + 工具栏 -->
+        <div class="glass-panel p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">🏆</span>
+            <h2 class="text-lg font-bold text-white">每日命中热力榜 <span class="text-xs font-normal text-cyan-400">Hit Leaderboard</span></h2>
+            <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono border border-emerald-500/30">跨模块 · 命中率高→低</span>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="flex items-center gap-1 text-xs">
+              <span class="text-slate-400">回看</span>
+              <button v-for="r in [10,20,30]" :key="r" @click="hitRange=r; fetchHitLeaderboard(r)"
+                class="px-2 py-1 rounded transition"
+                :class="hitRange===r ? 'bg-cyan-500 text-slate-950 font-bold' : 'bg-slate-800 text-slate-400'">{{ r }}</button>
+            </div>
+            <div class="flex items-center gap-1 text-xs">
+              <span class="text-slate-400">排序</span>
+              <button @click="hitSortKey='rate'" class="px-2 py-1 rounded transition" :class="hitSortKey==='rate' ? 'bg-amber-500 text-slate-950 font-bold' : 'bg-slate-800 text-slate-400'">命中率</button>
+              <button @click="hitSortKey='count'" class="px-2 py-1 rounded transition" :class="hitSortKey==='count' ? 'bg-rose-500 text-white font-bold' : 'bg-slate-800 text-slate-400'">命中数</button>
+            </div>
+            <button @click="fetchHitLeaderboard(hitRange)" class="cyber-btn cyber-btn-cyan text-xs flex items-center gap-1">
+              <span>🔄</span> 刷新
+            </button>
+          </div>
+        </div>
+
+        <!-- 当期命中排行表 (最新期) -->
+        <div class="glass-panel p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">📊</span>
+              <h3 class="text-base font-bold text-cyan-300">当期命中排行
+                <span class="text-xs text-slate-400 font-mono">第 {{ hitLeaderboard && hitLeaderboard.periods ? hitLeaderboard.periods[0] : '—' }} 期</span>
+              </h3>
+            </div>
+            <span class="text-xs text-slate-500">命中率 = 推荐命中数 / 本期推荐数 · 基线 {{ hitLeaderboard && hitLeaderboard.baseline_rate ? hitLeaderboard.baseline_rate : 25 }}%</span>
+          </div>
+          <div v-if="hitLoading" class="py-8 text-center text-slate-400 text-sm">加载命中数据...</div>
+          <div v-else-if="!hitSortedModules.length" class="py-8 text-center text-slate-500 text-sm">暂无命中数据</div>
+          <div v-else class="overflow-x-auto">
+            <table class="w-full text-xs">
+              <thead>
+                <tr class="text-slate-400 border-b border-slate-800">
+                  <th class="text-left py-2 px-2">#</th>
+                  <th class="text-left py-2 px-2">模块</th>
+                  <th class="text-center py-2 px-2">类型</th>
+                  <th class="text-center py-2 px-2">推荐数</th>
+                  <th class="text-center py-2 px-2">本期命中</th>
+                  <th class="text-center py-2 px-2">命中率</th>
+                  <th class="text-center py-2 px-2">Lift</th>
+                  <th class="text-center py-2 px-2">首推</th>
+                  <th class="text-left py-2 px-2">本期推荐号码</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(m, idx) in hitSortedModules" :key="m.id" class="border-b border-slate-800/60 hover:bg-slate-800/30">
+                  <td class="py-2 px-2">
+                    <span class="inline-flex w-6 h-6 items-center justify-center rounded font-bold font-mono text-xs"
+                      :class="idx===0 ? 'bg-amber-500 text-slate-950' : (idx===1 ? 'bg-slate-300 text-slate-900' : (idx===2 ? 'bg-amber-700 text-white' : 'bg-slate-800 text-slate-400'))">{{ idx+1 }}</span>
+                  </td>
+                  <td class="py-2 px-2 text-slate-200 font-semibold whitespace-nowrap">{{ m.name }}</td>
+                  <td class="py-2 px-2 text-center">
+                    <span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-cyan-500/20 text-cyan-300">荐号</span>
+                  </td>
+                  <td class="py-2 px-2 text-center font-mono text-slate-300">{{ m.recommended_count }}</td>
+                  <td class="py-2 px-2 text-center font-mono font-bold text-emerald-300">{{ m.latest.hit_count }}</td>
+                  <td class="py-2 px-2 text-center">
+                    <span class="inline-flex px-1.5 py-0.5 rounded font-mono font-bold" :style="{ background: hitColor(m.latest.hit_rate), color:'#031e2b' }">{{ (m.latest.hit_rate!=null?m.latest.hit_rate:0).toFixed(1) }}%</span>
+                  </td>
+                  <td class="py-2 px-2 text-center font-mono" :class="(m.latest.lift||0)>=1 ? 'text-emerald-300' : 'text-slate-400'">{{ (m.latest.lift||0).toFixed(2) }}x</td>
+                  <td class="py-2 px-2 text-center">{{ m.latest.top1_hit ? '🎯' : '—' }}</td>
+                  <td class="py-2 px-2">
+                    <div class="flex flex-wrap gap-1">
+                      <span v-for="num in m.latest.recommended" :key="'r'+num" class="inline-flex min-w-6 h-6 px-1 items-center justify-center rounded-full text-[10px] font-bold font-mono"
+                        :class="(hitLeaderboard.latest_actual||[]).includes(num) ? 'bg-emerald-500 text-white' : 'bg-slate-800 text-slate-400'">{{ String(num).padStart(2,'0') }}</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 近N期命中率热力矩阵 -->
+        <div class="glass-panel p-5">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-lg">🌡️</span>
+            <h3 class="text-base font-bold text-cyan-300">近 {{ hitRange }} 期命中率热力矩阵</h3>
+            <span class="text-[11px] text-slate-500">列=模块 · 行=期号(最新在上) · 越绿命中越高</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="text-[11px]">
+              <thead>
+                <tr>
+                  <th class="sticky left-0 bg-slate-950 px-2 py-1 text-slate-400 text-left">期号</th>
+                  <th v-for="m in hitSortedModules" :key="'c'+m.id" class="px-1 py-1">
+                    <div class="whitespace-nowrap text-center text-slate-300" :title="m.name">{{ m.name }}</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="p in (hitLeaderboard && hitLeaderboard.periods ? hitLeaderboard.periods : [])" :key="'p'+p">
+                  <td class="sticky left-0 bg-slate-950 px-2 py-1 font-mono text-slate-400">{{ p }}</td>
+                  <td v-for="m in hitSortedModules" :key="'r'+m.id+'x'+p" class="px-1 py-1">
+                    <div class="h-8 min-w-12 rounded flex items-center justify-center font-mono font-bold"
+                      :style="{ background: hitColor(hitRateOf(m,p)) }"
+                      :title="m.name+' 第'+p+'期 命中率 '+(hitRateOf(m,p)!=null?hitRateOf(m,p).toFixed(1)+'%':'无数据')">
+                      {{ hitRateOf(m,p)!=null ? hitRateOf(m,p).toFixed(0) : '·' }}
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-3 flex items-center gap-3 text-[11px] text-slate-400">
+            <span>图例:</span>
+            <span class="inline-flex items-center gap-1"><span class="inline-block w-4 h-4 rounded" style="background:rgba(16,185,129,0.85)"></span>≥75%</span>
+            <span class="inline-flex items-center gap-1"><span class="inline-block w-4 h-4 rounded" style="background:rgba(6,182,212,0.72)"></span>≥50%</span>
+            <span class="inline-flex items-center gap-1"><span class="inline-block w-4 h-4 rounded" style="background:rgba(245,158,11,0.6)"></span>≥25%</span>
+            <span class="inline-flex items-center gap-1"><span class="inline-block w-4 h-4 rounded" style="background:rgba(239,68,68,0.55)"></span>&lt;25%</span>
+          </div>
+        </div>
+
+        <!-- 模块近N期综合命中 -->
+        <div class="glass-panel p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-lg">🥇</span>
+            <h3 class="text-base font-bold text-cyan-300">模块近 {{ hitRange }} 期综合命中</h3>
+          </div>
+          <div v-if="!hitSortedModules.length" class="py-6 text-center text-slate-500 text-sm">暂无数据</div>
+          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div v-for="m in hitSortedModules" :key="'s'+m.id" class="stat-card border p-4">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-slate-300">{{ m.name }}</span>
+                <span class="text-[10px] font-mono text-cyan-300">荐号</span>
+              </div>
+              <div class="text-2xl font-black mt-2 font-mono" :style="{ color: hitColor(m.avg.hit_rate) }">{{ (m.avg && m.avg.hit_rate!=null ? m.avg.hit_rate : 0).toFixed(1) }}%</div>
+              <div class="text-[11px] text-slate-400 mt-1">均命中 {{ (m.avg && m.avg.hit_count!=null?m.avg.hit_count:0).toFixed(2) }}/期 · Lift {{ (m.avg && m.avg.lift!=null?m.avg.lift:0).toFixed(2) }}x</div>
+            </div>
+          </div>
+        </div>
+      </div>

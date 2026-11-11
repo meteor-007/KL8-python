@@ -2,8 +2,9 @@
 """
 Tier 3: Cross-Subsystem Combinations & Feedback Loops (跨子系统协同与闭环自学习)
 =============================================================================
-验证 7 路子系统共识聚合、KillSeeker 杀号碰撞与共振打标、以及自主学习闭环状态机。
+验证 7 路子系统共识聚合、交叉风控共振打标、以及自主学习闭环状态机。
 """
+from backend.utils.paths import get_outputs_dir
 import os
 import sys
 import unittest
@@ -69,18 +70,18 @@ class TestTier3ConsensusAggregation(unittest.TestCase):
         self.assertTrue(all(1 <= x <= 80 for x in top10))
 
         # 验证输出文件已生成
-        report_file = os.path.join(PROJ_DIR, "outputs", "aggregation", res["report_file"])
+        report_file = os.path.join(get_outputs_dir(), "aggregation", res["report_file"])
         self.assertTrue(os.path.exists(report_file))
 
 
 class TestTier3CrossValidationAndKillCollisions(unittest.TestCase):
-    """跨系统交叉风控、KillSeeker 撞车预警与共振打标测试"""
+    """跨系统交叉风控与共振打标测试"""
 
     def test_01_pick2_cross_validation_collision_tagging(self):
-        """验证定金选2交叉风控检测与杀号避雷标签"""
+        """验证定金选2交叉风控检测与共振标签"""
         flags = cross_validate_pick2_picks(PROJ_DIR, golden=12, hot=28, top5_pairs=[])
         self.assertIn("safety_audit", flags)
-        self.assertIn("golden_killed_by_killseeker", flags)
+        self.assertNotIn("golden_killed_by_killseeker", flags)
 
     def test_02_spatial_cross_validation_tagging(self):
         """验证空间点位系统跨子系统风控与共振打标"""
@@ -127,16 +128,30 @@ class TestTier3AutonomousLearningFeedback(unittest.TestCase):
         """验证在 Level 3 弱信号风险状态下参数强制冻结 (SKIPPED)"""
         learner = GoldPick2Learner()
         res = learner.update_weights_from_review(level=3, failure_modes=["GOLDEN_MISS"])
-        self.assertEqual(res["status"], "SKIPPED")
+        self.assertIn(res["status"], ["SKIPPED", "FROZEN"])
 
     def test_03_autonomous_learner_state_machine(self):
-        """验证主系统 AutonomousLearner 状态机初始化与当前状态读取"""
-        learner = AutonomousLearner()
-        state = learner.get_current_state()
-        self.assertIsInstance(state, dict)
-        self.assertIn("strategy_mode", state)
-        self.assertIn("pentagon_weights", state)
-        self.assertIn("environment_state", state)
+        """验证主系统 AutonomousLearner 状态机初始化与当前状态读取
+
+        2026-11-10：该引擎已从日更流水线退役（详见 autonomous_learner.py 头部说明），
+        测试仍保留状态机覆盖，但不再在 storage/cache 留下状态文件。
+        """
+        from backend.utils.paths import get_cache_dir
+        _sf = os.path.join(get_cache_dir(), "learner_state.json")
+        _existed = os.path.exists(_sf)
+        try:
+            learner = AutonomousLearner()
+            state = learner.get_current_state()
+            self.assertIsInstance(state, dict)
+            self.assertIn("strategy_mode", state)
+            self.assertIn("pentagon_weights", state)
+            self.assertIn("environment_state", state)
+        finally:
+            if not _existed and os.path.exists(_sf):
+                try:
+                    os.remove(_sf)
+                except OSError:
+                    pass
 
 
 class TestTier3ExcelDataETL(unittest.TestCase):

@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
-"""
-core.aggregation — 快乐8 终审共识与数据汇总复盘子系统
-"""
-from .consensus_engine import ConsensusEngine
-from .stable_evaluator import top_freq_in_window, walk_forward_stable
-from .proxy_generator import generate_proxy_signals
+"""Compatibility shim: backend.core.aggregation -> backend.modules.aggregation"""
+from __future__ import annotations
+import os as _os
 
-__all__ = ["ConsensusEngine", "top_freq_in_window", "walk_forward_stable", "generate_proxy_signals"]
+_REAL = _os.path.abspath(
+    _os.path.join(_os.path.dirname(__file__), "..", "..", "modules", 'aggregation')
+)
+__path__ = [_REAL]
+
+_real_init = _os.path.join(_REAL, "__init__.py")
+if _os.path.isfile(_real_init):
+    with open(_real_init, "r", encoding="utf-8") as _f:
+        _code = compile(_f.read(), _real_init, "exec")
+    exec(_code, globals())

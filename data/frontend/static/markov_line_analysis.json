@@ -1,0 +1,1058 @@
+{
+  "module_name": "markov_line",
+  "module_cn": "马尔可夫链与特征直线校准推演引擎",
+  "latest_issue": "2026280",
+  "target_issue": "2026281",
+  "latest_draw_numbers": [
+    4,
+    5,
+    7,
+    9,
+    12,
+    17,
+    26,
+    27,
+    30,
+    34,
+    43,
+    53,
+    66,
+    69,
+    70,
+    71,
+    72,
+    74,
+    75,
+    80
+  ],
+  "generated_at": "2026-10-22 20:32:16",
+  "top5_gold": [
+    8,
+    27,
+    70,
+    72,
+    73
+  ],
+  "top12_elite": [
+    6,
+    8,
+    26,
+    27,
+    42,
+    43,
+    44,
+    54,
+    70,
+    72,
+    73,
+    75
+  ],
+  "regime_mode": "DEFENSIVE_SHIELD",
+  "regime_desc": "🛡️ 防守刹车模式 (大环境离散分散，均衡防守降杠杆)",
+  "current_state": {
+    "state_id": 5,
+    "description": "高位聚集 + 连庄热态(和值>835)"
+  },
+  "predicted_primary_state": {
+    "state_id": 5,
+    "state_key": "HIGH_REPEAT",
+    "probability": 0.3482,
+    "description": "高位聚集 + 连庄热态(和值>835)",
+    "sum_level": "SUM_HIGH",
+    "odd_level": "ODD_BAL",
+    "momentum_level": "REPEAT_CLUST"
+  },
+  "predicted_alternative_states": [
+    {
+      "state_id": 1,
+      "state_key": "LOW_REPEAT",
+      "probability": 0.2667,
+      "description": "低位聚集 + 连庄热态(和值<785)"
+    }
+  ],
+  "transition_entropy": 2.2807,
+  "straight_line_calibration": {
+    "slope": 0.9852,
+    "intercept": 0.0097,
+    "r_squared": 0.9941,
+    "ks_statistic": 0.0422,
+    "is_straight": true,
+    "curve_points_sample": [
+      {
+        "x": 0.030314175653134268,
+        "y": 0.07142857142857142,
+        "y_ideal": 0.030314175653134268
+      },
+      {
+        "x": 0.1338291051601923,
+        "y": 0.12857142857142856,
+        "y_ideal": 0.1338291051601923
+      },
+      {
+        "x": 0.24864819709732244,
+        "y": 0.2571428571428571,
+        "y_ideal": 0.24864819709732244
+      },
+      {
+        "x": 0.38509088853916934,
+        "y": 0.34285714285714286,
+        "y_ideal": 0.38509088853916934
+      },
+      {
+        "x": 0.6517916130275894,
+        "y": 0.6714285714285715,
+        "y_ideal": 0.6517916130275894
+      },
+      {
+        "x": 1.0,
+        "y": 1.0,
+        "y_ideal": 1.0
+      }
+    ],
+    "total_points": 6
+  },
+  "auto_tuning": {
+    "best_half_life": 31.5,
+    "best_alpha": 0.09,
+    "best_beta": 0.15,
+    "best_r_squared": 0.9941,
+    "best_loss": 0.0996,
+    "best_line_fit": {
+      "slope": 0.9852,
+      "intercept": 0.0097,
+      "r_squared": 0.9941,
+      "ks_statistic": 0.0422,
+      "is_straight": true,
+      "curve_points_sample": [
+        {
+          "x": 0.030314175653134268,
+          "y": 0.07142857142857142,
+          "y_ideal": 0.030314175653134268
+        },
+        {
+          "x": 0.1338291051601923,
+          "y": 0.12857142857142856,
+          "y_ideal": 0.1338291051601923
+        },
+        {
+          "x": 0.24864819709732244,
+          "y": 0.2571428571428571,
+          "y_ideal": 0.24864819709732244
+        },
+        {
+          "x": 0.38509088853916934,
+          "y": 0.34285714285714286,
+          "y_ideal": 0.38509088853916934
+        },
+        {
+          "x": 0.6517916130275894,
+          "y": 0.6714285714285715,
+          "y_ideal": 0.6517916130275894
+        },
+        {
+          "x": 1.0,
+          "y": 1.0,
+          "y_ideal": 1.0
+        }
+      ],
+      "total_points": 6
+    },
+    "total_iterations": 15,
+    "trajectory": [
+      {
+        "iteration": 1,
+        "half_life": 30.0,
+        "smoothing_alpha": 0.02,
+        "second_order_weight": 0.1,
+        "loss": 0.2228,
+        "r_squared": 0.9922,
+        "slope": 0.9428,
+        "intercept": 0.0419,
+        "ks_stat": 0.072,
+        "curve_sample": [
+          {
+            "x": 0.024859696874553312,
+            "y": 0.07142857142857142,
+            "y_ideal": 0.024859696874553312
+          },
+          {
+            "x": 0.12801510682871806,
+            "y": 0.19999999999999998,
+            "y_ideal": 0.12801510682871806
+          },
+          {
+            "x": 0.235977087586193,
+            "y": 0.2571428571428571,
+            "y_ideal": 0.235977087586193
+          },
+          {
+            "x": 0.3770326231990785,
+            "y": 0.34285714285714286,
+            "y_ideal": 0.3770326231990785
+          },
+          {
+            "x": 0.6644849148280719,
+            "y": 0.6714285714285715,
+            "y_ideal": 0.6644849148280719
+          },
+          {
+            "x": 1.0,
+            "y": 1.0,
+            "y_ideal": 1.0
+          }
+        ]
+      },
+      {
+        "iteration": 2,
+        "half_life": 60.0,
+        "smoothing_alpha": 0.15,
+        "second_order_weight": 0.35,
+        "loss": 0.1922,
+        "r_squared": 0.9858,
+        "slope": 0.9982,
+        "intercept": 0.0212,
+        "ks_stat": 0.0938,
+        "curve_sample": [
+          {
+            "x": 0.03109129921159509,
+            "y": 0.07142857142857142,
+            "y_ideal": 0.03109129921159509
+          },
+          {
+            "x": 0.10523660044079956,
+            "y": 0.12857142857142856,
+            "y_ideal": 0.10523660044079956
+          },
+          {
+            "x": 0.22083952319283512,
+            "y": 0.21428571428571427,
+            "y_ideal": 0.22083952319283512
+          },
+          {
+            "x": 0.3708829549065902,
+            "y": 0.34285714285714286,
+            "y_ideal": 0.3708829549065902
+          },
+          {
+            "x": 0.5776139714476687,
+            "y": 0.6714285714285715,
+            "y_ideal": 0.5776139714476687
+          },
+          {
+            "x": 1.0,
+            "y": 1.0,
+            "y_ideal": 1.0
+          }
+        ]
+      },
+      {
+        "iteration": 3,
+        "half_life": 20.0,
+        "smoothing_alpha": 0.05,
+        "second_order_weight": 0.2,
+        "loss": 0.1116,
+        "r_squared": 0.991,
+        "slope": 0.9977,
+        "intercept": 0.0104,
+        "ks_stat": 0.0539,
+        "curve_sample": [
+          {
+            "x": 0.02215232477190583,
+            "y": 0.07142857142857142,
+            "y_ideal": 0.02215232477190583
+          },
+          {
+            "x": 0.12854075110336224,
+            "y": 0.12857142857142856,
+            "y_ideal": 0.12854075110336224
+          },
+          {
+            "x": 0.2426122430276088,
+            "y": 0.21428571428571427,
+            "y_ideal": 0.2426122430276088
+          },
+          {
+            "x": 0.3604231052789514,
+            "y": 0.34285714285714286,
+            "y_ideal": 0.3604231052789514
+          },
+          {
+            "x": 0.6175220520118508,
+            "y": 0.6714285714285715,
+            "y_ideal": 0.6175220520118508
+          },
+          {
+            "x": 1.0,
+            "y": 1.0,
+            "y_ideal": 1.0
+          }
+        ]
+      },
+      {
+        "iteration": 4,
+        "half_life": 75.0,
+        "smoothing_alpha": 0.2,
+        "second_order_weight": 0.4,
+        "loss": 0.2278,
+        "r_squared": 0.983,
+        "slope": 0.9979,
+        "intercept": 0.0265,
+        "ks_stat": 0.1101,
+        "curve_sample": [
+          {
+            "x": 0.032414099384133255,
+            "y": 0.07142857142857142,
+            "y_ideal": 0.032414099384133255
+          },
+          {
+            "x": 0.10137583353538247,
+            "y": 0.12857142857142856,
+            "y_ideal": 0.10137583353538247
+          },
+          {
+            "x": 0.21076649145800389,
+            "y": 0.21428571428571427,
+            "y_ideal": 0.21076649145800389
+          },
+          {
+            "x": 0.36865953923383254,
+            "y": 0.34285714285714286,
+            "y_ideal": 0.36865953923383254
+          },
+          {
+            "x": 0.5612990884288261,
+            "y": 0.6714285714285715,
+            "y_ideal": 0.5612990884288261
+          },
+          {
+            "x": 1.0,
+            "y": 1.0,
+            "y_ideal": 1.0
+          }
+        ]
+      },
+      {
+        "iteration": 5,
+        "half_life": 45.0,
+        "smoothing_alpha": 0.08,
+        "second_order_weight": 0.25,
+        "loss": 0.123,
+        "r_squared": 0.9896,
+        "slope": 0.9972,
+        "intercept": 0.0105,
+        "ks_stat": 0.0593,
+        "curve_sample": [
+          {
+            "x": 0.028915246028983425,
+            "y": 0.07142857142857142,
+            "y_ideal": 0.028915246028983425
+          },
+          {
+            "x": 0.11431137993386509,
+            "y": 0.12857142857142856,
+            "y_ideal": 0.11431137993386509
+          },
+          {
+            "x": 0.24212333809722333,
+            "y": 0.21428571428571427,
+            "y_ideal": 0.24212333809722333
+          },
+          {
+            "x": 0.3748674135134358,
+            "y": 0.34285714285714286,
+            "y_ideal": 0.3748674135134358
+          },
+          {
+            "x": 0.6121714167418242,
+            "y": 0.6714285714285715,
+            "y_ideal": 0.6121714167418242
+          },
+          {
+            "x": 1.0,
+            "y": 1.0,
+            "y_ideal": 1.0
+          }
+        ]
+      },
+      {
+        "iteration": 6,
+        "half_life": 35.0,
+        "smoothing_alpha": 0.1,
+        "second_order_weight": 0.15,
+        "loss": 0.1039,
+        "r_squared": 0.994,
+        "slope": 0.9849,
+        "intercept": 0.0086,
+        "ks_stat": 0.0455,
+        "curve_sample": [
+          {
+            "x": 0.031770171218389764,
+            "y": 0.07142857142857142,
+            "y_ideal": 0.031770171218389764
+          },
+          {
+            "x": 0.13324976558981483,
+            "y": 0.12857142857142856,
+            "y_ideal": 0.13324976558981483
+          },
+          {
+            "x": 0.2489634283068131,
+            "y": 0.2571428571428571,
+            "y_ideal": 0.2489634283068131
+          },
+          {
+            "x": 0.38832552710901025,
+            "y": 0.34285714285714286,
+            "y_ideal": 0.38832552710901025
+          },
+          {
+            "x": 0.654442883935765,
+            "y": 0.6714285714285715,
+            "y_ideal": 0.654442883935765
+          },
+          {
+            "x": 1.0,
+            "y": 1.0,
+            "y_ideal": 1.0
+          }
+        ]
+      },
+      {
+        "iteration": 7,
+        "half_life": 50.0,
+        "smoothing_alpha": 0.06,
+        "second_order_weight": 0.3,
+        "loss": 0.1754,
+        "r_squared": 0.9882,
+        "slope": 0.9941,
+        "intercept": 0.0219,
+        "ks_stat": 0.0826,
+        "curve_sample": [
+          {
+            "x": 0.02658191753157253,
+            "y": 0.07142857142857142,
+            "y_ideal": 0.02658191753157253
+          },
+          {
+            "x": 0.1044685293195681,
+            "y": 0.12857142857142856,
+            "y_ideal": 0.1044685293195681
+          },
+          {
+            "x": 0.22493290126062704,
+            "y": 0.21428571428571427,
+            "y_ideal": 0.22493290126062704
+          },
+          {
+            "x": 0.3659216913656964,
+            "y": 0.34285714285714286,
+            "y_ideal": 0.3659216913656964
+          },
+          {
+            "x": 0.5888034823324246,
+            "y": 0.6714285714285715,
+            "y_ideal": 0.5888034823324246
+          },
+          {
+            "x": 1.0,
+            "y": 1.0,
+            "y_ideal": 1.0
+          }
+        ]
+      },
+      {
+        "iteration": 8,
+        "half_life": 40.0,
+        "smoothing_alpha": 0.04,
+        "second_order_weight": 0.22,
+        "loss": 0.1298,
+        "r_squared": 0.9934,
+        "slope": 0.9839,
+        "intercept": 0.0226,
+        "ks_stat": 0.0519,
+        "curve_sample": [
+          {
+            "x": 0.02618896180637104,
+            "y": 0.07142857142857142,
+            "y_ideal": 0.02618896180637104
+          },
+          {
+            "x": 0.11514977476089437,
+            "y": 0.12857142857142856,
+            "y_ideal": 0.11514977476089437
+          },
+          {
+            "x": 0.24168809049409065,
+            "y": 0.2571428571428571,
+            "y_ideal": 0.24168809049409065
+          },
+          {
+            "x": 0.3716934896537735,
+            "y": 0.34285714285714286,
+            "y_ideal": 0.3716934896537735
+          },
+          {
+            "x": 0.6195746411238425,
+            "y": 0.6714285714285715,
+            "y_ideal": 0.6195746411238425
+          },
+          {
+            "x": 1.0,
+            "y": 1.0,
+            "y_ideal": 1.0
+          }
+        ]
+      },
+      {
+        "iteration": 9,
+        "half_life": 55.0,
+        "smoothing_alpha": 0.12,
+        "second_order_weight": 0.28,
+        "loss": 0.135,
+        "r_squared": 0.9888,
+        "slope": 0.9989,
+        "intercept": 0.0113,
+        "ks_stat": 0.0668,
+        "curve_sample": [
+          {
+            "x": 0.03135612527812176,
+            "y": 0.07142857142857142,
+            "y_ideal": 0.03135612527812176
+          },
+          {
+            "x": 0.1123780710490036,
+            "y": 0.12857142857142856,
+            "y_ideal": 0.1123780710490036
+          },
+          {
+            "x": 0.23818237257616573,
+            "y": 0.21428571428571427,
+            "y_ideal": 0.23818237257616573
+          },
+          {
+            "x": 0.37662871591555636,
+            "y": 0.34285714285714286,
+            "y_ideal": 0.37662871591555636
+          },
+          {
+            "x": 0.6046375385263528,
+            "y": 0.6714285714285715,
+            "y_ideal": 0.6046375385263528
+          },
+          {
+            "x": 1.0,
+            "y": 1.0,
+            "y_ideal": 1.0
+          }
+        ]
+      },
+      {
+        "iteration": 10,
+        "half_life": 65.0,
+        "smoothing_alpha": 0.03,
+        "second_order_weight": 0.18,
+        "loss": 0.1142,
+        "r_squared": 0.9947,
+        "slope": 0.9782,
+        "intercept": 0.02,
+        "ks_stat": 0.0413,
+        "curve_sample": [
+          {
+            "x": 0.03013992858284704,
+            "y": 0.07142857142857142,
+            "y_ideal": 0.03013992858284704
+          },
+          {
+            "x": 0.11609979896590428,
+            "y": 0.12857142857142856,
+            "y_ideal": 0.11609979896590428
+          },
+          {
+            "x": 0.23642416957629286,
+            "y": 0.2571428571428571,
+            "y_ideal": 0.23642416957629286
+          },
+          {
+            "x": 0.3789118517278811,
+            "y": 0.34285714285714286,
+            "y_ideal": 0.3789118517278811
+          },
+          {
+            "x": 0.6424298026382651,
+            "y": 0.6714285714285715,
+            "y_ideal": 0.6424298026382651
+          },
+          {
+            "x": 1.0,
+            "y": 1.0,
+            "y_ideal": 1.0
+          }
+        ]
+      },
+      {
+        "iteration": 11,
+        "half_life": 31.5,
+        "smoothing_alpha": 0.09,
+        "second_order_weight": 0.15,
+        "loss": 0.0996,
+        "r_squared": 0.9941,
+        "slope": 0.9852,
+        "intercept": 0.0097,
+        "ks_stat": 0.0422,
+        "curve_sample": [
+          {
+            "x": 0.030314175653134268,
+            "y": 0.07142857142857142,
+            "y_ideal": 0.030314175653134268
+          },
+          {
+            "x": 0.1338291051601923,
+            "y": 0.12857142857142856,
+            "y_ideal": 0.1338291051601923
+          },
+          {
+            "x": 0.24864819709732244,
+            "y": 0.2571428571428571,
+            "y_ideal": 0.24864819709732244
+          },
+          {
+            "x": 0.38509088853916934,
+            "y": 0.34285714285714286,
+            "y_ideal": 0.38509088853916934
+          },
+          {
+            "x": 0.6517916130275894,
+            "y": 0.6714285714285715,
+            "y_ideal": 0.6517916130275894
+          },
+          {
+            "x": 1.0,
+            "y": 1.0,
+            "y_ideal": 1.0
+          }
+        ]
+      },
+      {
+        "iteration": 12,
+        "half_life": 38.5,
+        "smoothing_alpha": 0.11,
+        "second_order_weight": 0.15,
+        "loss": 0.1072,
+        "r_squared": 0.9939,
+        "slope": 0.9847,
+        "intercept": 0.0077,
+        "ks_stat": 0.048,
+        "curve_sample": [
+          {
+            "x": 0.033064400923370055,
+            "y": 0.07142857142857142,
+            "y_ideal": 0.033064400923370055
+          },
+          {
+            "x": 0.13286077438388247,
+            "y": 0.12857142857142856,
+            "y_ideal": 0.13286077438388247
+          },
+          {
+            "x": 0.24922583691824168,
+            "y": 0.2571428571428571,
+            "y_ideal": 0.24922583691824168
+          },
+          {
+            "x": 0.39083293791809137,
+            "y": 0.34285714285714286,
+            "y_ideal": 0.39083293791809137
+          },
+          {
+            "x": 0.6567126844976544,
+            "y": 0.6714285714285715,
+            "y_ideal": 0.6567126844976544
+          },
+          {
+            "x": 1.0,
+            "y": 1.0,
+            "y_ideal": 1.0
+          }
+        ]
+      },
+      {
+        "iteration": 13,
+        "half_life": 35.0,
+        "smoothing_alpha": 0.08,
+        "second_order_weight": 0.165,
+        "loss": 0.1022,
+        "r_squared": 0.9941,
+        "slope": 0.9844,
+        "intercept": 0.0125,
+        "ks_stat": 0.0416,
+        "curve_sample": [
+          {
+            "x": 0.029812064062270528,
+            "y": 0.07142857142857142,
+            "y_ideal": 0.029812064062270528
+          },
+          {
+            "x": 0.12895258625066874,
+            "y": 0.12857142857142856,
+            "y_ideal": 0.12895258625066874
+          },
+          {
+            "x": 0.2465900705603654,
+            "y": 0.2571428571428571,
+            "y_ideal": 0.2465900705603654
+          },
+          {
+            "x": 0.3832817906851551,
+            "y": 0.34285714285714286,
+            "y_ideal": 0.3832817906851551
+          },
+          {
+            "x": 0.6459592022557699,
+            "y": 0.6714285714285715,
+            "y_ideal": 0.6459592022557699
+          },
+          {
+            "x": 1.0,
+            "y": 1.0,
+            "y_ideal": 1.0
+          }
+        ]
+      },
+      {
+        "iteration": 14,
+        "half_life": 35.0,
+        "smoothing_alpha": 0.12,
+        "second_order_weight": 0.135,
+        "loss": 0.1079,
+        "r_squared": 0.9937,
+        "slope": 0.9852,
+        "intercept": 0.0049,
+        "ks_stat": 0.0504,
+        "curve_sample": [
+          {
+            "x": 0.03368432520373069,
+            "y": 0.07142857142857142,
+            "y_ideal": 0.03368432520373069
+          },
+          {
+            "x": 0.13745190410908517,
+            "y": 0.12857142857142856,
+            "y_ideal": 0.13745190410908517
+          },
+          {
+            "x": 0.25128155048596634,
+            "y": 0.2571428571428571,
+            "y_ideal": 0.25128155048596634
+          },
+          {
+            "x": 0.3932574124339457,
+            "y": 0.34285714285714286,
+            "y_ideal": 0.3932574124339457
+          },
+          {
+            "x": 0.6627442317551284,
+            "y": 0.6714285714285715,
+            "y_ideal": 0.6627442317551284
+          },
+          {
+            "x": 1.0,
+            "y": 1.0,
+            "y_ideal": 1.0
+          }
+        ]
+      },
+      {
+        "iteration": 15,
+        "half_life": 36.75,
+        "smoothing_alpha": 0.095,
+        "second_order_weight": 0.158,
+        "loss": 0.1039,
+        "r_squared": 0.994,
+        "slope": 0.9846,
+        "intercept": 0.01,
+        "ks_stat": 0.0443,
+        "curve_sample": [
+          {
+            "x": 0.031488022336759486,
+            "y": 0.07142857142857142,
+            "y_ideal": 0.031488022336759486
+          },
+          {
+            "x": 0.13093857670037717,
+            "y": 0.12857142857142856,
+            "y_ideal": 0.13093857670037717
+          },
+          {
+            "x": 0.24796843121304868,
+            "y": 0.2571428571428571,
+            "y_ideal": 0.24796843121304868
+          },
+          {
+            "x": 0.3872024155992293,
+            "y": 0.34285714285714286,
+            "y_ideal": 0.3872024155992293
+          },
+          {
+            "x": 0.651436374602817,
+            "y": 0.6714285714285715,
+            "y_ideal": 0.651436374602817
+          },
+          {
+            "x": 1.0,
+            "y": 1.0,
+            "y_ideal": 1.0
+          }
+        ]
+      }
+    ]
+  },
+  "top_rebound_signals": [
+    {
+      "target_id": 5,
+      "target_type": "ball",
+      "current_residual": -4.0,
+      "z_score": -1.93,
+      "is_rebounding": true,
+      "rebound_strength": 3.3769
+    },
+    {
+      "target_id": 69,
+      "target_type": "ball",
+      "current_residual": -7.0,
+      "z_score": -1.882,
+      "is_rebounding": true,
+      "rebound_strength": 3.293
+    },
+    {
+      "target_id": 75,
+      "target_type": "ball",
+      "current_residual": -2.0,
+      "z_score": -1.674,
+      "is_rebounding": true,
+      "rebound_strength": 2.9289
+    },
+    {
+      "target_id": 12,
+      "target_type": "ball",
+      "current_residual": -4.0,
+      "z_score": -1.443,
+      "is_rebounding": true,
+      "rebound_strength": 2.5251
+    },
+    {
+      "target_id": 71,
+      "target_type": "ball",
+      "current_residual": -6.0,
+      "z_score": -1.297,
+      "is_rebounding": true,
+      "rebound_strength": 2.2692
+    },
+    {
+      "target_id": 34,
+      "target_type": "ball",
+      "current_residual": -1.0,
+      "z_score": -1.967,
+      "is_rebounding": true,
+      "rebound_strength": 1.5737
+    },
+    {
+      "target_id": 77,
+      "target_type": "ball",
+      "current_residual": -2.0,
+      "z_score": -2.574,
+      "is_rebounding": false,
+      "rebound_strength": 1.2869
+    },
+    {
+      "target_id": 57,
+      "target_type": "ball",
+      "current_residual": -3.0,
+      "z_score": -2.205,
+      "is_rebounding": false,
+      "rebound_strength": 1.1027
+    },
+    {
+      "target_id": 42,
+      "target_type": "ball",
+      "current_residual": -1.0,
+      "z_score": -1.365,
+      "is_rebounding": true,
+      "rebound_strength": 1.0923
+    },
+    {
+      "target_id": 18,
+      "target_type": "ball",
+      "current_residual": -3.0,
+      "z_score": -2.177,
+      "is_rebounding": false,
+      "rebound_strength": 1.0887
+    }
+  ],
+  "candidate_details": [
+    {
+      "ball": 27,
+      "composite_score": 0.9854,
+      "mid_hot_score": 1.0,
+      "neighbor_boost": 1.85,
+      "sandwich_boost": 0.0,
+      "omission_surge": 0.8,
+      "rebound_score": 0.0,
+      "gaussian_gravity": 0.7155,
+      "reason": "16期黄金中热主力 | 上期紧邻扩散 | 连庄热态核心重号"
+    },
+    {
+      "ball": 70,
+      "composite_score": 0.9724,
+      "mid_hot_score": 1.0,
+      "neighbor_boost": 1.85,
+      "sandwich_boost": 0.0,
+      "omission_surge": 0.8,
+      "rebound_score": 0.0835,
+      "gaussian_gravity": 0.5243,
+      "reason": "16期黄金中热主力 | 上期紧邻扩散 | 连庄热态核心重号"
+    },
+    {
+      "ball": 72,
+      "composite_score": 0.9634,
+      "mid_hot_score": 1.0,
+      "neighbor_boost": 1.85,
+      "sandwich_boost": 0.0,
+      "omission_surge": 0.8,
+      "rebound_score": 0.0,
+      "gaussian_gravity": 0.4709,
+      "reason": "16期黄金中热主力 | 上期紧邻扩散 | 连庄热态核心重号"
+    },
+    {
+      "ball": 73,
+      "composite_score": 0.957,
+      "mid_hot_score": 1.0,
+      "neighbor_boost": 0.85,
+      "sandwich_boost": 1.8,
+      "omission_surge": 1.0,
+      "rebound_score": 0.0,
+      "gaussian_gravity": 0.4449,
+      "reason": "16期黄金中热主力 | ⚡ 空间夹击高压影子点(穿透提权) | 黄金周期爆发(遗漏4期)"
+    },
+    {
+      "ball": 75,
+      "composite_score": 0.8739,
+      "mid_hot_score": 0.55,
+      "neighbor_boost": 1.85,
+      "sandwich_boost": 0.0,
+      "omission_surge": 0.8,
+      "rebound_score": 0.8673,
+      "gaussian_gravity": 0.3947,
+      "reason": "上期紧邻扩散 | 连庄热态核心重号 | 直线残差均值回归拐点"
+    },
+    {
+      "ball": 71,
+      "composite_score": 0.8734,
+      "mid_hot_score": 0.55,
+      "neighbor_boost": 1.85,
+      "sandwich_boost": 0.0,
+      "omission_surge": 0.8,
+      "rebound_score": 0.672,
+      "gaussian_gravity": 0.4974,
+      "reason": "上期紧邻扩散 | 连庄热态核心重号 | 直线残差均值回归拐点"
+    },
+    {
+      "ball": 26,
+      "composite_score": 0.857,
+      "mid_hot_score": 0.55,
+      "neighbor_boost": 1.85,
+      "sandwich_boost": 0.0,
+      "omission_surge": 0.8,
+      "rebound_score": 0.0,
+      "gaussian_gravity": 0.6887,
+      "reason": "上期紧邻扩散 | 连庄热态核心重号"
+    },
+    {
+      "ball": 74,
+      "composite_score": 0.8328,
+      "mid_hot_score": 0.55,
+      "neighbor_boost": 1.85,
+      "sandwich_boost": 0.0,
+      "omission_surge": 0.8,
+      "rebound_score": 0.0,
+      "gaussian_gravity": 0.4195,
+      "reason": "上期紧邻扩散 | 连庄热态核心重号"
+    },
+    {
+      "ball": 69,
+      "composite_score": 0.8234,
+      "mid_hot_score": 0.3,
+      "neighbor_boost": 1.85,
+      "sandwich_boost": 0.0,
+      "omission_surge": 0.8,
+      "rebound_score": 0.9752,
+      "gaussian_gravity": 0.5515,
+      "reason": "上期紧邻扩散 | 连庄热态核心重号 | 直线残差均值回归拐点"
+    },
+    {
+      "ball": 8,
+      "composite_score": 0.8189,
+      "mid_hot_score": 1.0,
+      "neighbor_boost": 0.85,
+      "sandwich_boost": 1.8,
+      "omission_surge": 0.4,
+      "rebound_score": 0.0,
+      "gaussian_gravity": 0.2431,
+      "reason": "16期黄金中热主力 | ⚡ 空间夹击高压影子点(穿透提权)"
+    },
+    {
+      "ball": 6,
+      "composite_score": 0.818,
+      "mid_hot_score": 1.0,
+      "neighbor_boost": 0.85,
+      "sandwich_boost": 1.8,
+      "omission_surge": 0.4,
+      "rebound_score": 0.0464,
+      "gaussian_gravity": 0.2078,
+      "reason": "16期黄金中热主力 | ⚡ 空间夹击高压影子点(穿透提权)"
+    },
+    {
+      "ball": 4,
+      "composite_score": 0.8109,
+      "mid_hot_score": 0.55,
+      "neighbor_boost": 1.85,
+      "sandwich_boost": 0.0,
+      "omission_surge": 0.8,
+      "rebound_score": 0.0,
+      "gaussian_gravity": 0.1761,
+      "reason": "上期紧邻扩散 | 连庄热态核心重号"
+    },
+    {
+      "ball": 5,
+      "composite_score": 0.7922,
+      "mid_hot_score": 0.3,
+      "neighbor_boost": 1.85,
+      "sandwich_boost": 0.0,
+      "omission_surge": 0.8,
+      "rebound_score": 1.0,
+      "gaussian_gravity": 0.1915,
+      "reason": "上期紧邻扩散 | 连庄热态核心重号 | 直线残差均值回归拐点"
+    },
+    {
+      "ball": 43,
+      "composite_score": 0.7896,
+      "mid_hot_score": 1.0,
+      "neighbor_boost": 1.0,
+      "sandwich_boost": 0.0,
+      "omission_surge": 0.8,
+      "rebound_score": 0.0,
+      "gaussian_gravity": 0.9959,
+      "reason": "16期黄金中热主力 | 上期紧邻扩散 | 连庄热态核心重号"
+    },
+    {
+      "ball": 54,
+      "composite_score": 0.7838,
+      "mid_hot_score": 1.0,
+      "neighbor_boost": 0.85,
+      "sandwich_boost": 0.0,
+      "omission_surge": 1.0,
+      "rebound_score": 0.0,
+      "gaussian_gravity": 0.9197,
+      "reason": "16期黄金中热主力 | 上期紧邻扩散 | 黄金周期爆发(遗漏6期)"
+    }
+  ]
+}

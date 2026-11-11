@@ -1,0 +1,320 @@
+<div v-show="activeTab === 'jingle_cockpit'" class="space-y-6">
+        <!-- 头部概览 -->
+        <div class="glass-panel p-5">
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xl">📜</span>
+                <h2 class="text-lg font-bold text-amber-300">顺口溜口诀规律与组合带出研判</h2>
+                <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono border border-amber-500/30">
+                  90条FDR精英口诀
+                </span>
+                <span v-if="jingleSummary" class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono">
+                  目标期: {{ jingleSummary.target_issue }}
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                💡 原理大白话：上期同时开出某些死党号码（触发组合），下期大概率带出特定号码（口诀推荐）。严密结合超几何理论基线与真·样本外防过拟合审计。
+              </p>
+            </div>
+            <div class="flex items-center gap-3">
+              <button @click="fetchJingleSummary(); fetchJingleReview(30);" class="cyber-btn cyber-btn-cyan text-xs !py-1.5">
+                🔄 刷新口诀数据
+              </button>
+              <button @click="triggerJingleRun" :disabled="isRunning" class="cyber-btn cyber-btn-gold text-xs !py-1.5">
+                🚀 运行口诀推演任务
+              </button>
+              <button @click="openModuleHistory('jingle_cockpit')" class="cyber-btn text-xs !py-1.5 flex items-center gap-1 bg-purple-500/15 text-purple-200 border border-purple-400/40 hover:border-purple-300/70">
+                <span>📜</span> 历史复盘记录
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4大核心指标卡片 -->
+        <div v-if="jingleSummary" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="glass-panel p-4 border-l-4 border-l-cyan-400">
+            <div class="text-xs text-slate-400">今日触发口诀</div>
+            <div class="text-2xl font-black text-cyan-300 mt-1">{{ jingleSummary.fired_count || 0 }} <span class="text-xs font-normal text-slate-400">条</span></div>
+            <div class="text-[11px] text-slate-500 mt-1">基准期号: {{ jingleSummary.latest_issue }}</div>
+          </div>
+
+          <div class="glass-panel p-4 border-l-4 border-l-amber-400">
+            <div class="text-xs text-slate-400">综合推荐码量</div>
+            <div class="text-2xl font-black text-amber-300 mt-1">{{ jingleSummary.k_count || 0 }} <span class="text-xs font-normal text-slate-400">码</span></div>
+            <div class="text-[11px] text-slate-500 mt-1">按 OOF 命中率加权聚合</div>
+          </div>
+
+          <div class="glass-panel p-4 border-l-4 border-l-emerald-400">
+            <div class="text-xs text-slate-400">至少一中理论期望</div>
+            <div class="text-2xl font-black text-emerald-300 mt-1">{{ ((jingleSummary.at_least_one_baseline || 0)*100).toFixed(1) }}%</div>
+            <div class="text-[11px] text-slate-500 mt-1">超几何无放回精密基线</div>
+          </div>
+
+          <div class="glass-panel p-4 border-l-4 border-l-purple-400">
+            <div class="text-xs text-slate-400">近30期综合超额 Lift</div>
+            <div class="text-2xl font-black text-purple-300 mt-1">{{ (jingleReview && jingleReview.metrics && jingleReview.metrics.overall_lift != null) ? jingleReview.metrics.overall_lift + 'x' : '--' }}</div>
+            <div class="text-[11px] text-slate-500 mt-1">{{ (jingleReview && jingleReview.metrics && jingleReview.metrics.overall_lift != null) ? '真·样本外实战对账' : '复盘数据缺失，未对账' }}</div>
+          </div>
+        </div>
+
+        <!-- 推荐码展示与交叉风控打标 -->
+        <div v-if="jingleSummary && jingleSummary.recommended_numbers && jingleSummary.recommended_numbers.length" class="glass-panel p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">🎯</span>
+              <h3 class="text-sm font-bold text-slate-100">今日口诀加权推荐码 (按命中优势度排序)</h3>
+            </div>
+            <div class="flex items-center gap-4 text-xs font-mono">
+              <span class="text-emerald-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> 多维共振码</span>
+              <span class="text-red-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-400"></span> 风控冲突码</span>
+              <span class="text-slate-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-400"></span> 独立口诀码</span>
+            </div>
+          </div>
+
+          <!-- 号码彩球矩阵 -->
+          <div class="flex flex-wrap items-center gap-4 py-2">
+            <div v-for="tagItem in (jingleSummary.cross_validation ? jingleSummary.cross_validation.detailed_tags : [])" :key="tagItem.number" 
+                 class="flex flex-col items-center gap-1.5 cursor-pointer transform hover:scale-110 transition"
+                 @click="openBallDetail({number: tagItem.number})">
+              <div class="lottery-ball text-base font-bold shadow-lg"
+                   :class="{
+                     'ball-gold pulse-gold': tagItem.is_resonance,
+                     'border-2 border-red-500 bg-red-950/60 text-red-300': tagItem.is_danger,
+                     'ball-cyan': !tagItem.is_resonance && !tagItem.is_danger
+                   }">
+                {{ String(tagItem.number).padStart(2, '0') }}
+              </div>
+              <div class="text-[10px] font-mono"
+                   :class="{
+                     'text-emerald-300': tagItem.is_resonance,
+                     'text-red-400': tagItem.is_danger,
+                     'text-slate-400': !tagItem.is_resonance && !tagItem.is_danger
+                   }">
+                {{ tagItem.tags && tagItem.tags[0] ? tagItem.tags[0].label.split(' ')[1] : '口诀码' }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 今日触发口诀明细卡片 -->
+        <div v-if="jingleSummary && jingleSummary.fired_details && jingleSummary.fired_details.length" class="glass-panel p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+              <span>⚡</span> 触发口诀精析 (共 {{ jingleSummary.fired_details.length }} 条)
+            </h3>
+            <span class="text-xs text-slate-400">满足条件: 触发组合 ⊆ 上期开奖号码</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div v-for="fd in jingleSummary.fired_details" :key="fd.rule_id" class="bg-slate-900/80 rounded-lg p-4 border border-slate-700/60 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-bold text-cyan-300">#{{ fd.rule_id }} {{ fd.kind_name }}</span>
+                <span class="text-xs px-2 py-0.5 rounded font-mono font-bold"
+                      :class="fd.oof_lift >= 4.0 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'">
+                  Lift {{ fd.oof_lift }}x
+                </span>
+              </div>
+
+              <div class="flex items-center justify-between bg-slate-950/60 p-2.5 rounded border border-slate-800">
+                <div>
+                  <div class="text-[10px] text-slate-400 mb-1">上期触发组合</div>
+                  <div class="flex gap-1">
+                    <span v-for="tn in fd.trigger" :key="tn" class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono text-xs font-bold">
+                      {{ String(tn).padStart(2, '0') }}
+                    </span>
+                  </div>
+                </div>
+                <div class="text-slate-500 text-sm">➔</div>
+                <div class="text-right">
+                  <div class="text-[10px] text-slate-400 mb-1">本期带出口诀码</div>
+                  <div class="flex gap-1 justify-end">
+                    <span v-for="pn in fd.predict" :key="pn" class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-mono text-xs font-bold">
+                      {{ String(pn).padStart(2, '0') }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-400 pt-1 border-t border-slate-800">
+                <div>OOF命中率: <span class="text-slate-200 font-mono font-bold">{{ (fd.oof_hit_rate*100).toFixed(1) }}%</span></div>
+                <div class="text-right">样本外命中: <span class="text-slate-200 font-mono">{{ fd.hits_oof }}/{{ fd.triggers_oof }}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 近30期实盘复盘流水对账表 -->
+        <div class="glass-panel p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+              <span>📊</span> 近 30 期顺口溜口诀对账复盘流水
+            </h3>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-400 font-mono" v-if="jingleReview && jingleReview.metrics">
+                平均命中: {{ jingleReview.metrics.avg_hit_per_period }}码 / 期 | 达标率: {{ (jingleReview.metrics.at_least_one_rate*100).toFixed(1) }}%
+              </span>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="cyber-table w-full text-xs text-left">
+              <thead>
+                <tr>
+                  <th>触发期 ➔ 目标期</th>
+                  <th>触发口诀</th>
+                  <th>推荐号码清单</th>
+                  <th>中奖球数</th>
+                  <th>至少一中</th>
+                  <th>两号齐出(双双中)</th>
+                  <th>单号带出</th>
+                  <th>样本分层</th>
+                </tr>
+              </thead>
+              <tbody v-if="jingleReview && jingleReview.pairs">
+                <tr v-for="(row, idx) in jingleReview.pairs" :key="idx">
+                  <td class="font-mono text-cyan-300">{{ row.trigger_issue }} ➔ {{ row.target_issue }}</td>
+                  <td class="font-mono">{{ row.fired_count }} 条</td>
+                  <td class="font-mono">
+                    <span v-for="num in row.recommended" :key="num" 
+                          class="inline-block mr-1 px-1 rounded"
+                          :class="row.hit_numbers.includes(num) ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40' : 'text-slate-400'">
+                      {{ String(num).padStart(2, '0') }}
+                    </span>
+                  </td>
+                  <td class="font-mono font-bold" :class="row.hit_count > 0 ? 'text-emerald-400' : 'text-red-400'"
+                      title="随机期望命中 = 推荐码数 × 0.25；单期数字不构成显著性证据。">
+                    {{ row.hit_count }} / {{ (row.recommended || []).length }}
+                    <span class="text-slate-500 font-normal text-[10px]">· 基线 {{ ((row.recommended || []).length * 0.25).toFixed(2) }}</span>
+                  </td>
+                  <td>
+                    <span v-if="row.at_least_one" class="text-emerald-400 font-bold">✅ 命中</span>
+                    <span v-else class="text-red-400 font-bold">❌ 未中</span>
+                  </td>
+                  <td class="font-mono">{{ row.np_ok }}/{{ row.np_fire }}</td>
+                  <td class="font-mono">{{ row.nt_ok }}/{{ row.nt_fire }}</td>
+                  <td>
+                    <span v-if="row.is_out_of_sample" class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">真·样本外</span>
+                    <span v-else class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">筛查窗口内</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ TAB 10: 90 条精英口诀规则总库 ═══════════ -->
+
+      <div v-show="activeTab === 'jingle_rules_lib'" class="space-y-6">
+        <!-- 头部与检索过滤 -->
+        <div class="glass-panel p-5">
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xl">📖</span>
+                <h2 class="text-lg font-bold text-amber-300">90 条精英口诀规则库总览</h2>
+                <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono">
+                  共 {{ (jingleRules || []).length }} 条
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                🛡️ 统计审计：口诀均在样本外 (OOF) 口径下评估，并纳入全系统统一的多重检验 (BH-FDR, α≤0.05) 校正；校正后仍不显著者不作优势宣称。
+              </p>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <select v-model="jingleRuleKindFilter" class="bg-slate-900 text-xs border border-slate-700 text-slate-200 rounded px-2.5 py-1.5">
+                <option value="all">全部类型 (90条)</option>
+                <option value="pair_pair">两号齐出规则 (74条)</option>
+                <option value="triple_single">单号带出规则 (16条)</option>
+              </select>
+              <input type="text" v-model="jingleRuleSearchKeyword" placeholder="输入球号或ID检索..." class="bg-slate-900 text-xs border border-slate-700 text-slate-200 rounded px-3 py-1.5 w-44">
+            </div>
+          </div>
+        </div>
+
+        <!-- 口诀卡片网格 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div v-for="r in filteredJingleRules" :key="r.rule_id" class="glass-panel p-4 border border-slate-700/60 hover:border-amber-500/40 transition space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono font-bold text-amber-300">#{{ r.rule_id }}</span>
+              <span class="text-[11px] px-1.5 py-0.5 rounded font-mono"
+                    :class="r.kind === 'pair_pair' ? 'bg-cyan-500/20 text-cyan-300' : 'bg-purple-500/20 text-purple-300'">
+                {{ r.kind === 'pair_pair' ? '两号齐出' : '单号带出' }}
+              </span>
+            </div>
+
+            <div class="bg-slate-950/80 p-2.5 rounded border border-slate-800 space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-500 text-[10px]">触发号码:</span>
+                <span class="font-mono font-bold text-cyan-300">{{ (r.trigger || []).map(x => String(x).padStart(2,'0')).join(' - ') }}</span>
+              </div>
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-500 text-[10px]">带出号码:</span>
+                <span class="font-mono font-bold text-amber-300">{{ (r.predict || []).map(x => String(x).padStart(2,'0')).join(' - ') }}</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-1 text-[11px] text-slate-400 pt-1 border-t border-slate-800/80 font-mono">
+              <div>OOF率: <span class="text-slate-200 font-bold">{{ ((r.hr_oof || 0)*100).toFixed(1) }}%</span></div>
+              <div class="text-right">Lift: <span class="text-emerald-400 font-bold">{{ (r.lift_oof || 0).toFixed(2) }}x</span></div>
+              <div>训练率: <span class="text-slate-300">{{ ((r.hr_train || 0)*100).toFixed(1) }}%</span></div>
+              <div class="text-right">Z值: <span class="text-cyan-300">{{ (r.z_oof || 0).toFixed(2) }}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ TAB: 每日点位数据录入与联动管理 ═══════════ -->
+
+      <div v-show="activeTab === 'jingle_cockpit'" id="module-review-jingle" class="space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
+          <div class="space-y-1">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">📊</span>
+              <h2 class="text-lg font-bold text-white tracking-wide">顺口溜口诀 · 样本外滚动复盘对账</h2>
+              <span class="cyber-badge cyber-badge-emerald font-mono">90条精英规则对账</span>
+            </div>
+            <p class="text-xs text-slate-400">
+              统计历史样本外口诀触发情况、推荐号码开出率与超几何理论基线对比
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button @click="fetchJingleReviewEnhanced(15)" :class="{'cyber-btn-cyan': jingleReviewPeriods === 15, 'cyber-btn-slate': jingleReviewPeriods !== 15}" class="cyber-btn text-xs py-1 px-3">近15期</button>
+            <button @click="fetchJingleReviewEnhanced(30)" :class="{'cyber-btn-cyan': jingleReviewPeriods === 30, 'cyber-btn-slate': jingleReviewPeriods !== 30}" class="cyber-btn text-xs py-1 px-3">近30期</button>
+            <button @click="fetchJingleReviewEnhanced(50)" :class="{'cyber-btn-cyan': jingleReviewPeriods === 50, 'cyber-btn-slate': jingleReviewPeriods !== 50}" class="cyber-btn text-xs py-1 px-3">近50期</button>
+          </div>
+        </div>
+
+        <div v-if="jingleReview && jingleReview.pairs" class="glass-panel p-6 space-y-4">
+          <div class="overflow-x-auto">
+            <table class="cyber-table w-full text-left text-xs">
+              <thead>
+                <tr>
+                  <th class="py-2.5 px-3">目标期号</th>
+                  <th class="py-2.5 px-3">触发口诀数</th>
+                  <th class="py-2.5 px-3">推荐号码</th>
+                  <th class="py-2.5 px-3">实际开出号码</th>
+                  <th class="py-2.5 px-3">命中个数</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="p in jingleReview.pairs" :key="p.period" class="hover:bg-slate-800/40">
+                  <td class="py-2 px-3 font-mono font-bold text-emerald-400">{{ p.period }}</td>
+                  <td class="py-2 px-3 font-mono">{{ p.fired_count != null ? p.fired_count : '--' }} 条</td>
+                  <td class="py-2 px-3 font-mono">
+                    <span v-for="n in p.recommended" :key="n" class="lottery-ball ball-emerald w-5 h-5 text-[10px] inline-flex mr-1">{{ String(n).padStart(2, '0') }}</span>
+                  </td>
+                  <td class="py-2 px-3 font-mono text-slate-400">
+                    <span v-for="n in p.actual_numbers" :key="n" class="px-1 py-0.2 rounded bg-slate-900 text-[10px] mr-1">{{ String(n).padStart(2, '0') }}</span>
+                  </td>
+                  <td class="py-2 px-3 font-mono font-bold" :class="p.hit_count > 0 ? 'text-emerald-400' : 'text-slate-600'">
+                    {{ p.hit_count }} / {{ p.recommended ? p.recommended.length : 0 }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>

@@ -25,6 +25,12 @@ import shutil
 import datetime
 from typing import Dict, List, Set, Tuple, Optional, Any
 
+if hasattr(sys.stdout, 'reconfigure'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
 # 路径自适应 (Dual-Root Bootstrap)
 _PROJ_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 _BACKEND_DIR = os.path.join(_PROJ_DIR, "backend")
@@ -32,13 +38,13 @@ for _p in [_BACKEND_DIR, _PROJ_DIR]:
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from utils.paths import get_project_root, data_path, _ensure_project_path
+from utils.paths import get_project_root, data_path, _ensure_project_path, get_cache_dir, find_module_script
 _ensure_project_path()
 PROJ_DIR = get_project_root()
 
-POINTS_FILE = os.path.join(PROJ_DIR, "daily_points.txt")
-HISTORY_FILE = os.path.join(PROJ_DIR, "kl8_history_final.txt")
-BACKUP_DIR = os.path.join(PROJ_DIR, "cache", "points_backup")
+POINTS_FILE = data_path("daily_points.txt")
+HISTORY_FILE = data_path("kl8_history_final.txt")
+BACKUP_DIR = os.path.join(get_cache_dir(), "points_backup")
 
 NUM_BALLS = 80
 POINTS_COUNT = 20
@@ -349,6 +355,99 @@ def backup_points_file() -> Optional[str]:
         return None
 
 
+# ── 自愈：点位台账被外部手写覆盖后自动重建 ──
+
+_BACKUP_NAME_RE = re.compile(r"^daily_points_\d{8}_\d{6}\.bak$")
+
+
+def _parse_points_entries(filepath: str) -> Dict[int, Tuple[str, List[int]]]:
+    """把点位台账解析成 {期号: (日期, 升序号码)}；只收带 period+points 且恰好 20 码的行。"""
+    entries: Dict[int, Tuple[str, List[int]]] = {}
+    if not os.path.exists(filepath):
+        return entries
+    with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            m_iss = re.search(r"period:(\d+)", line)
+            m_pts = re.search(r"points:([\d\s]+)", line)
+            m_date = re.search(r"date:([0-9\-]+)", line)
+            if not (m_iss and m_pts):
+                continue
+            pts = [int(x) for x in m_pts.group(1).split() if x.isdigit()]
+            if len(pts) == POINTS_COUNT:
+                entries[int(m_iss.group(1))] = (m_date.group(1) if m_date else "", sorted(pts))
+    return entries
+
+
+def repair_points_file(filepath: Optional[str] = None,
+                       backup_dir: Optional[str] = None) -> Dict[str, Any]:
+    """点位台账自愈：被外部手写覆盖成非标准格式时，从最近合法备份重建。
+
+    为什么需要：daily_points.txt 是唯一的人工输入真相源，但它同时是一份多期台账。
+    外部工具直接改写文件时常常只写一两行裸号码，上百期历史会被一次性冲掉；而所有
+    解析器都是"缺键即跳过"，所以故障是静默的 —— 下游只是拿不到点位，不会报错。
+
+    判定损坏（任一成立）：当前可解析期数少于备份，或当前最新期早于备份最新期。
+    重建方式：备份 ∪ 当前（同期以当前为准，保住当天新录的值），按期号降序原子写。
+    """
+    target = filepath or POINTS_FILE
+    bdir = backup_dir or BACKUP_DIR
+    current = _parse_points_entries(target)
+
+    if not os.path.isdir(bdir):
+        return {"status": "skipped", "reason": "无备份目录"}
+
+    candidates = []
+    for name in os.listdir(bdir):
+        if not _BACKUP_NAME_RE.match(name):
+            continue
+        entries = _parse_points_entries(os.path.join(bdir, name))
+        if entries:
+            path = os.path.join(bdir, name)
+            candidates.append((max(entries), os.path.getmtime(path), path, entries))
+    if not candidates:
+        return {"status": "skipped", "reason": "无合法备份"}
+
+    candidates.sort(key=lambda x: (x[0], x[1]), reverse=True)
+    best_max, _, best_path, best_entries = candidates[0]
+
+    cur_max = max(current) if current else 0
+    if len(current) >= len(best_entries) and cur_max >= best_max:
+        return {"status": "ok", "reason": "台账完整，无需修复",
+                "records": len(current), "latest": cur_max}
+
+    merged: Dict[int, Tuple[str, List[int]]] = dict(best_entries)
+    merged.update(current)  # 同期以当前文件为准，保住新录入
+
+    evidence = ""
+    if os.path.exists(target):
+        ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        try:
+            evidence = os.path.join(bdir, f"daily_points_BROKEN_{ts}.bak")
+            shutil.copy2(target, evidence)
+        except Exception:
+            evidence = ""
+
+    tmp = target + ".tmp"
+    with open(tmp, "w", encoding="utf-8", newline="\n") as f:
+        for p in sorted(merged, reverse=True):
+            d, pts = merged[p]
+            f.write(f"date:{d},period:{p},points:" + " ".join(f"{x:02d}" for x in pts) + "\n")
+    os.replace(tmp, target)
+
+    return {
+        "status": "repaired",
+        "reason": f"当前 {len(current)} 期(最新 {cur_max}) < 备份 {len(best_entries)} 期(最新 {best_max})",
+        "before_records": len(current),
+        "after_records": len(merged),
+        "latest": max(merged),
+        "source_backup": os.path.basename(best_path),
+        "evidence": evidence,
+    }
+
+
 def save_daily_points(date_str: str, period_str: str, points: List[int], filepath: Optional[str] = None, overwrite: bool = True) -> Dict[str, Any]:
     """
     安全原子写入点位数据到 daily_points.txt
@@ -449,15 +548,30 @@ def run_downstream_task(task_key: str, verbose: bool = True) -> Dict[str, Any]:
             "script": os.path.join(PROJ_DIR, "backend", "data_acquisition", "generate_hot_excel.py"),
             "args": []
         },
+        "sync_follow": {
+            "name": "🧬 热码写入跟随号码统计 (process_hot_numbers.py)",
+            "script": os.path.join(PROJ_DIR, "backend", "data_acquisition", "process_hot_numbers.py"),
+            "args": ["--sync-all-missing"]
+        },
         "spatial_points": {
             "name": "🔮 空间重点点位分析与精排 (run_points_daily.py)",
-            "script": os.path.join(PROJ_DIR, "run_points_daily.py"),
+            "script": find_module_script("run_points_daily.py"),
             "args": ["30"]
         },
         "suppression": {
             "name": "🪞 未开点位高压反弹与影子替身 (run_suppression_daily.py)",
-            "script": os.path.join(PROJ_DIR, "run_suppression_daily.py"),
+            "script": find_module_script("run_suppression_daily.py"),
             "args": ["30"]
+        },
+        "sixteen": {
+            "name": "🔥 16期中热操盘简报 (run_sixteen_daily.py)",
+            "script": find_module_script("run_sixteen_daily.py"),
+            "args": ["--quiet"]
+        },
+        "point_repeat_tracker": {
+            "name": "📊 点位重码追踪与绿底报表更新 (point_repeat_tracker.py)",
+            "script": os.path.join(PROJ_DIR, "backend", "modules", "point_repeat_tracker.py"),
+            "args": []
         },
         "deep_mining": {
             "name": "💎 深度挖掘引擎与点位共振 (deep_mining_engine.py)",
@@ -471,7 +585,7 @@ def run_downstream_task(task_key: str, verbose: bool = True) -> Dict[str, Any]:
         },
         "full_pipeline": {
             "name": "🚀 每日全流水线一键跑盘 (run_full_pipeline.py)",
-            "script": os.path.join(PROJ_DIR, "run_full_pipeline.py"),
+            "script": find_module_script("run_full_pipeline.py"),
             "args": []
         }
     }
@@ -484,10 +598,8 @@ def run_downstream_task(task_key: str, verbose: bool = True) -> Dict[str, Any]:
     if not os.path.exists(script_path):
         return {"status": "error", "message": f"脚本文件不存在: {script_path}"}
     
-    if verbose:
-        print(f"\n🚀 正在启动: {t_info['name']} ...")
-        
-    cmd = [sys.executable, script_path] + t_info["args"]
+    from backend.utils.paths import get_python_runner
+    cmd = [get_python_runner(), script_path] + t_info["args"]
     try:
         res = subprocess.run(
             cmd,
@@ -528,13 +640,23 @@ def run_all_points_downstream(verbose: bool = True) -> Dict[str, Any]:
     一键顺序执行所有点位联动的预测和同步任务
     顺序：
       1. 热码统计生成 (generate_hot_excel)
-      2. Excel点位格式同步 (apply_formats)
-      3. 空间重点点位分析 (spatial_points)
-      4. 未开点位高压反弹 (suppression)
+      2. 写入跟随号码统计 (process_hot_numbers) — 数据源矩阵期号真源
+      3. Excel点位格式同步 (apply_formats)
+      4. 空间重点点位分析 (spatial_points)
+      5. 未开点位高压反弹 (suppression)
+      6. 16期中热操盘简报 (sixteen)
+      7. 点位重码追踪与绿底报表更新 (point_repeat_tracker)
     """
     results = {}
-    sequence = ["hot_excel", "format", "spatial_points", "suppression"]
+    sequence = ["hot_excel", "sync_follow", "format", "spatial_points", "suppression", "sixteen", "point_repeat_tracker"]
     for t_key in sequence:
         res = run_downstream_task(t_key, verbose=verbose)
         results[t_key] = res
     return results
+
+
+if __name__ == "__main__":
+    print("🚀 开始执行每日点位下游全模块联动任务...")
+    run_all_points_downstream(verbose=True)
+    print("🎉 全部点位下游联动执行完毕！")
+

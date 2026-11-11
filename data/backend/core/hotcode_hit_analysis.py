@@ -15,6 +15,7 @@ Date: 2026-05-14
 Version: 1.0
 """
 
+from backend.utils.paths import get_cache_dir, get_reports_dir
 import os
 import sys
 import json
@@ -34,8 +35,8 @@ _ensure_project_path()
 _PROJ = get_project_root()
 HISTORY_FILE = os.path.join(_PROJ, 'kl8_history_final.txt')
 HOT_DIR = os.path.join(_PROJ, '热码统计')
-REPORT_DIR = os.path.join(_PROJ, 'reports')
-CACHE_DIR = os.path.join(_PROJ, 'cache')
+REPORT_DIR = os.path.join(get_reports_dir())
+CACHE_DIR = os.path.join(get_cache_dir())
 
 NUM_TOTAL = 80
 WINDOWS = ["全量", "50期", "25期", "10期"]

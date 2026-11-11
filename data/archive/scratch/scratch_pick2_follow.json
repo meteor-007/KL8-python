@@ -1,0 +1,42 @@
+{
+  "pk_stats": {
+    "n_periods": 30,
+    "golden_hit_count": 12,
+    "golden_hit_rate": 40.0,
+    "golden_lift": 1.6,
+    "hot_hit_count": 11,
+    "hot_hit_rate": 36.67,
+    "hot_lift": 1.47,
+    "top1_both_count": 3,
+    "top1_both_rate": 10.0,
+    "top1_both_lift": 1.66,
+    "top1_one_count": 15,
+    "top1_one_rate": 50.0,
+    "warm_pool_hit_rate": 24.66,
+    "confidence": {
+      "level": 1,
+      "badge": "🟢 Level 1",
+      "title": "高置信 (黄金胜率)",
+      "z_score": 1.9,
+      "lift": 1.6,
+      "description": "🟢 高置信 (Level 1) (Lift=1.60x, z=1.90)"
+    }
+  },
+  "fl_summary": null,
+  "fl_keys": [
+    "n_count",
+    "avg_rep_hits",
+    "rep_lift",
+    "rep_z",
+    "avg_inf_hits",
+    "inf_lift",
+    "inf_z",
+    "avg_cf_hits",
+    "cf_lift",
+    "cf_z",
+    "sum_inter_hits",
+    "confidence",
+    "rows",
+    "status"
+  ]
+}

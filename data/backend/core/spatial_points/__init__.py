@@ -1,45 +1,15 @@
 # -*- coding: utf-8 -*-
-"""
-重点点位分析 (空间点位打分与精排) 核心算法包
-"""
-from core.spatial_points.points_engine import (
-    load_draws_from_file,
-    calculate_spatial_point_features,
-    norm_z,
-    sigmoid,
-    get_region_baseline,
-    NUM_BALLS,
-    DEFAULT_WIN,
-    FEATURE_WEIGHTS
-)
-from core.spatial_points.points_ranker import (
-    rank_spatial_picks,
-    ZONES
-)
-from core.spatial_points.points_evaluator import (
-    walk_forward_evaluate,
-    evaluate_confidence_level,
-    BASELINE_TOP10,
-    BASELINE_CORE5
-)
-from core.spatial_points.points_cross_validator import (
-    cross_validate_spatial_picks
-)
+"""Compatibility shim: backend.core.spatial_points -> backend.modules._retired/spatial_points"""
+from __future__ import annotations
+import os as _os
 
-__all__ = [
-    "load_draws_from_file",
-    "calculate_spatial_point_features",
-    "norm_z",
-    "sigmoid",
-    "get_region_baseline",
-    "NUM_BALLS",
-    "DEFAULT_WIN",
-    "FEATURE_WEIGHTS",
-    "rank_spatial_picks",
-    "ZONES",
-    "walk_forward_evaluate",
-    "evaluate_confidence_level",
-    "BASELINE_TOP10",
-    "BASELINE_CORE5",
-    "cross_validate_spatial_picks",
-]
+_REAL = _os.path.abspath(
+    _os.path.join(_os.path.dirname(__file__), "..", "..", "modules", '_retired', 'spatial_points')
+)
+__path__ = [_REAL]
+
+_real_init = _os.path.join(_REAL, "__init__.py")
+if _os.path.isfile(_real_init):
+    with open(_real_init, "r", encoding="utf-8") as _f:
+        _code = compile(_f.read(), _real_init, "exec")
+    exec(_code, globals())

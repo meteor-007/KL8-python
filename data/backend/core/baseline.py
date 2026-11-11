@@ -4,6 +4,7 @@
 ==========================================
 Daily 默认输出；其余通道仅 weekly 监控。
 """
+from backend.utils.paths import get_cache_dir
 import json
 import os
 from typing import Dict, List, Tuple, Optional
@@ -14,7 +15,7 @@ if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
 from utils.paths import get_project_root, data_path, _ensure_project_path
 _ensure_project_path()
 _PROJ = get_project_root()
-WEEKLY_MONITOR_FILE = os.path.join(_PROJ, 'cache', 'weekly_channel_monitor.json')
+WEEKLY_MONITOR_FILE = os.path.join(get_cache_dir(), 'weekly_channel_monitor.json')
 
 PRIMARY_CHANNEL = 'FO'
 

@@ -21,6 +21,17 @@ DEFAULT_STRATEGY = {
     'use_b3_right': True, 'b3_right_quality_threshold': 0.6
 }
 
+# 中文环境名 → ScoreComposer/YAML 英文键 的官方映射
+# （2026-10-22 一致性修复：此前 dynamic_meta_fusion 硬编码 environment='balanced'，
+#   环境识别结果从未参与真正打分，「环境自适应」名不副实。补此单一事实来源映射。）
+ENV_NAME_TO_KEY = {
+    '热号爆发期': 'hot_burst',
+    '冷号反弹期': 'cold_rebound',
+    '平衡震荡期': 'balanced',
+    '趋势加速期': 'trend_accel',
+    '混沌随机期': 'chaotic',
+}
+
 def recognize_environment(history: List[Dict]) -> Tuple[int, str, float, Dict]:
     """
     基于规则的5类环境识别

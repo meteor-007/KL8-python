@@ -1,0 +1,377 @@
+{
+  "target_period": "2026301",
+  "based_on_period": "2026300",
+  "date": "2026-11-10",
+  "experts_meta_weights": {
+    "ef": 0.25,
+    "road": 0.22,
+    "rebound": 0.2,
+    "twin": 0.18,
+    "balance": 0.15
+  },
+  "summary_takeaways": {
+    "golden_core_5": [
+      11,
+      34,
+      19,
+      17,
+      31
+    ],
+    "golden_core_5_str": "11-17-19-31-34",
+    "resonance_12": [
+      11,
+      34,
+      19,
+      17,
+      31,
+      44,
+      32,
+      67,
+      68,
+      50,
+      76,
+      74
+    ],
+    "resonance_12_str": "11-17-19-31-32-34-44-50-67-68-74-76",
+    "best_resonance_pair": "11 (0路合数) + 11 (2路质数)"
+  },
+  "golden_core_details": [
+    {
+      "number": 11,
+      "display": "11",
+      "score": 60.45,
+      "vote_count": 4,
+      "endorsing_experts": [
+        "012路潮汐反弹",
+        "高压反弹影子",
+        "孪生质数跟随",
+        "空间平衡防守"
+      ],
+      "road": 2,
+      "is_prime": true,
+      "tail": 1
+    },
+    {
+      "number": 34,
+      "display": "34",
+      "score": 63.12,
+      "vote_count": 3,
+      "endorsing_experts": [
+        "012路潮汐反弹",
+        "高压反弹影子",
+        "空间平衡防守"
+      ],
+      "road": 1,
+      "is_prime": false,
+      "tail": 4
+    },
+    {
+      "number": 19,
+      "display": "19",
+      "score": 61.93,
+      "vote_count": 3,
+      "endorsing_experts": [
+        "高压反弹影子",
+        "孪生质数跟随",
+        "空间平衡防守"
+      ],
+      "road": 1,
+      "is_prime": true,
+      "tail": 9
+    },
+    {
+      "number": 17,
+      "display": "17",
+      "score": 58.15,
+      "vote_count": 3,
+      "endorsing_experts": [
+        "隐能量场EF",
+        "孪生质数跟随",
+        "空间平衡防守"
+      ],
+      "road": 2,
+      "is_prime": true,
+      "tail": 7
+    },
+    {
+      "number": 31,
+      "display": "31",
+      "score": 57.75,
+      "vote_count": 3,
+      "endorsing_experts": [
+        "隐能量场EF",
+        "孪生质数跟随",
+        "空间平衡防守"
+      ],
+      "road": 1,
+      "is_prime": true,
+      "tail": 1
+    }
+  ],
+  "resonance_12_details": [
+    {
+      "number": 11,
+      "display": "11",
+      "score": 60.45,
+      "vote_count": 4,
+      "endorsing_experts": [
+        "012路潮汐反弹",
+        "高压反弹影子",
+        "孪生质数跟随",
+        "空间平衡防守"
+      ],
+      "road": 2,
+      "is_prime": true,
+      "tail": 1
+    },
+    {
+      "number": 34,
+      "display": "34",
+      "score": 63.12,
+      "vote_count": 3,
+      "endorsing_experts": [
+        "012路潮汐反弹",
+        "高压反弹影子",
+        "空间平衡防守"
+      ],
+      "road": 1,
+      "is_prime": false,
+      "tail": 4
+    },
+    {
+      "number": 19,
+      "display": "19",
+      "score": 61.93,
+      "vote_count": 3,
+      "endorsing_experts": [
+        "高压反弹影子",
+        "孪生质数跟随",
+        "空间平衡防守"
+      ],
+      "road": 1,
+      "is_prime": true,
+      "tail": 9
+    },
+    {
+      "number": 17,
+      "display": "17",
+      "score": 58.15,
+      "vote_count": 3,
+      "endorsing_experts": [
+        "隐能量场EF",
+        "孪生质数跟随",
+        "空间平衡防守"
+      ],
+      "road": 2,
+      "is_prime": true,
+      "tail": 7
+    },
+    {
+      "number": 31,
+      "display": "31",
+      "score": 57.75,
+      "vote_count": 3,
+      "endorsing_experts": [
+        "隐能量场EF",
+        "孪生质数跟随",
+        "空间平衡防守"
+      ],
+      "road": 1,
+      "is_prime": true,
+      "tail": 1
+    },
+    {
+      "number": 44,
+      "display": "44",
+      "score": 62.47,
+      "vote_count": 2,
+      "endorsing_experts": [
+        "012路潮汐反弹",
+        "高压反弹影子"
+      ],
+      "road": 2,
+      "is_prime": false,
+      "tail": 4
+    },
+    {
+      "number": 32,
+      "display": "32",
+      "score": 60.83,
+      "vote_count": 2,
+      "endorsing_experts": [
+        "012路潮汐反弹",
+        "空间平衡防守"
+      ],
+      "road": 2,
+      "is_prime": false,
+      "tail": 2
+    },
+    {
+      "number": 67,
+      "display": "67",
+      "score": 60.31,
+      "vote_count": 2,
+      "endorsing_experts": [
+        "012路潮汐反弹",
+        "高压反弹影子"
+      ],
+      "road": 1,
+      "is_prime": true,
+      "tail": 7
+    },
+    {
+      "number": 68,
+      "display": "68",
+      "score": 58.85,
+      "vote_count": 2,
+      "endorsing_experts": [
+        "012路潮汐反弹",
+        "高压反弹影子"
+      ],
+      "road": 2,
+      "is_prime": false,
+      "tail": 8
+    },
+    {
+      "number": 50,
+      "display": "50",
+      "score": 58.19,
+      "vote_count": 2,
+      "endorsing_experts": [
+        "012路潮汐反弹",
+        "高压反弹影子"
+      ],
+      "road": 2,
+      "is_prime": false,
+      "tail": 0
+    },
+    {
+      "number": 76,
+      "display": "76",
+      "score": 57.89,
+      "vote_count": 2,
+      "endorsing_experts": [
+        "012路潮汐反弹",
+        "高压反弹影子"
+      ],
+      "road": 1,
+      "is_prime": false,
+      "tail": 6
+    },
+    {
+      "number": 74,
+      "display": "74",
+      "score": 57.57,
+      "vote_count": 2,
+      "endorsing_experts": [
+        "012路潮汐反弹",
+        "高压反弹影子"
+      ],
+      "road": 2,
+      "is_prime": false,
+      "tail": 4
+    }
+  ],
+  "best_resonance_pairs": [
+    {
+      "pair": [
+        11,
+        11
+      ],
+      "pair_label": "11 (0路合数) + 11 (2路质数)",
+      "strategy": "跨路攻守对冲搭档 (0路反弹合数 + 2路核心质数)",
+      "reason": "多维会诊共识打分首推，避开同路与同质合挤压"
+    },
+    {
+      "pair": [
+        11,
+        34
+      ],
+      "pair_label": "11 + 34",
+      "strategy": "共振双子金胆星 (全专家举手表决最高票)",
+      "reason": "同时获得 LSTM、能量场与 012路潮汐三重认可"
+    }
+  ],
+  "all_80_scores": {
+    "1": 39.29,
+    "2": 41.31,
+    "3": 43.0,
+    "4": 43.78,
+    "5": 46.39,
+    "6": 39.23,
+    "7": 54.88,
+    "8": 41.79,
+    "9": 29.02,
+    "10": 42.66,
+    "11": 60.45,
+    "12": 46.5,
+    "13": 53.31,
+    "14": 29.32,
+    "15": 32.45,
+    "16": 56.01,
+    "17": 58.15,
+    "18": 48.59,
+    "19": 61.93,
+    "20": 37.69,
+    "21": 38.61,
+    "22": 47.96,
+    "23": 41.12,
+    "24": 50.06,
+    "25": 46.49,
+    "26": 43.3,
+    "27": 46.68,
+    "28": 43.05,
+    "29": 55.44,
+    "30": 46.38,
+    "31": 57.75,
+    "32": 60.83,
+    "33": 43.42,
+    "34": 63.12,
+    "35": 45.71,
+    "36": 49.02,
+    "37": 28.75,
+    "38": 48.64,
+    "39": 38.73,
+    "40": 49.01,
+    "41": 44.07,
+    "42": 43.69,
+    "43": 42.23,
+    "44": 62.47,
+    "45": 37.26,
+    "46": 53.5,
+    "47": 51.65,
+    "48": 50.98,
+    "49": 42.23,
+    "50": 58.19,
+    "51": 47.04,
+    "52": 52.55,
+    "53": 56.47,
+    "54": 41.4,
+    "55": 26.62,
+    "56": 48.38,
+    "57": 45.87,
+    "58": 43.06,
+    "59": 48.45,
+    "60": 41.73,
+    "61": 45.72,
+    "62": 58.63,
+    "63": 41.93,
+    "64": 56.71,
+    "65": 34.71,
+    "66": 42.92,
+    "67": 60.31,
+    "68": 58.85,
+    "69": 39.89,
+    "70": 49.24,
+    "71": 45.72,
+    "72": 41.04,
+    "73": 46.15,
+    "74": 57.57,
+    "75": 44.98,
+    "76": 57.89,
+    "77": 41.98,
+    "78": 40.44,
+    "79": 42.78,
+    "80": 44.11
+  }
+}

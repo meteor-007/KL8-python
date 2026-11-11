@@ -1,0 +1,444 @@
+<div v-show="activeTab === 'draw_trend_chart'" class="space-y-6">
+
+        <!-- 顶部控制面板 -->
+        <div class="glass-panel p-5">
+          <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center text-lg shadow-[0_0_12px_rgba(6,182,212,0.4)]">
+                📈
+              </div>
+              <div>
+                <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                  <span>快乐8 开奖号码全景走势图</span>
+                  <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono border border-cyan-500/30">
+                    按开奖日期升序 (旧 ➔ 新)
+                  </span>
+                </h2>
+                <p class="text-xs text-slate-400 mt-0.5">
+                  当前展示：第 <span class="text-cyan-400 font-mono font-bold">{{ trendData.summary.start_period || '---' }}</span> 期 ({{ trendData.summary.start_date || '---' }}) ➔ 第 <span class="text-amber-400 font-mono font-bold">{{ trendData.summary.end_period || '---' }}</span> 期 ({{ trendData.summary.end_date || '---' }}) · 共 <span class="text-emerald-400 font-mono font-bold">{{ trendData.summary.total_periods || 0 }}</span> 期
+                </p>
+              </div>
+            </div>
+
+            <!-- 右侧切换与刷新按钮 -->
+            <div class="flex items-center gap-2.5">
+              <button @click="openTab('history_table')" class="cyber-btn cyber-btn-dark text-xs !py-1.5" title="切换到列表表格视图">
+                📋 列表模式
+              </button>
+              <button @click="fetchLotteryTrends(trendLimit)" :disabled="trendLoading" class="cyber-btn cyber-btn-cyan text-xs !py-1.5">
+                <span v-if="trendLoading" class="animate-spin">⚙️</span>
+                <span v-else>🔄</span>
+                {{ trendLoading ? '加载中...' : '刷新走势图' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- 快捷期数选择与多功能工具栏 (适配全主题，绝无浅色遮挡) -->
+          <div class="flex flex-wrap items-center justify-between gap-4 pt-4 text-xs">
+            <!-- 快捷期数预设 + 自定义期数 -->
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-slate-400 font-bold flex items-center gap-1">
+                <span>⏱️</span> 期数选择:
+              </span>
+              <div class="trend-ctrl-group">
+                <button v-for="num in [30, 50, 100, 200, 300, 500]" :key="num"
+                        @click="fetchLotteryTrends(num)"
+                        class="trend-ctrl-btn"
+                        :class="{'active': trendLimit === num}">
+                  {{ num }}期{{ num === 100 ? ' (默认)' : '' }}
+                </button>
+              </div>
+
+              <!-- 自定义期数输入框 -->
+              <div class="flex items-center gap-1 ml-2">
+                <span class="text-slate-400">自定义:</span>
+                <input type="number" min="5" max="1000" v-model.number="trendCustomInput" @keyup.enter="handleCustomLimitSubmit" class="trend-input w-16 text-xs">
+                <span class="text-slate-400">期</span>
+                <button @click="handleCustomLimitSubmit" class="cyber-btn cyber-btn-dark !py-1 !px-2.5 text-xs ml-1">确定</button>
+              </div>
+            </div>
+
+            <!-- 分区筛选、视图尺寸与遗漏开关 -->
+            <div class="flex flex-wrap items-center gap-3">
+              <!-- 区间过滤 -->
+              <div class="flex items-center gap-1">
+                <span class="text-slate-400">分区:</span>
+                <div class="trend-ctrl-group">
+                  <button @click="trendZoneFilter = 'all'" class="trend-ctrl-btn" :class="{'active': trendZoneFilter === 'all'}">全部80码</button>
+                  <button @click="trendZoneFilter = '1'" class="trend-ctrl-btn" :class="{'active': trendZoneFilter === '1'}">一区(1-20)</button>
+                  <button @click="trendZoneFilter = '2'" class="trend-ctrl-btn" :class="{'active': trendZoneFilter === '2'}">二区(21-40)</button>
+                  <button @click="trendZoneFilter = '3'" class="trend-ctrl-btn" :class="{'active': trendZoneFilter === '3'}">三区(41-60)</button>
+                  <button @click="trendZoneFilter = '4'" class="trend-ctrl-btn" :class="{'active': trendZoneFilter === '4'}">四区(61-80)</button>
+                </div>
+              </div>
+
+              <!-- 宽屏视图切换按钮 -->
+              <button @click="trendViewMode = (trendViewMode === 'wide' ? 'compact' : 'wide')"
+                      class="cyber-btn cyber-btn-dark text-xs !py-1 !px-2.5"
+                      :title="trendViewMode === 'wide' ? '当前宽屏舒适放大(30px)，点击切换为紧凑模式' : '当前紧凑模式(24px)，点击切换为宽屏放大模式'">
+                <span>{{ trendViewMode === 'wide' ? '🔍 宽屏放大 (30px)' : '📱 标准紧凑 (24px)' }}</span>
+              </button>
+
+              <!-- 显示遗漏数字开关 -->
+              <label class="flex items-center gap-1.5 cursor-pointer text-slate-300 select-none">
+                <input type="checkbox" v-model="trendShowOmission" class="rounded bg-slate-900 border-slate-700 text-cyan-500 focus:ring-0">
+                <span>显示遗漏值</span>
+              </label>
+
+              <!-- 号码聚焦高亮搜索 -->
+              <div class="flex items-center gap-1">
+                <span class="text-slate-400">聚焦球号:</span>
+                <input type="number" min="1" max="80" placeholder="1-80" v-model.number="trendSearchBall" @input="handleSearchBallHighlight" class="trend-input w-14 text-xs">
+                <button v-if="highlightedBall" @click="highlightedBall = null; trendSearchBall = ''" class="text-[11px] text-rose-500 font-bold hover:underline ml-1" title="清除高亮">✕清除</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 80 码走势大矩阵容器 (纯净网格、经典红球、宽屏自适应、无和值奇偶多余列) -->
+        <div class="glass-panel p-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2 text-xs text-slate-400">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-cyan-400 font-bold">💡 交互与预测:</span>
+              <span>红色为历史开奖；表底包含 3 行预测行（🔮 AI量化金胆 + 🧩 全模块共识 + 🎯 操盘自选）。</span>
+              <div class="inline-flex items-center gap-1.5 ml-1">
+                <button @click="loadTop5ToCustomPicks" class="text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition">
+                  🔮 一键导入AI金胆
+                </button>
+                <button @click="loadHiddenEnergyToCustomPicks" class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 transition">
+                  💎 导入Hidden Energy 5
+                </button>
+                <button v-if="customPicks.length > 0" @click="clearCustomPicks" class="text-[11px] px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30 transition">
+                  🗑️ 清空自选 ({{ customPicks.length }})
+                </button>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 font-mono text-[11px]">
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span> 历史中奖球</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> AI 金胆</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-sky-500 inline-block"></span> AI 优选</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> 模拟自选</span>
+            </div>
+          </div>
+
+          <!-- ══════ 全模块共识图例面板 (2026-10-22): 勾选模块 = 其预测号在共识行亮对应色点 ══════ -->
+          <div class="mb-2 rounded-lg border border-slate-800 bg-slate-900/60">
+            <div class="flex flex-wrap items-center gap-2 px-3 py-2 cursor-pointer select-none" @click="consensusLegendOpen = !consensusLegendOpen">
+              <span class="text-purple-300 font-bold">🧩 全模块预测共识</span>
+              <span class="text-[11px] text-slate-400">
+                第 <span class="text-cyan-300 font-mono font-bold">{{ consensusData.target_period || '---' }}</span> 期 ·
+                已勾选 <span class="text-emerald-300 font-bold">{{ consensusEnabled.length }}</span> / {{ (consensusData.modules || []).length }} 路模块
+              </span>
+              <span v-if="consensusLoading" class="text-[11px] animate-spin">⚙️</span>
+              <div class="inline-flex items-center gap-1.5 ml-2" @click.stop>
+                <button @click="selectStrongConsensusModules" class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/35 hover:bg-emerald-500/25 transition" title="只勾选历史 Lift ≥ 1.15x 的模块">💪 只选强水位</button>
+                <button @click="selectAllConsensusModules" class="text-[11px] px-2 py-0.5 rounded bg-sky-500/15 text-sky-300 border border-sky-500/35 hover:bg-sky-500/25 transition">全选</button>
+                <button @click="clearConsensusModules" class="text-[11px] px-2 py-0.5 rounded bg-slate-700/40 text-slate-300 border border-slate-600 hover:bg-slate-600/50 transition">清空</button>
+                <button @click="fetchModuleConsensus" class="text-[11px] px-2 py-0.5 rounded bg-purple-500/15 text-purple-300 border border-purple-500/35 hover:bg-purple-500/25 transition" title="重新拉取前瞻账当期票">🔄</button>
+              </div>
+              <span class="ml-auto text-[11px] text-slate-500">{{ consensusLegendOpen ? '▲ 收起' : '▼ 展开图例' }}</span>
+            </div>
+            <div v-show="consensusLegendOpen" class="px-3 pb-2.5 pt-0.5 border-t border-slate-800/70">
+              <div class="flex flex-wrap gap-1.5">
+                <label v-for="m in (consensusData.modules || [])" :key="m.id"
+                       class="consensus-legend-chip"
+                       :class="{'consensus-chip-on': consensusEnabled.includes(m.id)}"
+                       :style="{ borderColor: consensusEnabled.includes(m.id) ? m.color : '' }"
+                       :title="m.name + ' ｜ 当期 ' + m.picks.length + ' 码: ' + m.picks.map(x => String(x).padStart(2,'0')).join(' ') + ' ｜ 历史Lift ' + (m.lift != null ? m.lift.toFixed(2)+'x' : '—') + ' (n=' + m.n_periods + (m.insufficient ? ', 样本不足' : '') + ')'">
+                  <input type="checkbox" :checked="consensusEnabled.includes(m.id)" @change="toggleConsensusModule(m.id)" class="hidden">
+                  <span class="w-2.5 h-2.5 rounded-full inline-block shrink-0" :style="{ background: m.color, opacity: consensusEnabled.includes(m.id) ? 1 : 0.3 }"></span>
+                  <span class="truncate max-w-[130px]">{{ m.name }}</span>
+                  <span class="text-[10px] opacity-70 font-mono">{{ m.picks.length }}码</span>
+                  <span v-if="m.lift != null" class="text-[10px] font-mono" :class="m.lift >= 1.15 ? 'text-emerald-400' : (m.lift >= 0.95 ? 'text-slate-400' : 'text-rose-400')">{{ m.lift.toFixed(2)}}x</span>
+                </label>
+              </div>
+              <div v-if="!(consensusData.modules || []).length && !consensusLoading" class="text-[11px] text-slate-500 py-1">
+                暂无当期共识数据（前瞻账里还没有目标期的模块票，先跑一次「一键全流程推演」再回来）
+              </div>
+              <div class="text-[10px] text-slate-500 mt-1.5 leading-relaxed">
+                ⚖️ 号码格里的彩色圆点 = 勾选模块中点了该号的模块；点数越多共识越强。Lift 为该模块历史前瞻账实测，样本不足/未过 BH-FDR 者仅供研究参考。
+              </div>
+            </div>
+          </div>
+
+          <div class="trend-table-wrapper" id="trendTableWrapper" :class="{'trend-compact': trendViewMode === 'compact'}">
+            <table class="trend-table">
+              <thead>
+                <!-- 第一级表头: 左侧仅保留 期号、开奖日期 + 四大分区群组 -->
+                <tr>
+                  <th class="trend-sticky-col-1" rowspan="2">期号</th>
+                  <th class="trend-sticky-col-2" rowspan="2">开奖日期</th>
+
+                  <!-- 分区跨列大标题 -->
+                  <th v-if="trendZoneFilter === 'all' || trendZoneFilter === '1'" :colspan="20" class="trend-zone-hdr-1 trend-zone-border">
+                    一区 (01 - 20)
+                  </th>
+                  <th v-if="trendZoneFilter === 'all' || trendZoneFilter === '2'" :colspan="20" class="trend-zone-hdr-2 trend-zone-border">
+                    二区 (21 - 40)
+                  </th>
+                  <th v-if="trendZoneFilter === 'all' || trendZoneFilter === '3'" :colspan="20" class="trend-zone-hdr-3 trend-zone-border">
+                    三区 (41 - 60)
+                  </th>
+                  <th v-if="trendZoneFilter === 'all' || trendZoneFilter === '4'" :colspan="20" class="trend-zone-hdr-4">
+                    四区 (61 - 80)
+                  </th>
+                </tr>
+
+                <!-- 第二级表头: 01 ~ 80 单独列头 (点击可高亮聚焦) -->
+                <tr>
+                  <th v-for="num in filteredBallColumns" :key="'hdr-' + num"
+                      class="trend-cell cursor-pointer transition hover:opacity-80"
+                      :class="{'trend-zone-border': num % 20 === 0, 'trend-col-highlighted': highlightedBall === num}"
+                      :title="'点击聚焦号码 ' + num"
+                      @click="toggleHighlightBall(num)">
+                    <span class="font-mono font-bold text-[11px]"
+                          :class="num <= 20 ? 'text-cyan-400' : (num <= 40 ? 'text-amber-400' : (num <= 60 ? 'text-purple-400' : 'text-emerald-400'))">
+                      {{ String(num).padStart(2, '0') }}
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <!-- 历史开奖行 (按日期升序由早到晚展示) -->
+                <tr v-for="draw in trendData.draws" :key="draw.period">
+                  <!-- 左侧固定信息 (仅期号与日期) -->
+                  <td class="trend-sticky-col-1 font-mono font-bold text-cyan-400">{{ draw.period }}</td>
+                  <td class="trend-sticky-col-2 font-mono text-slate-400">{{ draw.date.slice(5) }}</td>
+
+                  <!-- 80 码走势落点与遗漏格子 (统一经典红球，白字加粗) -->
+                  <td v-for="num in filteredBallColumns" :key="draw.period + '-' + num"
+                      class="trend-cell"
+                      :class="{'trend-zone-border': num % 20 === 0, 'trend-col-highlighted': highlightedBall === num}">
+                    <!-- 开出中奖号码 (纯净清晰红球) -->
+                    <div v-if="draw.omissions[num - 1] === 0"
+                         class="trend-hit-ball cursor-pointer"
+                         :title="'第 ' + draw.period + ' 期开出 ' + String(num).padStart(2, '0')"
+                         @click="openBallDetail({number: num})">
+                      {{ String(num).padStart(2, '0') }}
+                    </div>
+
+                    <!-- 未开出号码 (清晰展示遗漏数值) -->
+                    <span v-else-if="trendShowOmission"
+                          class="trend-omiss-val"
+                          :class="{'trend-omiss-cold': draw.omissions[num - 1] >= 15, 'trend-omiss-warm': draw.omissions[num - 1] >= 10 && draw.omissions[num - 1] < 15}">
+                      {{ draw.omissions[num - 1] }}
+                    </span>
+                  </td>
+                </tr>
+
+                <!-- ══════════ 预测行 1: 🔮 AI 量化核心金胆预测行 ══════════ -->
+                <tr class="trend-pred-row-1">
+                  <!-- 左侧固定信息 -->
+                  <td class="trend-sticky-col-1 trend-pred-row-1 font-mono font-bold text-amber-400 py-1.5">
+                    <div class="flex items-center justify-center gap-1 text-[11px]">
+                      <span>🔮</span>
+                      <span>{{ systemStatus.target_period || '下期' }}</span>
+                    </div>
+                    <div class="text-[9px] text-amber-500 font-semibold scale-90">AI量化预测</div>
+                  </td>
+                  <td class="trend-sticky-col-2 trend-pred-row-1 font-mono text-amber-300 font-bold text-[10px]">
+                    今日精选
+                  </td>
+
+                  <!-- 80 码 AI 预测球 -->
+                  <td v-for="num in filteredBallColumns" :key="'pred-ai-' + num"
+                      class="trend-cell"
+                      :class="{'trend-zone-border': num % 20 === 0, 'trend-col-highlighted': highlightedBall === num}">
+                    <!-- 最优3码首席金胆 -->
+                    <div v-if="(prediction.top3_gold || (prediction.top5_gold || []).slice(0, 3)).includes(num)"
+                         class="trend-pred-ball trend-pred-top5 cursor-pointer"
+                         :title="'【AI最优3码】第 ' + (systemStatus.target_period || '') + ' 期重点推荐: ' + String(num).padStart(2, '0')"
+                         @click="openBallDetail({number: num})">
+                      ★{{ String(num).padStart(2, '0') }}
+                    </div>
+                    <!-- 首席特供 Hidden Energy 5 -->
+                    <div v-else-if="prediction.hidden_energy_5 && prediction.hidden_energy_5.includes(num)"
+                         class="trend-pred-ball trend-pred-custom cursor-pointer"
+                         :title="'【首席特供5码】号码: ' + String(num).padStart(2, '0')"
+                         @click="openBallDetail({number: num})">
+                      ⚡{{ String(num).padStart(2, '0') }}
+                    </div>
+                    <!-- 未入选占位 -->
+                    <span v-else class="trend-pred-empty">-</span>
+                  </td>
+                </tr>
+
+                <!-- ══════════ 预测行 2: 🧩 全模块预测共识行 (按模块上色) ══════════ -->
+                <tr class="trend-pred-row-consensus">
+                  <td class="trend-sticky-col-1 trend-pred-row-consensus font-mono font-bold text-purple-300 py-1.5">
+                    <div class="flex items-center justify-center gap-1 text-[11px]">
+                      <span>🧩</span>
+                      <span>{{ consensusData.target_period || '下期' }}</span>
+                    </div>
+                    <div class="text-[9px] text-purple-400 font-semibold scale-90">全模块共识 {{ consensusEnabled.length }}路</div>
+                  </td>
+                  <td class="trend-sticky-col-2 trend-pred-row-consensus font-mono text-purple-300 font-bold text-[10px] text-center">
+                    共识叠票
+                  </td>
+
+                  <td v-for="num in filteredBallColumns" :key="'pred-cons-' + num"
+                      class="trend-cell"
+                      :class="{'trend-zone-border': num % 20 === 0, 'trend-col-highlighted': highlightedBall === num}">
+                    <div v-if="(consensusByBall[num] || []).length"
+                         class="consensus-cell cursor-pointer"
+                         :title="consensusByBall[num].map(id => '· ' + (consensusModuleMap[id] ? consensusModuleMap[id].name : id)).join(String.fromCharCode(10)) + String.fromCharCode(10) + '共 ' + consensusByBall[num].length + ' 路模块'"
+                         @click="openBallDetail({number: num})">
+                      <span v-for="id in consensusByBall[num]" :key="id"
+                            class="consensus-dot"
+                            :style="{ background: (consensusModuleMap[id] || {}).color || '#94a3b8' }"></span>
+                      <span class="consensus-count"
+                            :class="{'consensus-count-hot': consensusByBall[num].length >= 5}">{{ consensusByBall[num].length }}</span>
+                    </div>
+                    <span v-else class="trend-pred-empty">-</span>
+                  </td>
+                </tr>
+
+                <!-- ══════════ 预测行 3: 🎯 操盘模拟自选验证行 ══════════ -->
+                <tr class="trend-pred-row-2">
+                  <!-- 左侧固定信息 -->
+                  <td class="trend-sticky-col-1 trend-pred-row-2 font-mono font-bold text-emerald-400 py-1.5">
+                    <div class="flex items-center justify-center gap-1 text-[11px]">
+                      <span>🎯</span>
+                      <span>自选模拟</span>
+                    </div>
+                    <div class="text-[9px] text-emerald-500 font-semibold scale-90">已选 {{ customPicks.length }} 码</div>
+                  </td>
+                  <td class="trend-sticky-col-2 trend-pred-row-2 text-center">
+                    <button v-if="customPicks.length > 0" @click="clearCustomPicks" class="text-[10px] text-rose-400 hover:underline font-bold" title="清空全部自选号码">
+                      ✕清空
+                    </button>
+                    <span v-else class="text-[9px] text-slate-400">点击选号</span>
+                  </td>
+
+                  <!-- 80 码交互选号格子 (支持点击自选/取消) -->
+                  <td v-for="num in filteredBallColumns" :key="'pred-custom-' + num"
+                      class="trend-cell cursor-pointer"
+                      :class="{'trend-zone-border': num % 20 === 0, 'trend-col-highlighted': highlightedBall === num}"
+                      @click="toggleCustomPick(num)">
+                    <!-- 用户已选定的球 -->
+                    <div v-if="customPicks.includes(num)"
+                         class="trend-pred-ball trend-pred-custom"
+                         :title="'点击取消选中号码 ' + num">
+                      🎯{{ String(num).padStart(2, '0') }}
+                    </div>
+                    <!-- 未选定 (提供可点击的小加号) -->
+                    <span v-else class="trend-pred-slot" :title="'点击选择号码 ' + num">+</span>
+                  </td>
+                </tr>
+              </tbody>
+
+              <!-- 表尾统计行 (固定在底部，汇总出现次数、平均遗漏、最大遗漏、最大连出) -->
+              <tfoot>
+                <!-- 1. 出现次数 -->
+                <tr>
+                  <td colspan="2" class="trend-stat-title">出现总次数</td>
+                  <td v-for="num in filteredBallColumns" :key="'stat-freq-' + num"
+                      class="trend-cell font-mono font-bold text-cyan-400"
+                      :class="{'trend-zone-border': num % 20 === 0, 'trend-col-highlighted': highlightedBall === num}">
+                    {{ getBallStat(num).frequency || 0 }}
+                  </td>
+                </tr>
+
+                <!-- 2. 平均遗漏 -->
+                <tr>
+                  <td colspan="2" class="trend-stat-title">平均遗漏期数</td>
+                  <td v-for="num in filteredBallColumns" :key="'stat-avg-' + num"
+                      class="trend-cell font-mono text-slate-400"
+                      :class="{'trend-zone-border': num % 20 === 0, 'trend-col-highlighted': highlightedBall === num}">
+                    {{ getBallStat(num).avg_omission || 0 }}
+                  </td>
+                </tr>
+
+                <!-- 3. 最大遗漏 -->
+                <tr>
+                  <td colspan="2" class="trend-stat-title">最大遗漏期数</td>
+                  <td v-for="num in filteredBallColumns" :key="'stat-max-' + num"
+                      class="trend-cell font-mono text-rose-400 font-bold"
+                      :class="{'trend-zone-border': num % 20 === 0, 'trend-col-highlighted': highlightedBall === num}">
+                    {{ getBallStat(num).max_omission || 0 }}
+                  </td>
+                </tr>
+
+                <!-- 4. 最大连出 -->
+                <tr>
+                  <td colspan="2" class="trend-stat-title">最大连出期数</td>
+                  <td v-for="num in filteredBallColumns" :key="'stat-consec-' + num"
+                      class="trend-cell font-mono text-amber-400 font-bold"
+                      :class="{'trend-zone-border': num % 20 === 0, 'trend-col-highlighted': highlightedBall === num}">
+                    {{ getBallStat(num).max_consecutive || 0 }}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- 辅助统计图表 (选定 N 期出号频次分布柱状图 + 和值/奇偶升序走势图) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-7 glass-panel p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                <span>📊</span> 01-80 码出号频次分布直方图 (近 {{ trendLimit }} 期)
+              </h3>
+              <span class="text-xs text-rose-400 font-mono">红虚线: 理论期望均线</span>
+            </div>
+            <div id="lottery-trend-dist-chart" class="w-full h-72"></div>
+          </div>
+
+          <div class="lg:col-span-5 glass-panel p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                <span>📈</span> 开奖和值与奇偶比走势 (日期升序)
+              </h3>
+              <span class="text-xs text-amber-400 font-mono">均值回归研判</span>
+            </div>
+            <div id="lottery-trend-sum-odd-chart" class="w-full h-72"></div>
+          </div>
+        </div>
+
+        <!-- 操盘实战大白话指南 (每日根据真实开奖号动态推演) -->
+        <div class="glass-panel p-5 bg-slate-950/70 border border-slate-800">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <h4 class="text-xs font-bold text-amber-300 flex items-center gap-2">
+              <span>🧬</span> 老派量化操盘手 · 开奖号码走势图实战秘籍
+            </h4>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] text-cyan-300 font-mono px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                根据第 {{ trendData?.tactics?.target_period || trendData?.summary?.end_period || '最新' }} 期真实开奖每日动态实时更新
+              </span>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-slate-300 leading-relaxed">
+            <div class="p-3.5 rounded-lg bg-slate-900/70 border border-slate-800 hover:border-cyan-500/40 transition-colors">
+              <div class="text-cyan-300 font-bold mb-1.5 flex items-center justify-between">
+                <span class="flex items-center gap-1"><span>🌊</span> 看冷热势头 (连号与热码)</span>
+                <span class="text-[10px] text-cyan-400/80 font-normal px-1.5 py-0.5 rounded bg-cyan-500/10">顺势追热</span>
+              </div>
+              <div class="text-slate-300 leading-relaxed">
+                {{ trendData?.tactics?.hot_momentum || '走势图中从上往下看，如果某列出现连续纵向连接的红球（连出 3 期以上），属于极度爆发热码，在热竭之前适合顺势跟进。' }}
+              </div>
+            </div>
+            <div class="p-3.5 rounded-lg bg-slate-900/70 border border-slate-800 hover:border-purple-500/40 transition-colors">
+              <div class="text-purple-300 font-bold mb-1.5 flex items-center justify-between">
+                <span class="flex items-center gap-1"><span>❄️</span> 抓冷门回补 (极限遗漏)</span>
+                <span class="text-[10px] text-purple-400/80 font-normal px-1.5 py-0.5 rounded bg-purple-500/10">极限反弹</span>
+              </div>
+              <div class="text-slate-300 leading-relaxed">
+                {{ trendData?.tactics?.cold_omission || '若某号码遗漏数字达到 15-20 期（出现红色遗漏预警），根据“风水轮流转 (均值回归)”定律，该号随时会强力反弹开出。' }}
+              </div>
+            </div>
+            <div class="p-3.5 rounded-lg bg-slate-900/70 border border-slate-800 hover:border-amber-500/40 transition-colors">
+              <div class="text-amber-300 font-bold mb-1.5 flex items-center justify-between">
+                <span class="flex items-center gap-1"><span>🤝</span> 看邻居与斜连线 (抓搭档)</span>
+                <span class="text-[10px] text-amber-400/80 font-normal px-1.5 py-0.5 rounded bg-amber-500/10">选2搭档</span>
+              </div>
+              <div class="text-slate-300 leading-relaxed">
+                {{ trendData?.tactics?.neighbor_diagonal || '走势图中重点观察上一期开出号码的左右邻居，以及斜对角线红球落点（如爬楼梯走势），是极佳的选2/选3搭档切入点。' }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>

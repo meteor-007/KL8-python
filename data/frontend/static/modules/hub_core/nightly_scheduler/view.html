@@ -1,0 +1,405 @@
+<div v-show="activeTab === 'nightly_scheduler'" class="space-y-6">
+        <!-- G5: 静态快照降级提示 —— 降级数据不得冒充实时结果 -->
+        <div v-if="evolutionHistoryStale" class="glass-panel p-3 border-l-4 border-amber-400 text-xs text-amber-300">
+          ⚠️ 进化历史接口不可用，当前展示的是静态快照（可能已过期）
+        </div>
+
+        <!-- 头部核心横幅 -->
+        <div class="glass-panel p-6 border-l-4 border-amber-500 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden"
+             style="background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(30,41,59,0.9));">
+          <div class="space-y-2 z-10">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">⏰</span>
+              <div>
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                  开奖后自动流水线 · 非点位预测全自动
+                  <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono font-bold">v6 · 开奖驱动</span>
+                </h2>
+                <p class="text-xs text-slate-400 font-mono mt-0.5">
+                  同步开奖 ➔ 自动跑 16期/经典开奖侧/六大AI ➔ 最优策略汇总；点位·三高·数据源关联等需手工录入后再手动执行
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 22:00 倒计时 & 触发器 -->
+          <div class="flex items-center gap-4 z-10 flex-wrap">
+            <div class="p-3.5 rounded-xl bg-slate-900/80 border border-amber-500/30 flex flex-col items-center min-w-[170px] shadow-[0_0_15px_rgba(245,158,11,0.15)]">
+              <span class="text-[10px] text-slate-400 font-mono uppercase tracking-wider">距离下次定时执行</span>
+              <span class="text-lg font-black font-mono text-amber-400 mt-0.5 animate-pulse">{{ schedulerStatus.countdown_human }}</span>
+              <span class="text-[9px] text-slate-500 mt-0.5 font-mono">目标时间: {{ schedulerStatus.next_run_time }}</span>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <button @click="triggerNightlyRun" :disabled="isRunning || schedulerStatus.is_running"
+                      class="cyber-btn cyber-btn-amber px-5 py-2.5 text-xs font-bold flex items-center gap-2 shadow-[0_0_20px_rgba(245,158,11,0.3)]">
+                <span class="text-base">{{ (isRunning || schedulerStatus.is_running) ? '⏳' : '🚀' }}</span>
+                <span>{{ (isRunning || schedulerStatus.is_running) ? '流水线计算中...' : '立即执行开奖后自动流水线' }}</span>
+              </button>
+              <div class="text-[10px] text-slate-500 font-mono leading-snug max-w-[220px]">
+                自动：16期+经典开奖侧+六大AI+汇总<br/>
+                手动：点位/三高/数据源关联/HE5
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 调度器状态与 Windows 系统任务说明 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="glass-panel p-4 border border-slate-800/80">
+            <div class="text-xs text-slate-400 mb-1">守护调度器运行状态</div>
+            <div class="flex items-center gap-2 font-mono font-bold text-sm" :class="schedulerStatus.enabled ? 'text-emerald-400' : 'text-slate-500'">
+              <span class="w-2.5 h-2.5 rounded-full" :class="schedulerStatus.enabled ? 'bg-emerald-400 animate-ping' : 'bg-slate-500'"></span>
+              <span>{{ schedulerStatus.is_running ? '⚡ 正在执行任务' : '🟢 后台常驻监听中 (22:00)' }}</span>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-2 font-mono truncate">{{ schedulerStatus.last_message }}</div>
+          </div>
+
+          <div class="glass-panel p-4 border border-slate-800/80">
+            <div class="text-xs text-slate-400 mb-1">最近一次执行记录</div>
+            <div class="font-mono text-sm font-bold text-white">{{ schedulerStatus.last_finished_at || '今日待命中' }}</div>
+            <div class="text-[10px] text-emerald-400 mt-2 font-mono">状态: {{ schedulerStatus.last_status }}</div>
+          </div>
+
+          <div class="glass-panel p-4 border border-slate-800/80">
+            <div class="text-xs text-slate-400 mb-1">v6 执行策略</div>
+            <div class="font-mono text-sm font-bold text-emerald-300">开奖同步 → 非点位全自动</div>
+            <div class="text-[10px] text-slate-500 mt-2 leading-snug">
+              主推口径 = 16期中热；点位/三高类跳过，录入后再手动跑
+            </div>
+          </div>
+
+          <div class="glass-panel p-4 border border-slate-800/80 flex flex-col justify-between">
+            <div class="text-xs text-slate-400 mb-1">Windows 计划任务双重保障</div>
+            <div class="text-xs font-mono text-amber-300">✅ setup_nightly_task.bat</div>
+            <div class="text-[10px] text-slate-400 mt-1">系统任务计划程序已就绪，双保险准点触发</div>
+          </div>
+        </div>
+
+        <!-- v6：自动 vs 手动清单 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div class="glass-panel p-5 space-y-3 border-l-4 border-emerald-400">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <h3 class="font-bold text-emerald-300 text-sm flex items-center gap-2"><span>✅</span> 开奖后自动执行</h3>
+              <span class="text-[10px] font-mono text-emerald-400">仅需开奖数据</span>
+            </div>
+            <ul class="text-xs text-slate-300 space-y-1.5 font-mono">
+              <li>· 16期中热（主推）</li>
+              <li>· 顺口溜 · 定胆选2 · 心理博弈</li>
+              <li>· 尾数 / 质合 / 熵</li>
+              <li>· 遗传算法 · 线性代数 · 随机森林 · 残差改错GBDT</li>
+              <li>· 最优策略汇总陈列（主推=16期）</li>
+            </ul>
+            <div class="pt-2 flex flex-wrap gap-2">
+              <button @click="openTab('sixteen_cockpit')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">🔥 16期</button>
+              <button @click="openTab('classic_overview')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">⚡ 经典大盘</button>
+              <button @click="openTab('genetic_cockpit')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">🧬 遗传算法</button>
+              <button @click="openTab('linear_algebra_cockpit')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">📐 线性代数</button>
+              <button @click="openTab('random_forest_cockpit')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">🌲 随机森林</button>
+              <button @click="openTab('error_correction_cockpit')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">🌳 残差GBDT</button>
+              <button @click="openTab('agg_cockpit')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">👑 策略汇总</button>
+            </div>
+          </div>
+
+          <div class="glass-panel p-5 space-y-3 border-l-4 border-amber-400">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <h3 class="font-bold text-amber-300 text-sm flex items-center gap-2"><span>⏸️</span> 待点位/手工后再手动</h3>
+              <span class="text-[10px] font-mono text-amber-400">本流水线不自动跑</span>
+            </div>
+            <ul class="text-xs text-slate-300 space-y-1.5 font-mono">
+              <li>· 数据源1×2 深层关联</li>
+              <li>· 未开点位高压反弹</li>
+              <li>· 点位与遗漏</li>
+              <li>· 三高×点位</li>
+              <li>· Hidden Energy / 点位强依赖研报段</li>
+            </ul>
+            <div class="pt-2 flex flex-wrap gap-2">
+              <button @click="openTab('points_input')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">📝 点位录入</button>
+              <button @click="openTab('tri_high_input')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">📝 三高录入</button>
+              <button @click="openTab('point_omission_cockpit')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">🎯 点位遗漏</button>
+              <button @click="openTab('datasource_cockpit')" class="cyber-btn cyber-btn-dark text-[11px] !py-1 !px-2">🧬 数据源</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════ 执行档案（保留审计轨迹，文案对齐 v6） ═══════════ -->
+        <div class="glass-panel p-5 space-y-4">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">📅</span>
+              <div>
+                <h3 class="font-bold text-white text-base flex items-center gap-2">
+                  开奖流水线执行档案
+                  <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 font-mono font-bold">
+                    最近 Gen {{ evolutionHistory[0]?.generation ?? '--' }}
+                  </span>
+                </h3>
+                <p class="text-xs text-slate-400 mt-0.5">
+                  定时/手动触发记录；v6 起自动段不含点位类模块
+                </p>
+              </div>
+            </div>
+
+            <!-- 右侧刷新与快捷统计 -->
+            <div class="flex items-center gap-3">
+              <div class="hidden sm:flex items-center gap-4 text-xs font-mono bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
+                <div>
+                  <span class="text-slate-500">最近执行: </span>
+                  <span class="text-amber-400 font-bold">{{ evolutionHistory[0]?.evolved_at || schedulerStatus.last_finished_at || '--' }}</span>
+                </div>
+              </div>
+              <button @click="fetchEvolutionStatus" :disabled="evolutionLoading"
+                      class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono flex items-center gap-1.5 transition">
+                <span>{{ evolutionLoading ? '⏳' : '🔄' }}</span>
+                <span>刷新档案</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 逻辑准则提示条 -->
+          <div class="p-3 rounded-lg bg-slate-900/90 border border-cyan-500/30 text-xs font-mono flex flex-col md:flex-row md:items-center justify-between gap-2 text-slate-300">
+            <div class="flex items-center gap-2">
+              <span class="text-base">🧭</span>
+              <span>
+                <strong class="text-cyan-300">时间与期号严密自洽逻辑：</strong>
+                每天 21:30 开奖 ➔ 22:00 自动流水线唤醒 ➔ 归档当晚已开期号 ➔ 跨模块自进化 ➔ 锁定<strong class="text-amber-300">次日开奖目标期</strong>推演。
+              </span>
+            </div>
+            <div class="text-[11px] text-emerald-400 font-bold">
+              ✅ 严格遵循因果律，绝无期号重叠与滞后
+            </div>
+          </div>
+
+          <!-- 历史执行记录表格 -->
+          <div class="overflow-x-auto rounded-lg border border-slate-800/80">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="text-[11px] text-slate-400 uppercase bg-slate-900/90 border-b border-slate-800 font-mono">
+                <tr>
+                  <th class="py-3 px-3">门禁迭代计数</th>
+                  <th class="py-3 px-3">执行时间</th>
+                  <th class="py-3 px-3">当晚已开期号</th>
+                  <th class="py-3 px-3">研判目标期 (次日开奖)</th>
+                  <th class="py-3 px-3">触发方式</th>
+                  <th class="py-3 px-3">执行状态</th>
+                  <th class="py-3 px-3">物理门禁要求</th>
+                  <th class="py-3 px-3">准入白名单系统 (表决权)</th>
+                  <th class="py-3 px-3">静音休眠模块</th>
+                  <th class="py-3 px-3">核心决策依据 (大白话)</th>
+                  <th class="py-3 px-3 text-right">操作</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono">
+                <tr v-for="item in evolutionHistory" :key="item.generation + '_' + item.evolved_at"
+                    class="hover:bg-slate-800/40 transition">
+                  <!-- 进化代数 -->
+                  <td class="py-3 px-3 whitespace-nowrap">
+                    <span class="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 font-black">
+                      Gen {{ item.generation }}
+                    </span>
+                  </td>
+                  <!-- 执行时间 -->
+                  <td class="py-3 px-3 whitespace-nowrap text-slate-200">
+                    {{ item.evolved_at }}
+                  </td>
+                  <!-- 当晚已开期号 -->
+                  <td class="py-3 px-3 whitespace-nowrap text-slate-400 font-mono">
+                    <span class="text-slate-300 font-bold">第 {{ item.last_drawn_period || (item.target_period - 1) }} 期</span>
+                    <span class="text-[10px] text-slate-500 block">({{ item.last_drawn_date || item.evolved_at.split(' ')[0] }})</span>
+                  </td>
+                  <!-- 研判目标期 (次日开奖) -->
+                  <td class="py-3 px-3 whitespace-nowrap font-bold text-amber-400">
+                    <span class="text-amber-300 font-black text-sm">第 {{ item.target_period }} 期</span>
+                    <span class="text-[10px] text-amber-400/80 block font-mono">({{ item.target_date || '次日' }} 开奖)</span>
+                  </td>
+                  <!-- 触发方式 -->
+                  <td class="py-3 px-3 whitespace-nowrap">
+                    <span :class="item.trigger_badge === 'scheduled' ? 'bg-amber-500/10 text-amber-300 border-amber-500/30' : 'bg-blue-500/10 text-blue-300 border-blue-500/30'"
+                          class="px-2 py-0.5 rounded text-[10px] border font-bold">
+                      {{ item.trigger_type }}
+                    </span>
+                  </td>
+                  <!-- 执行状态 -->
+                  <td class="py-3 px-3 whitespace-nowrap">
+                    <span class="text-emerald-400 font-bold flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                      <span>{{ item.status_label || '✅ 执行圆满成功' }}</span>
+                    </span>
+                  </td>
+                  <!-- 门禁要求 -->
+                  <td class="py-3 px-3 whitespace-nowrap">
+                    <span class="text-amber-300 font-bold">≥ {{ item.resonance_threshold }} 路点亮</span>
+                    <span class="text-slate-500 text-[10px] ml-1">(防守{{ item.kill_defense_size }}码)</span>
+                  </td>
+                  <!-- 准入白名单 -->
+                  <td class="py-3 px-3">
+                    <div class="flex flex-wrap gap-1 max-w-[260px]">
+                      <span v-for="name in (item.active_display || item.active_subsystems)" :key="name"
+                            class="px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 text-[10px] whitespace-nowrap">
+                        {{ name }}
+                      </span>
+                    </div>
+                  </td>
+                  <!-- 休眠模块 -->
+                  <td class="py-3 px-3">
+                    <div class="flex flex-wrap gap-1 max-w-[130px]">
+                      <span v-for="name in (item.muted_display || item.muted_subsystems)" :key="name"
+                            class="px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-300 border border-rose-500/20 text-[10px] whitespace-nowrap">
+                        {{ name }}
+                      </span>
+                      <span v-if="!item.muted_subsystems || item.muted_subsystems.length === 0" class="text-slate-500 text-[10px]">
+                        全员准入
+                      </span>
+                    </div>
+                  </td>
+                  <!-- 核心决策依据 (大白话) -->
+                  <td class="py-3 px-3 text-slate-300 font-sans text-xs max-w-[260px] truncate" :title="item.summary_rationale">
+                    {{ item.summary_rationale }}
+                  </td>
+                  <!-- 操作 -->
+                  <td class="py-3 px-3 whitespace-nowrap text-right">
+                    <button @click="openEvolutionDetail(item)"
+                            class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 text-xs font-mono transition">
+                      查看依据
+                    </button>
+                  </td>
+                </tr>
+                <tr v-if="!evolutionHistory || evolutionHistory.length === 0">
+                  <td colspan="11" class="py-12 text-center text-slate-500 font-mono">
+                    <div class="text-2xl mb-2">⏳</div>
+                    <div>暂无历史执行记录，正在从自学习账本加载或可点击上方“立即执行夜间全流程”</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ═══ C4: 周度权重调整建议单 —— 只提建议, 改参数必须人工点头 ═══ -->
+        <div class="glass-panel p-6 space-y-4 border-l-4 border-indigo-500">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">🗓️</span>
+              <span class="text-sm font-bold text-white">周度权重调整建议单</span>
+              <span v-if="weeklyAdvice?.week" class="cyber-badge cyber-badge-indigo font-mono text-[10px]">{{ weeklyAdvice.week }}</span>
+            </div>
+            <button @click="fetchWeeklyAdvice()" class="text-xs text-indigo-300 hover:underline">
+              {{ weeklyAdviceLoading ? '生成中…' : '🔄 生成/刷新建议单' }}
+            </button>
+          </div>
+
+          <p class="text-[11px] text-slate-500 leading-relaxed">
+            大白话：每周日系统自己看一遍 100 期成绩单，写出一份"建议单"—— 谁该上位、谁该降级、谁该重议。
+            但<b>它只提建议，不会自己动手</b>。要真正生效，必须有人工在命令行跑一次下面这条命令，并把这次确认写进审计日志。
+            自动改权重是危险的，得有人负责。
+          </p>
+          <div class="p-2 rounded border border-slate-700 font-mono text-[11px] text-indigo-300 break-all"
+               style="background: var(--bg-card-inner);">
+            {{ weeklyAdvice?.how_to_apply || 'python -m backend.core.weekly_advisor --apply --who <你的名字>' }}
+          </div>
+
+          <div v-if="!weeklyAdvice" class="text-xs text-slate-400 py-4 text-center">
+            本周建议单还没生成（每周日出一次，也可点上面按钮手动生成）。
+          </div>
+
+          <div v-else class="space-y-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs font-mono">
+              <div class="p-2.5 rounded border border-slate-700" style="background: var(--bg-card-inner);">
+                <div class="text-slate-400 text-[11px]">有票权 / 观察仓 / 已退役</div>
+                <div class="text-white font-bold text-base mt-0.5">
+                  {{ weeklyAdvice.summary?.n_votable }} / {{ weeklyAdvice.summary?.n_observation }} / {{ weeklyAdvice.summary?.n_retired }}
+                </div>
+              </div>
+              <div class="p-2.5 rounded border border-slate-700" style="background: var(--bg-card-inner);">
+                <div class="text-slate-400 text-[11px]">票权总和</div>
+                <div class="text-cyan-300 font-bold text-base mt-0.5">
+                  {{ weeklyAdvice.summary?.vote_weight_sum?.toFixed(4) || '-' }}
+                </div>
+              </div>
+              <div class="p-2.5 rounded border"
+                   :class="weeklyAdvice.summary?.n_needs_human > 0 ? 'border-amber-500/50' : 'border-slate-700'"
+                   style="background: var(--bg-card-inner);">
+                <div class="text-slate-400 text-[11px]">需人工裁决</div>
+                <div class="font-bold text-base mt-0.5"
+                     :class="weeklyAdvice.summary?.n_needs_human > 0 ? 'text-amber-300' : 'text-slate-400'">
+                  {{ weeklyAdvice.summary?.n_needs_human }} 项
+                </div>
+              </div>
+              <div class="p-2.5 rounded border border-slate-700" style="background: var(--bg-card-inner);">
+                <div class="text-slate-400 text-[11px]">榜单依据</div>
+                <div class="text-slate-300 text-[11px] mt-0.5 leading-snug">{{ weeklyAdvice.registry_basis }}</div>
+              </div>
+            </div>
+
+            <div class="p-3 rounded border-l-4 border-indigo-400 text-xs"
+                 style="background: rgba(99,102,241,0.08);">
+              <b class="text-indigo-200">本周结论：</b>
+              <span class="text-slate-300">{{ weeklyAdvice.verdict }}</span>
+            </div>
+
+            <!-- 谁在说话: 影响力 Top3 -->
+            <div v-if="weeklyAdvice.summary?.top_influence?.length" class="space-y-1.5">
+              <div class="text-xs font-bold text-slate-200">谁在说话 (影响力 Top 3)</div>
+              <div v-for="(t, i) in weeklyAdvice.summary.top_influence" :key="t.name"
+                   class="flex items-center gap-2 text-xs font-mono">
+                <span class="text-slate-500 w-4">{{ i + 1 }}.</span>
+                <span class="text-slate-200 flex-1 truncate">{{ t.name }}</span>
+                <div class="w-32 h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                  <div class="h-full rounded-full bg-gradient-to-r from-cyan-500 to-indigo-400"
+                       :style="'width: ' + Math.min(100, (t.share || 0) * 100).toFixed(1) + '%'"></div>
+                </div>
+                <span class="text-cyan-300 w-14 text-right">{{ ((t.share || 0) * 100).toFixed(1) }}%</span>
+              </div>
+            </div>
+
+            <div v-if="weeklyAdvice.modules?.length" class="overflow-x-auto">
+              <table class="cyber-table w-full text-left text-xs">
+                <thead>
+                  <tr class="bg-slate-900/80 text-slate-400 font-mono">
+                    <th class="py-2.5 px-3">模块</th>
+                    <th class="py-2.5 px-3">当前状态</th>
+                    <th class="py-2.5 px-3">票权</th>
+                    <th class="py-2.5 px-3">影响力</th>
+                    <th class="py-2.5 px-3">本周建议</th>
+                    <th class="py-2.5 px-3">依据</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 font-mono">
+                  <tr v-for="m in weeklyAdvice.modules" :key="m.id"
+                      class="hover:bg-slate-800/40"
+                      :class="m.needs_human ? 'bg-amber-500/5' : ''">
+                    <td class="py-2.5 px-3 font-bold text-white">
+                      {{ m.name }}
+                      <span v-if="m.needs_human" class="ml-1 px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px]">需人工</span>
+                    </td>
+                    <td class="py-2.5 px-3">
+                      <span class="px-2 py-0.5 rounded text-[10px]"
+                            :class="m.status === 'votable' ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/40'
+                                  : (m.status === 'observation' ? 'bg-amber-500/15 text-amber-300 border border-amber-500/40'
+                                  : 'bg-rose-500/15 text-rose-300 border border-rose-500/40')">
+                        {{ m.status === 'votable' ? '✅ 有票权' : (m.status === 'observation' ? '👁 观察仓' : '⏹ 已退役') }}
+                      </span>
+                    </td>
+                    <td class="py-2.5 px-3 text-white">{{ (m.vote_weight || 0).toFixed(4) }}</td>
+                    <td class="py-2.5 px-3 text-cyan-300">
+                      {{ m.influence_share === null || m.influence_share === undefined ? '-' : (m.influence_share * 100).toFixed(1) + '%' }}
+                    </td>
+                    <td class="py-2.5 px-3">
+                      <span class="px-2 py-0.5 rounded text-[10px]"
+                            :class="m.needs_human ? 'bg-amber-500/20 text-amber-200 border border-amber-500/50 font-bold'
+                                  : 'bg-slate-800 text-slate-300 border border-slate-700'">
+                        {{ m.action_text || m.action }}
+                      </span>
+                    </td>
+                    <td class="py-2.5 px-3 text-slate-400 max-w-lg text-[11px] leading-snug">{{ m.reason }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="text-[11px] text-slate-500 leading-relaxed border-t border-slate-800 pt-3 space-y-1">
+              <div>· <b>"需人工裁决"</b>指的是机器不敢自己决定的事：给一个没预注册的模块补票，或把一个模块彻底退役。这类决定必须有人签字。</div>
+              <div>· 降级（跑输大盘的有票权模块）是夜间流水线自动做的，不需要人工 —— 因为"证据变差就减票"本来就是规则。</div>
+            </div>
+          </div>
+        </div>
+      </div>

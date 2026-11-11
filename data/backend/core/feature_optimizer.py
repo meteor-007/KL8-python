@@ -24,9 +24,9 @@ _PROJ = get_project_root()
 
 from utils.excel_lock import excel_lock
 
-EXCEL_FILE = os.path.join(_PROJ, '跟随+点位+开奖数据.xlsx')
-HISTORY_FILE = os.path.join(_PROJ, 'kl8_history_final.txt')
-POINTS_FILE = os.path.join(_PROJ, 'daily_points.txt')
+EXCEL_FILE = data_path('跟随+点位+开奖数据.xlsx')
+HISTORY_FILE = data_path('kl8_history_final.txt')
+POINTS_FILE = data_path('daily_points.txt')
 
 POINT_FILL = "FFFCE4EC"
 BORDER_CLR = "FFD966B3"
@@ -578,7 +578,10 @@ def get_all_layer_a_scores(history=None, history_only=False, is_future: Optional
         data1, data2, d1_stars, points = _filter_scoped_data(
             _data_cache['data1'], _data_cache['data2'], _data_cache['d1_stars'],
             _data_cache['points'], allowed)
-        return _compute_layer_a_scores(history, data1, data2, d1_stars, points, is_future=False)
+        import contextlib
+        import io
+        with contextlib.redirect_stdout(io.StringIO()):
+            return _compute_layer_a_scores(history, data1, data2, d1_stars, points, is_future=False)
 
     if not _data_cache:
         try:

@@ -27,11 +27,12 @@ Walk-Forward Validation 是时间序列回测的黄金标准:
     results = validator.validate(history, prediction_fn)
     report = validator.report(results)
 """
+from backend.utils.paths import get_cache_dir
 import os
 import json
 import math
 import numpy as np
-from typing import Dict, List, Callable, Tuple, Any
+from typing import Dict, List, Callable, Tuple, Any, Optional
 from collections import defaultdict
 
 import os, sys
@@ -40,7 +41,7 @@ if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
 from utils.paths import get_project_root, data_path, _ensure_project_path
 _ensure_project_path()
 _PROJ = get_project_root()
-WF_RESULTS_FILE = os.path.join(_PROJ, 'cache', 'walk_forward_results.json')
+WF_RESULTS_FILE = os.path.join(get_cache_dir(), 'walk_forward_results.json')
 
 
 class WalkForwardValidator:
@@ -165,9 +166,15 @@ class WalkForwardValidator:
 
         return results
     
-    def report(self, results: List[Dict]) -> Dict:
-        """
-        生成Walk-Forward验证汇总报告
+    def report(self, results: List[Dict], write: bool = True,
+               extra: Optional[Dict] = None) -> Dict:
+        """生成Walk-Forward验证汇总报告。
+
+        C7 参数说明:
+          write=False —— 只算不落盘。per-channel 验证要用它: 三个单通道报告若都往
+                         cache/walk_forward_results.json 写, 会互相覆盖, 而那个文件是
+                         learning_gate 的门控依据, 覆盖等于伪造门控信号。
+          extra       —— 落盘前并入报告的附加字段 (如 channels / pipeline_mode)。
         """
         if not results:
             return {'status': 'NO_DATA', 'message': '无验证结果'}
@@ -260,13 +267,19 @@ class WalkForwardValidator:
         }
         
         # 保存
+        if not write:
+            if extra:
+                report.update(extra)
+            return report
+        if extra:
+            report.update(extra)
         try:
             os.makedirs(os.path.dirname(WF_RESULTS_FILE), exist_ok=True)
             with open(WF_RESULTS_FILE, 'w', encoding='utf-8') as f:
                 json.dump(report, f, ensure_ascii=False, indent=2)
         except Exception:
             pass
-        
+
         return report
     
     @staticmethod

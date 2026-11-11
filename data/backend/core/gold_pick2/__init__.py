@@ -1,35 +1,15 @@
 # -*- coding: utf-8 -*-
-"""
-定金选2 快乐8 算法模块包 (Gold Pick 2 Package)
-"""
-from core.gold_pick2.gold_pick2_engine import (
-    load_draws_from_file,
-    calculate_gold_pick2_features,
-    cross_validate_pick2_picks,
-    BASE_SINGLE,
-    BASE_PAIR,
-    DEFAULT_WEIGHTS,
-    norm_z
-)
-from core.gold_pick2.gold_pick2_reviewer import (
-    walk_forward_evaluate_pick2,
-    compute_confidence
-)
-from core.gold_pick2.gold_pick2_learner import (
-    GoldPick2Learner,
-    batch_update
-)
+"""Compatibility shim: backend.core.gold_pick2 -> backend.modules._retired.gold_pick2"""
+from __future__ import annotations
+import os as _os
 
-__all__ = [
-    "load_draws_from_file",
-    "calculate_gold_pick2_features",
-    "cross_validate_pick2_picks",
-    "walk_forward_evaluate_pick2",
-    "compute_confidence",
-    "GoldPick2Learner",
-    "batch_update",
-    "BASE_SINGLE",
-    "BASE_PAIR",
-    "DEFAULT_WEIGHTS",
-    "norm_z"
-]
+_REAL = _os.path.abspath(
+    _os.path.join(_os.path.dirname(__file__), "..", "..", "modules", "_retired", 'gold_pick2')
+)
+__path__ = [_REAL]
+
+_real_init = _os.path.join(_REAL, "__init__.py")
+if _os.path.isfile(_real_init):
+    with open(_real_init, "r", encoding="utf-8") as _f:
+        _code = compile(_f.read(), _real_init, "exec")
+    exec(_code, globals())

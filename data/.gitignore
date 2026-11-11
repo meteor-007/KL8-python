@@ -29,6 +29,13 @@ build/
 *.log
 logs/
 
+# 根目录误生成（正式活数据在 storage/；写入方已改，此处防复发）
+/output/
+/outputs/
+/reports/
+/kl8_012_roads_summary.csv
+/kl8_prime_composite_summary.csv
+
 # 临时文件
 *.tmp
 *.temp
@@ -36,6 +43,7 @@ logs/
 
 # 敏感文件
 cookies.txt
+.env
 
 # Claude Code 本机配置（权限规则/启动配置，不上传）
 .claude/

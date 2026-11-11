@@ -6,6 +6,7 @@
 - 主报告: FullReportEngine (20 方案 / 11 模块)
 - 附录 A: FO 单通道 baseline + 自学习门控
 """
+from backend.utils.paths import get_cache_dir
 import os
 import sys
 import json
@@ -16,7 +17,7 @@ from typing import Dict, Optional
 import os, sys
 if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils.paths import get_project_root, data_path, _ensure_project_path
+from utils.paths import get_project_root, data_path, get_logs_dir, _ensure_project_path
 _ensure_project_path()
 _PROJ = get_project_root()
 
@@ -27,12 +28,13 @@ from pipeline.full_report_engine import FullReportEngine
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
+_log_dir = get_logs_dir()
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout),
-        logging.FileHandler(os.path.join(_PROJ, 'logs', 'engine_runtime.log'), encoding='utf-8'),
+        logging.FileHandler(os.path.join(_log_dir, 'engine_runtime.log'), encoding='utf-8'),
     ],
 )
 logger = logging.getLogger("LotteryEngine")
@@ -50,7 +52,7 @@ class DailyReportOrchestrator:
         self.dc.initialize()
 
     def _load_weekly_monitor(self) -> Dict:
-        path = os.path.join(_PROJ, 'cache', 'weekly_channel_monitor.json')
+        path = os.path.join(get_cache_dir(), 'weekly_channel_monitor.json')
         if os.path.exists(path):
             try:
                 with open(path, 'r', encoding='utf-8') as f:
@@ -118,12 +120,17 @@ class DailyReportOrchestrator:
                 logger.critical("工业级主报告生成失败")
                 return
 
-            from main_v2 import run_pipeline
-            from core.learning_gate import gate_status
+            from backend.pipeline.main_v2 import run_pipeline
+            from backend.core.learning_gate import gate_status
 
             fo_result = run_pipeline(list(self.dc.history), top_k=20, quiet=True)
             gate = gate_status()
             self._append_fo_baseline_appendix(report_path, fo_result, gate, None)
+            try:
+                import shutil
+                shutil.copy2(report_path, os.path.join(_PROJ, os.path.basename(report_path)))
+            except Exception as ce:
+                logger.warning(f"复制日报至项目根目录失败: {ce}")
             logger.info(f"完整日报生成完毕 (含 FO 附录): {report_path}")
 
         except Exception as e:
