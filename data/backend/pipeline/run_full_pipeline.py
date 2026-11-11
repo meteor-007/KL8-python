@@ -946,6 +946,48 @@ def task6_cleanup():
                     pass
     ok(f'已清理 {count} 个 __pycache__ 目录')
 
+
+def task7_auto_git_sync():
+    """收尾：把当日代码与数据变更自动提交并推送。
+
+    2026-11-11 新增。失败只告警，绝不影响流水线结果 —— 同步是运维动作，
+    不该拖垮业务计算。可用环境变量关闭：
+        AUTO_GIT_SYNC=0  完全跳过
+        AUTO_GIT_PUSH=0  只提交不推送
+    """
+    banner('任务7：📤 自动提交并推送当日变更', 'cyan')
+    try:
+        from backend.utils.auto_git_sync import auto_sync
+    except Exception as e:
+        warn(f'自动同步模块不可用: {e}')
+        return
+
+    note = ''
+    try:
+        hist = data_path('kl8_history_final.txt')
+        with open(hist, 'r', encoding='utf-8') as f:
+            m = re.search(r'period:(\d+)', f.readline())
+        if m:
+            note = f'目标期 {int(m.group(1)) + 1}'
+    except Exception:
+        pass
+
+    try:
+        res = auto_sync(note=note)
+        st = res.get('status')
+        if st == 'pushed':
+            ok(f"已提交并推送 · {res.get('branch')} {res.get('sha')} · {res.get('shortstat', '')}")
+        elif st == 'committed':
+            warn(f"已提交但未推送: {res.get('message')}")
+        elif st == 'no_changes':
+            info('工作区无变更，跳过提交')
+        elif st == 'skipped':
+            info(f"跳过: {res.get('message')}")
+        else:
+            warn(f"自动同步失败（不影响本次推演）: {res.get('message')}")
+    except Exception as e:
+        warn(f'自动同步异常（不影响本次推演）: {e}')
+
 # ══════════════════════════════════════════════════════════
 # MAIN
 # ══════════════════════════════════════════════════════════
@@ -990,6 +1032,7 @@ if __name__ == '__main__':
         ok_report = task5_verify(report_path)
         print_module_board()
         task6_cleanup()
+        task7_auto_git_sync()
     except KeyboardInterrupt:
         print()
         warn('用户中断执行')
