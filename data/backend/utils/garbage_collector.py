@@ -23,6 +23,9 @@ if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
 from utils.paths import get_project_root, data_path, get_logs_dir, _ensure_project_path
 _ensure_project_path()
 _PROJ = get_project_root()
+
+# 根 logs/ 迁移到 storage/logs 时，最近 N 秒内仍在写入的文件跳过（避免截断活跃日志）
+_LOG_ACTIVE_WINDOW_SEC = 120
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] GC: %(message)s')
 logger = logging.getLogger("GarbageCollector")
 
@@ -191,6 +194,14 @@ def clean_root_clutter():
         for name in os.listdir(root_logs):
             s = os.path.join(root_logs, name)
             if not os.path.isfile(s):
+                continue
+            # 正在写入的日志不能搬：copy + remove 会让写入方的文件句柄失效，
+            # 后半段输出直接丢失（流水线跑到一半日志被截断就是这么来的）。
+            try:
+                if time.time() - os.path.getmtime(s) < _LOG_ACTIVE_WINDOW_SEC:
+                    logger.info(f"  [活跃] logs/{name} 最近仍在写入，跳过迁移")
+                    continue
+            except OSError:
                 continue
             d = os.path.join(storage_logs, name)
             try:
