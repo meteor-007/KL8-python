@@ -32,7 +32,7 @@ BACKEND_DIR = os.path.join(PROJ_DIR, "backend")
 if BACKEND_DIR not in sys.path:
     sys.path.insert(0, BACKEND_DIR)
 
-from backend.modules.unified_brain.feature_extractors import (
+from backend.modules.legacy.unified_brain.feature_extractors import (
     NUM_TOTAL,
     DefenseMaskExtractor,
     UnifiedFeatureBundle,

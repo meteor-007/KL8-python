@@ -80,32 +80,32 @@ from backend.api.routes_ops import router as ops_router
 from backend.api.routes_quant import router as quant_router
 from backend.api.routes_pipeline import router as pipeline_router
 
-from backend.modules._retired.genetic_algorithm.routes import router as genetic_router
-from backend.modules._retired.gold_pick2.routes import router as gold_pick2_router
+from backend.modules.legacy.genetic_algorithm.routes import router as genetic_router
+from backend.modules.legacy.gold_pick2.routes import router as gold_pick2_router
 from backend.modules.sixteen.routes import router as sixteen_router
 from backend.modules.formula_jingle.routes import router as jingle_router
 from backend.modules.point_suppression.routes import router as suppression_router
 from backend.modules.datasource.routes import router as datasource_router
-from backend.modules._retired.point_omission.routes import router as point_omission_router
+from backend.modules.legacy.point_omission.routes import router as point_omission_router
 from backend.modules.aggregation.routes import router as aggregation_router
 from backend.modules.tri_high.routes import router as tri_high_router
-from backend.modules._retired.unified_brain.routes import router as unified_brain_router
+from backend.modules.legacy.unified_brain.routes import router as unified_brain_router
 from backend.modules.master_review.routes import router as master_review_router
-from backend.modules._retired.linear_algebra.routes import router as linear_algebra_router
-from backend.modules._retired.random_forest.routes import router as random_forest_router
-from backend.modules._retired.dtw_matching.routes import router as dtw_router
-from backend.modules._retired.transformer_attention.routes import router as transformer_router
-from backend.modules._retired.matrix_profile.routes import router as matrix_profile_router
-from backend.modules._retired.tda_engine.routes import router as tda_router
+from backend.modules.legacy.linear_algebra.routes import router as linear_algebra_router
+from backend.modules.legacy.random_forest.routes import router as random_forest_router
+from backend.modules.legacy.dtw_matching.routes import router as dtw_router
+from backend.modules.legacy.transformer_attention.routes import router as transformer_router
+from backend.modules.legacy.matrix_profile.routes import router as matrix_profile_router
+from backend.modules.legacy.tda_engine.routes import router as tda_router
 from backend.modules.markov_line.routes import router as markov_line_router
 from backend.modules.error_correction.routes import router as error_correction_router
 from backend.modules.spear_shield_portfolio.routes import router as spear_shield_router
 from backend.modules.point_road_compressor.routes import router as point_road_router
 
-from backend.modules._retired.models.lstm.routes import router as lstm_router
-from backend.modules._retired.gemini_pick2.routes import router as gemini_router
-from backend.modules._retired.follow.routes import router as follow_router
-from backend.modules._retired.spatial_points.routes import router as spatial_points_router
+from backend.modules.legacy.models.lstm.routes import router as lstm_router
+from backend.modules.legacy.gemini_pick2.routes import router as gemini_router
+from backend.modules.legacy.follow.routes import router as follow_router
+from backend.modules.legacy.spatial_points.routes import router as spatial_points_router
 
 app.include_router(ops_router)
 app.include_router(quant_router)

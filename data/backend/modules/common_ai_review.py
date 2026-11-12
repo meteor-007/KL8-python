@@ -268,11 +268,11 @@ def compute_consensus_rolling_review(
             logger.warning("读取 AI 超级共识对账缓存失败: %s", e)
 
     try:
-        from backend.modules._retired.linear_algebra.service import get_linear_algebra_review
-        from backend.modules._retired.dtw_matching.service import get_dtw_review
-        from backend.modules._retired.transformer_attention.service import get_transformer_review
-        from backend.modules._retired.matrix_profile.service import get_matrix_profile_review
-        from backend.modules._retired.tda_engine.service import get_tda_review
+        from backend.modules.legacy.linear_algebra.service import get_linear_algebra_review
+        from backend.modules.legacy.dtw_matching.service import get_dtw_review
+        from backend.modules.legacy.transformer_attention.service import get_transformer_review
+        from backend.modules.legacy.matrix_profile.service import get_matrix_profile_review
+        from backend.modules.legacy.tda_engine.service import get_tda_review
         from backend.api.deps import data_service
 
         # 1. 批量加载 6 大模型样本外对账流水

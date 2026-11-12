@@ -26,7 +26,7 @@ BACKEND_DIR = os.path.join(PROJ_DIR, "backend")
 if BACKEND_DIR not in sys.path:
     sys.path.insert(0, BACKEND_DIR)
 
-from backend.modules.unified_brain.feature_extractors import (
+from backend.modules.legacy.unified_brain.feature_extractors import (
     BaseFeatureExtractor,
     TimeInertiaExtractor,
     SpatialEnergyExtractor,
@@ -60,8 +60,8 @@ class TestM1StaticASTForensics(unittest.TestCase):
 
     def setUp(self):
         candidates = [
+            os.path.join(PROJ_DIR, "backend", "modules", "legacy", "unified_brain", "feature_extractors.py"),
             os.path.join(PROJ_DIR, "backend", "modules", "unified_brain", "feature_extractors.py"),
-            os.path.join(PROJ_DIR, "backend", "core", "unified_brain", "feature_extractors.py"),
         ]
         self.target_file = candidates[0] if os.path.exists(candidates[0]) else candidates[1]
         with open(self.target_file, "r", encoding="utf-8") as f:

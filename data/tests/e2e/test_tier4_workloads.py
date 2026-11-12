@@ -63,11 +63,11 @@ class TestTier4Workloads(unittest.TestCase):
         self.assertEqual(res.returncode, 0, f"run_geminixuan2_daily failed: {res.stderr}\n{res.stdout}")
 
         out_txts = (
-            glob.glob(os.path.join(PROJ_DIR, "backend", "modules", "_retired", "gemini_pick2", "output", "gemini选2预测_*.txt")) +
+            glob.glob(os.path.join(PROJ_DIR, "backend", "modules", "legacy", "gemini_pick2", "output", "gemini选2预测_*.txt")) +
             glob.glob(os.path.join(PROJ_DIR, "gemini_pick2", "output", "gemini选2预测_*.txt"))
         )
         out_jsons = (
-            glob.glob(os.path.join(PROJ_DIR, "backend", "modules", "_retired", "gemini_pick2", "output", "k8_quant_memory_*.json")) +
+            glob.glob(os.path.join(PROJ_DIR, "backend", "modules", "legacy", "gemini_pick2", "output", "k8_quant_memory_*.json")) +
             glob.glob(os.path.join(PROJ_DIR, "gemini_pick2", "output", "k8_quant_memory_*.json"))
         )
         self.assertGreater(len(out_txts), 0, "No gemini txt predictions generated")

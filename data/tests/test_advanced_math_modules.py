@@ -3,11 +3,11 @@ import pytest
 from fastapi.testclient import TestClient
 from backend.api.api_server import app
 from backend.utils.history_loader import load_history
-from backend.modules.linear_algebra.linear_algebra_engine import LinearAlgebraEngine
-from backend.modules.dtw_matching.dtw_engine import DTWEngine
-from backend.modules.transformer_attention.transformer_engine import TransformerAttentionEngine
-from backend.modules.matrix_profile.matrix_profile_engine import MatrixProfileEngine
-from backend.modules.tda_engine.tda_engine import TDAEngine
+from backend.modules.legacy.linear_algebra.linear_algebra_engine import LinearAlgebraEngine
+from backend.modules.legacy.dtw_matching.dtw_engine import DTWEngine
+from backend.modules.legacy.transformer_attention.transformer_engine import TransformerAttentionEngine
+from backend.modules.legacy.matrix_profile.matrix_profile_engine import MatrixProfileEngine
+from backend.modules.legacy.tda_engine.tda_engine import TDAEngine
 
 client = TestClient(app)
 history = load_history(limit=200)

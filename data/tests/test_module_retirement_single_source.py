@@ -100,15 +100,19 @@ class TestConsistencyCheck(unittest.TestCase):
 
     def test_check_returns_documented_keys(self):
         c = check_registry_consistency()
-        self.assertEqual(set(c), {"active_in_retired_dir", "ungoverned_in_retired_dir"})
-        self.assertIsInstance(c["active_in_retired_dir"], list)
-        self.assertIsInstance(c["ungoverned_in_retired_dir"], list)
+        self.assertEqual(set(c), {"ungoverned_dirs", "active_in_legacy"})
+        self.assertIsInstance(c["ungoverned_dirs"], list)
+        self.assertIsInstance(c["active_in_legacy"], list)
 
     def test_no_ungoverned_dirs(self):
-        """_retired/ 下的模块目录都应能映射到判决层（利用别名表）。"""
+        """legacy/ 下的模块目录都应能映射到判决层（利用别名表）。
+
+        「活跃模块住在 legacy/」是正常状态（legacy = 历史遗留目录，不是"已退役"），
+        所以不把它当异常；真正的异常是查无此模块 —— 没人知道它还在不在跑。
+        """
         c = check_registry_consistency()
-        self.assertEqual(c["ungoverned_in_retired_dir"], [],
-                         f"以下目录未纳入判决层: {c['ungoverned_in_retired_dir']}")
+        self.assertEqual(c["ungoverned_dirs"], [],
+                         f"以下目录未纳入判决层: {c['ungoverned_dirs']}")
 
 
 if __name__ == "__main__":

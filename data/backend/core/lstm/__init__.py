@@ -1,11 +1,11 @@
 from __future__ import annotations
 # -*- coding: utf-8 -*-
-"""Compatibility shim: backend.core.lstm -> modules._retired.models.lstm"""
+"""Compatibility shim: backend.core.lstm -> modules.legacy.models.lstm"""
 import os as _os
 
 _REAL = _os.path.abspath(
     _os.path.join(
-        _os.path.dirname(__file__), "..", "..", "modules", "_retired", "models", "lstm"
+        _os.path.dirname(__file__), "..", "..", "modules", "legacy", "models", "lstm"
     )
 )
 __path__ = [_REAL]

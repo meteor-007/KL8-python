@@ -65,9 +65,15 @@ class TestMigrationLayout(unittest.TestCase):
             "aggregation",
             "tri_high",
         ):
-            self.assertTrue(os.path.isdir(os.path.join(mods, name)), name)
+            # 物理位置有两条合法路径：在册模块放 modules/<name>，
+            # 历史遗留但仍在跑的放 modules/legacy/<name>。
+            # 「是否退役」由 module_gate.MODULE_SEED 判决，不由目录位置决定。
+            base = os.path.join(mods, name)
+            if not os.path.isdir(base):
+                base = os.path.join(mods, "legacy", name)
+            self.assertTrue(os.path.isdir(base), name)
             self.assertTrue(
-                os.path.isfile(os.path.join(mods, name, "routes.py"))
+                os.path.isfile(os.path.join(base, "routes.py"))
                 or name in ("trinity",),
                 f"{name} routes",
             )
@@ -127,7 +133,7 @@ class TestMigrationLayout(unittest.TestCase):
 
     def test_packages_importable(self):
         from backend.core.gold_pick2 import calculate_gold_pick2_features
-        from backend.modules.unified_brain.unified_brain import UnifiedDecisionBrain
+        from backend.modules.legacy.unified_brain.unified_brain import UnifiedDecisionBrain
         self.assertTrue(callable(calculate_gold_pick2_features))
         self.assertTrue(UnifiedDecisionBrain is not None)
 

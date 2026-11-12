@@ -28,21 +28,21 @@ if PROJ_DIR not in sys.path:
     sys.path.insert(0, PROJ_DIR)
 
 from backend.api.service_core import CoreServiceMixin, _hit_leaderboard_cache, _all_modules_overview_cache
-from backend.modules._retired.genetic_algorithm.service import GeneticServiceMixin
-from backend.modules._retired.gold_pick2.service import GoldPick2ServiceMixin
+from backend.modules.legacy.genetic_algorithm.service import GeneticServiceMixin
+from backend.modules.legacy.gold_pick2.service import GoldPick2ServiceMixin
 from backend.modules.sixteen.service import SixteenServiceMixin
 from backend.modules.formula_jingle.service import JingleServiceMixin
 from backend.modules.point_suppression.service import SuppressionServiceMixin
 from backend.modules.datasource.service import DatasourceServiceMixin
-from backend.modules._retired.point_omission.service import PointOmissionServiceMixin
+from backend.modules.legacy.point_omission.service import PointOmissionServiceMixin
 from backend.modules.aggregation.service import AggregationServiceMixin
 from backend.modules.tri_high.service import TriHighServiceMixin
-from backend.modules._retired.unified_brain.service import UnifiedBrainServiceMixin
+from backend.modules.legacy.unified_brain.service import UnifiedBrainServiceMixin
 from backend.modules.master_review.service import MasterReviewServiceMixin
-from backend.modules._retired.models.lstm.service import LstmServiceMixin
-from backend.modules._retired.gemini_pick2.service import GeminiServiceMixin
-from backend.modules._retired.follow.service import FollowServiceMixin
-from backend.modules._retired.spatial_points.service import SpatialPointsServiceMixin
+from backend.modules.legacy.models.lstm.service import LstmServiceMixin
+from backend.modules.legacy.gemini_pick2.service import GeminiServiceMixin
+from backend.modules.legacy.follow.service import FollowServiceMixin
+from backend.modules.legacy.spatial_points.service import SpatialPointsServiceMixin
 
 
 class QuantDataService(

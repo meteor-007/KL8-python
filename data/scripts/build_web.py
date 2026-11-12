@@ -73,7 +73,7 @@ ORDERED_VIEWS = [
     "hub_ops/live_terminal/view.html",
 
     # 退役辅助 (仍组装进 index，侧边栏不展示)
-    "_retired/aux_lstm/view.html",
+    "legacy/aux_lstm/view.html",
 ]
 
 

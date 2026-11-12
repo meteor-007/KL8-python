@@ -453,7 +453,7 @@ def task39_gold_pick2():
     else:
         warn('run_pick2_daily.py 未找到，尝试内置算法引擎推演')
         try:
-            from backend.modules._retired.gold_pick2.run_daily import run_pick2_pipeline
+            from backend.modules.legacy.gold_pick2.run_daily import run_pick2_pipeline
             res = run_pick2_pipeline(n_review=30, verbose=False)
             ok(f"定金选2分析完成 | 目标期 {res.get('target_period')} | 核心金胆: {res.get('golden'):02d} | 热胆: {res.get('hot'):02d}")
         except Exception as pe:
@@ -555,19 +555,16 @@ def task3955_module_reconcile():
     except Exception as e:
         warn(f'前瞻账报告生成失败: {e}')
 
-    # 3.5) 一致性体检：目录位置与判决层是否又在各说各话。
-    #      历史上这两处不同步造成过前端 404、以及 consensus_straddle 隐身计入 BH 族，
-    #      所以每个夜间批次都把差异亮出来，而不是等出事故再回溯。
+    # 3.5) 一致性体检：legacy/ 下的模块目录是否都能映射到判决层。
+    #      改名 legacy 后，「活跃模块住在 legacy/」是正常状态，不报警；
+    #      真正要拦的是「查无此模块」—— 那说明它既没登记、也没人知道还在不在跑。
     try:
         from core.module_gate import check_registry_consistency
         _c = check_registry_consistency()
-        if _c['active_in_retired_dir'] or _c['ungoverned_in_retired_dir']:
-            if _c['active_in_retired_dir']:
-                warn(f"注册表一致性: 以下模块仍活跃却位于 _retired/ —— {_c['active_in_retired_dir']}")
-            if _c['ungoverned_in_retired_dir']:
-                warn(f"注册表一致性: 以下目录未纳入判决层 —— {_c['ungoverned_in_retired_dir']}")
+        if _c['ungoverned_dirs']:
+            warn(f"注册表一致性: 以下目录未纳入判决层（谁也不知道还在不在跑）—— {_c['ungoverned_dirs']}")
         else:
-            ok('注册表一致性体检通过（目录位置与判决层一致）')
+            ok('注册表一致性体检通过（legacy/ 下全部目录均有判决）')
     except Exception as e:
         warn(f'注册表一致性体检跳过: {e}')
 
@@ -699,7 +696,7 @@ def task3991_straddle_spear():
     banner('任务3.991：🧬 三维交集共识定胆 + 一胆拖三盾选2组合拳', 'magenta')
     for label, mid, sub in [
         ('三维交集共识 (consensus_straddle)', 'consensus_straddle',
-         ('modules', '_retired', 'consensus_straddle', 'run_daily.py')),
+         ('modules', 'legacy', 'consensus_straddle', 'run_daily.py')),
         ('一胆拖三盾 (spear_shield)', 'spear_shield',
          ('modules', 'spear_shield_portfolio', 'run_daily.py')),
     ]:

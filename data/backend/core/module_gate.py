@@ -436,7 +436,7 @@ MODULE_DIR_ALIASES: Dict[str, str] = {
     "genetic_algorithm": "genetic",
     "follow": "follow_track",
 }
-# _retired/ 下不是模块的目录（公共资源等），一致性体检时跳过
+# legacy/ 下不是模块的目录（公共资源等），一致性体检时跳过
 _NON_MODULE_DIRS = {"models"}
 
 
@@ -473,19 +473,22 @@ def is_module_active(module_id: str) -> bool:
 
 
 def check_registry_consistency(modules_dir: Optional[str] = None) -> Dict[str, List[str]]:
-    """体检：目录位置与判决层对「退役」的表述是否一致。
+    """体检：legacy/ 下的模块目录是否都能映射到判决层。
 
-    历史上这两处各说各话，已经造成过事故：
-      · 前端页面模块被移进 _retired/ 但 index.html 仍引用 → 6 个 404、首屏数据全灭
-      · consensus_straddle 代码在 _retired/ 里但流水线照跑 → 隐身计入 BH 检验族
+    改名 legacy 之后语义是「历史遗留目录」，里面既可能有仍在跑的模块，也可能有
+    已退役的 —— 所以「活跃模块住在 legacy/ 下」不再是异常，不该报警。
+    真正的异常只剩一个：某个目录在判决层里查无此模块（未治理，没人知道它还跑不跑）。
 
-    返回 {'active_in_retired_dir': [...], 'ungoverned_in_retired_dir': [...]}，
-    两个列表都应为空；非空说明「退役」这件事又开始多头表述了。
+    历史教训：目录位置与判决层各说各话，曾造成前端 6 个 404、首屏数据全灭，
+    以及 consensus_straddle 隐身计入 BH 检验族。
+
+    返回 {'ungoverned_dirs': [...], 'active_in_legacy': [...]}；
+    前者必须为空，后者仅供参考。
     """
-    base = modules_dir or os.path.join(_PROJ_DIR, "backend", "modules", "_retired")
+    base = modules_dir or os.path.join(_PROJ_DIR, "backend", "modules", "legacy")
     active, ungoverned = [], []
     if not os.path.isdir(base):
-        return {"active_in_retired_dir": active, "ungoverned_in_retired_dir": ungoverned}
+        return {"ungoverned_dirs": ungoverned, "active_in_legacy": active}
     for name in sorted(os.listdir(base)):
         if name in _NON_MODULE_DIRS:
             continue
@@ -497,7 +500,7 @@ def check_registry_consistency(modules_dir: Optional[str] = None) -> Dict[str, L
             ungoverned.append(name)
         elif st != "retired":
             active.append(name)
-    return {"active_in_retired_dir": active, "ungoverned_in_retired_dir": ungoverned}
+    return {"ungoverned_dirs": ungoverned, "active_in_legacy": active}
 
 
 class ModuleGate:

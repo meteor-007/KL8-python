@@ -175,7 +175,7 @@ def _ensure_project_path():
     root = get_project_root()
     backend_dir = get_backend_dir()
     modules_dir = get_modules_dir()
-    retired_dir = os.path.join(modules_dir, "_retired")
+    retired_dir = os.path.join(modules_dir, "legacy")
     scripts_dir = os.path.join(root, "scripts")
     for p in [root, backend_dir, modules_dir, retired_dir, scripts_dir]:
         if p not in sys.path:
@@ -331,35 +331,35 @@ def find_module_script(script_name: str) -> str:
     modules = get_modules_dir()
 
     SCRIPT_MAP = {
-        "run_pick2_daily.py": "_retired/gold_pick2/run_daily.py",
+        "run_pick2_daily.py": "legacy/gold_pick2/run_daily.py",
         "run_sixteen_daily.py": "sixteen/run_daily.py",
         "run_jingle_daily.py": "formula_jingle/run_daily.py",
         "run_suppression_daily.py": "point_suppression/run_daily.py",
         "run_aggregation_daily.py": "aggregation/run_daily.py",
-        "run_unified_brain_daily.py": "_retired/unified_brain/run_daily.py",
-        "run_evolution_daily.py": "_retired/unified_brain/run_evolution_daily.py",
+        "run_unified_brain_daily.py": "legacy/unified_brain/run_daily.py",
+        "run_evolution_daily.py": "legacy/unified_brain/run_evolution_daily.py",
         "run_datasource_daily.py": "datasource/run_daily.py",
-        "run_psychological_game_daily.py": "_retired/psychological_game/run_daily.py",
+        "run_psychological_game_daily.py": "legacy/psychological_game/run_daily.py",
         "run_prime_composite_daily.py": "prime_composite/run_daily.py",
         "run_master_review_daily.py": "master_review/run_daily.py",
         "run_multi_resonance_daily.py": "multi_resonance/run_daily.py",
-        "run_point_omission_daily.py": "_retired/point_omission/run_daily.py",
-        "run_omission_daily.py": "_retired/point_omission/run_daily.py",
+        "run_point_omission_daily.py": "legacy/point_omission/run_daily.py",
+        "run_omission_daily.py": "legacy/point_omission/run_daily.py",
         "run_kl8_lab_daily.py": "kl8_lab/run_daily.py",
         "run_tri_high_daily.py": "tri_high/tri_high_engine.py",
         "run_error_correction_daily.py": "error_correction/run_daily.py",
-        "run_random_forest_daily.py": "_retired/random_forest/run_daily.py",
-        "run_dtw_daily.py": "_retired/dtw_matching/run_daily.py",
-        "run_tda_daily.py": "_retired/tda_engine/run_daily.py",
-        "run_matrix_profile_daily.py": "_retired/matrix_profile/run_daily.py",
-        "run_transformer_daily.py": "_retired/transformer_attention/run_daily.py",
-        "run_linear_algebra_daily.py": "_retired/linear_algebra/run_daily.py",
-        "run_genetic_daily.py": "_retired/genetic_algorithm/run_daily.py",
+        "run_random_forest_daily.py": "legacy/random_forest/run_daily.py",
+        "run_dtw_daily.py": "legacy/dtw_matching/run_daily.py",
+        "run_tda_daily.py": "legacy/tda_engine/run_daily.py",
+        "run_matrix_profile_daily.py": "legacy/matrix_profile/run_daily.py",
+        "run_transformer_daily.py": "legacy/transformer_attention/run_daily.py",
+        "run_linear_algebra_daily.py": "legacy/linear_algebra/run_daily.py",
+        "run_genetic_daily.py": "legacy/genetic_algorithm/run_daily.py",
         "run_unified_audit_daily.py": "unified_audit/run_daily.py",
-        "run_follow_daily.py": "_retired/follow/run_daily.py",
-        "run_lstm_daily.py": "_retired/models/lstm/run_daily.py",
-        "run_geminixuan2_daily.py": "_retired/gemini_pick2/run_daily.py",
-        "run_points_daily.py": "_retired/spatial_points/run_daily.py",
+        "run_follow_daily.py": "legacy/follow/run_daily.py",
+        "run_lstm_daily.py": "legacy/models/lstm/run_daily.py",
+        "run_geminixuan2_daily.py": "legacy/gemini_pick2/run_daily.py",
+        "run_points_daily.py": "legacy/spatial_points/run_daily.py",
         "run_compressor_daily.py": "point_road_compressor/run_daily.py",
         "run_point_road_compressor_daily.py": "point_road_compressor/run_daily.py",
         "run_golden_split.py": "golden_split/run_split.py",

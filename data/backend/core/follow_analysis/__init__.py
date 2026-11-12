@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Compatibility shim: backend.core.follow_analysis -> backend.modules._retired/follow"""
+"""Compatibility shim: backend.core.follow_analysis -> backend.modules.legacy/follow"""
 from __future__ import annotations
 import os as _os
 
 _REAL = _os.path.abspath(
-    _os.path.join(_os.path.dirname(__file__), "..", "..", "modules", '_retired', 'follow')
+    _os.path.join(_os.path.dirname(__file__), "..", "..", "modules", 'legacy', 'follow')
 )
 __path__ = [_REAL]
 

@@ -170,8 +170,8 @@ def task_unified_brain():
     阶段 2 的全部预测模块、阶段 3 汇总、前瞻账对账、统一对账与静态快照**从未执行**。
     现移回模块级并置于调用方之前。
     """
-    from backend.modules._retired.unified_brain.evolution_engine import UnifiedBrainEvolutionEngine
-    from backend.modules._retired.unified_brain.unified_brain import UnifiedDecisionBrain
+    from backend.modules.legacy.unified_brain.evolution_engine import UnifiedBrainEvolutionEngine
+    from backend.modules.legacy.unified_brain.unified_brain import UnifiedDecisionBrain
 
     evo = UnifiedBrainEvolutionEngine(_PROJ_DIR)
     draws = evo.brain.feature_layer.draws
