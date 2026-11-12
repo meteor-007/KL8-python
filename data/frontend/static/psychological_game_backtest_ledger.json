@@ -1,15 +1,15 @@
 {
   "meta": {
     "engine_name": "Psychological Game Theory & Contrarian Reversion Engine",
-    "generated_at": "2026-11-11 13:28:14",
-    "total_history_draws": 2121,
+    "generated_at": "2026-11-12 19:55:40",
+    "total_history_draws": 2122,
     "protocol": "Walk-Forward Out-of-Sample Rolling Test (Zero Future Leakage)"
   },
   "multi_window_summary": {
     "last_30": {
       "n_tests": 30,
-      "start_issue": "2026271",
-      "end_issue": "2026300",
+      "start_issue": "2026272",
+      "end_issue": "2026301",
       "avg_pool_size_top5": 3.0,
       "avg_pool_size_top12": 3.0,
       "denominator_note": "口径已改为池化命中率 = Σ命中 / Σ实际推荐码数。引擎主口径为「最优3码」，top5_assault/top12_balanced 仅为其兼容别名(长度恒 3)，故 top5/top12 两栏实测为同一组号码、同一口径，非两个独立产品。",
@@ -20,127 +20,62 @@
       "rate12_pct": 21.11,
       "lift12": 0.844,
       "top5_win2_rate_pct": 6.67,
-      "avg_cold4": 0.73,
-      "avg_rep4": 0.9
+      "avg_cold4": 0.7,
+      "avg_rep4": 0.97
     },
     "last_50": {
       "n_tests": 50,
-      "start_issue": "2026251",
-      "end_issue": "2026300",
+      "start_issue": "2026252",
+      "end_issue": "2026301",
       "avg_pool_size_top5": 3.0,
       "avg_pool_size_top12": 3.0,
       "denominator_note": "口径已改为池化命中率 = Σ命中 / Σ实际推荐码数。引擎主口径为「最优3码」，top5_assault/top12_balanced 仅为其兼容别名(长度恒 3)，故 top5/top12 两栏实测为同一组号码、同一口径，非两个独立产品。",
-      "avg_h5": 0.68,
-      "rate5_pct": 22.67,
-      "lift5": 0.907,
-      "avg_h12": 0.68,
-      "rate12_pct": 22.67,
-      "lift12": 0.907,
+      "avg_h5": 0.7,
+      "rate5_pct": 23.33,
+      "lift5": 0.933,
+      "avg_h12": 0.7,
+      "rate12_pct": 23.33,
+      "lift12": 0.933,
       "top5_win2_rate_pct": 10.0,
-      "avg_cold4": 0.76,
-      "avg_rep4": 0.86
+      "avg_cold4": 0.78,
+      "avg_rep4": 0.9
     },
     "last_100": {
       "n_tests": 100,
-      "start_issue": "2026201",
-      "end_issue": "2026300",
-      "avg_pool_size_top5": 3.0,
-      "avg_pool_size_top12": 3.0,
-      "denominator_note": "口径已改为池化命中率 = Σ命中 / Σ实际推荐码数。引擎主口径为「最优3码」，top5_assault/top12_balanced 仅为其兼容别名(长度恒 3)，故 top5/top12 两栏实测为同一组号码、同一口径，非两个独立产品。",
-      "avg_h5": 0.8,
-      "rate5_pct": 26.67,
-      "lift5": 1.067,
-      "avg_h12": 0.8,
-      "rate12_pct": 26.67,
-      "lift12": 1.067,
-      "top5_win2_rate_pct": 14.0,
-      "avg_cold4": 0.94,
-      "avg_rep4": 0.96
-    },
-    "last_200": {
-      "n_tests": 200,
-      "start_issue": "2026101",
-      "end_issue": "2026300",
+      "start_issue": "2026202",
+      "end_issue": "2026301",
       "avg_pool_size_top5": 3.0,
       "avg_pool_size_top12": 3.0,
       "denominator_note": "口径已改为池化命中率 = Σ命中 / Σ实际推荐码数。引擎主口径为「最优3码」，top5_assault/top12_balanced 仅为其兼容别名(长度恒 3)，故 top5/top12 两栏实测为同一组号码、同一口径，非两个独立产品。",
       "avg_h5": 0.81,
-      "rate5_pct": 26.83,
-      "lift5": 1.073,
+      "rate5_pct": 27.0,
+      "lift5": 1.08,
       "avg_h12": 0.81,
-      "rate12_pct": 26.83,
-      "lift12": 1.073,
+      "rate12_pct": 27.0,
+      "lift12": 1.08,
+      "top5_win2_rate_pct": 14.0,
+      "avg_cold4": 0.94,
+      "avg_rep4": 0.97
+    },
+    "last_200": {
+      "n_tests": 200,
+      "start_issue": "2026102",
+      "end_issue": "2026301",
+      "avg_pool_size_top5": 3.0,
+      "avg_pool_size_top12": 3.0,
+      "denominator_note": "口径已改为池化命中率 = Σ命中 / Σ实际推荐码数。引擎主口径为「最优3码」，top5_assault/top12_balanced 仅为其兼容别名(长度恒 3)，故 top5/top12 两栏实测为同一组号码、同一口径，非两个独立产品。",
+      "avg_h5": 0.81,
+      "rate5_pct": 27.0,
+      "lift5": 1.08,
+      "avg_h12": 0.81,
+      "rate12_pct": 27.0,
+      "lift12": 1.08,
       "top5_win2_rate_pct": 17.0,
-      "avg_cold4": 1.03,
-      "avg_rep4": 0.91
+      "avg_cold4": 1.04,
+      "avg_rep4": 0.93
     }
   },
   "detailed_100_records": [
-    {
-      "issue": "2026201",
-      "date": "2026-07-30",
-      "target_numbers": [
-        2,
-        3,
-        12,
-        13,
-        17,
-        20,
-        24,
-        27,
-        31,
-        32,
-        40,
-        45,
-        50,
-        52,
-        61,
-        67,
-        71,
-        76,
-        79,
-        80
-      ],
-      "top5": [
-        8,
-        65,
-        15
-      ],
-      "top5_size": 3,
-      "top5_hits": [],
-      "top5_hit_count": 0,
-      "top12": [
-        8,
-        65,
-        15
-      ],
-      "top12_size": 3,
-      "top12_hits": [],
-      "top12_hit_count": 0,
-      "cold4": [
-        8,
-        38,
-        65,
-        80
-      ],
-      "cold4_hits": [
-        80
-      ],
-      "cold4_hit_count": 1,
-      "repeats4": [
-        2,
-        4,
-        17,
-        25
-      ],
-      "repeats4_hits": [
-        2,
-        17
-      ],
-      "repeats4_hit_count": 2,
-      "predicted_size_bias": "大小均衡对冲",
-      "actual_size_ratio": "11:9 (小:大)"
-    },
     {
       "issue": "2026202",
       "date": "2026-07-31",
@@ -6691,6 +6626,76 @@
       "repeats4_hits": [],
       "repeats4_hit_count": 0,
       "predicted_size_bias": "小号强力回补 (重兵布防 1-40)",
+      "actual_size_ratio": "10:10 (小:大)"
+    },
+    {
+      "issue": "2026301",
+      "date": "2026-11-11",
+      "target_numbers": [
+        8,
+        13,
+        14,
+        17,
+        22,
+        23,
+        33,
+        34,
+        35,
+        36,
+        47,
+        49,
+        51,
+        54,
+        60,
+        63,
+        68,
+        69,
+        75,
+        79
+      ],
+      "top5": [
+        9,
+        14,
+        37
+      ],
+      "top5_size": 3,
+      "top5_hits": [
+        14
+      ],
+      "top5_hit_count": 1,
+      "top12": [
+        9,
+        14,
+        37
+      ],
+      "top12_size": 3,
+      "top12_hits": [
+        14
+      ],
+      "top12_hit_count": 1,
+      "cold4": [
+        37,
+        9,
+        55,
+        14
+      ],
+      "cold4_hits": [
+        14
+      ],
+      "cold4_hit_count": 1,
+      "repeats4": [
+        8,
+        12,
+        17,
+        23
+      ],
+      "repeats4_hits": [
+        8,
+        17,
+        23
+      ],
+      "repeats4_hit_count": 3,
+      "predicted_size_bias": "大小均衡对冲",
       "actual_size_ratio": "10:10 (小:大)"
     }
   ]

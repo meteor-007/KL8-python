@@ -3,10 +3,10 @@
   "target_time": "22:00",
   "retry_minutes": 5,
   "max_retries": 6,
-  "last_run_date": "2026-11-10",
+  "last_run_date": "2026-11-11",
   "last_status": "SUCCESS",
-  "last_message": "✅ 夜间流水线执行圆满成功 (耗时: 135s)",
-  "last_finished_at": "2026-11-10 22:02:16",
+  "last_message": "✅ 夜间流水线执行圆满成功 (耗时: 138s)",
+  "last_finished_at": "2026-11-11 22:02:19",
   "last_trigger": "windows_scheduled_task",
-  "last_started_at": "2026-11-08 22:00:01"
+  "last_started_at": "2026-11-11 22:00:01"
 }

@@ -152,7 +152,10 @@ def _push_via_api(root: str, branch: str) -> Dict[str, Any]:
         if base_tree != remote_commit["tree"]["sha"]:
             return {"ok": False, "message": "本地基准与远端树不一致，拒绝推送（可能已分叉）"}
 
-        diff = subprocess.run(["git", "diff", "--name-status", "-z", base, local_sha],
+        # --no-renames：-z --name-status 下重命名输出 3 个字段（R100 / 旧路径 / 新路径），
+        # 而下面按「状态 + 路径」两字段逐个消费，遇到 rename 会整体错位，
+        # 生成的 tree 与本地不一致而中止。拆成 D + A 不影响最终 tree。
+        diff = subprocess.run(["git", "diff", "--name-status", "-z", "--no-renames", base, local_sha],
                               cwd=root, capture_output=True, timeout=120)
         parts = [p for p in diff.stdout.split(b"\x00") if p]
         entries, i = [], 0

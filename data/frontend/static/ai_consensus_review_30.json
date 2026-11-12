@@ -1,17 +1,334 @@
 {
   "status": "success",
   "module_name": "ai_math_consensus",
-  "latest_period": 2026298,
+  "latest_period": 2026300,
   "n_periods": 30,
   "stats": {
-    "avg_top3_hit": 0.67,
-    "avg_top5_hit": 0.67,
-    "avg_top12_hit": 0.67,
-    "gold_hit_rate": 16.7,
-    "pair_double_rate": 6.7,
+    "avg_top3_hit": 0.47,
+    "avg_top5_hit": 0.47,
+    "avg_top12_hit": 0.47,
+    "gold_hit_rate": 13.3,
+    "pair_double_rate": 10.0,
     "total_periods": 30
   },
   "records": [
+    {
+      "period": 2026300,
+      "draw_date": "2026-11-10",
+      "actual_draw": [
+        8,
+        12,
+        17,
+        23,
+        28,
+        30,
+        31,
+        33,
+        35,
+        39,
+        43,
+        45,
+        47,
+        51,
+        52,
+        58,
+        63,
+        66,
+        69,
+        75
+      ],
+      "top3": [
+        73,
+        72,
+        58
+      ],
+      "top3_hits": 1,
+      "top3_hit_nums": [
+        58
+      ],
+      "top3_details": [
+        {
+          "ball": 73,
+          "score": 8.0,
+          "vote_count": 3,
+          "sources": [
+            "SVD",
+            "DTW",
+            "MP"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 72,
+          "score": 5.0,
+          "vote_count": 2,
+          "sources": [
+            "MP",
+            "TDA"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 58,
+          "score": 3.15,
+          "vote_count": 1,
+          "sources": [
+            "GA"
+          ],
+          "is_hit": true
+        }
+      ],
+      "top5": [
+        73,
+        72,
+        58
+      ],
+      "top5_hits": 1,
+      "top5_hit_nums": [
+        58
+      ],
+      "top5_details": [
+        {
+          "ball": 73,
+          "score": 8.0,
+          "vote_count": 3,
+          "sources": [
+            "SVD",
+            "DTW",
+            "MP"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 72,
+          "score": 5.0,
+          "vote_count": 2,
+          "sources": [
+            "MP",
+            "TDA"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 58,
+          "score": 3.15,
+          "vote_count": 1,
+          "sources": [
+            "GA"
+          ],
+          "is_hit": true
+        }
+      ],
+      "top12": [
+        73,
+        72,
+        58
+      ],
+      "top12_hits": 1,
+      "top12_hit_nums": [
+        58
+      ],
+      "top12_details": [
+        {
+          "ball": 73,
+          "score": 8.0,
+          "vote_count": 3,
+          "sources": [
+            "SVD",
+            "DTW",
+            "MP"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 72,
+          "score": 5.0,
+          "vote_count": 2,
+          "sources": [
+            "MP",
+            "TDA"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 58,
+          "score": 3.15,
+          "vote_count": 1,
+          "sources": [
+            "GA"
+          ],
+          "is_hit": true
+        }
+      ],
+      "gold_core": 73,
+      "gold_hit": false,
+      "gold_pair": [
+        73,
+        72
+      ],
+      "gold_pair_hits": 0,
+      "gold_pair_hit_nums": []
+    },
+    {
+      "period": 2026299,
+      "draw_date": "2026-11-09",
+      "actual_draw": [
+        1,
+        7,
+        10,
+        13,
+        23,
+        25,
+        26,
+        28,
+        45,
+        46,
+        47,
+        49,
+        61,
+        63,
+        64,
+        72,
+        73,
+        77,
+        78,
+        79
+      ],
+      "top3": [
+        13,
+        26,
+        58
+      ],
+      "top3_hits": 2,
+      "top3_hit_nums": [
+        13,
+        26
+      ],
+      "top3_details": [
+        {
+          "ball": 13,
+          "score": 5.5,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "TRANS"
+          ],
+          "is_hit": true
+        },
+        {
+          "ball": 26,
+          "score": 5.5,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "MP"
+          ],
+          "is_hit": true
+        },
+        {
+          "ball": 58,
+          "score": 3.15,
+          "vote_count": 1,
+          "sources": [
+            "GA"
+          ],
+          "is_hit": false
+        }
+      ],
+      "top5": [
+        13,
+        26,
+        58
+      ],
+      "top5_hits": 2,
+      "top5_hit_nums": [
+        13,
+        26
+      ],
+      "top5_details": [
+        {
+          "ball": 13,
+          "score": 5.5,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "TRANS"
+          ],
+          "is_hit": true
+        },
+        {
+          "ball": 26,
+          "score": 5.5,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "MP"
+          ],
+          "is_hit": true
+        },
+        {
+          "ball": 58,
+          "score": 3.15,
+          "vote_count": 1,
+          "sources": [
+            "GA"
+          ],
+          "is_hit": false
+        }
+      ],
+      "top12": [
+        13,
+        26,
+        58
+      ],
+      "top12_hits": 2,
+      "top12_hit_nums": [
+        13,
+        26
+      ],
+      "top12_details": [
+        {
+          "ball": 13,
+          "score": 5.5,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "TRANS"
+          ],
+          "is_hit": true
+        },
+        {
+          "ball": 26,
+          "score": 5.5,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "MP"
+          ],
+          "is_hit": true
+        },
+        {
+          "ball": 58,
+          "score": 3.15,
+          "vote_count": 1,
+          "sources": [
+            "GA"
+          ],
+          "is_hit": false
+        }
+      ],
+      "gold_core": 13,
+      "gold_hit": true,
+      "gold_pair": [
+        13,
+        26
+      ],
+      "gold_pair_hits": 2,
+      "gold_pair_hit_nums": [
+        13,
+        26
+      ]
+    },
     {
       "period": 2026298,
       "draw_date": "2026-11-08",
@@ -39,13 +356,11 @@
       ],
       "top3": [
         44,
-        54,
-        25
+        24,
+        54
       ],
-      "top3_hits": 1,
-      "top3_hit_nums": [
-        25
-      ],
+      "top3_hits": 0,
+      "top3_hit_nums": [],
       "top3_details": [
         {
           "ball": 44,
@@ -58,34 +373,33 @@
           "is_hit": false
         },
         {
+          "ball": 24,
+          "score": 5.1,
+          "vote_count": 2,
+          "sources": [
+            "GA",
+            "DTW"
+          ],
+          "is_hit": false
+        },
+        {
           "ball": 54,
-          "score": 4.0,
+          "score": 4.5,
           "vote_count": 2,
           "sources": [
             "MP",
             "TDA"
           ],
           "is_hit": false
-        },
-        {
-          "ball": 25,
-          "score": 3.15,
-          "vote_count": 1,
-          "sources": [
-            "GA"
-          ],
-          "is_hit": true
         }
       ],
       "top5": [
         44,
-        54,
-        25
+        24,
+        54
       ],
-      "top5_hits": 1,
-      "top5_hit_nums": [
-        25
-      ],
+      "top5_hits": 0,
+      "top5_hit_nums": [],
       "top5_details": [
         {
           "ball": 44,
@@ -98,34 +412,33 @@
           "is_hit": false
         },
         {
+          "ball": 24,
+          "score": 5.1,
+          "vote_count": 2,
+          "sources": [
+            "GA",
+            "DTW"
+          ],
+          "is_hit": false
+        },
+        {
           "ball": 54,
-          "score": 4.0,
+          "score": 4.5,
           "vote_count": 2,
           "sources": [
             "MP",
             "TDA"
           ],
           "is_hit": false
-        },
-        {
-          "ball": 25,
-          "score": 3.15,
-          "vote_count": 1,
-          "sources": [
-            "GA"
-          ],
-          "is_hit": true
         }
       ],
       "top12": [
         44,
-        54,
-        25
+        24,
+        54
       ],
-      "top12_hits": 1,
-      "top12_hit_nums": [
-        25
-      ],
+      "top12_hits": 0,
+      "top12_hit_nums": [],
       "top12_details": [
         {
           "ball": 44,
@@ -138,30 +451,31 @@
           "is_hit": false
         },
         {
+          "ball": 24,
+          "score": 5.1,
+          "vote_count": 2,
+          "sources": [
+            "GA",
+            "DTW"
+          ],
+          "is_hit": false
+        },
+        {
           "ball": 54,
-          "score": 4.0,
+          "score": 4.5,
           "vote_count": 2,
           "sources": [
             "MP",
             "TDA"
           ],
           "is_hit": false
-        },
-        {
-          "ball": 25,
-          "score": 3.15,
-          "vote_count": 1,
-          "sources": [
-            "GA"
-          ],
-          "is_hit": true
         }
       ],
       "gold_core": 44,
       "gold_hit": false,
       "gold_pair": [
         44,
-        54
+        24
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": []
@@ -356,12 +670,13 @@
       "top3_details": [
         {
           "ball": 73,
-          "score": 8.5,
-          "vote_count": 3,
+          "score": 10.5,
+          "vote_count": 4,
           "sources": [
             "SVD",
             "DTW",
-            "MP"
+            "MP",
+            "TDA"
           ],
           "is_hit": true
         },
@@ -377,7 +692,7 @@
         },
         {
           "ball": 44,
-          "score": 5.5,
+          "score": 5.0,
           "vote_count": 2,
           "sources": [
             "SVD",
@@ -400,12 +715,13 @@
       "top5_details": [
         {
           "ball": 73,
-          "score": 8.5,
-          "vote_count": 3,
+          "score": 10.5,
+          "vote_count": 4,
           "sources": [
             "SVD",
             "DTW",
-            "MP"
+            "MP",
+            "TDA"
           ],
           "is_hit": true
         },
@@ -421,7 +737,7 @@
         },
         {
           "ball": 44,
-          "score": 5.5,
+          "score": 5.0,
           "vote_count": 2,
           "sources": [
             "SVD",
@@ -444,12 +760,13 @@
       "top12_details": [
         {
           "ball": 73,
-          "score": 8.5,
-          "vote_count": 3,
+          "score": 10.5,
+          "vote_count": 4,
           "sources": [
             "SVD",
             "DTW",
-            "MP"
+            "MP",
+            "TDA"
           ],
           "is_hit": true
         },
@@ -465,7 +782,7 @@
         },
         {
           "ball": 44,
-          "score": 5.5,
+          "score": 5.0,
           "vote_count": 2,
           "sources": [
             "SVD",
@@ -512,29 +829,29 @@
         77
       ],
       "top3": [
-        43,
-        73,
+        34,
+        9,
         19
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
       "top3_details": [
         {
-          "ball": 43,
-          "score": 6.15,
+          "ball": 34,
+          "score": 5.65,
           "vote_count": 2,
           "sources": [
             "GA",
-            "DTW"
+            "TRANS"
           ],
           "is_hit": false
         },
         {
-          "ball": 73,
-          "score": 5.5,
+          "ball": 9,
+          "score": 5.12,
           "vote_count": 2,
           "sources": [
-            "MP",
+            "GA",
             "TDA"
           ],
           "is_hit": false
@@ -551,29 +868,29 @@
         }
       ],
       "top5": [
-        43,
-        73,
+        34,
+        9,
         19
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
       "top5_details": [
         {
-          "ball": 43,
-          "score": 6.15,
+          "ball": 34,
+          "score": 5.65,
           "vote_count": 2,
           "sources": [
             "GA",
-            "DTW"
+            "TRANS"
           ],
           "is_hit": false
         },
         {
-          "ball": 73,
-          "score": 5.5,
+          "ball": 9,
+          "score": 5.12,
           "vote_count": 2,
           "sources": [
-            "MP",
+            "GA",
             "TDA"
           ],
           "is_hit": false
@@ -590,29 +907,29 @@
         }
       ],
       "top12": [
-        43,
-        73,
+        34,
+        9,
         19
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
       "top12_details": [
         {
-          "ball": 43,
-          "score": 6.15,
+          "ball": 34,
+          "score": 5.65,
           "vote_count": 2,
           "sources": [
             "GA",
-            "DTW"
+            "TRANS"
           ],
           "is_hit": false
         },
         {
-          "ball": 73,
-          "score": 5.5,
+          "ball": 9,
+          "score": 5.12,
           "vote_count": 2,
           "sources": [
-            "MP",
+            "GA",
             "TDA"
           ],
           "is_hit": false
@@ -628,11 +945,11 @@
           "is_hit": false
         }
       ],
-      "gold_core": 43,
+      "gold_core": 34,
       "gold_hit": false,
       "gold_pair": [
-        43,
-        73
+        34,
+        9
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": []
@@ -663,15 +980,24 @@
         80
       ],
       "top3": [
-        44,
         54,
-        16
+        44,
+        61
       ],
-      "top3_hits": 1,
-      "top3_hit_nums": [
-        16
-      ],
+      "top3_hits": 0,
+      "top3_hit_nums": [],
       "top3_details": [
+        {
+          "ball": 54,
+          "score": 8.0,
+          "vote_count": 3,
+          "sources": [
+            "DTW",
+            "MP",
+            "TDA"
+          ],
+          "is_hit": false
+        },
         {
           "ball": 44,
           "score": 6.0,
@@ -683,36 +1009,35 @@
           "is_hit": false
         },
         {
-          "ball": 54,
-          "score": 5.5,
+          "ball": 61,
+          "score": 5.1,
           "vote_count": 2,
           "sources": [
-            "DTW",
-            "MP"
+            "GA",
+            "TRANS"
           ],
           "is_hit": false
-        },
-        {
-          "ball": 16,
-          "score": 5.0,
-          "vote_count": 2,
-          "sources": [
-            "DTW",
-            "MP"
-          ],
-          "is_hit": true
         }
       ],
       "top5": [
-        44,
         54,
-        16
+        44,
+        61
       ],
-      "top5_hits": 1,
-      "top5_hit_nums": [
-        16
-      ],
+      "top5_hits": 0,
+      "top5_hit_nums": [],
       "top5_details": [
+        {
+          "ball": 54,
+          "score": 8.0,
+          "vote_count": 3,
+          "sources": [
+            "DTW",
+            "MP",
+            "TDA"
+          ],
+          "is_hit": false
+        },
         {
           "ball": 44,
           "score": 6.0,
@@ -724,36 +1049,35 @@
           "is_hit": false
         },
         {
-          "ball": 54,
-          "score": 5.5,
+          "ball": 61,
+          "score": 5.1,
           "vote_count": 2,
           "sources": [
-            "DTW",
-            "MP"
+            "GA",
+            "TRANS"
           ],
           "is_hit": false
-        },
-        {
-          "ball": 16,
-          "score": 5.0,
-          "vote_count": 2,
-          "sources": [
-            "DTW",
-            "MP"
-          ],
-          "is_hit": true
         }
       ],
       "top12": [
-        44,
         54,
-        16
+        44,
+        61
       ],
-      "top12_hits": 1,
-      "top12_hit_nums": [
-        16
-      ],
+      "top12_hits": 0,
+      "top12_hit_nums": [],
       "top12_details": [
+        {
+          "ball": 54,
+          "score": 8.0,
+          "vote_count": 3,
+          "sources": [
+            "DTW",
+            "MP",
+            "TDA"
+          ],
+          "is_hit": false
+        },
         {
           "ball": 44,
           "score": 6.0,
@@ -765,31 +1089,21 @@
           "is_hit": false
         },
         {
-          "ball": 54,
-          "score": 5.5,
+          "ball": 61,
+          "score": 5.1,
           "vote_count": 2,
           "sources": [
-            "DTW",
-            "MP"
+            "GA",
+            "TRANS"
           ],
           "is_hit": false
-        },
-        {
-          "ball": 16,
-          "score": 5.0,
-          "vote_count": 2,
-          "sources": [
-            "DTW",
-            "MP"
-          ],
-          "is_hit": true
         }
       ],
-      "gold_core": 44,
+      "gold_core": 54,
       "gold_hit": false,
       "gold_pair": [
-        44,
-        54
+        54,
+        44
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": []
@@ -820,9 +1134,9 @@
         78
       ],
       "top3": [
-        73,
         57,
-        2
+        73,
+        9
       ],
       "top3_hits": 2,
       "top3_hit_nums": [
@@ -831,17 +1145,6 @@
       ],
       "top3_details": [
         {
-          "ball": 73,
-          "score": 8.12,
-          "vote_count": 3,
-          "sources": [
-            "GA",
-            "DTW",
-            "MP"
-          ],
-          "is_hit": true
-        },
-        {
           "ball": 57,
           "score": 5.5,
           "vote_count": 2,
@@ -852,20 +1155,30 @@
           "is_hit": true
         },
         {
-          "ball": 2,
-          "score": 4.5,
+          "ball": 73,
+          "score": 5.5,
           "vote_count": 2,
           "sources": [
-            "SVD",
+            "DTW",
             "MP"
+          ],
+          "is_hit": true
+        },
+        {
+          "ball": 9,
+          "score": 4.62,
+          "vote_count": 2,
+          "sources": [
+            "GA",
+            "TDA"
           ],
           "is_hit": false
         }
       ],
       "top5": [
-        73,
         57,
-        2
+        73,
+        9
       ],
       "top5_hits": 2,
       "top5_hit_nums": [
@@ -874,17 +1187,6 @@
       ],
       "top5_details": [
         {
-          "ball": 73,
-          "score": 8.12,
-          "vote_count": 3,
-          "sources": [
-            "GA",
-            "DTW",
-            "MP"
-          ],
-          "is_hit": true
-        },
-        {
           "ball": 57,
           "score": 5.5,
           "vote_count": 2,
@@ -895,20 +1197,30 @@
           "is_hit": true
         },
         {
-          "ball": 2,
-          "score": 4.5,
+          "ball": 73,
+          "score": 5.5,
           "vote_count": 2,
           "sources": [
-            "SVD",
+            "DTW",
             "MP"
+          ],
+          "is_hit": true
+        },
+        {
+          "ball": 9,
+          "score": 4.62,
+          "vote_count": 2,
+          "sources": [
+            "GA",
+            "TDA"
           ],
           "is_hit": false
         }
       ],
       "top12": [
-        73,
         57,
-        2
+        73,
+        9
       ],
       "top12_hits": 2,
       "top12_hit_nums": [
@@ -917,17 +1229,6 @@
       ],
       "top12_details": [
         {
-          "ball": 73,
-          "score": 8.12,
-          "vote_count": 3,
-          "sources": [
-            "GA",
-            "DTW",
-            "MP"
-          ],
-          "is_hit": true
-        },
-        {
           "ball": 57,
           "score": 5.5,
           "vote_count": 2,
@@ -938,21 +1239,31 @@
           "is_hit": true
         },
         {
-          "ball": 2,
-          "score": 4.5,
+          "ball": 73,
+          "score": 5.5,
           "vote_count": 2,
           "sources": [
-            "SVD",
+            "DTW",
             "MP"
+          ],
+          "is_hit": true
+        },
+        {
+          "ball": 9,
+          "score": 4.62,
+          "vote_count": 2,
+          "sources": [
+            "GA",
+            "TDA"
           ],
           "is_hit": false
         }
       ],
-      "gold_core": 73,
+      "gold_core": 57,
       "gold_hit": true,
       "gold_pair": [
-        73,
-        57
+        57,
+        73
       ],
       "gold_pair_hits": 2,
       "gold_pair_hit_nums": [
@@ -986,20 +1297,31 @@
         75
       ],
       "top3": [
-        78,
-        61,
-        9
+        73,
+        7,
+        61
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
       "top3_details": [
         {
-          "ball": 78,
-          "score": 5.1,
-          "vote_count": 2,
+          "ball": 73,
+          "score": 7.62,
+          "vote_count": 3,
           "sources": [
             "GA",
-            "DTW"
+            "DTW",
+            "MP"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 7,
+          "score": 4.5,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "MP"
           ],
           "is_hit": false
         },
@@ -1010,34 +1332,36 @@
           "sources": [
             "SVD",
             "TDA"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 9,
-          "score": 3.15,
-          "vote_count": 1,
-          "sources": [
-            "GA"
           ],
           "is_hit": false
         }
       ],
       "top5": [
-        78,
-        61,
-        9
+        73,
+        7,
+        61
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
       "top5_details": [
         {
-          "ball": 78,
-          "score": 5.1,
-          "vote_count": 2,
+          "ball": 73,
+          "score": 7.62,
+          "vote_count": 3,
           "sources": [
             "GA",
-            "DTW"
+            "DTW",
+            "MP"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 7,
+          "score": 4.5,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "MP"
           ],
           "is_hit": false
         },
@@ -1048,34 +1372,36 @@
           "sources": [
             "SVD",
             "TDA"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 9,
-          "score": 3.15,
-          "vote_count": 1,
-          "sources": [
-            "GA"
           ],
           "is_hit": false
         }
       ],
       "top12": [
-        78,
-        61,
-        9
+        73,
+        7,
+        61
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
       "top12_details": [
         {
-          "ball": 78,
-          "score": 5.1,
-          "vote_count": 2,
+          "ball": 73,
+          "score": 7.62,
+          "vote_count": 3,
           "sources": [
             "GA",
-            "DTW"
+            "DTW",
+            "MP"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 7,
+          "score": 4.5,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "MP"
           ],
           "is_hit": false
         },
@@ -1088,22 +1414,13 @@
             "TDA"
           ],
           "is_hit": false
-        },
-        {
-          "ball": 9,
-          "score": 3.15,
-          "vote_count": 1,
-          "sources": [
-            "GA"
-          ],
-          "is_hit": false
         }
       ],
-      "gold_core": 78,
+      "gold_core": 73,
       "gold_hit": false,
       "gold_pair": [
-        78,
-        61
+        73,
+        7
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": []
@@ -1134,16 +1451,28 @@
         78
       ],
       "top3": [
-        56,
+        73,
         72,
-        9
+        3
       ],
-      "top3_hits": 0,
-      "top3_hit_nums": [],
+      "top3_hits": 1,
+      "top3_hit_nums": [
+        3
+      ],
       "top3_details": [
         {
-          "ball": 56,
-          "score": 4.5,
+          "ball": 73,
+          "score": 5.15,
+          "vote_count": 2,
+          "sources": [
+            "GA",
+            "TDA"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 72,
+          "score": 4.0,
           "vote_count": 2,
           "sources": [
             "DTW",
@@ -1152,36 +1481,38 @@
           "is_hit": false
         },
         {
-          "ball": 72,
-          "score": 4.1,
-          "vote_count": 2,
-          "sources": [
-            "GA",
-            "DTW"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 9,
-          "score": 3.15,
+          "ball": 3,
+          "score": 3.0,
           "vote_count": 1,
           "sources": [
-            "GA"
+            "MP"
           ],
-          "is_hit": false
+          "is_hit": true
         }
       ],
       "top5": [
-        56,
+        73,
         72,
-        9
+        3
       ],
-      "top5_hits": 0,
-      "top5_hit_nums": [],
+      "top5_hits": 1,
+      "top5_hit_nums": [
+        3
+      ],
       "top5_details": [
         {
-          "ball": 56,
-          "score": 4.5,
+          "ball": 73,
+          "score": 5.15,
+          "vote_count": 2,
+          "sources": [
+            "GA",
+            "TDA"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 72,
+          "score": 4.0,
           "vote_count": 2,
           "sources": [
             "DTW",
@@ -1190,36 +1521,38 @@
           "is_hit": false
         },
         {
-          "ball": 72,
-          "score": 4.1,
-          "vote_count": 2,
-          "sources": [
-            "GA",
-            "DTW"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 9,
-          "score": 3.15,
+          "ball": 3,
+          "score": 3.0,
           "vote_count": 1,
           "sources": [
-            "GA"
+            "MP"
           ],
-          "is_hit": false
+          "is_hit": true
         }
       ],
       "top12": [
-        56,
+        73,
         72,
-        9
+        3
       ],
-      "top12_hits": 0,
-      "top12_hit_nums": [],
+      "top12_hits": 1,
+      "top12_hit_nums": [
+        3
+      ],
       "top12_details": [
         {
-          "ball": 56,
-          "score": 4.5,
+          "ball": 73,
+          "score": 5.15,
+          "vote_count": 2,
+          "sources": [
+            "GA",
+            "TDA"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 72,
+          "score": 4.0,
           "vote_count": 2,
           "sources": [
             "DTW",
@@ -1228,29 +1561,19 @@
           "is_hit": false
         },
         {
-          "ball": 72,
-          "score": 4.1,
-          "vote_count": 2,
-          "sources": [
-            "GA",
-            "DTW"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 9,
-          "score": 3.15,
+          "ball": 3,
+          "score": 3.0,
           "vote_count": 1,
           "sources": [
-            "GA"
+            "MP"
           ],
-          "is_hit": false
+          "is_hit": true
         }
       ],
-      "gold_core": 56,
+      "gold_core": 73,
       "gold_hit": false,
       "gold_pair": [
-        56,
+        73,
         72
       ],
       "gold_pair_hits": 0,
@@ -1282,16 +1605,16 @@
         72
       ],
       "top3": [
-        9,
         18,
-        56
+        9,
+        10
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
       "top3_details": [
         {
-          "ball": 9,
-          "score": 7.5,
+          "ball": 18,
+          "score": 8.0,
           "vote_count": 3,
           "sources": [
             "SVD",
@@ -1301,36 +1624,38 @@
           "is_hit": false
         },
         {
-          "ball": 18,
-          "score": 5.5,
-          "vote_count": 2,
+          "ball": 9,
+          "score": 6.5,
+          "vote_count": 3,
           "sources": [
             "SVD",
-            "DTW"
+            "MP",
+            "TDA"
           ],
           "is_hit": false
         },
         {
-          "ball": 56,
-          "score": 3.15,
-          "vote_count": 1,
+          "ball": 10,
+          "score": 5.0,
+          "vote_count": 2,
           "sources": [
-            "GA"
+            "DTW",
+            "MP"
           ],
           "is_hit": false
         }
       ],
       "top5": [
-        9,
         18,
-        56
+        9,
+        10
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
       "top5_details": [
         {
-          "ball": 9,
-          "score": 7.5,
+          "ball": 18,
+          "score": 8.0,
           "vote_count": 3,
           "sources": [
             "SVD",
@@ -1340,36 +1665,38 @@
           "is_hit": false
         },
         {
-          "ball": 18,
-          "score": 5.5,
-          "vote_count": 2,
+          "ball": 9,
+          "score": 6.5,
+          "vote_count": 3,
           "sources": [
             "SVD",
-            "DTW"
+            "MP",
+            "TDA"
           ],
           "is_hit": false
         },
         {
-          "ball": 56,
-          "score": 3.15,
-          "vote_count": 1,
+          "ball": 10,
+          "score": 5.0,
+          "vote_count": 2,
           "sources": [
-            "GA"
+            "DTW",
+            "MP"
           ],
           "is_hit": false
         }
       ],
       "top12": [
-        9,
         18,
-        56
+        9,
+        10
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
       "top12_details": [
         {
-          "ball": 9,
-          "score": 7.5,
+          "ball": 18,
+          "score": 8.0,
           "vote_count": 3,
           "sources": [
             "SVD",
@@ -1379,30 +1706,32 @@
           "is_hit": false
         },
         {
-          "ball": 18,
-          "score": 5.5,
-          "vote_count": 2,
+          "ball": 9,
+          "score": 6.5,
+          "vote_count": 3,
           "sources": [
             "SVD",
-            "DTW"
+            "MP",
+            "TDA"
           ],
           "is_hit": false
         },
         {
-          "ball": 56,
-          "score": 3.15,
-          "vote_count": 1,
+          "ball": 10,
+          "score": 5.0,
+          "vote_count": 2,
           "sources": [
-            "GA"
+            "DTW",
+            "MP"
           ],
           "is_hit": false
         }
       ],
-      "gold_core": 9,
+      "gold_core": 18,
       "gold_hit": false,
       "gold_pair": [
-        9,
-        18
+        18,
+        9
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": []
@@ -1435,24 +1764,25 @@
       "top3": [
         44,
         51,
-        55
+        52
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
       "top3_details": [
         {
           "ball": 44,
-          "score": 5.5,
-          "vote_count": 2,
+          "score": 8.0,
+          "vote_count": 3,
           "sources": [
             "SVD",
+            "DTW",
             "TDA"
           ],
           "is_hit": false
         },
         {
           "ball": 51,
-          "score": 5.0,
+          "score": 6.0,
           "vote_count": 2,
           "sources": [
             "SVD",
@@ -1461,12 +1791,12 @@
           "is_hit": false
         },
         {
-          "ball": 55,
-          "score": 4.5,
+          "ball": 52,
+          "score": 4.62,
           "vote_count": 2,
           "sources": [
-            "SVD",
-            "DTW"
+            "GA",
+            "MP"
           ],
           "is_hit": false
         }
@@ -1474,24 +1804,25 @@
       "top5": [
         44,
         51,
-        55
+        52
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
       "top5_details": [
         {
           "ball": 44,
-          "score": 5.5,
-          "vote_count": 2,
+          "score": 8.0,
+          "vote_count": 3,
           "sources": [
             "SVD",
+            "DTW",
             "TDA"
           ],
           "is_hit": false
         },
         {
           "ball": 51,
-          "score": 5.0,
+          "score": 6.0,
           "vote_count": 2,
           "sources": [
             "SVD",
@@ -1500,12 +1831,12 @@
           "is_hit": false
         },
         {
-          "ball": 55,
-          "score": 4.5,
+          "ball": 52,
+          "score": 4.62,
           "vote_count": 2,
           "sources": [
-            "SVD",
-            "DTW"
+            "GA",
+            "MP"
           ],
           "is_hit": false
         }
@@ -1513,24 +1844,25 @@
       "top12": [
         44,
         51,
-        55
+        52
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
       "top12_details": [
         {
           "ball": 44,
-          "score": 5.5,
-          "vote_count": 2,
+          "score": 8.0,
+          "vote_count": 3,
           "sources": [
             "SVD",
+            "DTW",
             "TDA"
           ],
           "is_hit": false
         },
         {
           "ball": 51,
-          "score": 5.0,
+          "score": 6.0,
           "vote_count": 2,
           "sources": [
             "SVD",
@@ -1539,12 +1871,12 @@
           "is_hit": false
         },
         {
-          "ball": 55,
-          "score": 4.5,
+          "ball": 52,
+          "score": 4.62,
           "vote_count": 2,
           "sources": [
-            "SVD",
-            "DTW"
+            "GA",
+            "MP"
           ],
           "is_hit": false
         }
@@ -1585,7 +1917,7 @@
       ],
       "top3": [
         9,
-        44,
+        51,
         63
       ],
       "top3_hits": 0,
@@ -1593,32 +1925,33 @@
       "top3_details": [
         {
           "ball": 9,
-          "score": 9.6,
-          "vote_count": 4,
+          "score": 11.1,
+          "vote_count": 5,
           "sources": [
             "GA",
             "SVD",
             "DTW",
-            "MP"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 44,
-          "score": 6.15,
-          "vote_count": 2,
-          "sources": [
-            "GA",
+            "MP",
             "TDA"
           ],
           "is_hit": false
         },
         {
-          "ball": 63,
-          "score": 5.0,
+          "ball": 51,
+          "score": 6.0,
           "vote_count": 2,
           "sources": [
-            "DTW",
+            "SVD",
+            "DTW"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 63,
+          "score": 6.0,
+          "vote_count": 2,
+          "sources": [
+            "TRANS",
             "MP"
           ],
           "is_hit": false
@@ -1626,7 +1959,7 @@
       ],
       "top5": [
         9,
-        44,
+        51,
         63
       ],
       "top5_hits": 0,
@@ -1634,32 +1967,33 @@
       "top5_details": [
         {
           "ball": 9,
-          "score": 9.6,
-          "vote_count": 4,
+          "score": 11.1,
+          "vote_count": 5,
           "sources": [
             "GA",
             "SVD",
             "DTW",
-            "MP"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 44,
-          "score": 6.15,
-          "vote_count": 2,
-          "sources": [
-            "GA",
+            "MP",
             "TDA"
           ],
           "is_hit": false
         },
         {
-          "ball": 63,
-          "score": 5.0,
+          "ball": 51,
+          "score": 6.0,
           "vote_count": 2,
           "sources": [
-            "DTW",
+            "SVD",
+            "DTW"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 63,
+          "score": 6.0,
+          "vote_count": 2,
+          "sources": [
+            "TRANS",
             "MP"
           ],
           "is_hit": false
@@ -1667,7 +2001,7 @@
       ],
       "top12": [
         9,
-        44,
+        51,
         63
       ],
       "top12_hits": 0,
@@ -1675,32 +2009,33 @@
       "top12_details": [
         {
           "ball": 9,
-          "score": 9.6,
-          "vote_count": 4,
+          "score": 11.1,
+          "vote_count": 5,
           "sources": [
             "GA",
             "SVD",
             "DTW",
-            "MP"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 44,
-          "score": 6.15,
-          "vote_count": 2,
-          "sources": [
-            "GA",
+            "MP",
             "TDA"
           ],
           "is_hit": false
         },
         {
-          "ball": 63,
-          "score": 5.0,
+          "ball": 51,
+          "score": 6.0,
           "vote_count": 2,
           "sources": [
-            "DTW",
+            "SVD",
+            "DTW"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 63,
+          "score": 6.0,
+          "vote_count": 2,
+          "sources": [
+            "TRANS",
             "MP"
           ],
           "is_hit": false
@@ -1710,7 +2045,7 @@
       "gold_hit": false,
       "gold_pair": [
         9,
-        44
+        51
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": []
@@ -1741,141 +2076,130 @@
         79
       ],
       "top3": [
-        78,
-        9,
-        55
+        31,
+        34,
+        53
       ],
-      "top3_hits": 2,
-      "top3_hit_nums": [
-        9,
-        55
-      ],
+      "top3_hits": 0,
+      "top3_hit_nums": [],
       "top3_details": [
         {
-          "ball": 78,
-          "score": 6.0,
+          "ball": 31,
+          "score": 5.62,
           "vote_count": 2,
           "sources": [
-            "SVD",
+            "GA",
             "DTW"
           ],
           "is_hit": false
         },
         {
-          "ball": 9,
-          "score": 5.5,
+          "ball": 34,
+          "score": 5.0,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "TRANS"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 53,
+          "score": 5.0,
           "vote_count": 2,
           "sources": [
             "DTW",
             "MP"
           ],
-          "is_hit": true
-        },
-        {
-          "ball": 55,
-          "score": 4.5,
-          "vote_count": 2,
-          "sources": [
-            "SVD",
-            "TDA"
-          ],
-          "is_hit": true
+          "is_hit": false
         }
       ],
       "top5": [
-        78,
-        9,
-        55
+        31,
+        34,
+        53
       ],
-      "top5_hits": 2,
-      "top5_hit_nums": [
-        9,
-        55
-      ],
+      "top5_hits": 0,
+      "top5_hit_nums": [],
       "top5_details": [
         {
-          "ball": 78,
-          "score": 6.0,
+          "ball": 31,
+          "score": 5.62,
           "vote_count": 2,
           "sources": [
-            "SVD",
+            "GA",
             "DTW"
           ],
           "is_hit": false
         },
         {
-          "ball": 9,
-          "score": 5.5,
+          "ball": 34,
+          "score": 5.0,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "TRANS"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 53,
+          "score": 5.0,
           "vote_count": 2,
           "sources": [
             "DTW",
             "MP"
           ],
-          "is_hit": true
-        },
-        {
-          "ball": 55,
-          "score": 4.5,
-          "vote_count": 2,
-          "sources": [
-            "SVD",
-            "TDA"
-          ],
-          "is_hit": true
+          "is_hit": false
         }
       ],
       "top12": [
-        78,
-        9,
-        55
+        31,
+        34,
+        53
       ],
-      "top12_hits": 2,
-      "top12_hit_nums": [
-        9,
-        55
-      ],
+      "top12_hits": 0,
+      "top12_hit_nums": [],
       "top12_details": [
         {
-          "ball": 78,
-          "score": 6.0,
+          "ball": 31,
+          "score": 5.62,
           "vote_count": 2,
           "sources": [
-            "SVD",
+            "GA",
             "DTW"
           ],
           "is_hit": false
         },
         {
-          "ball": 9,
-          "score": 5.5,
+          "ball": 34,
+          "score": 5.0,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "TRANS"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 53,
+          "score": 5.0,
           "vote_count": 2,
           "sources": [
             "DTW",
             "MP"
           ],
-          "is_hit": true
-        },
-        {
-          "ball": 55,
-          "score": 4.5,
-          "vote_count": 2,
-          "sources": [
-            "SVD",
-            "TDA"
-          ],
-          "is_hit": true
+          "is_hit": false
         }
       ],
-      "gold_core": 78,
+      "gold_core": 31,
       "gold_hit": false,
       "gold_pair": [
-        78,
-        9
+        31,
+        34
       ],
-      "gold_pair_hits": 1,
-      "gold_pair_hit_nums": [
-        9
-      ]
+      "gold_pair_hits": 0,
+      "gold_pair_hit_nums": []
     },
     {
       "period": 2026286,
@@ -1903,30 +2227,20 @@
         80
       ],
       "top3": [
-        61,
         43,
-        44
+        44,
+        61
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
       "top3_details": [
         {
-          "ball": 61,
+          "ball": 43,
           "score": 8.0,
           "vote_count": 3,
           "sources": [
-            "SVD",
-            "TRANS",
-            "TDA"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 43,
-          "score": 6.0,
-          "vote_count": 2,
-          "sources": [
             "DTW",
+            "TRANS",
             "MP"
           ],
           "is_hit": false
@@ -1934,6 +2248,16 @@
         {
           "ball": 44,
           "score": 6.0,
+          "vote_count": 2,
+          "sources": [
+            "SVD",
+            "TDA"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 61,
+          "score": 4.5,
           "vote_count": 2,
           "sources": [
             "SVD",
@@ -1943,30 +2267,20 @@
         }
       ],
       "top5": [
-        61,
         43,
-        44
+        44,
+        61
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
       "top5_details": [
         {
-          "ball": 61,
+          "ball": 43,
           "score": 8.0,
           "vote_count": 3,
           "sources": [
-            "SVD",
-            "TRANS",
-            "TDA"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 43,
-          "score": 6.0,
-          "vote_count": 2,
-          "sources": [
             "DTW",
+            "TRANS",
             "MP"
           ],
           "is_hit": false
@@ -1974,6 +2288,16 @@
         {
           "ball": 44,
           "score": 6.0,
+          "vote_count": 2,
+          "sources": [
+            "SVD",
+            "TDA"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 61,
+          "score": 4.5,
           "vote_count": 2,
           "sources": [
             "SVD",
@@ -1983,30 +2307,20 @@
         }
       ],
       "top12": [
-        61,
         43,
-        44
+        44,
+        61
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
       "top12_details": [
         {
-          "ball": 61,
+          "ball": 43,
           "score": 8.0,
           "vote_count": 3,
           "sources": [
-            "SVD",
-            "TRANS",
-            "TDA"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 43,
-          "score": 6.0,
-          "vote_count": 2,
-          "sources": [
             "DTW",
+            "TRANS",
             "MP"
           ],
           "is_hit": false
@@ -2020,13 +2334,23 @@
             "TDA"
           ],
           "is_hit": false
+        },
+        {
+          "ball": 61,
+          "score": 4.5,
+          "vote_count": 2,
+          "sources": [
+            "SVD",
+            "TDA"
+          ],
+          "is_hit": false
         }
       ],
-      "gold_core": 61,
+      "gold_core": 43,
       "gold_hit": false,
       "gold_pair": [
-        61,
-        43
+        43,
+        44
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": []
@@ -2057,25 +2381,22 @@
         78
       ],
       "top3": [
-        44,
+        8,
         62,
-        9
+        13
       ],
-      "top3_hits": 2,
-      "top3_hit_nums": [
-        9,
-        44
-      ],
+      "top3_hits": 0,
+      "top3_hit_nums": [],
       "top3_details": [
         {
-          "ball": 44,
-          "score": 5.0,
+          "ball": 8,
+          "score": 6.15,
           "vote_count": 2,
           "sources": [
-            "SVD",
-            "TDA"
+            "GA",
+            "MP"
           ],
-          "is_hit": true
+          "is_hit": false
         },
         {
           "ball": 62,
@@ -2088,35 +2409,32 @@
           "is_hit": false
         },
         {
-          "ball": 9,
-          "score": 3.15,
+          "ball": 13,
+          "score": 3.0,
           "vote_count": 1,
           "sources": [
-            "GA"
+            "TRANS"
           ],
-          "is_hit": true
+          "is_hit": false
         }
       ],
       "top5": [
-        44,
+        8,
         62,
-        9
+        13
       ],
-      "top5_hits": 2,
-      "top5_hit_nums": [
-        9,
-        44
-      ],
+      "top5_hits": 0,
+      "top5_hit_nums": [],
       "top5_details": [
         {
-          "ball": 44,
-          "score": 5.0,
+          "ball": 8,
+          "score": 6.15,
           "vote_count": 2,
           "sources": [
-            "SVD",
-            "TDA"
+            "GA",
+            "MP"
           ],
-          "is_hit": true
+          "is_hit": false
         },
         {
           "ball": 62,
@@ -2129,35 +2447,32 @@
           "is_hit": false
         },
         {
-          "ball": 9,
-          "score": 3.15,
+          "ball": 13,
+          "score": 3.0,
           "vote_count": 1,
           "sources": [
-            "GA"
+            "TRANS"
           ],
-          "is_hit": true
+          "is_hit": false
         }
       ],
       "top12": [
-        44,
+        8,
         62,
-        9
+        13
       ],
-      "top12_hits": 2,
-      "top12_hit_nums": [
-        9,
-        44
-      ],
+      "top12_hits": 0,
+      "top12_hit_nums": [],
       "top12_details": [
         {
-          "ball": 44,
-          "score": 5.0,
+          "ball": 8,
+          "score": 6.15,
           "vote_count": 2,
           "sources": [
-            "SVD",
-            "TDA"
+            "GA",
+            "MP"
           ],
-          "is_hit": true
+          "is_hit": false
         },
         {
           "ball": 62,
@@ -2170,25 +2485,23 @@
           "is_hit": false
         },
         {
-          "ball": 9,
-          "score": 3.15,
+          "ball": 13,
+          "score": 3.0,
           "vote_count": 1,
           "sources": [
-            "GA"
+            "TRANS"
           ],
-          "is_hit": true
+          "is_hit": false
         }
       ],
-      "gold_core": 44,
-      "gold_hit": true,
+      "gold_core": 8,
+      "gold_hit": false,
       "gold_pair": [
-        44,
+        8,
         62
       ],
-      "gold_pair_hits": 1,
-      "gold_pair_hit_nums": [
-        44
-      ]
+      "gold_pair_hits": 0,
+      "gold_pair_hit_nums": []
     },
     {
       "period": 2026284,
@@ -2216,9 +2529,9 @@
         78
       ],
       "top3": [
+        8,
         15,
-        11,
-        13
+        11
       ],
       "top3_hits": 1,
       "top3_hit_nums": [
@@ -2226,6 +2539,16 @@
       ],
       "top3_details": [
         {
+          "ball": 8,
+          "score": 6.15,
+          "vote_count": 2,
+          "sources": [
+            "GA",
+            "MP"
+          ],
+          "is_hit": false
+        },
+        {
           "ball": 15,
           "score": 5.5,
           "vote_count": 2,
@@ -2244,22 +2567,12 @@
             "MP"
           ],
           "is_hit": true
-        },
-        {
-          "ball": 13,
-          "score": 5.0,
-          "vote_count": 2,
-          "sources": [
-            "TRANS",
-            "MP"
-          ],
-          "is_hit": false
         }
       ],
       "top5": [
+        8,
         15,
-        11,
-        13
+        11
       ],
       "top5_hits": 1,
       "top5_hit_nums": [
@@ -2267,6 +2580,16 @@
       ],
       "top5_details": [
         {
+          "ball": 8,
+          "score": 6.15,
+          "vote_count": 2,
+          "sources": [
+            "GA",
+            "MP"
+          ],
+          "is_hit": false
+        },
+        {
           "ball": 15,
           "score": 5.5,
           "vote_count": 2,
@@ -2285,22 +2608,12 @@
             "MP"
           ],
           "is_hit": true
-        },
-        {
-          "ball": 13,
-          "score": 5.0,
-          "vote_count": 2,
-          "sources": [
-            "TRANS",
-            "MP"
-          ],
-          "is_hit": false
         }
       ],
       "top12": [
+        8,
         15,
-        11,
-        13
+        11
       ],
       "top12_hits": 1,
       "top12_hit_nums": [
@@ -2308,6 +2621,16 @@
       ],
       "top12_details": [
         {
+          "ball": 8,
+          "score": 6.15,
+          "vote_count": 2,
+          "sources": [
+            "GA",
+            "MP"
+          ],
+          "is_hit": false
+        },
+        {
           "ball": 15,
           "score": 5.5,
           "vote_count": 2,
@@ -2326,28 +2649,16 @@
             "MP"
           ],
           "is_hit": true
-        },
-        {
-          "ball": 13,
-          "score": 5.0,
-          "vote_count": 2,
-          "sources": [
-            "TRANS",
-            "MP"
-          ],
-          "is_hit": false
         }
       ],
-      "gold_core": 15,
+      "gold_core": 8,
       "gold_hit": false,
       "gold_pair": [
-        15,
-        11
+        8,
+        15
       ],
-      "gold_pair_hits": 1,
-      "gold_pair_hit_nums": [
-        11
-      ]
+      "gold_pair_hits": 0,
+      "gold_pair_hit_nums": []
     },
     {
       "period": 2026283,
@@ -2375,9 +2686,9 @@
         80
       ],
       "top3": [
-        9,
         44,
-        54
+        51,
+        73
       ],
       "top3_hits": 1,
       "top3_hit_nums": [
@@ -2385,17 +2696,6 @@
       ],
       "top3_details": [
         {
-          "ball": 9,
-          "score": 8.65,
-          "vote_count": 3,
-          "sources": [
-            "GA",
-            "MP",
-            "TDA"
-          ],
-          "is_hit": false
-        },
-        {
           "ball": 44,
           "score": 5.5,
           "vote_count": 2,
@@ -2406,20 +2706,30 @@
           "is_hit": true
         },
         {
-          "ball": 54,
-          "score": 4.62,
+          "ball": 51,
+          "score": 5.1,
           "vote_count": 2,
           "sources": [
             "GA",
-            "TDA"
+            "SVD"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 73,
+          "score": 4.0,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "MP"
           ],
           "is_hit": false
         }
       ],
       "top5": [
-        9,
         44,
-        54
+        51,
+        73
       ],
       "top5_hits": 1,
       "top5_hit_nums": [
@@ -2427,17 +2737,6 @@
       ],
       "top5_details": [
         {
-          "ball": 9,
-          "score": 8.65,
-          "vote_count": 3,
-          "sources": [
-            "GA",
-            "MP",
-            "TDA"
-          ],
-          "is_hit": false
-        },
-        {
           "ball": 44,
           "score": 5.5,
           "vote_count": 2,
@@ -2448,20 +2747,30 @@
           "is_hit": true
         },
         {
-          "ball": 54,
-          "score": 4.62,
+          "ball": 51,
+          "score": 5.1,
           "vote_count": 2,
           "sources": [
             "GA",
-            "TDA"
+            "SVD"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 73,
+          "score": 4.0,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "MP"
           ],
           "is_hit": false
         }
       ],
       "top12": [
-        9,
         44,
-        54
+        51,
+        73
       ],
       "top12_hits": 1,
       "top12_hit_nums": [
@@ -2469,17 +2778,6 @@
       ],
       "top12_details": [
         {
-          "ball": 9,
-          "score": 8.65,
-          "vote_count": 3,
-          "sources": [
-            "GA",
-            "MP",
-            "TDA"
-          ],
-          "is_hit": false
-        },
-        {
           "ball": 44,
           "score": 5.5,
           "vote_count": 2,
@@ -2490,21 +2788,31 @@
           "is_hit": true
         },
         {
-          "ball": 54,
-          "score": 4.62,
+          "ball": 51,
+          "score": 5.1,
           "vote_count": 2,
           "sources": [
             "GA",
-            "TDA"
+            "SVD"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 73,
+          "score": 4.0,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "MP"
           ],
           "is_hit": false
         }
       ],
-      "gold_core": 9,
-      "gold_hit": false,
+      "gold_core": 44,
+      "gold_hit": true,
       "gold_pair": [
-        9,
-        44
+        44,
+        51
       ],
       "gold_pair_hits": 1,
       "gold_pair_hit_nums": [
@@ -2537,39 +2845,39 @@
         80
       ],
       "top3": [
-        72,
-        35,
-        42
+        55,
+        9,
+        72
       ],
       "top3_hits": 1,
       "top3_hit_nums": [
-        35
+        9
       ],
       "top3_details": [
         {
-          "ball": 72,
-          "score": 8.65,
+          "ball": 55,
+          "score": 7.0,
           "vote_count": 3,
           "sources": [
-            "GA",
+            "SVD",
             "DTW",
             "MP"
           ],
           "is_hit": false
         },
         {
-          "ball": 35,
-          "score": 5.12,
+          "ball": 9,
+          "score": 6.15,
           "vote_count": 2,
           "sources": [
             "GA",
-            "DTW"
+            "TDA"
           ],
           "is_hit": true
         },
         {
-          "ball": 42,
-          "score": 5.0,
+          "ball": 72,
+          "score": 5.5,
           "vote_count": 2,
           "sources": [
             "DTW",
@@ -2579,39 +2887,39 @@
         }
       ],
       "top5": [
-        72,
-        35,
-        42
+        55,
+        9,
+        72
       ],
       "top5_hits": 1,
       "top5_hit_nums": [
-        35
+        9
       ],
       "top5_details": [
         {
-          "ball": 72,
-          "score": 8.65,
+          "ball": 55,
+          "score": 7.0,
           "vote_count": 3,
           "sources": [
-            "GA",
+            "SVD",
             "DTW",
             "MP"
           ],
           "is_hit": false
         },
         {
-          "ball": 35,
-          "score": 5.12,
+          "ball": 9,
+          "score": 6.15,
           "vote_count": 2,
           "sources": [
             "GA",
-            "DTW"
+            "TDA"
           ],
           "is_hit": true
         },
         {
-          "ball": 42,
-          "score": 5.0,
+          "ball": 72,
+          "score": 5.5,
           "vote_count": 2,
           "sources": [
             "DTW",
@@ -2621,39 +2929,39 @@
         }
       ],
       "top12": [
-        72,
-        35,
-        42
+        55,
+        9,
+        72
       ],
       "top12_hits": 1,
       "top12_hit_nums": [
-        35
+        9
       ],
       "top12_details": [
         {
-          "ball": 72,
-          "score": 8.65,
+          "ball": 55,
+          "score": 7.0,
           "vote_count": 3,
           "sources": [
-            "GA",
+            "SVD",
             "DTW",
             "MP"
           ],
           "is_hit": false
         },
         {
-          "ball": 35,
-          "score": 5.12,
+          "ball": 9,
+          "score": 6.15,
           "vote_count": 2,
           "sources": [
             "GA",
-            "DTW"
+            "TDA"
           ],
           "is_hit": true
         },
         {
-          "ball": 42,
-          "score": 5.0,
+          "ball": 72,
+          "score": 5.5,
           "vote_count": 2,
           "sources": [
             "DTW",
@@ -2662,15 +2970,15 @@
           "is_hit": false
         }
       ],
-      "gold_core": 72,
+      "gold_core": 55,
       "gold_hit": false,
       "gold_pair": [
-        72,
-        35
+        55,
+        9
       ],
       "gold_pair_hits": 1,
       "gold_pair_hit_nums": [
-        35
+        9
       ]
     },
     {
@@ -2701,14 +3009,14 @@
       "top3": [
         54,
         44,
-        29
+        31
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
       "top3_details": [
         {
           "ball": 54,
-          "score": 10.12,
+          "score": 11.12,
           "vote_count": 4,
           "sources": [
             "GA",
@@ -2729,12 +3037,12 @@
           "is_hit": false
         },
         {
-          "ball": 29,
-          "score": 4.5,
+          "ball": 31,
+          "score": 5.15,
           "vote_count": 2,
           "sources": [
-            "DTW",
-            "MP"
+            "GA",
+            "DTW"
           ],
           "is_hit": false
         }
@@ -2742,14 +3050,14 @@
       "top5": [
         54,
         44,
-        29
+        31
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
       "top5_details": [
         {
           "ball": 54,
-          "score": 10.12,
+          "score": 11.12,
           "vote_count": 4,
           "sources": [
             "GA",
@@ -2770,12 +3078,12 @@
           "is_hit": false
         },
         {
-          "ball": 29,
-          "score": 4.5,
+          "ball": 31,
+          "score": 5.15,
           "vote_count": 2,
           "sources": [
-            "DTW",
-            "MP"
+            "GA",
+            "DTW"
           ],
           "is_hit": false
         }
@@ -2783,14 +3091,14 @@
       "top12": [
         54,
         44,
-        29
+        31
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
       "top12_details": [
         {
           "ball": 54,
-          "score": 10.12,
+          "score": 11.12,
           "vote_count": 4,
           "sources": [
             "GA",
@@ -2811,12 +3119,12 @@
           "is_hit": false
         },
         {
-          "ball": 29,
-          "score": 4.5,
+          "ball": 31,
+          "score": 5.15,
           "vote_count": 2,
           "sources": [
-            "DTW",
-            "MP"
+            "GA",
+            "DTW"
           ],
           "is_hit": false
         }
@@ -2857,30 +3165,20 @@
       ],
       "top3": [
         54,
-        39,
-        44
+        44,
+        51
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
       "top3_details": [
         {
           "ball": 54,
-          "score": 6.5,
+          "score": 8.0,
           "vote_count": 3,
           "sources": [
             "DTW",
             "MP",
             "TDA"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 39,
-          "score": 6.0,
-          "vote_count": 2,
-          "sources": [
-            "DTW",
-            "MP"
           ],
           "is_hit": false
         },
@@ -2891,36 +3189,36 @@
           "sources": [
             "SVD",
             "TDA"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 51,
+          "score": 5.0,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "MP"
           ],
           "is_hit": false
         }
       ],
       "top5": [
         54,
-        39,
-        44
+        44,
+        51
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
       "top5_details": [
         {
           "ball": 54,
-          "score": 6.5,
+          "score": 8.0,
           "vote_count": 3,
           "sources": [
             "DTW",
             "MP",
             "TDA"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 39,
-          "score": 6.0,
-          "vote_count": 2,
-          "sources": [
-            "DTW",
-            "MP"
           ],
           "is_hit": false
         },
@@ -2931,36 +3229,36 @@
           "sources": [
             "SVD",
             "TDA"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 51,
+          "score": 5.0,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "MP"
           ],
           "is_hit": false
         }
       ],
       "top12": [
         54,
-        39,
-        44
+        44,
+        51
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
       "top12_details": [
         {
           "ball": 54,
-          "score": 6.5,
+          "score": 8.0,
           "vote_count": 3,
           "sources": [
             "DTW",
             "MP",
             "TDA"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 39,
-          "score": 6.0,
-          "vote_count": 2,
-          "sources": [
-            "DTW",
-            "MP"
           ],
           "is_hit": false
         },
@@ -2971,6 +3269,16 @@
           "sources": [
             "SVD",
             "TDA"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 51,
+          "score": 5.0,
+          "vote_count": 2,
+          "sources": [
+            "DTW",
+            "MP"
           ],
           "is_hit": false
         }
@@ -2979,7 +3287,7 @@
       "gold_hit": false,
       "gold_pair": [
         54,
-        39
+        44
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": []
@@ -3019,7 +3327,7 @@
       "top3_details": [
         {
           "ball": 65,
-          "score": 7.6,
+          "score": 8.62,
           "vote_count": 3,
           "sources": [
             "GA",
@@ -3059,7 +3367,7 @@
       "top5_details": [
         {
           "ball": 65,
-          "score": 7.6,
+          "score": 8.62,
           "vote_count": 3,
           "sources": [
             "GA",
@@ -3099,7 +3407,7 @@
       "top12_details": [
         {
           "ball": 65,
-          "score": 7.6,
+          "score": 8.62,
           "vote_count": 3,
           "sources": [
             "GA",
@@ -3166,7 +3474,7 @@
       "top3": [
         73,
         50,
-        9
+        34
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
@@ -3183,20 +3491,20 @@
         },
         {
           "ball": 50,
-          "score": 5.1,
+          "score": 6.0,
           "vote_count": 2,
           "sources": [
-            "GA",
+            "DTW",
             "MP"
           ],
           "is_hit": false
         },
         {
-          "ball": 9,
+          "ball": 34,
           "score": 5.0,
           "vote_count": 2,
           "sources": [
-            "DTW",
+            "TRANS",
             "MP"
           ],
           "is_hit": false
@@ -3205,7 +3513,7 @@
       "top5": [
         73,
         50,
-        9
+        34
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
@@ -3222,20 +3530,20 @@
         },
         {
           "ball": 50,
-          "score": 5.1,
+          "score": 6.0,
           "vote_count": 2,
           "sources": [
-            "GA",
+            "DTW",
             "MP"
           ],
           "is_hit": false
         },
         {
-          "ball": 9,
+          "ball": 34,
           "score": 5.0,
           "vote_count": 2,
           "sources": [
-            "DTW",
+            "TRANS",
             "MP"
           ],
           "is_hit": false
@@ -3244,7 +3552,7 @@
       "top12": [
         73,
         50,
-        9
+        34
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
@@ -3261,20 +3569,20 @@
         },
         {
           "ball": 50,
-          "score": 5.1,
+          "score": 6.0,
           "vote_count": 2,
           "sources": [
-            "GA",
+            "DTW",
             "MP"
           ],
           "is_hit": false
         },
         {
-          "ball": 9,
+          "ball": 34,
           "score": 5.0,
           "vote_count": 2,
           "sources": [
-            "DTW",
+            "TRANS",
             "MP"
           ],
           "is_hit": false
@@ -3316,123 +3624,135 @@
       ],
       "top3": [
         73,
-        54,
-        24
+        50,
+        55
       ],
-      "top3_hits": 0,
-      "top3_hit_nums": [],
+      "top3_hits": 1,
+      "top3_hit_nums": [
+        55
+      ],
       "top3_details": [
         {
           "ball": 73,
-          "score": 6.15,
-          "vote_count": 2,
+          "score": 8.12,
+          "vote_count": 3,
           "sources": [
             "GA",
-            "SVD"
+            "SVD",
+            "MP"
           ],
           "is_hit": false
         },
         {
-          "ball": 54,
-          "score": 5.62,
+          "ball": 50,
+          "score": 5.0,
           "vote_count": 2,
           "sources": [
-            "GA",
+            "DTW",
+            "MP"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 55,
+          "score": 4.5,
+          "vote_count": 2,
+          "sources": [
+            "SVD",
             "TDA"
           ],
-          "is_hit": false
-        },
-        {
-          "ball": 24,
-          "score": 3.0,
-          "vote_count": 1,
-          "sources": [
-            "TRANS"
-          ],
-          "is_hit": false
+          "is_hit": true
         }
       ],
       "top5": [
         73,
-        54,
-        24
+        50,
+        55
       ],
-      "top5_hits": 0,
-      "top5_hit_nums": [],
+      "top5_hits": 1,
+      "top5_hit_nums": [
+        55
+      ],
       "top5_details": [
         {
           "ball": 73,
-          "score": 6.15,
-          "vote_count": 2,
+          "score": 8.12,
+          "vote_count": 3,
           "sources": [
             "GA",
-            "SVD"
+            "SVD",
+            "MP"
           ],
           "is_hit": false
         },
         {
-          "ball": 54,
-          "score": 5.62,
+          "ball": 50,
+          "score": 5.0,
           "vote_count": 2,
           "sources": [
-            "GA",
+            "DTW",
+            "MP"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 55,
+          "score": 4.5,
+          "vote_count": 2,
+          "sources": [
+            "SVD",
             "TDA"
           ],
-          "is_hit": false
-        },
-        {
-          "ball": 24,
-          "score": 3.0,
-          "vote_count": 1,
-          "sources": [
-            "TRANS"
-          ],
-          "is_hit": false
+          "is_hit": true
         }
       ],
       "top12": [
         73,
-        54,
-        24
+        50,
+        55
       ],
-      "top12_hits": 0,
-      "top12_hit_nums": [],
+      "top12_hits": 1,
+      "top12_hit_nums": [
+        55
+      ],
       "top12_details": [
         {
           "ball": 73,
-          "score": 6.15,
-          "vote_count": 2,
+          "score": 8.12,
+          "vote_count": 3,
           "sources": [
             "GA",
-            "SVD"
+            "SVD",
+            "MP"
           ],
           "is_hit": false
         },
         {
-          "ball": 54,
-          "score": 5.62,
+          "ball": 50,
+          "score": 5.0,
           "vote_count": 2,
           "sources": [
-            "GA",
+            "DTW",
+            "MP"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 55,
+          "score": 4.5,
+          "vote_count": 2,
+          "sources": [
+            "SVD",
             "TDA"
           ],
-          "is_hit": false
-        },
-        {
-          "ball": 24,
-          "score": 3.0,
-          "vote_count": 1,
-          "sources": [
-            "TRANS"
-          ],
-          "is_hit": false
+          "is_hit": true
         }
       ],
       "gold_core": 73,
       "gold_hit": false,
       "gold_pair": [
         73,
-        54
+        50
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": []
@@ -3463,138 +3783,127 @@
         73
       ],
       "top3": [
-        73,
-        9,
-        55
+        35,
+        72,
+        48
       ],
-      "top3_hits": 1,
-      "top3_hit_nums": [
-        73
-      ],
+      "top3_hits": 0,
+      "top3_hit_nums": [],
       "top3_details": [
         {
-          "ball": 73,
-          "score": 6.0,
+          "ball": 35,
+          "score": 4.5,
           "vote_count": 2,
           "sources": [
             "SVD",
-            "DTW"
-          ],
-          "is_hit": true
-        },
-        {
-          "ball": 9,
-          "score": 5.12,
-          "vote_count": 2,
-          "sources": [
-            "GA",
             "TDA"
           ],
           "is_hit": false
         },
         {
-          "ball": 55,
-          "score": 5.0,
+          "ball": 72,
+          "score": 4.5,
           "vote_count": 2,
           "sources": [
             "DTW",
-            "TDA"
+            "MP"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 48,
+          "score": 3.15,
+          "vote_count": 1,
+          "sources": [
+            "GA"
           ],
           "is_hit": false
         }
       ],
       "top5": [
-        73,
-        9,
-        55
+        35,
+        72,
+        48
       ],
-      "top5_hits": 1,
-      "top5_hit_nums": [
-        73
-      ],
+      "top5_hits": 0,
+      "top5_hit_nums": [],
       "top5_details": [
         {
-          "ball": 73,
-          "score": 6.0,
+          "ball": 35,
+          "score": 4.5,
           "vote_count": 2,
           "sources": [
             "SVD",
-            "DTW"
-          ],
-          "is_hit": true
-        },
-        {
-          "ball": 9,
-          "score": 5.12,
-          "vote_count": 2,
-          "sources": [
-            "GA",
             "TDA"
           ],
           "is_hit": false
         },
         {
-          "ball": 55,
-          "score": 5.0,
+          "ball": 72,
+          "score": 4.5,
           "vote_count": 2,
           "sources": [
             "DTW",
-            "TDA"
+            "MP"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 48,
+          "score": 3.15,
+          "vote_count": 1,
+          "sources": [
+            "GA"
           ],
           "is_hit": false
         }
       ],
       "top12": [
-        73,
-        9,
-        55
+        35,
+        72,
+        48
       ],
-      "top12_hits": 1,
-      "top12_hit_nums": [
-        73
-      ],
+      "top12_hits": 0,
+      "top12_hit_nums": [],
       "top12_details": [
         {
-          "ball": 73,
-          "score": 6.0,
+          "ball": 35,
+          "score": 4.5,
           "vote_count": 2,
           "sources": [
             "SVD",
-            "DTW"
-          ],
-          "is_hit": true
-        },
-        {
-          "ball": 9,
-          "score": 5.12,
-          "vote_count": 2,
-          "sources": [
-            "GA",
             "TDA"
           ],
           "is_hit": false
         },
         {
-          "ball": 55,
-          "score": 5.0,
+          "ball": 72,
+          "score": 4.5,
           "vote_count": 2,
           "sources": [
             "DTW",
-            "TDA"
+            "MP"
+          ],
+          "is_hit": false
+        },
+        {
+          "ball": 48,
+          "score": 3.15,
+          "vote_count": 1,
+          "sources": [
+            "GA"
           ],
           "is_hit": false
         }
       ],
-      "gold_core": 73,
-      "gold_hit": true,
+      "gold_core": 35,
+      "gold_hit": false,
       "gold_pair": [
-        73,
-        9
+        35,
+        72
       ],
-      "gold_pair_hits": 1,
-      "gold_pair_hit_nums": [
-        73
-      ]
+      "gold_pair_hits": 0,
+      "gold_pair_hit_nums": []
     },
     {
       "period": 2026275,
@@ -3631,7 +3940,7 @@
       "top3_details": [
         {
           "ball": 54,
-          "score": 7.15,
+          "score": 8.65,
           "vote_count": 3,
           "sources": [
             "GA",
@@ -3642,9 +3951,10 @@
         },
         {
           "ball": 16,
-          "score": 5.5,
-          "vote_count": 2,
+          "score": 6.1,
+          "vote_count": 3,
           "sources": [
+            "GA",
             "DTW",
             "MP"
           ],
@@ -3671,7 +3981,7 @@
       "top5_details": [
         {
           "ball": 54,
-          "score": 7.15,
+          "score": 8.65,
           "vote_count": 3,
           "sources": [
             "GA",
@@ -3682,9 +3992,10 @@
         },
         {
           "ball": 16,
-          "score": 5.5,
-          "vote_count": 2,
+          "score": 6.1,
+          "vote_count": 3,
           "sources": [
+            "GA",
             "DTW",
             "MP"
           ],
@@ -3711,7 +4022,7 @@
       "top12_details": [
         {
           "ball": 54,
-          "score": 7.15,
+          "score": 8.65,
           "vote_count": 3,
           "sources": [
             "GA",
@@ -3722,9 +4033,10 @@
         },
         {
           "ball": 16,
-          "score": 5.5,
-          "vote_count": 2,
+          "score": 6.1,
+          "vote_count": 3,
           "sources": [
+            "GA",
             "DTW",
             "MP"
           ],
@@ -3777,18 +4089,15 @@
       ],
       "top3": [
         73,
-        9,
-        35
+        50,
+        13
       ],
-      "top3_hits": 2,
-      "top3_hit_nums": [
-        9,
-        35
-      ],
+      "top3_hits": 0,
+      "top3_hit_nums": [],
       "top3_details": [
         {
           "ball": 73,
-          "score": 6.15,
+          "score": 5.62,
           "vote_count": 2,
           "sources": [
             "GA",
@@ -3797,39 +4106,37 @@
           "is_hit": false
         },
         {
-          "ball": 9,
-          "score": 5.5,
+          "ball": 50,
+          "score": 5.15,
           "vote_count": 2,
           "sources": [
-            "DTW",
+            "GA",
             "TDA"
           ],
-          "is_hit": true
+          "is_hit": false
         },
         {
-          "ball": 35,
-          "score": 3.0,
-          "vote_count": 1,
+          "ball": 13,
+          "score": 5.1,
+          "vote_count": 2,
           "sources": [
-            "SVD"
+            "GA",
+            "TRANS"
           ],
-          "is_hit": true
+          "is_hit": false
         }
       ],
       "top5": [
         73,
-        9,
-        35
+        50,
+        13
       ],
-      "top5_hits": 2,
-      "top5_hit_nums": [
-        9,
-        35
-      ],
+      "top5_hits": 0,
+      "top5_hit_nums": [],
       "top5_details": [
         {
           "ball": 73,
-          "score": 6.15,
+          "score": 5.62,
           "vote_count": 2,
           "sources": [
             "GA",
@@ -3838,39 +4145,37 @@
           "is_hit": false
         },
         {
-          "ball": 9,
-          "score": 5.5,
+          "ball": 50,
+          "score": 5.15,
           "vote_count": 2,
           "sources": [
-            "DTW",
+            "GA",
             "TDA"
           ],
-          "is_hit": true
+          "is_hit": false
         },
         {
-          "ball": 35,
-          "score": 3.0,
-          "vote_count": 1,
+          "ball": 13,
+          "score": 5.1,
+          "vote_count": 2,
           "sources": [
-            "SVD"
+            "GA",
+            "TRANS"
           ],
-          "is_hit": true
+          "is_hit": false
         }
       ],
       "top12": [
         73,
-        9,
-        35
+        50,
+        13
       ],
-      "top12_hits": 2,
-      "top12_hit_nums": [
-        9,
-        35
-      ],
+      "top12_hits": 0,
+      "top12_hit_nums": [],
       "top12_details": [
         {
           "ball": 73,
-          "score": 6.15,
+          "score": 5.62,
           "vote_count": 2,
           "sources": [
             "GA",
@@ -3879,35 +4184,34 @@
           "is_hit": false
         },
         {
-          "ball": 9,
-          "score": 5.5,
+          "ball": 50,
+          "score": 5.15,
           "vote_count": 2,
           "sources": [
-            "DTW",
+            "GA",
             "TDA"
           ],
-          "is_hit": true
+          "is_hit": false
         },
         {
-          "ball": 35,
-          "score": 3.0,
-          "vote_count": 1,
+          "ball": 13,
+          "score": 5.1,
+          "vote_count": 2,
           "sources": [
-            "SVD"
+            "GA",
+            "TRANS"
           ],
-          "is_hit": true
+          "is_hit": false
         }
       ],
       "gold_core": 73,
       "gold_hit": false,
       "gold_pair": [
         73,
-        9
+        50
       ],
-      "gold_pair_hits": 1,
-      "gold_pair_hit_nums": [
-        9
-      ]
+      "gold_pair_hits": 0,
+      "gold_pair_hit_nums": []
     },
     {
       "period": 2026273,
@@ -3937,20 +4241,19 @@
       "top3": [
         73,
         34,
-        2
+        50
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
       "top3_details": [
         {
           "ball": 73,
-          "score": 10.0,
-          "vote_count": 4,
+          "score": 7.5,
+          "vote_count": 3,
           "sources": [
             "SVD",
             "DTW",
-            "MP",
-            "TDA"
+            "MP"
           ],
           "is_hit": false
         },
@@ -3965,11 +4268,12 @@
           "is_hit": false
         },
         {
-          "ball": 2,
-          "score": 3.15,
-          "vote_count": 1,
+          "ball": 50,
+          "score": 5.0,
+          "vote_count": 2,
           "sources": [
-            "GA"
+            "DTW",
+            "TDA"
           ],
           "is_hit": false
         }
@@ -3977,20 +4281,19 @@
       "top5": [
         73,
         34,
-        2
+        50
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
       "top5_details": [
         {
           "ball": 73,
-          "score": 10.0,
-          "vote_count": 4,
+          "score": 7.5,
+          "vote_count": 3,
           "sources": [
             "SVD",
             "DTW",
-            "MP",
-            "TDA"
+            "MP"
           ],
           "is_hit": false
         },
@@ -4005,11 +4308,12 @@
           "is_hit": false
         },
         {
-          "ball": 2,
-          "score": 3.15,
-          "vote_count": 1,
+          "ball": 50,
+          "score": 5.0,
+          "vote_count": 2,
           "sources": [
-            "GA"
+            "DTW",
+            "TDA"
           ],
           "is_hit": false
         }
@@ -4017,20 +4321,19 @@
       "top12": [
         73,
         34,
-        2
+        50
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
       "top12_details": [
         {
           "ball": 73,
-          "score": 10.0,
-          "vote_count": 4,
+          "score": 7.5,
+          "vote_count": 3,
           "sources": [
             "SVD",
             "DTW",
-            "MP",
-            "TDA"
+            "MP"
           ],
           "is_hit": false
         },
@@ -4045,11 +4348,12 @@
           "is_hit": false
         },
         {
-          "ball": 2,
-          "score": 3.15,
-          "vote_count": 1,
+          "ball": 50,
+          "score": 5.0,
+          "vote_count": 2,
           "sources": [
-            "GA"
+            "DTW",
+            "TDA"
           ],
           "is_hit": false
         }
@@ -4247,171 +4551,17 @@
       ],
       "top3": [
         73,
-        35,
-        54
-      ],
-      "top3_hits": 0,
-      "top3_hit_nums": [],
-      "top3_details": [
-        {
-          "ball": 73,
-          "score": 9.15,
-          "vote_count": 3,
-          "sources": [
-            "GA",
-            "DTW",
-            "MP"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 35,
-          "score": 5.12,
-          "vote_count": 2,
-          "sources": [
-            "GA",
-            "SVD"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 54,
-          "score": 4.6,
-          "vote_count": 2,
-          "sources": [
-            "GA",
-            "TDA"
-          ],
-          "is_hit": false
-        }
-      ],
-      "top5": [
-        73,
-        35,
-        54
-      ],
-      "top5_hits": 0,
-      "top5_hit_nums": [],
-      "top5_details": [
-        {
-          "ball": 73,
-          "score": 9.15,
-          "vote_count": 3,
-          "sources": [
-            "GA",
-            "DTW",
-            "MP"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 35,
-          "score": 5.12,
-          "vote_count": 2,
-          "sources": [
-            "GA",
-            "SVD"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 54,
-          "score": 4.6,
-          "vote_count": 2,
-          "sources": [
-            "GA",
-            "TDA"
-          ],
-          "is_hit": false
-        }
-      ],
-      "top12": [
-        73,
-        35,
-        54
-      ],
-      "top12_hits": 0,
-      "top12_hit_nums": [],
-      "top12_details": [
-        {
-          "ball": 73,
-          "score": 9.15,
-          "vote_count": 3,
-          "sources": [
-            "GA",
-            "DTW",
-            "MP"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 35,
-          "score": 5.12,
-          "vote_count": 2,
-          "sources": [
-            "GA",
-            "SVD"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 54,
-          "score": 4.6,
-          "vote_count": 2,
-          "sources": [
-            "GA",
-            "TDA"
-          ],
-          "is_hit": false
-        }
-      ],
-      "gold_core": 73,
-      "gold_hit": false,
-      "gold_pair": [
-        73,
-        35
-      ],
-      "gold_pair_hits": 0,
-      "gold_pair_hit_nums": []
-    },
-    {
-      "period": 2026270,
-      "draw_date": "2026-10-11",
-      "actual_draw": [
-        3,
-        6,
-        7,
-        8,
-        9,
-        16,
-        21,
-        22,
-        23,
-        27,
-        39,
-        40,
-        41,
         44,
-        48,
-        54,
-        60,
-        65,
-        68,
-        75
-      ],
-      "top3": [
-        31,
-        23,
-        51
+        9
       ],
       "top3_hits": 1,
       "top3_hit_nums": [
-        23
+        44
       ],
       "top3_details": [
         {
-          "ball": 31,
-          "score": 7.1,
+          "ball": 73,
+          "score": 9.15,
           "vote_count": 3,
           "sources": [
             "GA",
@@ -4421,39 +4571,38 @@
           "is_hit": false
         },
         {
-          "ball": 23,
-          "score": 6.0,
+          "ball": 44,
+          "score": 4.0,
           "vote_count": 2,
           "sources": [
-            "DTW",
-            "MP"
+            "SVD",
+            "TDA"
           ],
           "is_hit": true
         },
         {
-          "ball": 51,
-          "score": 5.0,
-          "vote_count": 2,
+          "ball": 9,
+          "score": 3.0,
+          "vote_count": 1,
           "sources": [
-            "SVD",
-            "DTW"
+            "TDA"
           ],
           "is_hit": false
         }
       ],
       "top5": [
-        31,
-        23,
-        51
+        73,
+        44,
+        9
       ],
       "top5_hits": 1,
       "top5_hit_nums": [
-        23
+        44
       ],
       "top5_details": [
         {
-          "ball": 31,
-          "score": 7.1,
+          "ball": 73,
+          "score": 9.15,
           "vote_count": 3,
           "sources": [
             "GA",
@@ -4463,247 +4612,77 @@
           "is_hit": false
         },
         {
-          "ball": 23,
-          "score": 6.0,
+          "ball": 44,
+          "score": 4.0,
           "vote_count": 2,
           "sources": [
-            "DTW",
-            "MP"
+            "SVD",
+            "TDA"
           ],
           "is_hit": true
         },
         {
-          "ball": 51,
-          "score": 5.0,
-          "vote_count": 2,
+          "ball": 9,
+          "score": 3.0,
+          "vote_count": 1,
           "sources": [
-            "SVD",
-            "DTW"
+            "TDA"
           ],
           "is_hit": false
         }
       ],
       "top12": [
-        31,
-        23,
-        51
+        73,
+        44,
+        9
       ],
       "top12_hits": 1,
       "top12_hit_nums": [
-        23
-      ],
-      "top12_details": [
-        {
-          "ball": 31,
-          "score": 7.1,
-          "vote_count": 3,
-          "sources": [
-            "GA",
-            "DTW",
-            "MP"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 23,
-          "score": 6.0,
-          "vote_count": 2,
-          "sources": [
-            "DTW",
-            "MP"
-          ],
-          "is_hit": true
-        },
-        {
-          "ball": 51,
-          "score": 5.0,
-          "vote_count": 2,
-          "sources": [
-            "SVD",
-            "DTW"
-          ],
-          "is_hit": false
-        }
-      ],
-      "gold_core": 31,
-      "gold_hit": false,
-      "gold_pair": [
-        31,
-        23
-      ],
-      "gold_pair_hits": 1,
-      "gold_pair_hit_nums": [
-        23
-      ]
-    },
-    {
-      "period": 2026269,
-      "draw_date": "2026-10-10",
-      "actual_draw": [
-        1,
-        2,
-        3,
-        7,
-        11,
-        13,
-        15,
-        18,
-        25,
-        27,
-        30,
-        35,
-        44,
-        46,
-        55,
-        57,
-        60,
-        63,
-        70,
-        73
-      ],
-      "top3": [
-        73,
-        62,
-        63
-      ],
-      "top3_hits": 2,
-      "top3_hit_nums": [
-        63,
-        73
-      ],
-      "top3_details": [
-        {
-          "ball": 73,
-          "score": 8.65,
-          "vote_count": 3,
-          "sources": [
-            "GA",
-            "SVD",
-            "TDA"
-          ],
-          "is_hit": true
-        },
-        {
-          "ball": 62,
-          "score": 8.5,
-          "vote_count": 3,
-          "sources": [
-            "SVD",
-            "DTW",
-            "MP"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 63,
-          "score": 5.0,
-          "vote_count": 2,
-          "sources": [
-            "DTW",
-            "MP"
-          ],
-          "is_hit": true
-        }
-      ],
-      "top5": [
-        73,
-        62,
-        63
-      ],
-      "top5_hits": 2,
-      "top5_hit_nums": [
-        63,
-        73
-      ],
-      "top5_details": [
-        {
-          "ball": 73,
-          "score": 8.65,
-          "vote_count": 3,
-          "sources": [
-            "GA",
-            "SVD",
-            "TDA"
-          ],
-          "is_hit": true
-        },
-        {
-          "ball": 62,
-          "score": 8.5,
-          "vote_count": 3,
-          "sources": [
-            "SVD",
-            "DTW",
-            "MP"
-          ],
-          "is_hit": false
-        },
-        {
-          "ball": 63,
-          "score": 5.0,
-          "vote_count": 2,
-          "sources": [
-            "DTW",
-            "MP"
-          ],
-          "is_hit": true
-        }
-      ],
-      "top12": [
-        73,
-        62,
-        63
-      ],
-      "top12_hits": 2,
-      "top12_hit_nums": [
-        63,
-        73
+        44
       ],
       "top12_details": [
         {
           "ball": 73,
-          "score": 8.65,
+          "score": 9.15,
           "vote_count": 3,
           "sources": [
             "GA",
-            "SVD",
-            "TDA"
-          ],
-          "is_hit": true
-        },
-        {
-          "ball": 62,
-          "score": 8.5,
-          "vote_count": 3,
-          "sources": [
-            "SVD",
             "DTW",
             "MP"
           ],
           "is_hit": false
         },
         {
-          "ball": 63,
-          "score": 5.0,
+          "ball": 44,
+          "score": 4.0,
           "vote_count": 2,
           "sources": [
-            "DTW",
-            "MP"
+            "SVD",
+            "TDA"
           ],
           "is_hit": true
+        },
+        {
+          "ball": 9,
+          "score": 3.0,
+          "vote_count": 1,
+          "sources": [
+            "TDA"
+          ],
+          "is_hit": false
         }
       ],
       "gold_core": 73,
-      "gold_hit": true,
+      "gold_hit": false,
       "gold_pair": [
         73,
-        62
+        44
       ],
       "gold_pair_hits": 1,
       "gold_pair_hit_nums": [
-        73
+        44
       ]
     }
   ],
-  "updated_at": "2026-11-09 20:35:34"
+  "updated_at": "2026-11-11 17:16:37"
 }
