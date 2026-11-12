@@ -44,6 +44,7 @@ if sys.platform == "win32" and hasattr(sys.stdout, "reconfigure"):
 
 from backend.utils.paths import get_outputs_dir, get_reports_dir, data_path
 from backend.utils.history_loader import load_history
+from backend.utils import kl8_probability as prob
 
 
 def get_latest_draw_and_target() -> Tuple[Dict[str, Any], str, str]:
@@ -1022,10 +1023,55 @@ class StandardDailyReportEngine:
         note_straddle = self.retired_note("consensus_straddle")
         note_ec = self.retired_note("error_correction")
 
+        # ── 概率事实区块 ──
+        # 纯组合数学，与任何模块的推荐无关，也不依赖历史数据。
+        # 放在报告最前面，是因为读者最容易忽略的恰恰是这件事：
+        # 下面所有模块的号码，命中分布与随手乱选完全一致。
+        def _fmt_prob(p: float) -> str:
+            """概率的人类可读写法。
+
+            极小概率（如选10 全中 ≈ 1.1e-7）用两位小数会印成 0.0000%，
+            读者看到的不是「很小」而是「没有」——那是错误信息。
+            低于 0.01% 时补一个「约 1/N」，让量级可感。
+            """
+            if p <= 0:
+                return "0%"
+            pct = p * 100
+            if pct >= 1:
+                return f"{pct:.2f}%"
+            if pct >= 0.01:
+                return f"{pct:.3f}%"
+            return f"{pct:.6f}%（约 1/{1 / p:,.0f}）"
+
+        _prob_rows = "\n".join(
+            f"| 选{k} | {prob.expected_hits(k):.2f} 码 | {_fmt_prob(prob.all_match_prob(k))} |"
+            for k in (1, 2, 3, 5, 10)
+        )
+        prob_facts = f"""## ⚠️ 概率事实（读之前请先看这一段）
+
+快乐8 每期从 80 个号码中开出 20 个，**每个号码被开出的概率恒为 25%，各期相互独立**。
+对任意固定的 k 个号码，命中数服从超几何分布，也就是说：
+
+> **选哪 k 个号码，都不会改变下面这张表里的任何一个数字。**
+
+| 玩法 | 期望命中 | 全中概率 |
+| :--- | ---: | ---: |
+{_prob_rows}
+
+30 码大底：期望命中 **{prob.expected_hits(30):.2f} 码**，命中 ≥11 码的概率 **{prob.prob_at_least(30, 11) * 100:.2f}%**（红利档位）。
+
+**本报告中的模块推荐、命中率、Lift，都是对历史产出的如实记录，不构成「未来会开」的证据。**
+全系统前瞻账池化实测约 0.98x，与随机基线无统计差异，且没有任何模块通过 BH-FDR 多重检验。
+请把它当作选号参考与历史档案，而不是下注依据。"""
+
         doc = f"""# 快乐8 全模块独立预测明细 + 全系统汇总标准研报 (目标期 {target})
 
 > 📅 **生成时间**：{now_str} ｜ **开奖基准**：第 `{l_issue}` 期 ｜ **执行引擎**：标准全模块推演引擎 v1.0
 > ⚖️ **设计规范**：每个模块独立预测逐条详细展开，全系统汇总提炼核心投资组合，文末附带一键可复制纯文本。
+
+---
+
+{prob_facts}
 
 ---
 
