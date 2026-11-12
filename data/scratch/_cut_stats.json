@@ -1,0 +1,52 @@
+{
+ "error_correction": {
+  "all_p": 111,
+  "all_h": 20,
+  "all_lift": 0.7207,
+  "n30": 29,
+  "p30": 87,
+  "h30": 15,
+  "lift30": 0.6897,
+  "n_periods": 37
+ },
+ "hidden_energy5": {
+  "all_p": 200,
+  "all_h": 41,
+  "all_lift": 0.82,
+  "n30": 30,
+  "p30": 150,
+  "h30": 31,
+  "lift30": 0.8267,
+  "n_periods": 40
+ },
+ "consensus_straddle": {
+  "all_p": 190,
+  "all_h": 39,
+  "all_lift": 0.8211,
+  "n30": 29,
+  "p30": 145,
+  "h30": 29,
+  "lift30": 0.8,
+  "n_periods": 38
+ },
+ "formula_jingle": {
+  "all_p": 403,
+  "all_h": 90,
+  "all_lift": 0.8933,
+  "n30": 30,
+  "p30": 232,
+  "h30": 48,
+  "lift30": 0.8276,
+  "n_periods": 52
+ },
+ "deep_assoc_blast5": {
+  "all_p": 200,
+  "all_h": 43,
+  "all_lift": 0.86,
+  "n30": 30,
+  "p30": 150,
+  "h30": 33,
+  "lift30": 0.88,
+  "n_periods": 40
+ }
+}

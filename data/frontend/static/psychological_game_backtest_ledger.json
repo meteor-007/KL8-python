@@ -1,7 +1,7 @@
 {
   "meta": {
     "engine_name": "Psychological Game Theory & Contrarian Reversion Engine",
-    "generated_at": "2026-11-12 19:55:40",
+    "generated_at": "2026-11-12 20:11:35",
     "total_history_draws": 2122,
     "protocol": "Walk-Forward Out-of-Sample Rolling Test (Zero Future Leakage)"
   },

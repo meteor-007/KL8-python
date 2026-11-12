@@ -709,6 +709,43 @@
     },
     "good_numbers_r0": [
       {
+        "number": 63,
+        "display": "63",
+        "tail": 3,
+        "road": 0,
+        "omission": 0,
+        "freq30": 10,
+        "freq16": 5,
+        "score": 38.0,
+        "is_prime": false,
+        "is_neighbor": false,
+        "is_repeat": true,
+        "tags": [
+          "合数",
+          "共识精选",
+          "强势重号"
+        ]
+      },
+      {
+        "number": 69,
+        "display": "69",
+        "tail": 9,
+        "road": 0,
+        "omission": 0,
+        "freq30": 8,
+        "freq16": 5,
+        "score": 37.5,
+        "is_prime": false,
+        "is_neighbor": true,
+        "is_repeat": true,
+        "tags": [
+          "合数",
+          "HiddenEnergy金牌",
+          "强势重号",
+          "斜连邻号"
+        ]
+      },
+      {
         "number": 12,
         "display": "12",
         "tail": 2,
@@ -716,67 +753,49 @@
         "omission": 1,
         "freq30": 7,
         "freq16": 4,
-        "score": 69.5,
+        "score": 34.5,
         "is_prime": false,
         "is_neighbor": true,
         "is_repeat": false,
         "tags": [
           "合数",
-          "HiddenEnergy金牌",
           "隔期跳开",
           "斜连邻号"
         ]
       },
       {
-        "number": 27,
-        "display": "27",
-        "tail": 7,
+        "number": 15,
+        "display": "15",
+        "tail": 5,
         "road": 0,
-        "omission": 3,
-        "freq30": 10,
-        "freq16": 4,
-        "score": 44.5,
+        "omission": 5,
+        "freq30": 6,
+        "freq16": 1,
+        "score": 28.5,
         "is_prime": false,
-        "is_neighbor": false,
+        "is_neighbor": true,
         "is_repeat": false,
         "tags": [
           "合数",
           "AI三维金胆",
-          "黄金温态"
+          "斜连邻号"
         ]
       },
       {
-        "number": 45,
-        "display": "45",
-        "tail": 5,
+        "number": 24,
+        "display": "24",
+        "tail": 4,
         "road": 0,
-        "omission": 1,
-        "freq30": 9,
-        "freq16": 7,
-        "score": 30.0,
-        "is_prime": false,
-        "is_neighbor": false,
-        "is_repeat": false,
-        "tags": [
-          "合数",
-          "隔期跳开"
-        ]
-      },
-      {
-        "number": 42,
-        "display": "42",
-        "tail": 2,
-        "road": 0,
-        "omission": 3,
-        "freq30": 6,
-        "freq16": 5,
+        "omission": 6,
+        "freq30": 7,
+        "freq16": 4,
         "score": 24.5,
         "is_prime": false,
-        "is_neighbor": false,
+        "is_neighbor": true,
         "is_repeat": false,
         "tags": [
           "合数",
-          "黄金温态"
+          "斜连邻号"
         ]
       },
       {
@@ -796,79 +815,43 @@
           "强势重号",
           "斜连邻号"
         ]
-      },
-      {
-        "number": 36,
-        "display": "36",
-        "tail": 6,
-        "road": 0,
-        "omission": 0,
-        "freq30": 9,
-        "freq16": 6,
-        "score": 22.5,
-        "is_prime": false,
-        "is_neighbor": true,
-        "is_repeat": true,
-        "tags": [
-          "合数",
-          "强势重号",
-          "斜连邻号"
-        ]
       }
     ],
     "good_numbers_r1": [
       {
-        "number": 31,
-        "display": "31",
-        "tail": 1,
+        "number": 13,
+        "display": "13",
+        "tail": 3,
         "road": 1,
-        "omission": 1,
+        "omission": 0,
         "freq30": 7,
-        "freq16": 3,
-        "score": 48.5,
-        "is_prime": true,
-        "is_neighbor": false,
-        "is_repeat": false,
-        "tags": [
-          "质数",
-          "HiddenEnergy金牌",
-          "隔期跳开"
-        ]
-      },
-      {
-        "number": 7,
-        "display": "07",
-        "tail": 7,
-        "road": 1,
-        "omission": 2,
-        "freq30": 9,
         "freq16": 5,
-        "score": 41.0,
+        "score": 30.5,
         "is_prime": true,
         "is_neighbor": true,
-        "is_repeat": false,
+        "is_repeat": true,
         "tags": [
           "质数",
-          "AI三维金胆",
-          "黄金温态",
+          "共识精选",
+          "强势重号",
           "斜连邻号"
         ]
       },
       {
-        "number": 22,
-        "display": "22",
-        "tail": 2,
+        "number": 16,
+        "display": "16",
+        "tail": 6,
         "road": 1,
-        "omission": 0,
-        "freq30": 8,
-        "freq16": 4,
-        "score": 34.5,
+        "omission": 3,
+        "freq30": 9,
+        "freq16": 6,
+        "score": 29.0,
         "is_prime": false,
         "is_neighbor": true,
-        "is_repeat": true,
+        "is_repeat": false,
         "tags": [
           "合数",
-          "强势重号",
+          "黄金温态",
           "斜连邻号"
         ]
       },
@@ -880,19 +863,55 @@
         "omission": 2,
         "freq30": 2,
         "freq16": 1,
-        "score": 33.0,
+        "score": 29.0,
         "is_prime": false,
         "is_neighbor": true,
         "is_repeat": false,
         "tags": [
           "合数",
-          "AI三维金胆",
+          "共识精选",
           "黄金温态",
           "斜连邻号"
+        ]
+      },
+      {
+        "number": 49,
+        "display": "49",
+        "tail": 9,
+        "road": 1,
+        "omission": 0,
+        "freq30": 8,
+        "freq16": 5,
+        "score": 26.0,
+        "is_prime": false,
+        "is_neighbor": false,
+        "is_repeat": true,
+        "tags": [
+          "合数",
+          "共识精选",
+          "强势重号"
         ]
       }
     ],
     "good_numbers_r2": [
+      {
+        "number": 47,
+        "display": "47",
+        "tail": 7,
+        "road": 2,
+        "omission": 0,
+        "freq30": 11,
+        "freq16": 7,
+        "score": 53.0,
+        "is_prime": true,
+        "is_neighbor": false,
+        "is_repeat": true,
+        "tags": [
+          "质数",
+          "HiddenEnergy金牌",
+          "强势重号"
+        ]
+      },
       {
         "number": 35,
         "display": "35",
@@ -901,48 +920,14 @@
         "omission": 0,
         "freq30": 7,
         "freq16": 4,
-        "score": 45.5,
+        "score": 46.5,
         "is_prime": false,
         "is_neighbor": true,
         "is_repeat": true,
         "tags": [
           "合数",
-          "HiddenEnergy金牌",
+          "AI三维金胆",
           "强势重号",
-          "斜连邻号"
-        ]
-      },
-      {
-        "number": 17,
-        "display": "17",
-        "tail": 7,
-        "road": 2,
-        "omission": 0,
-        "freq30": 10,
-        "freq16": 6,
-        "score": 30.0,
-        "is_prime": true,
-        "is_neighbor": false,
-        "is_repeat": true,
-        "tags": [
-          "质数",
-          "强势重号"
-        ]
-      },
-      {
-        "number": 50,
-        "display": "50",
-        "tail": 0,
-        "road": 2,
-        "omission": 4,
-        "freq30": 7,
-        "freq16": 6,
-        "score": 24.5,
-        "is_prime": false,
-        "is_neighbor": true,
-        "is_repeat": false,
-        "tags": [
-          "合数",
           "斜连邻号"
         ]
       },
@@ -954,53 +939,72 @@
         "omission": 0,
         "freq30": 10,
         "freq16": 6,
-        "score": 22.5,
+        "score": 30.5,
         "is_prime": true,
         "is_neighbor": true,
         "is_repeat": true,
         "tags": [
           "质数",
+          "共识精选",
           "强势重号",
           "斜连邻号"
         ]
       },
       {
-        "number": 68,
-        "display": "68",
-        "tail": 8,
+        "number": 32,
+        "display": "32",
+        "tail": 2,
         "road": 2,
-        "omission": 0,
-        "freq30": 9,
-        "freq16": 6,
-        "score": 22.5,
+        "omission": 6,
+        "freq30": 6,
+        "freq16": 2,
+        "score": 28.5,
         "is_prime": false,
         "is_neighbor": true,
-        "is_repeat": true,
+        "is_repeat": false,
         "tags": [
           "合数",
-          "强势重号",
+          "AI三维金胆",
           "斜连邻号"
+        ]
+      },
+      {
+        "number": 17,
+        "display": "17",
+        "tail": 7,
+        "road": 2,
+        "omission": 0,
+        "freq30": 10,
+        "freq16": 6,
+        "score": 26.0,
+        "is_prime": true,
+        "is_neighbor": false,
+        "is_repeat": true,
+        "tags": [
+          "质数",
+          "共识精选",
+          "强势重号"
         ]
       }
     ],
     "cross_road_pairs": [
       {
         "pair": [
-          12,
-          35
+          63,
+          47
         ],
-        "pair_label": "12 (0路) + 35 (2路)",
+        "pair_label": "63 (0路) + 47 (2路)",
         "strategy": "跨路温热双子星 (0路金胆 + 2路金胆)",
-        "reason": "0路最高分好码 12 搭配 2路最高分好码 35，均为低遗漏高频温热形态，避开同路挤压"
+        "reason": "0路最高分好码 63 搭配 2路最高分好码 47，均为低遗漏高频温热形态，避开同路挤压"
       },
       {
         "pair": [
-          12,
-          31
+          63,
+          13
         ],
-        "pair_label": "12 (0路) + 31 (1路)",
+        "pair_label": "63 (0路) + 13 (1路)",
         "strategy": "动能攻守搭档 (0路反弹头牌 + 1路严选头牌)",
-        "reason": "号码 12 与 31 形成跨路温热共振反弹"
+        "reason": "号码 63 与 13 形成跨路温热共振反弹"
       }
     ]
   },
@@ -2565,6 +2569,6 @@
     "shannon_entropy": 3.3195,
     "road_012_ratio": "8:5:7",
     "road_tactical_bias": "三路均衡轮动，勿押单一路别",
-    "best_cross_pair": "12 (0路) + 35 (2路)"
+    "best_cross_pair": "63 (0路) + 47 (2路)"
   }
 }

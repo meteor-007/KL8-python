@@ -666,9 +666,10 @@ def task398_tri_high():
 # SECTION 3.991: 三维交集共识 / 一胆拖三盾 (此前无人调用, 产物长期缺当期)
 # ══════════════════════════════════════════════════════════
 def task3991_straddle_spear():
-    banner('任务3.991：🧬 三维交集共识定胆 + 一胆拖三盾选2组合拳', 'magenta')
+    banner('任务3.991：🎯 一胆拖三盾选2组合拳', 'magenta')
+    # 2026-11-12 退役：三维交集共识 (consensus_straddle) 全量 Lift=0.82x，
+    # 且未登记注册表却持续计入 BH-FDR 检验族。代码仍在 _retired/ 下，可复启。
     for label, sub in [
-        ('三维交集共识 (consensus_straddle)', ('modules', '_retired', 'consensus_straddle', 'run_daily.py')),
         ('一胆拖三盾 (spear_shield)', ('modules', 'spear_shield_portfolio', 'run_daily.py')),
     ]:
         script = _resolve_backend_script(*sub)
@@ -1009,7 +1010,8 @@ if __name__ == '__main__':
         task12_hot_numbers()
         task13_15_sync()
         task2_review()
-        task36_formula_jingle()
+        # 2026-11-12 退役：顺口溜 (formula_jingle) 全量 Lift=0.89x、单模块占台账 6.1% 票数是最大稀释源
+        # task36_formula_jingle()
         task38_point_suppression()
         task39_gold_pick2()
         task394_sixteen_period()
@@ -1018,7 +1020,8 @@ if __name__ == '__main__':
         task396_prime_tail()
         task397_psychological_game()
         task398_tri_high()
-        task399_error_correction()
+        # 2026-11-12 退役：残差改错 (error_correction) 全量 Lift=0.72x（活跃模块最低）
+        # task399_error_correction()
         task3991_straddle_spear()
         task3992_point_road_compressor()
         task3993_daily_gap_modules()

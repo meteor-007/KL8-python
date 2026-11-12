@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T19:58:48.402468",
+  "generated_at": "2026-11-12T20:14:35.790508",
   "basis": "master_review_ledger.json(100期) + BH-FDR + 前瞻账 + last30 Lift",
   "rules": {
     "new_module_gate": "新模块须预注册+前瞻记账≥200期+BH-FDR(q<0.05)且CI下界>1.0方可投票",
