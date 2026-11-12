@@ -130,8 +130,10 @@ MODULE_SEED: Dict[str, Dict[str, Any]] = {
     },
     "formula_jingle": {
         "name": "顺口溜 90 条精英口诀", "cohort": "legacy", "lane": "daily",
-        "decree": {"status": "votable", "date": "2026-09-10",
-                   "reason": "30期榜 1.07x 贴基线, 收缩后票权≈0.05, 保留记账"},
+        "decree": {"status": "retired", "date": "2026-11-12",
+                   "reason": "2026-11-12 退役: 全量前瞻账 403票/90中 Lift=0.89x(单侧p=0.118), "
+                             "30期 Lift=0.83x; 单模块占全部台账票数 6.1%, 是最大稀释源。"
+                             "引擎与产物保留, 撤销判决即可复启"},
         "seed_audit_lift": 1.07,
     },
     "datasource": {
@@ -205,9 +207,9 @@ MODULE_SEED: Dict[str, Dict[str, Any]] = {
     # ── 门禁后上线的新模块 (registered, B3: 观察仓) ──
     "hidden_energy5": {
         "name": "Hidden Energy 5 首席特供", "cohort": "legacy", "lane": "daily",
-        "decree": {"status": "observation", "date": "2026-09-10",
-                   "reason": "B5: 30期 1.31x 系小样本噪声, FDR 校正后不显著; "
-                             "降级观察仓, 撤销'一级共振决议权'; 满 100 期且显著方可复票"},
+        "decree": {"status": "retired", "date": "2026-11-12",
+                   "reason": "2026-11-12 退役: 全量前瞻账 200票/41中 Lift=0.82x(单侧p=0.080), "
+                             "30期 Lift=0.83x; B5 降级后仍未跑赢随机基线。引擎保留可复启"},
     },
     "prime_composite": {
         "name": "质合数与尾数香农熵推演", "cohort": "registered", "lane": "daily",
@@ -286,8 +288,21 @@ MODULE_SEED: Dict[str, Dict[str, Any]] = {
     },
     "error_correction": {
         "name": "残差改错预测", "cohort": "registered", "lane": "research",
-        "decree": {"status": "observation", "date": "2026-09-15",
-                   "reason": "research 舱：专攻错题纠偏"},
+        "decree": {"status": "retired", "date": "2026-11-12",
+                   "reason": "2026-11-12 退役: 全量前瞻账 111票/20中 Lift=0.72x, 为全部活跃模块最低"
+                             "(单侧p=0.052), 30期 Lift=0.69x; research 舱且 vote_weight=0。引擎保留可复启"},
+    },
+    "consensus_straddle": {
+        "name": "三维交集共识定胆与选2冷热对冲", "cohort": "registered", "lane": "daily",
+        "decree": {"status": "retired", "date": "2026-11-12",
+                   "reason": "2026-11-12 补登记并退役: 全量前瞻账 190票/39中 Lift=0.82x(单侧p=0.088), "
+                             "30期 Lift=0.80x。此前未登记注册表却持续计入 BH-FDR 检验族, 虚增试验数 m"},
+    },
+    "deep_assoc_blast5": {
+        "name": "方案2 精选爆发 Top 5", "cohort": "registered", "lane": "daily",
+        "decree": {"status": "retired", "date": "2026-11-12",
+                   "reason": "2026-11-12 补登记并退役: 全量前瞻账 200票/43中 Lift=0.86x(单侧p=0.144), "
+                             "30期 Lift=0.88x。此前未登记注册表却持续计入 BH-FDR 检验族, 虚增试验数 m"},
     },
     "unified_brain": {
         "name": "统一决策脑", "cohort": "registered", "lane": "research",

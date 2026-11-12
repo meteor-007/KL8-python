@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T20:14:35.790508",
+  "generated_at": "2026-11-12T20:16:39.984950",
   "basis": "master_review_ledger.json(100期) + BH-FDR + 前瞻账 + last30 Lift",
   "rules": {
     "new_module_gate": "新模块须预注册+前瞻记账≥200期+BH-FDR(q<0.05)且CI下界>1.0方可投票",
@@ -223,22 +223,22 @@
       "cohort": "legacy",
       "lane": "daily",
       "kind": "pick",
-      "status": "observation",
+      "status": "retired",
       "vote_weight": 0.0,
       "evidence": null,
       "evidence_source": "audit_20260910_seed(30期,未刷新)",
       "decree": {
-        "status": "votable",
-        "date": "2026-09-10",
-        "reason": "30期榜 1.07x 贴基线, 收缩后票权≈0.05, 保留记账"
+        "status": "retired",
+        "date": "2026-11-12",
+        "reason": "2026-11-12 退役: 全量前瞻账 403票/90中 Lift=0.89x(单侧p=0.118), 30期 Lift=0.83x; 单模块占全部台账票数 6.1%, 是最大稀释源。引擎与产物保留, 撤销判决即可复启"
       },
       "preregistered": null,
       "aliases": [],
-      "auto_note": "last30 降级: lift_30=0.828<0.95 (n=30), 自动转观察仓",
+      "auto_note": null,
       "lift_30": 0.8276,
       "n_30": 30,
       "lift_30_source": "module_ledger_last30",
-      "gate_reason": "last30 降级: lift_30=0.828<0.95 (n=30), 自动转观察仓",
+      "gate_reason": "2026-11-12 退役: 全量前瞻账 403票/90中 Lift=0.89x(单侧p=0.118), 30期 Lift=0.83x; 单模块占全部台账票数 6.1%, 是最大稀释源。引擎与产物保留, 撤销判决即可复启",
       "watermark": "⚠️ 注册表未经100期榜刷新, 权重为审计种子值",
       "prospective_periods": 52
     },
@@ -532,7 +532,7 @@
       "cohort": "legacy",
       "lane": "daily",
       "kind": "pick",
-      "status": "observation",
+      "status": "retired",
       "vote_weight": 0.0,
       "evidence": {
         "n_periods": 50,
@@ -547,9 +547,9 @@
       },
       "evidence_source": "live_master_review",
       "decree": {
-        "status": "observation",
-        "date": "2026-09-10",
-        "reason": "B5: 30期 1.31x 系小样本噪声, FDR 校正后不显著; 降级观察仓, 撤销'一级共振决议权'; 满 100 期且显著方可复票"
+        "status": "retired",
+        "date": "2026-11-12",
+        "reason": "2026-11-12 退役: 全量前瞻账 200票/41中 Lift=0.82x(单侧p=0.080), 30期 Lift=0.83x; B5 降级后仍未跑赢随机基线。引擎保留可复启"
       },
       "preregistered": null,
       "aliases": [],
@@ -557,7 +557,7 @@
       "lift_30": 0.8267,
       "n_30": 30,
       "lift_30_source": "module_ledger_last30",
-      "gate_reason": "B5: 30期 1.31x 系小样本噪声, FDR 校正后不显著; 降级观察仓, 撤销'一级共振决议权'; 满 100 期且显著方可复票",
+      "gate_reason": "2026-11-12 退役: 全量前瞻账 200票/41中 Lift=0.82x(单侧p=0.080), 30期 Lift=0.83x; B5 降级后仍未跑赢随机基线。引擎保留可复启",
       "watermark": "样本不足100期",
       "prospective_periods": 40
     },
@@ -800,14 +800,14 @@
       "cohort": "registered",
       "lane": "research",
       "kind": "pick",
-      "status": "observation",
+      "status": "retired",
       "vote_weight": 0.0,
       "evidence": null,
       "evidence_source": "audit_20260910_seed(30期,未刷新)",
       "decree": {
-        "status": "observation",
-        "date": "2026-09-15",
-        "reason": "research 舱：专攻错题纠偏"
+        "status": "retired",
+        "date": "2026-11-12",
+        "reason": "2026-11-12 退役: 全量前瞻账 111票/20中 Lift=0.72x, 为全部活跃模块最低(单侧p=0.052), 30期 Lift=0.69x; research 舱且 vote_weight=0。引擎保留可复启"
       },
       "preregistered": null,
       "aliases": [],
@@ -815,9 +815,59 @@
       "lift_30": 0.7111,
       "n_30": 30,
       "lift_30_source": "module_ledger_last30",
-      "gate_reason": "research 舱：专攻错题纠偏",
+      "gate_reason": "2026-11-12 退役: 全量前瞻账 111票/20中 Lift=0.72x, 为全部活跃模块最低(单侧p=0.052), 30期 Lift=0.69x; research 舱且 vote_weight=0。引擎保留可复启",
       "watermark": "⚠️ 注册表未经100期榜刷新, 权重为审计种子值",
       "prospective_periods": 37
+    },
+    "consensus_straddle": {
+      "id": "consensus_straddle",
+      "name": "三维交集共识定胆与选2冷热对冲",
+      "cohort": "registered",
+      "lane": "daily",
+      "kind": "pick",
+      "status": "retired",
+      "vote_weight": 0.0,
+      "evidence": null,
+      "evidence_source": "audit_20260910_seed(30期,未刷新)",
+      "decree": {
+        "status": "retired",
+        "date": "2026-11-12",
+        "reason": "2026-11-12 补登记并退役: 全量前瞻账 190票/39中 Lift=0.82x(单侧p=0.088), 30期 Lift=0.80x。此前未登记注册表却持续计入 BH-FDR 检验族, 虚增试验数 m"
+      },
+      "preregistered": null,
+      "aliases": [],
+      "auto_note": null,
+      "lift_30": 0.88,
+      "n_30": 30,
+      "lift_30_source": "module_ledger_last30",
+      "gate_reason": "2026-11-12 补登记并退役: 全量前瞻账 190票/39中 Lift=0.82x(单侧p=0.088), 30期 Lift=0.80x。此前未登记注册表却持续计入 BH-FDR 检验族, 虚增试验数 m",
+      "watermark": "⚠️ 注册表未经100期榜刷新, 权重为审计种子值",
+      "prospective_periods": 38
+    },
+    "deep_assoc_blast5": {
+      "id": "deep_assoc_blast5",
+      "name": "方案2 精选爆发 Top 5",
+      "cohort": "registered",
+      "lane": "daily",
+      "kind": "pick",
+      "status": "retired",
+      "vote_weight": 0.0,
+      "evidence": null,
+      "evidence_source": "audit_20260910_seed(30期,未刷新)",
+      "decree": {
+        "status": "retired",
+        "date": "2026-11-12",
+        "reason": "2026-11-12 补登记并退役: 全量前瞻账 200票/43中 Lift=0.86x(单侧p=0.144), 30期 Lift=0.88x。此前未登记注册表却持续计入 BH-FDR 检验族, 虚增试验数 m"
+      },
+      "preregistered": null,
+      "aliases": [],
+      "auto_note": null,
+      "lift_30": 0.88,
+      "n_30": 30,
+      "lift_30_source": "module_ledger_last30",
+      "gate_reason": "2026-11-12 补登记并退役: 全量前瞻账 200票/43中 Lift=0.86x(单侧p=0.144), 30期 Lift=0.88x。此前未登记注册表却持续计入 BH-FDR 检验族, 虚增试验数 m",
+      "watermark": "⚠️ 注册表未经100期榜刷新, 权重为审计种子值",
+      "prospective_periods": 40
     },
     "unified_brain": {
       "id": "unified_brain",
