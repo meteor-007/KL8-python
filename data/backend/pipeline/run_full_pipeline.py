@@ -33,6 +33,20 @@ for _p in [_BACKEND_DIR, PROJ]:
 
 from utils.paths import data_path, get_python_runner
 
+
+def module_active(mid: str) -> bool:
+    """模块是否仍在册 —— 判决源唯一：backend/core/module_gate.py 的 MODULE_SEED。
+
+    流水线不用「注释掉任务」的方式退役模块：那样复启就得改代码，
+    任务列表会变成与注册表并行的第二份真相源，两边迟早打架。
+    导入失败时按活跃处理，绝不因为读不到判决就静默停掉任务。
+    """
+    try:
+        from core.module_gate import is_module_active
+        return is_module_active(mid)
+    except Exception:
+        return True
+
 # ── ANSI 颜色代码 (Windows 10+ 支持) ──
 C = {
     'reset':  '\033[0m',
@@ -541,6 +555,22 @@ def task3955_module_reconcile():
     except Exception as e:
         warn(f'前瞻账报告生成失败: {e}')
 
+    # 3.5) 一致性体检：目录位置与判决层是否又在各说各话。
+    #      历史上这两处不同步造成过前端 404、以及 consensus_straddle 隐身计入 BH 族，
+    #      所以每个夜间批次都把差异亮出来，而不是等出事故再回溯。
+    try:
+        from core.module_gate import check_registry_consistency
+        _c = check_registry_consistency()
+        if _c['active_in_retired_dir'] or _c['ungoverned_in_retired_dir']:
+            if _c['active_in_retired_dir']:
+                warn(f"注册表一致性: 以下模块仍活跃却位于 _retired/ —— {_c['active_in_retired_dir']}")
+            if _c['ungoverned_in_retired_dir']:
+                warn(f"注册表一致性: 以下目录未纳入判决层 —— {_c['ungoverned_in_retired_dir']}")
+        else:
+            ok('注册表一致性体检通过（目录位置与判决层一致）')
+    except Exception as e:
+        warn(f'注册表一致性体检跳过: {e}')
+
     # 4) 统一对账：开奖后 settle + 刷新 Markdown 日报
     # 2026-11-09 修复：过去只 settle 从不 snapshot，settle 便永远"无预测快照"而 skip，
     # 且只打 INFO 不告警 —— unified_daily_audit 自 2026281 起已静默断档 18 期。
@@ -666,12 +696,17 @@ def task398_tri_high():
 # SECTION 3.991: 三维交集共识 / 一胆拖三盾 (此前无人调用, 产物长期缺当期)
 # ══════════════════════════════════════════════════════════
 def task3991_straddle_spear():
-    banner('任务3.991：🎯 一胆拖三盾选2组合拳', 'magenta')
-    # 2026-11-12 退役：三维交集共识 (consensus_straddle) 全量 Lift=0.82x，
-    # 且未登记注册表却持续计入 BH-FDR 检验族。代码仍在 _retired/ 下，可复启。
-    for label, sub in [
-        ('一胆拖三盾 (spear_shield)', ('modules', 'spear_shield_portfolio', 'run_daily.py')),
+    banner('任务3.991：🧬 三维交集共识定胆 + 一胆拖三盾选2组合拳', 'magenta')
+    for label, mid, sub in [
+        ('三维交集共识 (consensus_straddle)', 'consensus_straddle',
+         ('modules', '_retired', 'consensus_straddle', 'run_daily.py')),
+        ('一胆拖三盾 (spear_shield)', 'spear_shield',
+         ('modules', 'spear_shield_portfolio', 'run_daily.py')),
     ]:
+        # 退役与否由注册表判决，不在这里写死 —— 复启只需改 MODULE_SEED 一处
+        if not module_active(mid):
+            info(f'{label} 已退役，跳过推演')
+            continue
         script = _resolve_backend_script(*sub)
         if os.path.exists(script):
             ok_flag = run_py(script)
@@ -1010,8 +1045,8 @@ if __name__ == '__main__':
         task12_hot_numbers()
         task13_15_sync()
         task2_review()
-        # 2026-11-12 退役：顺口溜 (formula_jingle) 全量 Lift=0.89x、单模块占台账 6.1% 票数是最大稀释源
-        # task36_formula_jingle()
+        if module_active('formula_jingle'):
+            task36_formula_jingle()
         task38_point_suppression()
         task39_gold_pick2()
         task394_sixteen_period()
@@ -1020,8 +1055,8 @@ if __name__ == '__main__':
         task396_prime_tail()
         task397_psychological_game()
         task398_tri_high()
-        # 2026-11-12 退役：残差改错 (error_correction) 全量 Lift=0.72x（活跃模块最低）
-        # task399_error_correction()
+        if module_active('error_correction'):
+            task399_error_correction()
         task3991_straddle_spear()
         task3992_point_road_compressor()
         task3993_daily_gap_modules()

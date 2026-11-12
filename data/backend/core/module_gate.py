@@ -423,6 +423,83 @@ def _lift_30_from_detailed(
     return {"lift_30": None, "n_30": n, "source": None}
 
 
+# ──────────────────────────────────────────────────────────────
+#  单一真相源：判决查询
+#  「某个模块现在还算不算数」只有一个答案来源。
+#  生成 / 记账 / 报告渲染都必须走这里，不要各自维护白名单、注释任务或删条目。
+# ──────────────────────────────────────────────────────────────
+# 目录名 → 注册表 id：早期模块目录名与注册表 id 不一致（历史遗留，勿再新增）
+MODULE_DIR_ALIASES: Dict[str, str] = {
+    "dtw_matching": "dtw",
+    "tda_engine": "tda",
+    "transformer_attention": "transformer",
+    "genetic_algorithm": "genetic",
+    "follow": "follow_track",
+}
+# _retired/ 下不是模块的目录（公共资源等），一致性体检时跳过
+_NON_MODULE_DIRS = {"models"}
+
+
+def decree_status_of(module_id: str) -> Optional[str]:
+    """模块判决状态 (votable / observation / retired)；未收录返回 None。
+
+    只认代码里的 MODULE_SEED 与人工覆盖层，**不读** module_vote_registry.json ——
+    那份注册表是流水线每次对账重写的生成物，可能尚未刷新，读它会拿到过期判决
+    （2026-11-12 就因此把刚退役的模块改回了 observation）。
+    """
+    seed = MODULE_SEED.get(module_id)
+    if seed is None:
+        return None
+    decree = load_decree_overrides().get(module_id, seed["decree"])
+    return decree.get("status")
+
+
+def retired_module_ids() -> List[str]:
+    """当前被判退役的模块 id。
+
+    同样只读 MODULE_SEED + 人工覆盖层，不读生成的注册表 —— 各消费方
+    (流水线 / 记账 / 报告渲染) 拿到的必须是同一份答案。
+    """
+    return [mid for mid in MODULE_SEED if decree_status_of(mid) == "retired"]
+
+
+def is_module_active(module_id: str) -> bool:
+    """模块是否仍在册 (参与出号 / 记账 / 报告展示)。
+
+    未收录进 MODULE_SEED 的模块按「活跃」处理 —— 宁可如实显示，也不擅自隐藏；
+    这类未治理模块由 check_registry_consistency() 报出来。
+    """
+    return decree_status_of(module_id) != "retired"
+
+
+def check_registry_consistency(modules_dir: Optional[str] = None) -> Dict[str, List[str]]:
+    """体检：目录位置与判决层对「退役」的表述是否一致。
+
+    历史上这两处各说各话，已经造成过事故：
+      · 前端页面模块被移进 _retired/ 但 index.html 仍引用 → 6 个 404、首屏数据全灭
+      · consensus_straddle 代码在 _retired/ 里但流水线照跑 → 隐身计入 BH 检验族
+
+    返回 {'active_in_retired_dir': [...], 'ungoverned_in_retired_dir': [...]}，
+    两个列表都应为空；非空说明「退役」这件事又开始多头表述了。
+    """
+    base = modules_dir or os.path.join(_PROJ_DIR, "backend", "modules", "_retired")
+    active, ungoverned = [], []
+    if not os.path.isdir(base):
+        return {"active_in_retired_dir": active, "ungoverned_in_retired_dir": ungoverned}
+    for name in sorted(os.listdir(base)):
+        if name in _NON_MODULE_DIRS:
+            continue
+        if name.startswith("__") or not os.path.isdir(os.path.join(base, name)):
+            continue
+        mid = MODULE_DIR_ALIASES.get(name, name)
+        st = decree_status_of(mid)
+        if st is None:
+            ungoverned.append(name)
+        elif st != "retired":
+            active.append(name)
+    return {"active_in_retired_dir": active, "ungoverned_in_retired_dir": ungoverned}
+
+
 class ModuleGate:
     """模块投票注册表的唯一读写口"""
 

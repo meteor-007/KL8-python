@@ -232,6 +232,27 @@ class StandardDailyReportEngine:
 
     def __init__(self, proj_dir: str = _PROJ_DIR):
         self.proj_dir = proj_dir
+        # 退役判决的唯一答案来源。报告层不再各自判断「这个模块还要不要展示」，
+        # 一律问这里 —— 与流水线、记账闸门共用同一份 MODULE_SEED。
+        try:
+            from core.module_gate import retired_module_ids
+            self.retired = set(retired_module_ids())
+        except Exception:
+            self.retired = set()
+
+    def is_active(self, module_id: str) -> bool:
+        return module_id not in self.retired
+
+    def retired_note(self, module_id: str) -> str:
+        """退役模块在报告里的统一标注（活跃模块返回空串）。
+
+        没有这行标注时，退役模块会因为读不到当期产物而被渲染成「产物缺失」，
+        读起来像数据故障 —— 实际上是判决结果，两件事必须分开说。
+        """
+        if self.is_active(module_id):
+            return ""
+        return ("> ⏹ **本模块已退役**：前瞻账实测未跑赢 25% 随机基线，"
+                "不参与决议与 BH-FDR 校正。以下为历史口径说明，**不产出当期号码**。")
 
     def gather_all_data(self, target_period: Optional[str] = None) -> Dict[str, Any]:
         """全面归集 22 大模块与全部输入源的真实计算产物"""
@@ -259,7 +280,10 @@ class StandardDailyReportEngine:
 
         # 2. 顺口溜
         jingle_txt = os.path.join(self.proj_dir, "storage", "outputs", "predictions", f"顺口溜预测_{target}.txt")
-        if os.path.exists(jingle_txt):
+        if not self.is_active("formula_jingle"):
+            # 已退役：不读产物（否则旧产物会被当成当期结论继续展示）
+            bundle["jingle_raw"] = ""
+        elif os.path.exists(jingle_txt):
             try:
                 with open(jingle_txt, "r", encoding="utf-8") as f:
                     bundle["jingle_raw"] = f.read()
@@ -272,7 +296,10 @@ class StandardDailyReportEngine:
         #    2026-10-09 整改: 原来"当期报告不存在就退到目录里最新那一份", 会把上一期的
         #    共识金胆当成今日金胆发出去。现在只认当期文件, 找不到就留空待标无数据。
         cs_md = os.path.join(self.proj_dir, "storage", "outputs", "reports", f"consensus_straddle_report_{target}.md")
-        if os.path.exists(cs_md):
+        if not self.is_active("consensus_straddle"):
+            # 已退役：不读产物，避免把退役模块的旧号码当成在册模块的当期结论展示
+            bundle["consensus_straddle_raw"] = ""
+        elif os.path.exists(cs_md):
             try:
                 with open(cs_md, "r", encoding="utf-8") as f:
                     bundle["consensus_straddle_raw"] = f.read()
@@ -373,6 +400,13 @@ class StandardDailyReportEngine:
             ("tda", "tda_latest.json"),
             ("error_correction", "error_correction_latest.json"),
         ]:
+            # 键 → 模块 id：用于向判决层查询「这个模块还在不在册」。
+            # 未列出的键（rf/la/dtw…）不是注册表 id，is_active 按活跃处理，
+            # 它们是否退役由研究舱那一段的归档说明负责，不在此处处理。
+            _RID_MODULE = {"error_correction": "error_correction"}
+            if not self.is_active(_RID_MODULE.get(r_id, r_id)):
+                bundle[r_id] = {}
+                continue
             p = os.path.join(self.proj_dir, "storage", "outputs", fname)
             if os.path.exists(p):
                 try:
@@ -617,7 +651,9 @@ class StandardDailyReportEngine:
         # 3. 三维交集共识定胆系统动态提取
         cs_raw = b.get("consensus_straddle_raw", "")
         m_cs_g = re.search(r"至尊共识金胆[^\d]*(\d+)", cs_raw)
-        cs_gold = m_cs_g.group(1) if m_cs_g else gap.add("三维交集共识 (consensus_straddle)", f"第 {target} 期报告缺失")
+        cs_gold = m_cs_g.group(1) if m_cs_g else (
+            MISSING if not self.is_active("consensus_straddle")
+            else gap.add("三维交集共识 (consensus_straddle)", f"第 {target} 期报告缺失"))
         m_cs_s = re.search(r"次席共识银胆[^\d]*(\d+)", cs_raw)
         cs_silver = m_cs_s.group(1) if m_cs_s else MISSING
         m_cs_b = re.search(r"三席共识铜胆[^\d]*(\d+)", cs_raw)
@@ -636,7 +672,7 @@ class StandardDailyReportEngine:
                 if _pair not in cs_pairs:
                     cs_pairs.append(_pair)
         cs_pair_block = "\n".join(f"  · `[{p}]`" for p in cs_pairs[:5]) or f"  {MISSING}(当期共识报告未列选2阵容)"
-        if not cs_pairs:
+        if not cs_pairs and self.is_active("consensus_straddle"):
             gap.add("三维交集共识·选2阵容 (consensus_straddle)", f"第 {target} 期报告未匹配到 Top 选2 阵容")
         m_cs_kl = re.search(r"KL\s*散度[^\d]*([0-9.]+)", cs_raw)
         m_cs_grade = re.search(r"风控评级[^\w]*`?([A-Z]+)", cs_raw)
@@ -733,7 +769,7 @@ class StandardDailyReportEngine:
 
         _deep_ok = _deep_product_ok()
         deep_consensus_note = "本期三条爆发规则无交集（合法为空）" if _deep_ok else "无当期记录"
-        if not deep_blast5 and not _deep_ok:
+        if not deep_blast5 and not _deep_ok and self.is_active("deep_assoc_blast5"):
             gap.add("方案2 精选爆发 (deep_assoc_blast5)", f"第 {target} 期深度关联产物缺失")
         if not deep_consensus and not _deep_ok:
             gap.add("方案2 跨规则共识 (deep_assoc_consensus)", f"第 {target} 期深度关联产物缺失")
@@ -980,6 +1016,12 @@ class StandardDailyReportEngine:
 
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+        # 退役标注：活跃模块是空串，模板里直接插值；退役模块则给出明确判决说明，
+        # 避免读者把「已退役、不出当期号」误读成「产物缺失的数据故障」。
+        note_jingle = self.retired_note("formula_jingle")
+        note_straddle = self.retired_note("consensus_straddle")
+        note_ec = self.retired_note("error_correction")
+
         doc = f"""# 快乐8 全模块独立预测明细 + 全系统汇总标准研报 (目标期 {target})
 
 > 📅 **生成时间**：{now_str} ｜ **开奖基准**：第 `{l_issue}` 期 ｜ **执行引擎**：标准全模块推演引擎 v1.0
@@ -1007,6 +1049,7 @@ class StandardDailyReportEngine:
 ## 一、daily 日常舱 · 核心预测模块逐项详细输出
 
 ### 1. 📜 顺口溜口诀规律与组合带出 (formula_jingle) —— 【双轨全息展开】
+{note_jingle}
 
 > **操盘手大白话说明**：顺口溜绝不仅仅是背口诀，本系统采用**双引擎驱动**：
 > - **第一轨（基于规则库 Rule-Based）**：90 条经过多重统计检验与样本外检验的固定精英规则；
@@ -1025,6 +1068,7 @@ class StandardDailyReportEngine:
 ---
 
 ### 2. 🧬 三维交集共识定胆系统与选2冷热对冲 (consensus_straddle)
+{note_straddle}
 
 > **操盘手大白话说明**：三个裁判（16窗中热冠军底座、三高点位共振、冷热对冲配对）同时举手才算数！拒绝单兵作战，专打胜率对冲。
 
@@ -1114,6 +1158,7 @@ class StandardDailyReportEngine:
 ---
 
 ### 12. 🧬 残差改错与错题纠偏 (error_correction)
+{note_ec}
 
 - **AI 改错裁判纠偏 Top 5**：`{_covers(ec_top5, "残差改错产物非当期")}`
 
