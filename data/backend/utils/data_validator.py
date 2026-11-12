@@ -197,6 +197,27 @@ def validate_all(auto_fix: bool = False) -> Dict:
             report['warnings'].append(f"B0. 点位台账自愈失败: {_e}")
 
     # ═══════════════════════════════════════════
+    # B1. 三高手账自愈（与点位台账同一套思路：人工输入、多期累积、故障静默）
+    #     手账被覆盖成只剩几期时，所有读取方都是「没有就跳过」，
+    #     没有任何一处会报错 —— 只能靠这里主动比对备份才发现。
+    # ═══════════════════════════════════════════
+    if auto_fix:
+        try:
+            try:
+                from backend.modules.tri_high.tri_high_engine import repair_tri_high_file
+            except ImportError:
+                from modules.tri_high.tri_high_engine import repair_tri_high_file
+            _rt = repair_tri_high_file()
+            if _rt.get('status') == 'repaired':
+                report['fixes'].append(
+                    f"B1. 三高手账已自愈: {_rt['reason']} → 重建 {_rt['after_records']} 期"
+                    f"(最新 {_rt['latest']})，来源 {_rt['source_backup']}，原文件留证 {_rt['evidence']}"
+                )
+                report['checks']['B1_tri_high_repair'] = _rt
+        except Exception as _e:
+            report['warnings'].append(f"B1. 三高手账自愈失败: {_e}")
+
+    # ═══════════════════════════════════════════
     # A. kl8_history_final.txt 数据新鲜度与完整性
     # ═══════════════════════════════════════════
     history = _parse_txt_history(HISTORY_FILE)

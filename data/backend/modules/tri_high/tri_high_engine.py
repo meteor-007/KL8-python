@@ -10,8 +10,10 @@
 """
 from backend.utils.paths import get_outputs_dir
 import os
+import re
 import sys
 import json
+import shutil
 import collections
 from datetime import datetime
 from typing import Dict, List, Set, Tuple, Any, Optional
@@ -29,13 +31,143 @@ _BACKEND_DIR = os.path.join(_PROJ_DIR, "backend")
 if _BACKEND_DIR not in sys.path:
     sys.path.insert(0, _BACKEND_DIR)
 
-from backend.utils.paths import data_path
+from backend.utils.paths import data_path, get_cache_dir
 from backend.utils.history_loader import load_history
 
 TRI_HIGH_STORAGE_FILE = os.path.join(_PROJ_DIR, "storage", "points", "tri_high_points.json")
 DAILY_POINTS_FILE = data_path("daily_points.txt")
 ANALYSIS_OUTPUT_FILE = os.path.join(_PROJ_DIR, "storage", "points", "tri_high_analysis.json")
 REPORT_OUTPUT_FILE = os.path.join(get_outputs_dir(), "reports", "tri_high_report_latest.md")
+
+# 三高手账备份（与点位台账 daily_points 同一套自愈思路）
+TRI_HIGH_BACKUP_DIR = os.path.join(get_cache_dir(), "tri_high_backup")
+TRI_HIGH_BACKUP_KEEP = 50
+_TRI_HIGH_BACKUP_RE = re.compile(r"^tri_high_points_\d{8}_\d{6}\.bak$")
+
+
+def _load_records_from(path: str) -> List[Dict[str, Any]]:
+    """读一份手账文件的 records；解析失败返回空列表（只代表读不出来，不代表文件里没数据）。"""
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        recs = data.get("records", []) if isinstance(data, dict) else []
+        return [r for r in recs if isinstance(r, dict) and str(r.get("period", "")).strip()]
+    except Exception:
+        return []
+
+
+def _records_span(records: List[Dict[str, Any]]) -> Tuple[int, int]:
+    """返回 (期数, 最新期号)；空手账返回 (0, 0)。"""
+    periods = []
+    for r in records:
+        try:
+            periods.append(int(str(r.get("period", "")).strip()))
+        except (TypeError, ValueError):
+            continue
+    return (len(records), max(periods)) if periods else (0, 0)
+
+
+def backup_tri_high_file(storage_file: Optional[str] = None) -> Optional[str]:
+    """把当前手账复制一份带时间戳的备份，并轮转清理旧备份（保留最近 TRI_HIGH_BACKUP_KEEP 份）。
+
+    三高手账是人工逐期录入、多期累积的 JSON。外部工具或误操作把它覆盖成只剩一两期时，
+    所有读取方都是「没有就跳过」，故障是静默的 —— 往往几周后才有人发现历史没了
+    （点位台账 daily_points.txt 就被这样冲掉过两次）。每次写入前先备份，是让这类损失可回滚的前提。
+    """
+    target = storage_file or TRI_HIGH_STORAGE_FILE
+    if not os.path.exists(target):
+        return None
+    try:
+        os.makedirs(TRI_HIGH_BACKUP_DIR, exist_ok=True)
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_path = os.path.join(TRI_HIGH_BACKUP_DIR, f"tri_high_points_{ts}.bak")
+        shutil.copy2(target, backup_path)
+
+        baks = sorted(
+            os.path.join(TRI_HIGH_BACKUP_DIR, n)
+            for n in os.listdir(TRI_HIGH_BACKUP_DIR)
+            if _TRI_HIGH_BACKUP_RE.match(n)
+        )
+        if len(baks) > TRI_HIGH_BACKUP_KEEP:
+            for old in baks[:-TRI_HIGH_BACKUP_KEEP]:
+                try:
+                    os.remove(old)
+                except Exception:
+                    pass
+        return backup_path
+    except Exception as e:
+        print(f"⚠️ 备份三高手账失败: {e}")
+        return None
+
+
+def repair_tri_high_file(storage_file: Optional[str] = None,
+                         backup_dir: Optional[str] = None) -> Dict[str, Any]:
+    """三高手账自愈：被覆盖或清空后，从最近一份合法备份重建。
+
+    判定缩水（任一成立）：
+      · 当前可解析期数少于最佳备份
+      · 当前最新期号早于备份最新期号
+    重建方式：备份 ∪ 当前（同期以当前为准，保住刚录入的那期），按期号降序原子写。
+    修复前把坏文件另存为 tri_high_points_BROKEN_<ts>.bak 留证，不直接丢弃。
+    """
+    target = storage_file or TRI_HIGH_STORAGE_FILE
+    bdir = backup_dir or TRI_HIGH_BACKUP_DIR
+    current = _load_records_from(target)
+
+    if not os.path.isdir(bdir):
+        return {"status": "skipped", "reason": "无备份目录"}
+
+    candidates = []
+    for name in os.listdir(bdir):
+        if not _TRI_HIGH_BACKUP_RE.match(name):
+            continue
+        path = os.path.join(bdir, name)
+        recs = _load_records_from(path)
+        if recs:
+            n, latest = _records_span(recs)
+            candidates.append((latest, os.path.getmtime(path), path, n, recs))
+    if not candidates:
+        return {"status": "skipped", "reason": "无合法备份"}
+
+    candidates.sort(key=lambda x: (x[0], x[1]), reverse=True)
+    best_latest, _, best_path, best_n, best_recs = candidates[0]
+
+    cur_n, cur_latest = _records_span(current)
+    if cur_n >= best_n and cur_latest >= best_latest:
+        return {"status": "ok", "reason": "手账完整，无需修复",
+                "records": cur_n, "latest": cur_latest}
+
+    merged: Dict[str, Dict[str, Any]] = {}
+    for r in best_recs:
+        merged[str(r["period"]).strip()] = r
+    for r in current:                       # 同期以当前为准，保住新录入
+        merged[str(r["period"]).strip()] = r
+
+    evidence = ""
+    if os.path.exists(target):
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        try:
+            evidence = os.path.join(bdir, f"tri_high_points_BROKEN_{ts}.bak")
+            shutil.copy2(target, evidence)
+        except Exception:
+            evidence = ""
+
+    ordered = sorted(merged.values(), key=lambda r: int(str(r["period"]).strip()), reverse=True)
+    tmp = target + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump({"records": ordered, "updated_at": datetime.now().isoformat()},
+                  f, ensure_ascii=False, indent=2)
+    os.replace(tmp, target)
+
+    return {
+        "status": "repaired",
+        "reason": f"当前 {cur_n} 期(最新 {cur_latest}) < 备份 {best_n} 期(最新 {best_latest})",
+        "before_records": cur_n,
+        "after_records": len(ordered),
+        "latest": max(int(str(r["period"]).strip()) for r in ordered),
+        "source_backup": os.path.basename(best_path),
+        "evidence": evidence,
+    }
 
 
 class TriHighResonanceEngine:
@@ -60,10 +192,18 @@ class TriHighResonanceEngine:
             return []
 
     def save_tri_high_records(self, records: List[Dict[str, Any]]):
-        """持久化保存三高录入历史记录"""
+        """持久化保存三高录入历史记录。
+
+        写入前先备份、写入走 tmp+replace：手账是唯一的人工输入真相源，
+        一旦被覆盖或写到一半中断，历史就没了，而所有读取方都只是"没有就跳过"，
+        故障完全静默。
+        """
         records.sort(key=lambda x: int(x.get("period", 0)), reverse=True)
-        with open(self.storage_file, "w", encoding="utf-8") as f:
+        backup_tri_high_file(self.storage_file)
+        tmp = self.storage_file + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
             json.dump({"records": records, "updated_at": datetime.now().isoformat()}, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, self.storage_file)
 
     def save_record(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         """录入或更新单期记录"""
