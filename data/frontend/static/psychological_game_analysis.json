@@ -1,140 +1,153 @@
 {
-  "target_period": "2026302",
-  "based_on_period": "2026301",
-  "total_draws": 2122,
-  "date": "2026-11-11",
+  "target_period": "2026303",
+  "based_on_period": "2026302",
+  "total_draws": 2123,
+  "date": "2026-11-12",
   "top3_gold": [
-    9,
-    37,
-    55
-  ],
-  "top5_assault": [
-    9,
-    37,
-    55
-  ],
-  "top12_balanced": [
-    9,
-    37,
-    55
-  ],
-  "top_cold_spring": [
-    37,
     9,
     55,
     40
   ],
+  "top5_assault": [
+    9,
+    55,
+    40
+  ],
+  "top12_balanced": [
+    9,
+    55,
+    40
+  ],
+  "top_cold_spring": [
+    9,
+    55,
+    40,
+    59
+  ],
   "top_healthy_repeats": [
-    8,
-    17,
-    47,
-    49
+    3,
+    11,
+    16,
+    29
   ],
   "macro_pendulum": {
-    "last_size_ratio": "10:10 (小:大)",
+    "last_size_ratio": "8:12 (小:大)",
     "avg_big_count": 10.2,
     "big_small_bias": 0.07,
-    "size_trend_desc": "大小比处于常态中枢震荡区间，预计维持 10:10 均衡格局",
-    "target_size_bias": "大小均衡对冲",
+    "size_trend_desc": "上期大号极度超买(12大)，大盘钟摆强烈向小号报复性回调，下期看好 11小9大 或 10:10 均衡",
+    "target_size_bias": "小号强力回补 (重兵布防 1-40)",
     "last_odd_even_ratio": "12:8 (奇:偶)",
     "odd_trend_desc": "奇偶比常态均衡，预计下期维持约 10:10 均势",
     "zone_shares": [
-      18.3,
-      28.3,
-      25.0,
-      28.3
+      16.7,
+      30.0,
+      30.0,
+      23.3
     ],
     "zone_weights": [
-      1.54,
-      0.74,
-      1.0,
-      0.74
+      1.66,
+      0.6,
+      0.6,
+      1.14
     ],
     "zone_diagnoses": [
-      "1区 (01-20): 处于常态温水区 (18.3%)",
-      "2区 (21-40): 处于常态温水区 (28.3%)",
-      "3区 (41-60): 处于常态温水区 (25.0%)",
-      "4区 (61-80): 处于常态温水区 (28.3%)"
+      "1区 (01-20): 严重偏冷 (16.7%)，资金报复性补仓",
+      "2区 (21-40): 处于常态温水区 (30.0%)",
+      "3区 (41-60): 处于常态温水区 (30.0%)",
+      "4区 (61-80): 处于常态温水区 (23.3%)"
     ]
   },
   "contrarian_cold_spring": {
     "spring_cold_candidates": [
       {
-        "number": 37,
-        "display": "37",
+        "number": 9,
+        "display": "09",
         "omission": 15,
         "recent_freq10": 0,
         "spring_tension": 2.08,
         "status": "弹性中冷 (遗漏15期，绝望点强反弹)"
       },
       {
-        "number": 9,
-        "display": "09",
-        "omission": 14,
-        "recent_freq10": 0,
-        "spring_tension": 1.96,
-        "status": "弹性中冷 (遗漏14期，绝望点强反弹)"
-      },
-      {
         "number": 55,
         "display": "55",
-        "omission": 14,
+        "omission": 15,
         "recent_freq10": 0,
-        "spring_tension": 1.96,
-        "status": "弹性中冷 (遗漏14期，绝望点强反弹)"
+        "spring_tension": 2.08,
+        "status": "弹性中冷 (遗漏15期，绝望点强反弹)"
       },
       {
         "number": 40,
         "display": "40",
-        "omission": 10,
+        "omission": 11,
         "recent_freq10": 0,
-        "spring_tension": 1.48,
-        "status": "弹性中冷 (遗漏10期，绝望点强反弹)"
+        "spring_tension": 1.6,
+        "status": "弹性中冷 (遗漏11期，绝望点强反弹)"
       },
       {
         "number": 59,
         "display": "59",
-        "omission": 10,
+        "omission": 11,
         "recent_freq10": 0,
-        "spring_tension": 1.48,
-        "status": "弹性中冷 (遗漏10期，绝望点强反弹)"
+        "spring_tension": 1.6,
+        "status": "弹性中冷 (遗漏11期，绝望点强反弹)"
       },
       {
-        "number": 70,
-        "display": "70",
+        "number": 62,
+        "display": "62",
         "omission": 9,
         "recent_freq10": 1,
         "spring_tension": 1.36,
         "status": "弹性中冷 (遗漏9期，绝望点强反弹)"
       },
       {
-        "number": 53,
-        "display": "53",
+        "number": 80,
+        "display": "80",
         "omission": 8,
         "recent_freq10": 1,
         "spring_tension": 1.24,
         "status": "弹性中冷 (遗漏8期，绝望点强反弹)"
       },
       {
-        "number": 62,
-        "display": "62",
-        "omission": 8,
-        "recent_freq10": 2,
-        "spring_tension": 1.24,
-        "status": "弹性中冷 (遗漏8期，绝望点强反弹)"
+        "number": 6,
+        "display": "06",
+        "omission": 7,
+        "recent_freq10": 1,
+        "spring_tension": 1.12,
+        "status": "弹性中冷 (遗漏7期，绝望点强反弹)"
+      },
+      {
+        "number": 18,
+        "display": "18",
+        "omission": 7,
+        "recent_freq10": 1,
+        "spring_tension": 1.12,
+        "status": "弹性中冷 (遗漏7期，绝望点强反弹)"
       }
     ],
-    "deep_dead_cold": [],
+    "deep_dead_cold": [
+      {
+        "number": 65,
+        "display": "65",
+        "omission": 26,
+        "status": "深度死冷 (散户深套，防继续装死)"
+      }
+    ],
     "crowd_hot_penalties": [
       {
-        "number": 23,
-        "display": "23",
+        "number": 35,
+        "display": "35",
         "recent_freq10": 5,
         "status": "极热追涨区 (散户跟风严重，防冲顶滞涨)"
       },
       {
-        "number": 36,
-        "display": "36",
+        "number": 47,
+        "display": "47",
+        "recent_freq10": 5,
+        "status": "极热追涨区 (散户跟风严重，防冲顶滞涨)"
+      },
+      {
+        "number": 58,
+        "display": "58",
         "recent_freq10": 5,
         "status": "极热追涨区 (散户跟风严重，防冲顶滞涨)"
       },
@@ -146,159 +159,159 @@
       }
     ],
     "omissions": {
-      "1": 2,
-      "2": 3,
-      "3": 7,
-      "4": 5,
-      "5": 3,
-      "6": 6,
-      "7": 2,
-      "8": 0,
-      "9": 14,
-      "10": 2,
-      "11": 4,
-      "12": 1,
-      "13": 0,
-      "14": 0,
-      "15": 5,
-      "16": 3,
-      "17": 0,
-      "18": 6,
-      "19": 5,
-      "20": 3,
-      "21": 6,
-      "22": 0,
-      "23": 0,
-      "24": 6,
-      "25": 2,
-      "26": 2,
-      "27": 3,
-      "28": 1,
-      "29": 3,
-      "30": 1,
-      "31": 1,
-      "32": 6,
-      "33": 0,
-      "34": 0,
+      "1": 3,
+      "2": 4,
+      "3": 0,
+      "4": 6,
+      "5": 4,
+      "6": 7,
+      "7": 3,
+      "8": 1,
+      "9": 15,
+      "10": 3,
+      "11": 0,
+      "12": 2,
+      "13": 1,
+      "14": 1,
+      "15": 6,
+      "16": 0,
+      "17": 1,
+      "18": 7,
+      "19": 6,
+      "20": 4,
+      "21": 7,
+      "22": 1,
+      "23": 1,
+      "24": 7,
+      "25": 3,
+      "26": 0,
+      "27": 0,
+      "28": 2,
+      "29": 0,
+      "30": 2,
+      "31": 2,
+      "32": 7,
+      "33": 1,
+      "34": 1,
       "35": 0,
-      "36": 0,
-      "37": 15,
-      "38": 6,
-      "39": 1,
-      "40": 10,
-      "41": 4,
-      "42": 3,
-      "43": 1,
-      "44": 5,
-      "45": 1,
-      "46": 2,
+      "36": 1,
+      "37": 0,
+      "38": 7,
+      "39": 2,
+      "40": 11,
+      "41": 5,
+      "42": 4,
+      "43": 2,
+      "44": 0,
+      "45": 2,
+      "46": 3,
       "47": 0,
-      "48": 4,
-      "49": 0,
-      "50": 4,
-      "51": 0,
-      "52": 1,
-      "53": 8,
-      "54": 0,
-      "55": 14,
-      "56": 6,
-      "57": 3,
-      "58": 1,
-      "59": 10,
-      "60": 0,
-      "61": 2,
-      "62": 8,
-      "63": 0,
-      "64": 2,
-      "65": 25,
-      "66": 1,
-      "67": 5,
-      "68": 0,
+      "48": 0,
+      "49": 1,
+      "50": 5,
+      "51": 1,
+      "52": 0,
+      "53": 0,
+      "54": 1,
+      "55": 15,
+      "56": 0,
+      "57": 4,
+      "58": 0,
+      "59": 11,
+      "60": 1,
+      "61": 0,
+      "62": 9,
+      "63": 1,
+      "64": 3,
+      "65": 26,
+      "66": 2,
+      "67": 0,
+      "68": 1,
       "69": 0,
-      "70": 9,
-      "71": 5,
-      "72": 2,
-      "73": 2,
-      "74": 5,
+      "70": 0,
+      "71": 6,
+      "72": 3,
+      "73": 3,
+      "74": 6,
       "75": 0,
-      "76": 4,
-      "77": 2,
-      "78": 2,
-      "79": 0,
-      "80": 7
+      "76": 5,
+      "77": 3,
+      "78": 3,
+      "79": 1,
+      "80": 8
     },
     "freq_10": {
       "1": 2,
-      "2": 4,
-      "3": 1,
+      "2": 3,
+      "3": 2,
       "4": 1,
-      "5": 4,
+      "5": 3,
       "6": 1,
       "7": 4,
       "8": 3,
       "9": 0,
-      "10": 3,
-      "11": 2,
+      "10": 2,
+      "11": 3,
       "12": 3,
       "13": 4,
       "14": 1,
       "15": 1,
-      "16": 3,
-      "17": 4,
+      "16": 4,
+      "17": 3,
       "18": 1,
       "19": 2,
       "20": 1,
       "21": 2,
-      "22": 2,
+      "22": 1,
       "23": 5,
       "24": 1,
-      "25": 6,
+      "25": 5,
       "26": 2,
-      "27": 1,
+      "27": 2,
       "28": 3,
-      "29": 2,
+      "29": 3,
       "30": 2,
       "31": 2,
       "32": 1,
       "33": 4,
       "34": 3,
-      "35": 4,
-      "36": 5,
-      "37": 0,
+      "35": 5,
+      "36": 4,
+      "37": 1,
       "38": 1,
       "39": 2,
       "40": 0,
       "41": 1,
       "42": 4,
-      "43": 6,
-      "44": 3,
-      "45": 7,
+      "43": 5,
+      "44": 4,
+      "45": 6,
       "46": 1,
-      "47": 4,
-      "48": 3,
+      "47": 5,
+      "48": 4,
       "49": 4,
-      "50": 3,
-      "51": 3,
+      "50": 2,
+      "51": 2,
       "52": 3,
-      "53": 1,
+      "53": 2,
       "54": 3,
       "55": 0,
-      "56": 2,
-      "57": 4,
-      "58": 4,
+      "56": 3,
+      "57": 3,
+      "58": 5,
       "59": 0,
       "60": 2,
-      "61": 2,
-      "62": 2,
+      "61": 3,
+      "62": 1,
       "63": 4,
-      "64": 3,
+      "64": 2,
       "65": 0,
       "66": 2,
-      "67": 1,
-      "68": 3,
-      "69": 3,
+      "67": 2,
+      "68": 2,
+      "69": 4,
       "70": 1,
-      "71": 2,
+      "71": 1,
       "72": 4,
       "73": 3,
       "74": 2,
@@ -313,50 +326,68 @@
   "healthy_repeats_and_clusters": {
     "healthy_repeats": [
       {
-        "number": 8,
-        "display": "08",
+        "number": 3,
+        "display": "03",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
       {
-        "number": 17,
-        "display": "17",
+        "number": 11,
+        "display": "11",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
       {
-        "number": 47,
-        "display": "47",
+        "number": 16,
+        "display": "16",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
       {
-        "number": 49,
-        "display": "49",
+        "number": 29,
+        "display": "29",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
       {
-        "number": 51,
-        "display": "51",
+        "number": 35,
+        "display": "35",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
       {
-        "number": 54,
-        "display": "54",
+        "number": 37,
+        "display": "37",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
       {
-        "number": 60,
-        "display": "60",
+        "number": 44,
+        "display": "44",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
       {
-        "number": 63,
-        "display": "63",
+        "number": 56,
+        "display": "56",
+        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
+        "recommend": true
+      },
+      {
+        "number": 58,
+        "display": "58",
+        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
+        "recommend": true
+      },
+      {
+        "number": 61,
+        "display": "61",
+        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
+        "recommend": true
+      },
+      {
+        "number": 67,
+        "display": "67",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
@@ -365,94 +396,59 @@
         "display": "75",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
-      },
-      {
-        "number": 79,
-        "display": "79",
-        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
-        "recommend": true
       }
     ],
     "truncated_repeats": [
       {
-        "number": 13,
-        "display": "13",
+        "number": 26,
+        "display": "26",
         "adjacent_pairs": [
-          "13-14"
+          "26-27"
         ],
         "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
         "recommend": false
       },
       {
-        "number": 14,
-        "display": "14",
+        "number": 27,
+        "display": "27",
         "adjacent_pairs": [
-          "13-14"
+          "26-27"
         ],
         "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
         "recommend": false
       },
       {
-        "number": 22,
-        "display": "22",
+        "number": 47,
+        "display": "47",
         "adjacent_pairs": [
-          "22-23"
+          "47-48"
         ],
         "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
         "recommend": false
       },
       {
-        "number": 23,
-        "display": "23",
+        "number": 48,
+        "display": "48",
         "adjacent_pairs": [
-          "22-23"
+          "47-48"
         ],
         "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
         "recommend": false
       },
       {
-        "number": 33,
-        "display": "33",
+        "number": 52,
+        "display": "52",
         "adjacent_pairs": [
-          "33-34"
+          "52-53"
         ],
         "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
         "recommend": false
       },
       {
-        "number": 34,
-        "display": "34",
+        "number": 53,
+        "display": "53",
         "adjacent_pairs": [
-          "33-34",
-          "34-35"
-        ],
-        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
-        "recommend": false
-      },
-      {
-        "number": 35,
-        "display": "35",
-        "adjacent_pairs": [
-          "34-35",
-          "35-36"
-        ],
-        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
-        "recommend": false
-      },
-      {
-        "number": 36,
-        "display": "36",
-        "adjacent_pairs": [
-          "35-36"
-        ],
-        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
-        "recommend": false
-      },
-      {
-        "number": 68,
-        "display": "68",
-        "adjacent_pairs": [
-          "68-69"
+          "52-53"
         ],
         "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
         "recommend": false
@@ -461,19 +457,26 @@
         "number": 69,
         "display": "69",
         "adjacent_pairs": [
-          "68-69"
+          "69-70"
+        ],
+        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
+        "recommend": false
+      },
+      {
+        "number": 70,
+        "display": "70",
+        "adjacent_pairs": [
+          "69-70"
         ],
         "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
         "recommend": false
       }
     ],
     "last_consecutive_pairs": [
-      "13-14",
-      "22-23",
-      "33-34",
-      "34-35",
-      "35-36",
-      "68-69"
+      "26-27",
+      "47-48",
+      "52-53",
+      "69-70"
     ],
     "cluster_bias_desc": "连号活性向 1 区转移，重点伏击【 05-10 】前区连号集群回补"
   },
@@ -483,684 +486,576 @@
       "display": "09",
       "zone_idx": 1,
       "is_small": true,
-      "omission": 14,
-      "freq10": 0,
-      "final_score": 0.763
-    },
-    {
-      "number": 37,
-      "display": "37",
-      "zone_idx": 2,
-      "is_small": true,
       "omission": 15,
       "freq10": 0,
-      "final_score": 0.697
+      "final_score": 0.821
     },
     {
       "number": 55,
       "display": "55",
       "zone_idx": 3,
       "is_small": false,
-      "omission": 14,
+      "omission": 15,
       "freq10": 0,
-      "final_score": 0.682
-    },
-    {
-      "number": 59,
-      "display": "59",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 10,
-      "freq10": 0,
-      "final_score": 0.514
+      "final_score": 0.67
     },
     {
       "number": 40,
       "display": "40",
       "zone_idx": 2,
       "is_small": true,
-      "omission": 10,
+      "omission": 11,
       "freq10": 0,
-      "final_score": 0.487
+      "final_score": 0.51
     },
     {
-      "number": 3,
-      "display": "03",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 7,
-      "freq10": 1,
-      "final_score": 0.469
-    },
-    {
-      "number": 70,
-      "display": "70",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 9,
-      "freq10": 1,
-      "final_score": 0.437
-    },
-    {
-      "number": 53,
-      "display": "53",
+      "number": 59,
+      "display": "59",
       "zone_idx": 3,
       "is_small": false,
-      "omission": 8,
-      "freq10": 1,
-      "final_score": 0.43
-    },
-    {
-      "number": 6,
-      "display": "06",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 6,
-      "freq10": 1,
-      "final_score": 0.427
-    },
-    {
-      "number": 18,
-      "display": "18",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 6,
-      "freq10": 1,
-      "final_score": 0.427
+      "omission": 11,
+      "freq10": 0,
+      "final_score": 0.502
     },
     {
       "number": 62,
       "display": "62",
       "zone_idx": 4,
       "is_small": false,
-      "omission": 8,
-      "freq10": 2,
-      "final_score": 0.395
+      "omission": 9,
+      "freq10": 1,
+      "final_score": 0.491
+    },
+    {
+      "number": 6,
+      "display": "06",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 7,
+      "freq10": 1,
+      "final_score": 0.485
+    },
+    {
+      "number": 18,
+      "display": "18",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 7,
+      "freq10": 1,
+      "final_score": 0.485
     },
     {
       "number": 80,
       "display": "80",
       "zone_idx": 4,
       "is_small": false,
-      "omission": 7,
+      "omission": 8,
       "freq10": 1,
-      "final_score": 0.353
-    },
-    {
-      "number": 56,
-      "display": "56",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 6,
-      "freq10": 2,
-      "final_score": 0.346
-    },
-    {
-      "number": 21,
-      "display": "21",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 6,
-      "freq10": 2,
-      "final_score": 0.319
-    },
-    {
-      "number": 24,
-      "display": "24",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 6,
-      "freq10": 1,
-      "final_score": 0.319
-    },
-    {
-      "number": 32,
-      "display": "32",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 6,
-      "freq10": 1,
-      "final_score": 0.319
-    },
-    {
-      "number": 38,
-      "display": "38",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 6,
-      "freq10": 1,
-      "final_score": 0.319
-    },
-    {
-      "number": 2,
-      "display": "02",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 3,
-      "freq10": 4,
-      "final_score": 0.239
-    },
-    {
-      "number": 5,
-      "display": "05",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 3,
-      "freq10": 4,
-      "final_score": 0.239
-    },
-    {
-      "number": 7,
-      "display": "07",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 2,
-      "freq10": 4,
-      "final_score": 0.239
-    },
-    {
-      "number": 10,
-      "display": "10",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 2,
-      "freq10": 3,
-      "final_score": 0.239
-    },
-    {
-      "number": 12,
-      "display": "12",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 1,
-      "freq10": 3,
-      "final_score": 0.239
-    },
-    {
-      "number": 16,
-      "display": "16",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 3,
-      "freq10": 3,
-      "final_score": 0.239
-    },
-    {
-      "number": 8,
-      "display": "08",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 0,
-      "freq10": 3,
-      "final_score": 0.197
-    },
-    {
-      "number": 17,
-      "display": "17",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 0,
-      "freq10": 4,
-      "final_score": 0.197
-    },
-    {
-      "number": 42,
-      "display": "42",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 3,
-      "freq10": 4,
-      "final_score": 0.159
-    },
-    {
-      "number": 43,
-      "display": "43",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 1,
-      "freq10": 6,
-      "final_score": 0.159
-    },
-    {
-      "number": 44,
-      "display": "44",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 5,
-      "freq10": 3,
-      "final_score": 0.159
-    },
-    {
-      "number": 45,
-      "display": "45",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 1,
-      "freq10": 7,
-      "final_score": 0.159
-    },
-    {
-      "number": 48,
-      "display": "48",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 4,
-      "freq10": 3,
-      "final_score": 0.159
-    },
-    {
-      "number": 50,
-      "display": "50",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 4,
-      "freq10": 3,
-      "final_score": 0.159
-    },
-    {
-      "number": 52,
-      "display": "52",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 1,
-      "freq10": 3,
-      "final_score": 0.159
-    },
-    {
-      "number": 57,
-      "display": "57",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 3,
-      "freq10": 4,
-      "final_score": 0.159
-    },
-    {
-      "number": 58,
-      "display": "58",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 1,
-      "freq10": 4,
-      "final_score": 0.159
-    },
-    {
-      "number": 25,
-      "display": "25",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 2,
-      "freq10": 6,
-      "final_score": 0.131
-    },
-    {
-      "number": 28,
-      "display": "28",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 1,
-      "freq10": 3,
-      "final_score": 0.131
-    },
-    {
-      "number": 64,
-      "display": "64",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 2,
-      "freq10": 3,
-      "final_score": 0.124
-    },
-    {
-      "number": 72,
-      "display": "72",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 2,
-      "freq10": 4,
-      "final_score": 0.124
-    },
-    {
-      "number": 73,
-      "display": "73",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 2,
-      "freq10": 3,
-      "final_score": 0.124
-    },
-    {
-      "number": 77,
-      "display": "77",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 2,
-      "freq10": 3,
-      "final_score": 0.124
-    },
-    {
-      "number": 47,
-      "display": "47",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 4,
-      "final_score": 0.116
-    },
-    {
-      "number": 49,
-      "display": "49",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 4,
-      "final_score": 0.116
-    },
-    {
-      "number": 51,
-      "display": "51",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 3,
-      "final_score": 0.116
-    },
-    {
-      "number": 54,
-      "display": "54",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 3,
-      "final_score": 0.116
-    },
-    {
-      "number": 60,
-      "display": "60",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 2,
-      "final_score": 0.116
-    },
-    {
-      "number": 63,
-      "display": "63",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 4,
-      "final_score": 0.081
-    },
-    {
-      "number": 79,
-      "display": "79",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 3,
-      "final_score": 0.081
-    },
-    {
-      "number": 1,
-      "display": "01",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 2,
-      "freq10": 2,
-      "final_score": 0.077
+      "final_score": 0.449
     },
     {
       "number": 4,
       "display": "04",
       "zone_idx": 1,
       "is_small": true,
-      "omission": 5,
+      "omission": 6,
       "freq10": 1,
-      "final_score": 0.077
-    },
-    {
-      "number": 11,
-      "display": "11",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 4,
-      "freq10": 2,
-      "final_score": 0.077
+      "final_score": 0.443
     },
     {
       "number": 15,
       "display": "15",
       "zone_idx": 1,
       "is_small": true,
-      "omission": 5,
+      "omission": 6,
       "freq10": 1,
-      "final_score": 0.077
+      "final_score": 0.443
     },
     {
       "number": 19,
       "display": "19",
       "zone_idx": 1,
       "is_small": true,
-      "omission": 5,
+      "omission": 6,
       "freq10": 2,
-      "final_score": 0.077
-    },
-    {
-      "number": 20,
-      "display": "20",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 3,
-      "freq10": 1,
-      "final_score": 0.077
-    },
-    {
-      "number": 13,
-      "display": "13",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 0,
-      "freq10": 4,
-      "final_score": 0.007
-    },
-    {
-      "number": 14,
-      "display": "14",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 0,
-      "freq10": 1,
-      "final_score": 0.007
-    },
-    {
-      "number": 41,
-      "display": "41",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 4,
-      "freq10": 1,
-      "final_score": -0.004
-    },
-    {
-      "number": 46,
-      "display": "46",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 2,
-      "freq10": 1,
-      "final_score": -0.004
-    },
-    {
-      "number": 26,
-      "display": "26",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 2,
-      "freq10": 2,
-      "final_score": -0.031
-    },
-    {
-      "number": 27,
-      "display": "27",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 3,
-      "freq10": 1,
-      "final_score": -0.031
-    },
-    {
-      "number": 29,
-      "display": "29",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 3,
-      "freq10": 2,
-      "final_score": -0.031
-    },
-    {
-      "number": 30,
-      "display": "30",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 1,
-      "freq10": 2,
-      "final_score": -0.031
-    },
-    {
-      "number": 31,
-      "display": "31",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 1,
-      "freq10": 2,
-      "final_score": -0.031
-    },
-    {
-      "number": 39,
-      "display": "39",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 1,
-      "freq10": 2,
-      "final_score": -0.031
-    },
-    {
-      "number": 61,
-      "display": "61",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 2,
-      "freq10": 2,
-      "final_score": -0.039
-    },
-    {
-      "number": 65,
-      "display": "65",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 25,
-      "freq10": 0,
-      "final_score": -0.039
-    },
-    {
-      "number": 66,
-      "display": "66",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 1,
-      "freq10": 2,
-      "final_score": -0.039
-    },
-    {
-      "number": 67,
-      "display": "67",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 5,
-      "freq10": 1,
-      "final_score": -0.039
+      "final_score": 0.443
     },
     {
       "number": 71,
       "display": "71",
       "zone_idx": 4,
       "is_small": false,
-      "omission": 5,
-      "freq10": 2,
-      "final_score": -0.039
+      "omission": 6,
+      "freq10": 1,
+      "final_score": 0.365
     },
     {
       "number": 74,
       "display": "74",
       "zone_idx": 4,
       "is_small": false,
-      "omission": 5,
+      "omission": 6,
       "freq10": 2,
-      "final_score": -0.039
+      "final_score": 0.365
     },
     {
-      "number": 76,
-      "display": "76",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 4,
-      "freq10": 2,
-      "final_score": -0.039
-    },
-    {
-      "number": 78,
-      "display": "78",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 2,
-      "freq10": 2,
-      "final_score": -0.039
-    },
-    {
-      "number": 22,
-      "display": "22",
+      "number": 21,
+      "display": "21",
       "zone_idx": 2,
+      "is_small": true,
+      "omission": 7,
+      "freq10": 2,
+      "final_score": 0.342
+    },
+    {
+      "number": 24,
+      "display": "24",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 7,
+      "freq10": 1,
+      "final_score": 0.342
+    },
+    {
+      "number": 32,
+      "display": "32",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 7,
+      "freq10": 1,
+      "final_score": 0.342
+    },
+    {
+      "number": 38,
+      "display": "38",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 7,
+      "freq10": 1,
+      "final_score": 0.342
+    },
+    {
+      "number": 2,
+      "display": "02",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 4,
+      "freq10": 3,
+      "final_score": 0.255
+    },
+    {
+      "number": 5,
+      "display": "05",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 4,
+      "freq10": 3,
+      "final_score": 0.255
+    },
+    {
+      "number": 7,
+      "display": "07",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 3,
+      "freq10": 4,
+      "final_score": 0.255
+    },
+    {
+      "number": 8,
+      "display": "08",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 3,
+      "final_score": 0.255
+    },
+    {
+      "number": 12,
+      "display": "12",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 2,
+      "freq10": 3,
+      "final_score": 0.255
+    },
+    {
+      "number": 13,
+      "display": "13",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 4,
+      "final_score": 0.255
+    },
+    {
+      "number": 17,
+      "display": "17",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 3,
+      "final_score": 0.255
+    },
+    {
+      "number": 3,
+      "display": "03",
+      "zone_idx": 1,
       "is_small": true,
       "omission": 0,
       "freq10": 2,
-      "final_score": -0.101
+      "final_score": 0.213
+    },
+    {
+      "number": 11,
+      "display": "11",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 3,
+      "final_score": 0.213
+    },
+    {
+      "number": 16,
+      "display": "16",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 4,
+      "final_score": 0.213
+    },
+    {
+      "number": 63,
+      "display": "63",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 4,
+      "final_score": 0.178
+    },
+    {
+      "number": 72,
+      "display": "72",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 3,
+      "freq10": 4,
+      "final_score": 0.178
+    },
+    {
+      "number": 73,
+      "display": "73",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 3,
+      "freq10": 3,
+      "final_score": 0.178
+    },
+    {
+      "number": 77,
+      "display": "77",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 3,
+      "freq10": 3,
+      "final_score": 0.178
+    },
+    {
+      "number": 79,
+      "display": "79",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 3,
+      "final_score": 0.178
+    },
+    {
+      "number": 61,
+      "display": "61",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 3,
+      "final_score": 0.135
+    },
+    {
+      "number": 67,
+      "display": "67",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 2,
+      "final_score": 0.135
+    },
+    {
+      "number": 23,
+      "display": "23",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 5,
+      "final_score": 0.112
+    },
+    {
+      "number": 25,
+      "display": "25",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 3,
+      "freq10": 5,
+      "final_score": 0.112
+    },
+    {
+      "number": 28,
+      "display": "28",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 2,
+      "freq10": 3,
+      "final_score": 0.112
     },
     {
       "number": 33,
       "display": "33",
       "zone_idx": 2,
       "is_small": true,
-      "omission": 0,
+      "omission": 1,
       "freq10": 4,
-      "final_score": -0.101
+      "final_score": 0.112
     },
     {
       "number": 34,
       "display": "34",
       "zone_idx": 2,
       "is_small": true,
-      "omission": 0,
+      "omission": 1,
       "freq10": 3,
-      "final_score": -0.101
+      "final_score": 0.112
     },
     {
-      "number": 35,
-      "display": "35",
+      "number": 36,
+      "display": "36",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 4,
+      "final_score": 0.112
+    },
+    {
+      "number": 42,
+      "display": "42",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 4,
+      "freq10": 4,
+      "final_score": 0.105
+    },
+    {
+      "number": 43,
+      "display": "43",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 2,
+      "freq10": 5,
+      "final_score": 0.105
+    },
+    {
+      "number": 45,
+      "display": "45",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 2,
+      "freq10": 6,
+      "final_score": 0.105
+    },
+    {
+      "number": 49,
+      "display": "49",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 4,
+      "final_score": 0.105
+    },
+    {
+      "number": 54,
+      "display": "54",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 3,
+      "final_score": 0.105
+    },
+    {
+      "number": 57,
+      "display": "57",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 4,
+      "freq10": 3,
+      "final_score": 0.105
+    },
+    {
+      "number": 1,
+      "display": "01",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 3,
+      "freq10": 2,
+      "final_score": 0.093
+    },
+    {
+      "number": 10,
+      "display": "10",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 3,
+      "freq10": 2,
+      "final_score": 0.093
+    },
+    {
+      "number": 14,
+      "display": "14",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 1,
+      "final_score": 0.093
+    },
+    {
+      "number": 20,
+      "display": "20",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 4,
+      "freq10": 1,
+      "final_score": 0.093
+    },
+    {
+      "number": 29,
+      "display": "29",
       "zone_idx": 2,
       "is_small": true,
       "omission": 0,
+      "freq10": 3,
+      "final_score": 0.07
+    },
+    {
+      "number": 37,
+      "display": "37",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 1,
+      "final_score": 0.07
+    },
+    {
+      "number": 65,
+      "display": "65",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 26,
+      "freq10": 0,
+      "final_score": 0.068
+    },
+    {
+      "number": 44,
+      "display": "44",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 0,
       "freq10": 4,
-      "final_score": -0.101
+      "final_score": 0.062
+    },
+    {
+      "number": 56,
+      "display": "56",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 3,
+      "final_score": 0.062
+    },
+    {
+      "number": 64,
+      "display": "64",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 3,
+      "freq10": 2,
+      "final_score": 0.015
+    },
+    {
+      "number": 66,
+      "display": "66",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 2,
+      "freq10": 2,
+      "final_score": 0.015
     },
     {
       "number": 68,
       "display": "68",
       "zone_idx": 4,
       "is_small": false,
-      "omission": 0,
-      "freq10": 3,
-      "final_score": -0.109
+      "omission": 1,
+      "freq10": 2,
+      "final_score": 0.015
+    },
+    {
+      "number": 76,
+      "display": "76",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 5,
+      "freq10": 2,
+      "final_score": 0.015
+    },
+    {
+      "number": 78,
+      "display": "78",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 3,
+      "freq10": 2,
+      "final_score": 0.015
+    },
+    {
+      "number": 22,
+      "display": "22",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 1,
+      "final_score": -0.05
+    },
+    {
+      "number": 30,
+      "display": "30",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 2,
+      "freq10": 2,
+      "final_score": -0.05
+    },
+    {
+      "number": 31,
+      "display": "31",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 2,
+      "freq10": 2,
+      "final_score": -0.05
+    },
+    {
+      "number": 39,
+      "display": "39",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 2,
+      "freq10": 2,
+      "final_score": -0.05
     },
     {
       "number": 69,
@@ -1168,8 +1063,107 @@
       "zone_idx": 4,
       "is_small": false,
       "omission": 0,
+      "freq10": 4,
+      "final_score": -0.055
+    },
+    {
+      "number": 70,
+      "display": "70",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 1,
+      "final_score": -0.055
+    },
+    {
+      "number": 41,
+      "display": "41",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 5,
+      "freq10": 1,
+      "final_score": -0.058
+    },
+    {
+      "number": 46,
+      "display": "46",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 3,
+      "freq10": 1,
+      "final_score": -0.058
+    },
+    {
+      "number": 50,
+      "display": "50",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 5,
+      "freq10": 2,
+      "final_score": -0.058
+    },
+    {
+      "number": 51,
+      "display": "51",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 2,
+      "final_score": -0.058
+    },
+    {
+      "number": 60,
+      "display": "60",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 2,
+      "final_score": -0.058
+    },
+    {
+      "number": 26,
+      "display": "26",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 2,
+      "final_score": -0.12
+    },
+    {
+      "number": 27,
+      "display": "27",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 2,
+      "final_score": -0.12
+    },
+    {
+      "number": 48,
+      "display": "48",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 4,
+      "final_score": -0.128
+    },
+    {
+      "number": 52,
+      "display": "52",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 0,
       "freq10": 3,
-      "final_score": -0.109
+      "final_score": -0.128
+    },
+    {
+      "number": 53,
+      "display": "53",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 2,
+      "final_score": -0.128
     },
     {
       "number": 75,
@@ -1178,25 +1172,34 @@
       "is_small": false,
       "omission": 0,
       "freq10": 6,
-      "final_score": -0.319
+      "final_score": -0.265
     },
     {
-      "number": 23,
-      "display": "23",
+      "number": 35,
+      "display": "35",
       "zone_idx": 2,
       "is_small": true,
       "omission": 0,
       "freq10": 5,
-      "final_score": -0.501
+      "final_score": -0.33
     },
     {
-      "number": 36,
-      "display": "36",
-      "zone_idx": 2,
-      "is_small": true,
+      "number": 58,
+      "display": "58",
+      "zone_idx": 3,
+      "is_small": false,
       "omission": 0,
       "freq10": 5,
-      "final_score": -0.501
+      "final_score": -0.338
+    },
+    {
+      "number": 47,
+      "display": "47",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 5,
+      "final_score": -0.528
     }
   ]
 }
