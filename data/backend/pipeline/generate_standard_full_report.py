@@ -309,6 +309,44 @@ class StandardDailyReportEngine:
         return (f"> 📊 **实测对照**：理论基线 25.0% ｜ 历史实测 **{rate_txt}**"
                 f"（{n_periods} 期 / {picks} 票 / 命中 {hits}）｜ Lift **{lift_txt}** ｜ {verdict}")
 
+    def budget_facts(self) -> str:
+        """预算与期望回报区块。
+
+        奖金表未配置时明确说明「本节不计算」，而不是给一个看似合理的数字 ——
+        凭空捏一个返奖率推出来的期望回报，比不给更危险。
+        """
+        try:
+            from backend.utils import kl8_budget as budget
+        except Exception as e:                                    # noqa: BLE001
+            return f"> ⚠️ 预算模块不可用：{e}"
+
+        table = budget.load_payout_table()
+        if not budget.is_configured(table):
+            return ("## 💰 预算与期望回报\n\n"
+                    "> ⚠️ **奖金表未配置，本节不做任何计算。**\n"
+                    "> 快乐8 各玩法的奖金按渠道与期次规则变化，把金额写死在代码里等于伪造数据。\n"
+                    "> 请按所购渠道的官方规则填写 `backend/config/kl8_payout.json`，并置 `configured: true`。\n"
+                    "> 在填好之前，本节不给出任何期望回报数字 —— **缺失信息好过错误信息**。")
+
+        rows = ["## 💰 预算与期望回报（每注）", "",
+                "| 玩法 | 单注成本 | 期望回报 | 期望净 | 返奖率 | 至少中一档 |",
+                "| :--- | ---: | ---: | ---: | ---: | ---: |"]
+        for play in table.get("plays", {}):
+            m = budget.play_metrics(play, 1, table)
+            if m.get("status") != "ok":
+                continue
+            rows.append(
+                f"| {play} | {m['stake']:.2f} 元 | {m['expected_payout']:.3f} 元 | "
+                f"{m['expected_net']:+.3f} 元 | {m['return_rate'] * 100:.1f}% | "
+                f"{m['prob_any_prize'] * 100:.2f}% |"
+            )
+        src = table.get("source") or "未注明来源"
+        ver = table.get("source_version") or "未注明版本"
+        rows += ["",
+                 f"> 奖金表来源：{src}（{ver}）。",
+                 "> 期望回报是**长期平均值**，单期波动极大，不代表任何一期的实际结果。"]
+        return "\n".join(rows)
+
     def gather_all_data(self, target_period: Optional[str] = None) -> Dict[str, Any]:
         """全面归集 22 大模块与全部输入源的真实计算产物"""
         latest_draw, calc_target, target_date = get_latest_draw_and_target()
@@ -1126,6 +1164,8 @@ class StandardDailyReportEngine:
 ---
 
 {prob_facts}
+
+{self.budget_facts()}
 
 ---
 

@@ -1,0 +1,9 @@
+{
+  "_note": "快乐8 奖金表。请按你所购渠道的官方规则填写，并注明版本日期。",
+  "_why_not_builtin": "玩法与返奖率会调整，把钱数写死在代码里等于伪造数据。系统只在 configured=true 时才计算期望回报。",
+  "_how_to_fill": "把某个玩法改成 configured 需要的形状即可，例如：\"选5\": {\"stake\": 2, \"prizes\": {\"5\": 1000, \"4\": 21, \"3\": 3}}，其中 key 是命中个数、value 是该档奖金（元），stake 是单注成本（元）。不必填满所有玩法，只填你实际会买的。",
+  "source": "",
+  "source_version": "",
+  "configured": false,
+  "plays": {}
+}
