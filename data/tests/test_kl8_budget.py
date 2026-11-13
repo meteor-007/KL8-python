@@ -45,10 +45,18 @@ class TestConfigGate(unittest.TestCase):
         t = B.load_payout_table(os.path.join(PROJ_DIR, "no_such_payout.json"))
         self.assertFalse(B.is_configured(t))
 
-    def test_shipped_config_is_unconfigured(self):
-        """仓库自带的配置模板必须是未配置状态 —— 不能悄悄带着一组假数字。"""
-        self.assertFalse(B.is_configured(B.load_payout_table()),
-                         "仓库模板被填了数？那等于内置了来源不明的奖金表")
+    def test_shipped_config_is_attributable(self):
+        """仓库里的奖金表要么未配置，要么必须注明来源与版本。
+
+        不允许出现「有数字但说不出出处」的状态 —— 那正是伪造数据的温床。
+        """
+        t = B.load_payout_table()
+        if not B.is_configured(t):
+            return
+        self.assertTrue(str(t.get("source", "")).strip(),
+                        "已配置的奖金表必须注明来源")
+        self.assertTrue(str(t.get("source_version", "")).strip(),
+                        "已配置的奖金表必须注明版本日期")
 
 
 class TestPlayMetrics(unittest.TestCase):

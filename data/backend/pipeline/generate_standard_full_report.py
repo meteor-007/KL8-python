@@ -331,6 +331,7 @@ class StandardDailyReportEngine:
         rows = ["## 💰 预算与期望回报（每注）", "",
                 "| 玩法 | 单注成本 | 期望回报 | 期望净 | 返奖率 | 至少中一档 |",
                 "| :--- | ---: | ---: | ---: | ---: | ---: |"]
+        risk = []
         for play in table.get("plays", {}):
             m = budget.play_metrics(play, 1, table)
             if m.get("status") != "ok":
@@ -340,6 +341,16 @@ class StandardDailyReportEngine:
                 f"{m['expected_net']:+.3f} 元 | {m['return_rate'] * 100:.1f}% | "
                 f"{m['prob_any_prize'] * 100:.2f}% |"
             )
+            risk.append(
+                f"- **{play}**：全额落空 **{m['prob_total_loss'] * 100:.1f}%** ｜ "
+                f"单注回报标准差 **{m['payout_std']:.2f} 元**"
+                f"（约 {m['payout_std'] / m['stake']:.1f} 倍注额）"
+            )
+        rows += ["", "**波动与风险（单注）**："] + risk + [
+            "",
+            "> 买 N 注时：期望回报与成本同比例增长，标准差只增长 √N 倍。",
+            "> 也就是说**买得越多，相对波动越小，但期望亏损比例一点不变**。",
+        ]
         src = table.get("source") or "未注明来源"
         ver = table.get("source_version") or "未注明版本"
         rows += ["",
