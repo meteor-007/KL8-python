@@ -1,6 +1,6 @@
 {
   "target_period": 2026303,
-  "calculated_at": "2026-11-13T09:50:13.236021",
+  "calculated_at": "2026-11-13T09:59:40.613447",
   "architecture": "Unified Quantum Decision Brain (Research Only)",
   "gold_single": 43,
   "gold_core": 43,
@@ -281,6 +281,6 @@
       70,
       75
     ],
-    "extracted_at": "2026-11-13T09:50:13.236021"
+    "extracted_at": "2026-11-13T09:59:40.613447"
   }
 }
