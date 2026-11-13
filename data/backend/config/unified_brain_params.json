@@ -1,7 +1,7 @@
 {
-  "generation": 408,
+  "generation": 453,
   "architecture": "Unified Quantum State-Space Decision Brain v5.0",
-  "last_calibrated_at": "2026-11-13T09:59:40.589446",
+  "last_calibrated_at": "2026-11-13T16:24:47.235501",
   "target_period": 2026303,
   "sigma": 3.25,
   "lambda_decay": 0.98,

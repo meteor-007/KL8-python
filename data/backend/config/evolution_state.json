@@ -1,37 +1,34 @@
 {
-  "generation": 71,
-  "last_evolved": "2026-11-11T13:57:02.575285",
-  "target_period": 2026301,
+  "generation": 76,
+  "last_evolved": "2026-11-13T16:21:08.019971",
+  "target_period": 2026303,
   "status": "HEALTHY_OPTIMAL",
   "resonance_threshold": 3,
   "active_subsystems": [
     "aggregation_stable10",
-    "trinity_top12",
-    "trinity_top5"
+    "trinity_top12"
   ],
   "muted_subsystems": [
-    "point_suppression",
-    "sixteen_hot"
+    "trinity_top5",
+    "point_suppression"
   ],
   "kill_defense_size": 14,
   "rationales": [
-    "🟡 【终审共识 Stable Top 10】实测 Lift=1.28x (收缩 1.04x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
-    "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.13x (收缩 1.02x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
-    "🟡 【Trinity 三维融合 Top 5】实测 Lift=1.12x (收缩 1.02x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+    "🟡 【终审共识 Stable Top 10】实测 Lift=1.36x (收缩 1.05x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+    "🟡 【Trinity 三维融合 Top 12】实测 Lift=1.00x (收缩 1.00x, n=5)，样本不足100期，保留【共振表决权】但不得授予一级决议权。",
+    "🔴 【Trinity 三维融合 Top 5】实测 Lift=0.96x (收缩 0.99x, n=5) 落后基线，触发【一票静音机制】，本代自动休眠！",
     "🔴 【空间高压反弹与影子追踪】实测 Lift=0.80x (收缩 0.97x, n=5) 落后基线，触发【一票静音机制】，本代自动休眠！",
-    "🔴 【16期中热号出窗进窗推演】实测 Lift=0.80x (收缩 0.97x, n=5) 落后基线，触发【一票静音机制】，本代自动休眠！",
-    "🔭 【Hidden Energy 5 首席特供】观察仓: 实测 Lift=0.64x (收缩 0.95x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
+    "🔭 【16期中热号出窗进窗推演】观察仓: 实测 Lift=0.53x (收缩 0.93x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
     "🔭 【黄金定胆选2搭档】观察仓: 实测 Lift=0.00x (收缩 0.86x, n=5)，小样本未证显著，撤销决议权，继续记账观察。",
     "🛡️ 大盘未达统计显著顺风 (超强信标<3路)，门禁维持【3路及以上共振】才准出票，坚决防洗盘。",
     "🛡️ 杀号引擎维持标准防守拦截池【14码一票否决】。"
   ],
   "observation_subsystems": [
-    "hidden_energy5",
+    "sixteen_hot",
     "gold_pick2"
   ],
   "params_changed": [
-    "新准入: aggregation_stable10",
-    "退出表决: point_suppression"
+    "门禁参数与上一代完全一致 (阈值/杀号池/表决名单均未变化)"
   ],
   "learning_gate_note": "权重学习效率由 learning_gate 独立门控; 当前 197折WF的CI下界<1.0, 调参冻结, 本引擎只做门禁准入"
 }
