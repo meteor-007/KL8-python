@@ -458,8 +458,11 @@ if __name__ == '__main__':
         sys.stdout.reconfigure(encoding='utf-8')
 
     # 加载历史
-    HISTORY_FILE = os.path.join(_PROJ, 'kl8_history_final.txt')
-    POINTS_FILE = os.path.join(_PROJ, 'daily_points.txt')
+    # 这两个文件在 storage/raw/ 下，不在项目根。原先写成 os.path.join(_PROJ, ...)，
+    # 直接跑本脚本必然 FileNotFoundError。
+    from utils.paths import data_path
+    HISTORY_FILE = data_path('kl8_history_final.txt')
+    POINTS_FILE = data_path('daily_points.txt')
 
     history = []
     with open(HISTORY_FILE, 'r', encoding='utf-8') as f:
