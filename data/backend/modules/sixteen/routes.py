@@ -121,3 +121,43 @@ def get_folk_sixteen_summary(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get("/dimension-cross")
+def get_dimension_cross(
+    target_period: Optional[int] = Query(None, description="目标期号，默认预测下一期")
+):
+    """16 期窗口维度交叉研究：出现次数×剩余次数矩阵 + 尾数/012路/质合画像 + 约束优化选号"""
+    try:
+        from backend.modules.sixteen.sixteen_engine import load_draws_from_file
+        from backend.modules.sixteen.dimension_cross import analyze_dimension_cross
+        draws = load_draws_from_file()
+        if target_period is not None:
+            idx = next(
+                (i for i, d in enumerate(draws) if int(d["period"]) == int(target_period)),
+                None,
+            )
+            if idx is None:
+                raise HTTPException(status_code=404, detail=f"未找到期号 {target_period}")
+            return analyze_dimension_cross(draws, target_idx=idx)
+        return analyze_dimension_cross(draws)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/dimension-arbitrage")
+def get_dimension_arbitrage(
+    n: int = Query(200, ge=30, le=1000, description="回测期数"),
+    size: int = Query(20, ge=1, le=20, description="选号口径"),
+    restarts: int = Query(25, ge=5, le=120, description="约束优化重启次数")
+):
+    """三轨样本外仲裁：纯动量 vs 动量+维度约束 vs 遗漏甜区回补（含显著性检验）"""
+    try:
+        from backend.modules.sixteen.sixteen_engine import load_draws_from_file
+        from backend.modules.sixteen.dimension_cross import run_dimension_arbitrage
+        draws = load_draws_from_file()
+        return run_dimension_arbitrage(draws, n_periods=n, pick_size=size, restarts=restarts)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+

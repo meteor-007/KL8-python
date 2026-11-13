@@ -532,6 +532,92 @@ class FullReportEngine:
                     "error": f"Meta-Gold 计算异常: {me}",
                 }
 
+            # ── 16 期窗口维度交叉研究（出现次数×剩余次数 × 尾数/012路/质合）──
+            #      结论取自 latest_summary.json 的 dimension_cross（与大屏同源）；
+            #      仲裁结论取自 dimension_arbitrage_latest.json（7 天缓存，避免每晚重跑 200 期）。
+            dim_cross_dict: Dict[str, Any] = {}
+            dim_cross_note = ""
+            try:
+                _sx_path = os.path.join(get_cache_dir(), "sixteen_period", "latest_summary.json")
+                if os.path.exists(_sx_path):
+                    with open(_sx_path, "r", encoding="utf-8") as _f:
+                        _sx_full = json.load(_f)
+                    _dc = _sx_full.get("dimension_cross") or {}
+                    if str(_sx_full.get("target_period")) == str(target_issue) and _dc.get("status") == "ok":
+                        dim_cross_dict = _dc
+                    else:
+                        dim_cross_note = f"产物目标期={_sx_full.get('target_period') or '缺失'}，非 {target_issue}"
+                else:
+                    dim_cross_note = "latest_summary 缺失"
+            except Exception as _e:
+                dim_cross_note = f"读取异常: {_e}"
+
+            dc_quadrants_lines: List[str] = []
+            for _key, _label in (
+                ("hot_short_omission", "高频短漏"),
+                ("hot_long_omission", "高频长漏"),
+                ("cold_short_omission", "低频短漏"),
+                ("cold_long_omission", "低频长漏"),
+            ):
+                _q = ((dim_cross_dict.get("cross_matrix") or {}).get("quadrants") or {}).get(_key) or {}
+                _qn = [int(x) for x in (_q.get("nums") or [])]
+                _qn_str = "-".join(f"{x:02d}" for x in _qn) if _qn else "无"
+                dc_quadrants_lines.append(f"{_label} {_qn_str}（{_q.get('count', 0)}码）")
+
+            _dp = dim_cross_dict.get("dimension_profile") or {}
+            _tail_rows = _dp.get("tail") or []
+            _tail_cover = sum(1 for _t in _tail_rows if int(_t.get("count") or 0) > 0)
+            _tail_hot = "、".join(str(_t["tail"]) for _t in _tail_rows if _t.get("flag") == "聚集") or "无"
+            _tail_cold = "、".join(str(_t["tail"]) for _t in _tail_rows if _t.get("flag") == "空缺") or "无"
+            _roads = _dp.get("road") or []
+            _road_str = ":".join(str(int(_r.get("count") or 0)) for _r in _roads) or "无"
+            _prime = _dp.get("prime") or {}
+            _prime_str = (
+                f"质{_prime.get('prime', {}).get('count', 0)}"
+                f"/合{_prime.get('composite', {}).get('count', 0)}"
+                f"/中{_prime.get('neutral', {}).get('count', 0)}"
+            )
+
+            _op = dim_cross_dict.get("optimal_picks") or {}
+            _op_picks = [int(x) for x in (_op.get("picks") or [])]
+            _op_picks_str = " ".join(f"{x:02d}" for x in _op_picks) if _op_picks else "无"
+            _op_feasible = "满足" if _op.get("feasible") else "冲突"
+            _cd = _op.get("constraint_detail") or {}
+            _op_road = ":".join(str(int((_cd.get("road_counts") or {}).get(str(_r), 0))) for _r in range(3))
+
+            arb_dict: Dict[str, Any] = {}
+            arb_note = ""
+            try:
+                from backend.modules.sixteen.dimension_cross import get_dimension_arbitrage
+                from backend.modules.sixteen.sixteen_engine import load_draws_from_file
+                arb_dict = get_dimension_arbitrage(
+                    load_draws_from_file(), n_periods=200, pick_size=20, restarts=25,
+                )
+                if arb_dict.get("status") != "ok":
+                    arb_note = str(arb_dict.get("message") or "仲裁失败")
+            except Exception as _e:
+                arb_note = f"仲裁读取异常: {_e}"
+
+            arb_lines: List[str] = []
+            for _key, _label in (
+                ("momentum", "纯动量"),
+                ("constrained", "动量+维度约束"),
+                ("rebound", "遗漏甜区回补"),
+            ):
+                _tr = (arb_dict.get("tracks") or {}).get(_key) or {}
+                if not _tr:
+                    continue
+                _sig = "✅显著" if _tr.get("significant") else "不显著"
+                arb_lines.append(
+                    f"{_label} {_tr.get('hit_rate_pct')}%(lift {_tr.get('lift')}，p={_tr.get('p')}，{_sig})"
+                )
+            arb_str = " ｜ ".join(arb_lines) if arb_lines else f"无仲裁数据{arb_note}"
+            arb_verdict = arb_dict.get("verdict") or arb_note or "无仲裁结论"
+            arb_meta = (
+                f"样本 {arb_dict.get('n_periods')} 期 · 口径 {arb_dict.get('pick_size')} 码"
+                if arb_dict.get("n_periods") else ""
+            )
+
             # ── 写报告 ──
             with open(report_path, 'w', encoding='utf-8') as f:
                 f.write(f"# 快乐8 核心研判与审计报告 (工业级深度融合版)\n")
@@ -584,6 +670,14 @@ class FullReportEngine:
                     f.write(f"- **👑 全场至尊核心金胆**：`{sup_g:02d}` (综合共识评分: `{sup_sc}`)\n")
                 f.write(f"- **🌟 共振金牌来源**：`{' + '.join(sup_src) if sup_src else '数据缺失'}`\n")
                 f.write(f"- **💎 Meta-Gold 五维金胆梯队**：`{'-'.join(f'{x:02d}' for x in mg_t5) if mg_t5 else '数据缺失'}`\n\n")
+
+                f.write(f"### 0.6. 🧭 16 期窗口维度交叉研究 (出现次数 × 剩余次数 × 尾数/012路/质合)\n\n")
+                f.write(f"> **大白话**：把 16 期窗口里每个号码的「出现次数」与「剩余次数（遗漏）」交叉成矩阵，定位结构性机会；再对照理论基线看尾数/012路/质合有没有聚集或空缺；最后用硬约束选 20 码，并用 200 期样本外回测仲裁哪条轨更优。\n\n")
+                f.write(f"- **结构象限**：{' ｜ '.join(dc_quadrants_lines) if dc_quadrants_lines else '无交叉矩阵'}\n")
+                f.write(f"- **中热池维度画像**：尾数覆盖 {_tail_cover}/10（聚集 {_tail_hot}，空缺 {_tail_cold}）｜012路 {_road_str}｜{_prime_str}\n")
+                f.write(f"- **动量+维度硬约束最优 20 码**：`{_op_picks_str}`（尾数覆盖 {_cd.get('tail_coverage', 0)}/≥8，012路 {_op_road}/6~8，质数 {_cd.get('prime_count', 0)}/4~8，约束{_op_feasible}）\n")
+                f.write(f"- **三轨样本外仲裁**（{arb_meta}）：{arb_str}\n")
+                f.write(f"- **仲裁判词**：{arb_verdict}\n\n")
 
                 f.write(f"### 1. 三维融合 极秘推荐 (Trinity Fusion)\n")
                 w_curr_str = " ".join([f"{k}:{v:.2f}" for k, v in current_weights.items()])

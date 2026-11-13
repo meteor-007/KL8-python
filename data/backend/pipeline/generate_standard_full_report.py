@@ -925,6 +925,101 @@ class StandardDailyReportEngine:
         # A辅 = 微信桶频3/4/5 确定性混剪六码
         ops_a_aux = _num_list((ops.get("scoring_contrast") or {}).get("method2_six"))
 
+        # 14b. 16 期维度交叉研究 (出现次数×剩余次数 × 尾数/012路/质合)
+        #      结论取自 latest_summary.json 的 dimension_cross（与 GPUs 大屏同源），
+        #      仲裁结论取自 dimension_arbitrage_latest.json（7 天缓存，避免每晚重跑 200 期）。
+        dim_cross: Dict[str, Any] = {}
+        dim_cross_note = ""
+        try:
+            _sx_path = os.path.join(self.proj_dir, "storage", "cache", "sixteen_period", "latest_summary.json")
+            if os.path.exists(_sx_path):
+                with open(_sx_path, "r", encoding="utf-8") as _f:
+                    _sx_full = json.load(_f)
+                _dc = _sx_full.get("dimension_cross") or {}
+                if str(_sx_full.get("target_period")) == str(target) and _dc.get("status") == "ok":
+                    dim_cross = _dc
+                else:
+                    dim_cross_note = f"产物目标期={_sx_full.get('target_period') or '缺失'}，非 {target}"
+            else:
+                dim_cross_note = "latest_summary 缺失"
+        except Exception as _e:
+            dim_cross_note = f"读取异常: {_e}"
+
+        dc_quadrants: List[str] = []
+        for _key, _label in (
+            ("hot_short_omission", "高频短漏"),
+            ("hot_long_omission", "高频长漏"),
+            ("cold_short_omission", "低频短漏"),
+            ("cold_long_omission", "低频长漏"),
+        ):
+            _q = ((dim_cross.get("cross_matrix") or {}).get("quadrants") or {}).get(_key) or {}
+            _qn = _num_list(_q.get("nums"))
+            dc_quadrants.append(f"{_label} {_covers(_qn, '无')}({_q.get('count', 0)}码)")
+        dc_quadrants_str = " ｜ ".join(dc_quadrants) if dc_quadrants else "无交叉矩阵"
+
+        _dp = dim_cross.get("dimension_profile") or {}
+        _tail_rows = _dp.get("tail") or []
+        _tail_cover = sum(1 for _t in _tail_rows if int(_t.get("count") or 0) > 0)
+        _tail_hot = [str(_t["tail"]) for _t in _tail_rows if _t.get("flag") == "聚集"]
+        _tail_cold = [str(_t["tail"]) for _t in _tail_rows if _t.get("flag") == "空缺"]
+        _roads = _dp.get("road") or []
+        _road_str = ":".join(str(int(_r.get("count") or 0)) for _r in _roads) or "无"
+        _prime = _dp.get("prime") or {}
+        _prime_str = (
+            f"质{_prime.get('prime', {}).get('count', 0)}"
+            f"/合{_prime.get('composite', {}).get('count', 0)}"
+            f"/中{_prime.get('neutral', {}).get('count', 0)}"
+        )
+        _tail_hot_str = _covers(_tail_hot, "无聚集") if _tail_hot else "无"
+        _tail_cold_str = _covers(_tail_cold, "无空缺") if _tail_cold else "无"
+        dc_profile_str = (
+            f"尾数覆盖 {_tail_cover}/10（聚集 {_tail_hot_str}，空缺 {_tail_cold_str}）"
+            f"｜012路 {_road_str}｜{_prime_str}"
+            if _tail_rows else "无维度画像"
+        )
+
+        _op = dim_cross.get("optimal_picks") or {}
+        _op_picks = _num_list(_op.get("picks"))
+        _op_feasible = "满足" if _op.get("feasible") else "冲突"
+        _cd = _op.get("constraint_detail") or {}
+        _op_road = ":".join(str(int((_cd.get("road_counts") or {}).get(str(_r), 0))) for _r in range(3))
+        dc_opt_str = (
+            f"`{_covers(_op_picks, '无')}`（尾数覆盖 {_cd.get('tail_coverage', 0)}/≥8，"
+            f"012路 {_op_road}/6~8，质数 {_cd.get('prime_count', 0)}/4~8，约束{_op_feasible}）"
+            if _op_picks else f"无约束选号{dim_cross_note and '（' + dim_cross_note + '）' or ''}"
+        )
+
+        arb: Dict[str, Any] = {}
+        arb_note = ""
+        try:
+            from backend.modules.sixteen.dimension_cross import get_dimension_arbitrage
+            from backend.modules.sixteen.sixteen_engine import load_draws_from_file
+            arb = get_dimension_arbitrage(load_draws_from_file(), n_periods=200, pick_size=20, restarts=25)
+            if arb.get("status") != "ok":
+                arb_note = str(arb.get("message") or "仲裁失败")
+        except Exception as _e:
+            arb_note = f"仲裁读取异常: {_e}"
+
+        arb_lines: List[str] = []
+        for _key, _label in (
+            ("momentum", "纯动量"),
+            ("constrained", "动量+维度约束"),
+            ("rebound", "遗漏甜区回补"),
+        ):
+            _tr = (arb.get("tracks") or {}).get(_key) or {}
+            if not _tr:
+                continue
+            _sig = "✅显著" if _tr.get("significant") else "不显著"
+            arb_lines.append(
+                f"{_label} {_tr.get('hit_rate_pct')}%(lift {_tr.get('lift')}，p={_tr.get('p')}，{_sig})"
+            )
+        arb_str = " ｜ ".join(arb_lines) if arb_lines else f"无仲裁数据{arb_note and '（' + arb_note + '）' or ''}"
+        arb_verdict = arb.get("verdict") or arb_note or "无仲裁结论"
+        arb_meta = (
+            f"样本 {arb.get('n_periods')} 期 · 口径 {arb.get('pick_size')} 码"
+            if arb.get("n_periods") else ""
+        )
+
         # 14c. 点位012压缩器 (当期)
         prc = b.get("point_road_compressor", {}) if _period_ok(b.get("point_road_compressor", {}), target) else {}
         prc_top3 = _num_list(prc.get("top3_gold"))
@@ -1239,6 +1334,12 @@ class StandardDailyReportEngine:
 - **【A-主 · 算法死答案 (ops tip3)】**：最优3码 **`{_covers(ops_tip3, "16期产物缺失")}`** ｜ 回补金银铜：`{_covers(ops_rb, "无")}` ｜ 选2：`{' / '.join(ops_pairs) or MISSING}`
 - **【A-辅 · 微信桶频3/4/5 确定性混剪六码】**：**`{_covers(ops_a_aux, "16期产物缺失")}`**
 - **【B-主 · 方法2 主核 (辅轨·不替换 A-主)】**：**`{_covers(ops_m2, "16期产物缺失")}`** ｜ 选2：**`{' / '.join(ops_m2_pairs) or MISSING}`**
+- **【C · 维度交叉研究 (出现次数×剩余次数 × 尾数/012路/质合)】**
+  - **结构象限**：{dc_quadrants_str}
+  - **中热池维度画像**：{dc_profile_str}
+  - **动量+维度硬约束最优 20 码**：{dc_opt_str}
+  - **三轨样本外仲裁**（{arb_meta}）：{arb_str}
+  - **仲裁判词**：{arb_verdict}
 
 ---
 

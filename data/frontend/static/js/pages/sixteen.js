@@ -395,8 +395,103 @@
       chartHandles.sixteenDistChart.resize();
     };
 
+    // ── 维度交叉研究（出现次数 × 剩余次数 × 尾数/012路/质合）──
+    const dimensionCross = computed(() => (sixteenSummary.value || {}).dimension_cross || {});
+    const crossMatrixView = computed(() => {
+      const cm = dimensionCross.value.cross_matrix || {};
+      const rows = cm.rows || [];
+      const cols = cm.cols || [];
+      const matrix = cm.matrix || {};
+      const cells = [];
+      let maxCount = 1;
+      rows.forEach((r) => cols.forEach((c) => {
+        const cell = (matrix[r] || {})[c] || { count: 0, nums: [], avg_midhot: 0 };
+        if (cell.count > maxCount) maxCount = cell.count;
+        cells.push({
+          row: r, col: c, count: cell.count,
+          nums: cell.nums || [], avgMidhot: cell.avg_midhot || 0,
+        });
+      }));
+      const quadrants = Object.entries(cm.quadrants || {}).map(([key, q]) => ({
+        key, label: q.label, desc: q.desc, count: q.count, nums: q.nums || [],
+      }));
+      return { rows, cols, cells, quadrants, maxCount, note: cm.note || '' };
+    });
+    const dimensionProfile = computed(() => (dimensionCross.value.dimension_profile || {}));
+    const dimTailView = computed(() => {
+      const t = dimensionProfile.value.tail || [];
+      const max = Math.max(1, ...t.map((x) => x.count));
+      return t.map((x) => ({ ...x, pct: Math.round(x.count / max * 100) }));
+    });
+    const dimRoadView = computed(() => {
+      const t = dimensionProfile.value.road || [];
+      const max = Math.max(1, ...t.map((x) => x.count));
+      return t.map((x) => ({ ...x, pct: Math.round(x.count / max * 100) }));
+    });
+    const dimPrimeView = computed(() => (dimensionProfile.value.prime || {}));
+    const optimalPicksView = computed(() => {
+      const op = dimensionCross.value.optimal_picks || {};
+      return {
+        picks: op.picks || [],
+        feasible: !!op.feasible,
+        violation: op.violation || 0,
+        totalScore: op.total_midhot_score || 0,
+        poolScope: op.pool_scope || '',
+        constraintDetail: op.constraint_detail || {},
+        detail: op.detail || [],
+      };
+    });
+    const crossCellClass = (cell) => {
+      if (!cell.count) return 'text-slate-700';
+      const ratio = cell.count / Math.max(1, crossMatrixView.value.maxCount);
+      if (ratio > 0.7) return 'text-rose-300 font-bold bg-rose-500/15';
+      if (ratio > 0.4) return 'text-amber-300 bg-amber-500/10';
+      if (ratio > 0.15) return 'text-cyan-300 bg-cyan-500/10';
+      return 'text-slate-400';
+    };
+    const crossCellTitle = (cell) => {
+      if (!cell.count) return '';
+      return `${cell.nums.map((n) => String(n).padStart(2, '0')).join(' ')}\n平均动量 ${cell.avgMidhot}`;
+    };
+
+    // ── 三轨回测仲裁 ──
+    const arbitrageResult = ref(null);
+    const arbitrageLoading = ref(false);
+    const runDimensionArbitrage = async () => {
+      arbitrageLoading.value = true;
+      arbitrageResult.value = null;
+      try {
+        const res = await fetch('/api/sixteen/dimension-arbitrage?n=200&size=20&restarts=25');
+        if (res.ok) arbitrageResult.value = await res.json();
+      } catch (err) {
+        console.error('维度仲裁回测失败:', err);
+      } finally {
+        arbitrageLoading.value = false;
+      }
+    };
+    const arbitrageTracks = computed(() => {
+      const tracks = (arbitrageResult.value || {}).tracks || {};
+      return Object.entries(tracks).map(([key, v]) => ({
+        key, ...v,
+        label: { momentum: '纯动量', constrained: '动量+维度约束', rebound: '遗漏甜区回补' }[key] || key,
+      }));
+    });
+
     return {
       sixteenSummary,
+      dimensionCross,
+      crossMatrixView,
+      dimensionProfile,
+      dimTailView,
+      dimRoadView,
+      dimPrimeView,
+      optimalPicksView,
+      crossCellClass,
+      crossCellTitle,
+      arbitrageResult,
+      arbitrageLoading,
+      arbitrageTracks,
+      runDimensionArbitrage,
       sixteenReview,
       sixteenReviewPeriods,
       sixteenHistory,

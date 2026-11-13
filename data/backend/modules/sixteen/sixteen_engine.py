@@ -2000,6 +2000,13 @@ class SixteenPeriodEngine:
             dist_history=dist_history_table_desc,
             freq_bucket_picks=freq_bucket_picks,
         )
+        # 维度交叉研究：出现次数×剩余次数矩阵 + 尾数/012路/质合画像 + 约束优化选号
+        try:
+            from backend.modules.sixteen.dimension_cross import analyze_dimension_cross
+            dimension_cross = analyze_dimension_cross(self.draws, target_idx=target_idx)
+        except Exception:
+            logger.exception("维度交叉研究计算失败")
+            dimension_cross = {}
         # 刚开期对账：上一窗（预测 latest_period）的出窗同源 vs 动量精选
         if target_idx >= WINDOW_SIZE:
             prev_window = self.draws[target_idx - WINDOW_SIZE : target_idx]
@@ -2117,6 +2124,7 @@ class SixteenPeriodEngine:
             "freq_bucket_picks": freq_bucket_picks,
             "daily_ops_brief": daily_ops_brief,
             "bucket_dimension_board": bucket_dimension_board,
+            "dimension_cross": dimension_cross,
             "meta": {
                 "window_size": WINDOW_SIZE,
                 "medium_hot_range": "3-6次",
