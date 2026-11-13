@@ -319,7 +319,11 @@ class TestRealHistoricalDataStressAndAntiFuture(unittest.TestCase):
     """
 
     def setUp(self):
-        self.history_file = os.path.join(PROJ_DIR, "kl8_history_final.txt")
+        # 开奖历史在 storage/raw/ 下，不在项目根。
+        # 之前写的是 os.path.join(PROJ_DIR, "kl8_history_final.txt")，文件根本不存在，
+        # load_historical_draws 返回空列表 → 下面两个测试静默 skip —— 一直"通过"，实则从未跑过。
+        from backend.utils.paths import data_path
+        self.history_file = data_path("kl8_history_final.txt")
         self.draws = load_historical_draws(self.history_file)
         self.pipeline = FeatureEngineeringPipeline(data_root=PROJ_DIR)
 
@@ -341,15 +345,15 @@ class TestRealHistoricalDataStressAndAntiFuture(unittest.TestCase):
                 # 强校验必须无条件通过
                 self.assertTrue(bundle.validate())
                 self.assertEqual(bundle.target_period, target_period)
-                self.assertEqual(len(bundle.killed_numbers), 20)
-                self.assertEqual(int(np.sum(~bundle.defense_mask)), 20)
 
-                # 校验十年区间分布
-                decade_counts = [0] * 8
-                for k in bundle.killed_numbers:
-                    decade_counts[(k - 1) // 10] += 1
-                for d_idx, c in enumerate(decade_counts):
-                    self.assertLessEqual(c, 4, f"Period {target_period}: 区间 {d_idx} 杀号 {c} 超过 4 码")
+                # KillSeeker 已下架（见 feature_extractors.DefenseMaskExtractor 文档）：
+                # 不再产生任何杀号，防守掩码恒为全 True。这里校验的是**当前契约**。
+                # 若将来重新启用杀号，本断言会失败 —— 届时请把 decade 分布（每区 ≤4 码）
+                # 等约束一并补回来，而不是简单删掉断言。
+                self.assertEqual(bundle.killed_numbers, [],
+                                 f"{target_period}: KillSeeker 已下架，杀号应恒为空")
+                self.assertTrue(bool(np.all(bundle.defense_mask)),
+                                f"{target_period}: 防守掩码应全 True")
 
     def test_strict_anti_future_leakage_across_all_extractors(self):
         """【防未来数据渗透对抗验证】：向输入数据塞入当期及未来开奖，提取结果必须与严格截断历史完全一致"""

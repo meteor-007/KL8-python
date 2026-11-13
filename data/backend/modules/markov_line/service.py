@@ -232,7 +232,7 @@ def _generate_markdown_report(data: Dict[str, Any], file_path: str) -> None:
         "---",
         "",
         "## 二、 自动寻优与直线校准闭环（自适应调参拉直至 y=x）",
-        f"- **最优半衰期 $\lambda^*$**：`{tuning.get('best_half_life', 45.0)}` 期（动态匹配近期大环境）",
+        f"- **最优半衰期 $\\lambda^*$**：`{tuning.get('best_half_life', 45.0)}` 期（动态匹配近期大环境）",
         f"- **最优平滑系数 $\\alpha^*$**：`{tuning.get('best_alpha', 0.08)}`（防死心眼与噪声抑制）",
         f"- **二阶转移权重 $\\beta^*$**：`{tuning.get('best_beta', 0.25)}`（高阶惯性融合比率）",
         f"- **拟合直线方程**：$y = {eq_str}$",

@@ -64,10 +64,14 @@ reproducibility:
 
 # 易变字段：数据新鲜度依赖「运行当天」的日期，逐字节比对前先归一
 _STALENESS_RE = re.compile(r"^- \*\*数据新鲜度\*\*：.*$", re.MULTILINE)
+# 「距今日 N 天」同理：沙箱里的开奖日期是固定的 2025-05-30，但天数按真实当天算，
+# 每过一天这个数就 +1。只归一化上面那一行的话，本测试每天都会失败一次。
+_DAYS_SINCE_RE = re.compile(r"距今日\s*\d+\s*天")
 
 
 def normalize(md: str) -> str:
-    return _STALENESS_RE.sub("- **数据新鲜度**：<STALENESS>", md)
+    md = _STALENESS_RE.sub("- **数据新鲜度**：<STALENESS>", md)
+    return _DAYS_SINCE_RE.sub("距今日 <N> 天", md)
 
 
 # ── 固定输入 ─────────────────────────────────────────────────
@@ -131,7 +135,9 @@ def test_report_golden_is_byte_identical():
         pytest.skip(f"黄金文件缺失：{path}（用 python tests/test_golden.py --update 生成）")
 
     actual = render_golden_text()
-    expected = path.read_text(encoding="utf-8").replace("\r\n", "\n")
+    # 黄金文件同样过一遍归一化：里面的「距今日 N 天」是生成当天写死的，
+    # 不归一化就会和新算出来的值永远对不上。
+    expected = normalize(path.read_text(encoding="utf-8").replace("\r\n", "\n"))
 
     assert actual == expected, (
         "报告与黄金文件不一致。若是**有意的**输出变更，请审查 diff 后运行 "
