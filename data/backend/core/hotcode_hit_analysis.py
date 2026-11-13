@@ -33,7 +33,6 @@ if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
 from utils.paths import get_project_root, data_path, _ensure_project_path
 _ensure_project_path()
 _PROJ = get_project_root()
-HISTORY_FILE = os.path.join(_PROJ, 'kl8_history_final.txt')
 HOT_DIR = os.path.join(_PROJ, '热码统计')
 REPORT_DIR = os.path.join(get_reports_dir())
 CACHE_DIR = os.path.join(get_cache_dir())

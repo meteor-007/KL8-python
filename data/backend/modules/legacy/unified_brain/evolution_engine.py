@@ -35,7 +35,7 @@ from .loss_and_backprop import (
 )
 
 # 路径常量定义
-# 模块迁入 _retired/ 后目录层数变了，改为向上回溯到真正的项目根（同时含 backend / frontend / storage）
+# 模块迁入 legacy/ 后目录层数变了，改为向上回溯到真正的项目根（同时含 backend / frontend / storage）
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 while not (os.path.isdir(os.path.join(_BASE_DIR, "backend"))
            and os.path.isdir(os.path.join(_BASE_DIR, "frontend"))

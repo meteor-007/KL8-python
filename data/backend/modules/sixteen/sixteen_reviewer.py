@@ -59,7 +59,14 @@ class SixteenPeriodReviewer:
         top10_hit_total = 0
         ops5_hit_total = 0
         ops12_hit_total = 0
+        # 操盘轨的 top5 / top12 已是「兼容旧字段」，真实内容都是 tip3 那 3 个号
+        # （见 sixteen_engine: `top5 = list(tip3)` / `top12 = list(tip3)`）。
+        # 期望命中必须按**实际篮子长度**算，不能按字段名里的 5 / 12 算，
+        # 否则 lift 会被凭空除以 1.25 / 3.0，把一个 1.04x 的中性结果渲染成 0.26x。
+        ops5_exp_total = 0.0
+        ops12_exp_total = 0.0
         tip3_hit_total = 0
+        tip3_exp_total = 0.0
         tip3_v3_hit_total = 0
         ops5_v3_hit_total = 0
         tip3_v3_eval = 0
@@ -155,7 +162,10 @@ class SixteenPeriodReviewer:
             top10_hit_total += top10_hits
             ops5_hit_total += ops5_hits
             ops12_hit_total += ops12_hits
+            ops5_exp_total += len(ops5) * 0.25
+            ops12_exp_total += len(ops12) * 0.25
             tip3_hit_total += tip3_hits
+            tip3_exp_total += len(tip3) * 0.25
             edge4_hit_total += edge4_hits
             edge4_pick_total += edge4_n
             mid4_hit_total += mid4_hits
@@ -308,11 +318,14 @@ class SixteenPeriodReviewer:
                 "top5_avg_hits": top5_avg,
                 "top5_lift": top5_lift,
                 "ops_top5_avg_hits": round(ops5_hit_total / n, 2),
-                "ops_top5_lift": round((ops5_hit_total / n) / 1.25, 2),
+                "ops_top5_basket_size": round(ops5_exp_total / n / 0.25, 2),
+                "ops_top5_lift": round(ops5_hit_total / ops5_exp_total, 2) if ops5_exp_total else None,
                 "ops_top12_avg_hits": round(ops12_hit_total / n, 2),
-                "ops_top12_lift": round((ops12_hit_total / n) / 3.0, 2),
+                "ops_top12_basket_size": round(ops12_exp_total / n / 0.25, 2),
+                "ops_top12_lift": round(ops12_hit_total / ops12_exp_total, 2) if ops12_exp_total else None,
                 "ops_tip3_avg_hits": round(tip3_hit_total / n, 2),
-                "ops_tip3_lift": round((tip3_hit_total / n) / 0.75, 2),
+                "ops_tip3_basket_size": round(tip3_exp_total / n / 0.25, 2),
+                "ops_tip3_lift": round(tip3_hit_total / tip3_exp_total, 2) if tip3_exp_total else None,
                 "ops_pts_v3_contrast": {
                     "tip3_avg_hits": round(tip3_v3_hit_total / tip3_v3_eval, 2) if tip3_v3_eval else None,
                     "top5_avg_hits": round(ops5_v3_hit_total / ops5_v3_eval, 2) if ops5_v3_eval else None,

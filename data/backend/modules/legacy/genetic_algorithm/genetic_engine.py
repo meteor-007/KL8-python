@@ -29,7 +29,7 @@ from typing import List, Dict, Any, Tuple, Optional
 
 # 路径初始化
 _CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-# 模块迁入 _retired/ 后目录层数变了，改为向上回溯到真正的项目根（同时含 backend 与 storage 的目录）
+# 模块迁入 legacy/ 后目录层数变了，改为向上回溯到真正的项目根（同时含 backend 与 storage 的目录）
 _ROOT_DIR = _CURRENT_DIR
 while not (os.path.isdir(os.path.join(_ROOT_DIR, "backend"))
            and os.path.isdir(os.path.join(_ROOT_DIR, "frontend"))

@@ -18,7 +18,7 @@
   Layer 6: 跟随星号验证 — Excel星号号码的命中率回测
   Final:   综合精选 — 多层信号叠加，输出5个最优稳定命中
 """
-from backend.utils.paths import get_reports_dir
+from backend.utils.paths import get_reports_dir, data_path
 import sys
 import os
 import re
@@ -45,7 +45,10 @@ def load_history():
 def load_points():
     """加载点位数据"""
     points = {}
-    path = os.path.join(_data_dir, 'daily_points.txt')
+    # 这两个文件在 storage/raw/ 下，不在 backend/core/。
+    # 原先写 os.path.join(_data_dir, ...)，本函数每次调用都 FileNotFoundError ——
+    # 而它挂在点位落库的自动联动里，等于那一步长期在静默失败。
+    path = data_path('daily_points.txt')
     with open(path, 'r', encoding='utf-8') as f:
         for line in f:
             line = line.strip()
@@ -62,7 +65,7 @@ def load_points():
 def load_excel_stars():
     """从Excel跟随号码统计表读取Data1星号号码（热码标记）"""
     import openpyxl
-    path = os.path.join(_data_dir, '跟随+点位+开奖数据.xlsx')
+    path = data_path('跟随+点位+开奖数据.xlsx')
     wb = openpyxl.load_workbook(path, data_only=True, read_only=True)
     ws = wb['跟随号码统计']
     grid = list(ws.iter_rows(values_only=True))

@@ -25,7 +25,6 @@ if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
 from utils.paths import get_project_root, data_path, _ensure_project_path
 _ensure_project_path()
 _PROJ = get_project_root()
-HISTORY_FILE = os.path.join(_PROJ, 'kl8_history_final.txt')
 SELF_LEARNING_FILE = os.path.join(get_cache_dir(), 'self_learning_state.json')
 ZONE_RANGES = [(i*10+1, (i+1)*10) for i in range(8)]
 THEORY_DENSITY = 20.0/80.0

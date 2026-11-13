@@ -618,6 +618,30 @@ def task3952_harvest():
         warn(f'逐模块预测收割失败: {e}')
 
 
+def task3952b_research_sync():
+    """把已立预注册的研究实验与前瞻账同步（只同步，不判定）。
+
+    研究结论必须来自「先立规矩、再收数据、到期按规矩判」，
+    所以这一步只负责喂数据；判定由 research_harness.evaluate() 按预注册规则做，
+    任何地方都不许在这里改规则或提前下结论。
+    """
+    try:
+        from backend.utils.research_harness import sync_all_from_forward_ledger, list_experiments
+        synced = sync_all_from_forward_ledger()
+        if not synced:
+            info('无进行中的预注册实验')
+            return
+        for s in synced:
+            if s.get('added'):
+                ok(f"实验 {s['exp_id']} 新增观察 {s['added']} 期"
+                   f"（累计 {s.get('total_periods')} 期）")
+        for r in list_experiments():
+            if r.get('verdict') not in (None, 'collecting', 'error'):
+                info(f"实验 {r['exp_id']} 判定: {r['verdict']} —— {r.get('reason')}")
+    except Exception as e:
+        warn(f'研究实验同步失败: {e}')
+
+
 # ══════════════════════════════════════════════════════════
 # SECTION 3.953: 30码大底方案滚动回测 (研报动态证据源, OOF + BH-FDR)
 # ══════════════════════════════════════════════════════════
@@ -1062,6 +1086,7 @@ if __name__ == '__main__':
         task395_aggregation()
         task3951_follow_rank()
         task3952_harvest()
+        task3952b_research_sync()
         task3953_thirty_ball_benchmark()
         task3955_module_reconcile()
         task3956_period_review()

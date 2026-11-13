@@ -44,8 +44,11 @@ data:
   python_project:
     enabled: true
     dir: "__SHARED__"
-    points_file: "daily_points.txt"
-    history_file: "kl8_history_final.txt"
+    # 数据文件在共享目录的 storage/raw/ 下（见 backend/modules/kl8_lab/config.yaml）。
+    # 原先写成共享根目录下的裸文件名，是迁移前的旧布局 —— 结果这两个端到端用例
+    # 一直读不到档案，静默 skip，等于从没验证过真实档案链路。
+    points_file: "storage/raw/daily_points.txt"
+    history_file: "storage/raw/kl8_history_final.txt"
     mode: "read_only"
   upload_dir: "data/uploads"
   seed_dir: "data/seed"

@@ -1,0 +1,22 @@
+{
+  "exp_id": "sixteen_top3_hitrate",
+  "title": "16期窗口中热主推 Top3 是否跑赢 25% 基线",
+  "hypothesis": "sixteen_hot 的中热主推最优3码，在样本外每码命中率 > 25%（即 Lift > 1.0）",
+  "primary_metric": "top3_hit_rate",
+  "target_periods": 500,
+  "kill_rule": {
+    "type": "rate_below_baseline"
+  },
+  "baseline": 0.25,
+  "alpha": 0.05,
+  "checkpoints": [
+    120,
+    250
+  ],
+  "notes": "样本量依据：调优后样本外实测约 27.8%（2.8pp 高于基线）。alpha=0.05、power=0.8 下要可靠分辨这一量级效应需约 1500 票；该模块每期 3 票，故 500 期。120/250 期为预设无效性检查点，只允许提前判死，不允许提前判成功。start_period=2026303：此前 46 期已参与调参与观察，不纳入。",
+  "start_period": "2026303",
+  "module_id": "sixteen_hot",
+  "created_at": "2026-11-13T16:19:30",
+  "schema_version": 1,
+  "sha256": "8abc74d0eb8da3c3a503c590545bfaff72300670d8001be9d6390616bef54ba9"
+}

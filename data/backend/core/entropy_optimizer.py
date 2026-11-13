@@ -18,7 +18,6 @@ if os.path.dirname(os.path.dirname(os.path.abspath(__file__))) not in sys.path:
 from utils.paths import get_project_root, data_path, _ensure_project_path
 _ensure_project_path()
 _PROJ = get_project_root()
-HISTORY_FILE = os.path.join(_PROJ, 'kl8_history_final.txt')
 
 def load_history(limit=100):
     """v2.2: 委托给 utils.history_loader，保持返回格式 list[list[int]] 不变。"""

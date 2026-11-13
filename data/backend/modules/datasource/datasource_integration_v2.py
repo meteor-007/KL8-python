@@ -37,8 +37,9 @@ for _p in [_BACKEND, _ROOT]:
 from utils.paths import get_project_root, data_path, _ensure_project_path
 _ensure_project_path()
 _PROJ = get_project_root()
-DATA_FILE = os.path.join(_PROJ, '跟随+点位+开奖数据.xlsx')
-HISTORY_FILE = os.path.join(_PROJ, 'kl8_history_final.txt')
+# 数据文件在 storage/raw/ 下，不在项目根 —— 原先写成 os.path.join(_PROJ, ...)，
+# 每次运行都会走到下面那句「找不到数据文件」。
+DATA_FILE = data_path('跟随+点位+开奖数据.xlsx')
 OUTPUT_DIR = os.path.join(get_reports_dir())
 
 NUM_TOTAL = 80
