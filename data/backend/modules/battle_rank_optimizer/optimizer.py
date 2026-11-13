@@ -170,14 +170,14 @@ class BattleRankOptimizer:
                 if len(all_ranked_nums) >= 10:
                     break
 
-        # 选 1: 综合多期多模块长期胜率赋能后，战力得分绝对最高的金胆
+        # 选 1: 综合多期多模块长期胜率赋能后，战力得分绝对最高的首选号
         pick1_num = all_ranked_nums[0]
         pick1_data = {
-            "tier": "选1 (金胆独尊)",
+            "tier": "选1 (首选独尊)",
             "target": 1,
             "numbers": [pick1_num],
             "leader": pick1_num,
-            "desc": "按各模块历史累计已对账战绩加权，战力总分最高之第一金胆（权重来源尚未通过 BH-FDR 校正，属观察级参考）。"
+            "desc": "按各模块历史累计已对账战绩加权，战力总分最高之第一首选号（权重来源尚未通过 BH-FDR 校正，属观察级参考）。"
         }
 
         # 选 2: 选1 + 跨路对冲最强搭档
@@ -196,7 +196,7 @@ class BattleRankOptimizer:
             "target": 2,
             "numbers": sorted(pick2_nums),
             "pair": f"[{pick1_num:02d}-{pick2_candidate:02d}]",
-            "desc": "长期胜率金胆 + 跨路互补高分搭档，防范单一路数震荡。"
+            "desc": "长期胜率首选号 + 跨路互补高分搭档，防范单一路数震荡。"
         }
 
         # 选 3: 选2 + 第3尖刀
@@ -206,7 +206,7 @@ class BattleRankOptimizer:
                 pick3_nums.append(cand)
                 break
         pick3_data = {
-            "tier": "选3 (尖刀突击)",
+            "tier": "选3 (突击尖兵)",
             "target": 3,
             "numbers": sorted(pick3_nums),
             "desc": "前锋突击组合，集中命中火力突破区间。"

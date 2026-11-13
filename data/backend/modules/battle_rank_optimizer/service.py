@@ -171,7 +171,7 @@ class BattleRankService:
                 lines = sec.strip().splitlines()
                 header = lines[0].strip()
                 for line in lines[1:]:
-                    if any(k in line for k in ["码：", "Top", "大底", "搭档", "最优 3 码", "金胆", "防线", "主力池", "精选中底"]):
+                    if any(k in line for k in ["码：", "Top", "大底", "搭档", "最优 3 码", "首选号", "金胆", "防线", "主力池", "精选中底"]):
                         m = re.findall(r"`([0-9\s]+)`", line)
                         for raw in m:
                             nums = [int(x) for x in re.findall(r"\b([0-7][0-9]|80)\b", raw)]
@@ -259,7 +259,7 @@ class BattleRankService:
             lines.append(f"#### 🔹 【{tier_name}】")
             lines.append(f"- **精选阵容 ({len(nums)}码)**：**`{nums_str}`**")
             if k == 1:
-                lines.append(f"- **第一金胆**：**`{pdata.get('leader', 0):02d}`**")
+                lines.append(f"- **第一首选号**：**`{pdata.get('leader', 0):02d}`**")
             elif k == 2:
                 lines.append(f"- **核心双骄搭档**：**`{pdata.get('pair', '')}`**")
             lines.append(f"- **操盘手量化解析**：{desc}")

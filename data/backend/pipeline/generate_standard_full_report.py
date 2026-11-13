@@ -255,6 +255,60 @@ class StandardDailyReportEngine:
         return ("> ⏹ **本模块已退役**：前瞻账实测未跑赢 25% 随机基线，"
                 "不参与决议与 BH-FDR 校正。以下为历史口径说明，**不产出当期号码**。")
 
+    # 报告小节序号 → 注册表模块 id。
+    # 不用正则从标题里抠名字：标题格式不统一（"(Trinity Fusion)"、"(road_prime_shrink / TPRD v2.0)"），
+    # 抠不准就会静默漏标注 —— 而漏标注的恰恰是读者最容易当真读的那几节。
+    _SECTION_MODULE_IDS = {
+        "1": "formula_jingle", "2": "consensus_straddle", "3": "sixteen_hot",
+        "4": "tri_high", "5": "gold_pick2", "6": "point_suppression",
+        "7": "datasource", "8": "trinity_top5", "9": "psychological_game",
+        "10": "prime_composite", "11": "multi_resonance", "12": "error_correction",
+        "13": "spear_shield", "14": "point_road_compressor",
+        "15": "road_prime_shrink", "16": "point_omission",
+    }
+
+    def _ledger_stats(self) -> Dict[str, Any]:
+        """前瞻账逐模块统计（懒加载一次，避免每节重复读 jsonl 与跑 FDR）。"""
+        if getattr(self, "_stats_cache", None) is None:
+            try:
+                from core.module_gate import module_ledger_report
+                rep = module_ledger_report(min_n=30)
+                self._stats_cache = rep.get("modules", {}) or {}
+            except Exception:
+                self._stats_cache = {}
+        return self._stats_cache
+
+    def module_stat_line(self, module_id: str) -> str:
+        """模块实测对照行：把「理论期望 vs 历史实测」直接摆在号码旁边。
+
+        没有这一行时，「至尊共识第一金胆：40」读起来像一条预测结论；
+        有了它，读者一眼能看到该模块的历史命中率、与 25% 随机基线差多少、
+        以及是否通过显著性检验。这是本报告最重要的上下文。
+        """
+        st = self._ledger_stats().get(module_id)
+        if not isinstance(st, dict) or not st.get("total_picks"):
+            return ""
+
+        picks = st["total_picks"]
+        hits = st.get("total_hits") or 0
+        rate = st.get("pooled_rate")
+        lift = st.get("lift")
+        n_periods = st.get("n_periods") or 0
+
+        if st.get("retired"):
+            verdict = "已退役，不参与校正"
+        elif st.get("bh_significant"):
+            verdict = "**已过 BH-FDR**"
+        elif st.get("insufficient"):
+            verdict = "样本不足，尚无结论"
+        else:
+            verdict = "**未过 BH-FDR，与随机无统计差异**"
+
+        rate_txt = f"{rate * 100:.1f}%" if isinstance(rate, (int, float)) else "—"
+        lift_txt = f"{lift:.2f}x" if isinstance(lift, (int, float)) else "—"
+        return (f"> 📊 **实测对照**：理论基线 25.0% ｜ 历史实测 **{rate_txt}**"
+                f"（{n_periods} 期 / {picks} 票 / 命中 {hits}）｜ Lift **{lift_txt}** ｜ {verdict}")
+
     def gather_all_data(self, target_period: Optional[str] = None) -> Dict[str, Any]:
         """全面归集 22 大模块与全部输入源的真实计算产物"""
         latest_draw, calc_target, target_date = get_latest_draw_and_target()
@@ -997,7 +1051,7 @@ class StandardDailyReportEngine:
 【十全防线 (票数前10)】:  {_covers([n for n, _ in ranked_all[:10]], "无")}
 ──────────────────────────────────────────────────────────────────────────
 【16期中热 A-主 tip3】 :  {_covers(ops_tip3, "无")}
-【三高×点位 金胆】     :  {format_num(tri_gold) if tri_gold else MISSING}
+【三高×点位 首选号】     :  {format_num(tri_gold) if tri_gold else MISSING}
 【定金选2 搭档】       :  {f'[{pick2_top1}]' if pick2_top1 != MISSING else MISSING}
 【选2 票池首选】       :  {_covers(consensus_top[:2], "无 2 票以上共识号")}
 ──────────────────────────────────────────────────────────────────────────
@@ -1118,7 +1172,7 @@ class StandardDailyReportEngine:
 
 > **操盘手大白话说明**：三个裁判（16窗中热冠军底座、三高点位共振、冷热对冲配对）同时举手才算数！拒绝单兵作战，专打胜率对冲。
 
-- 👑 **至尊共识第一金胆**：**`{cs_gold}`**
+- 👑 **共识第一首选号**：**`{cs_gold}`**
 - 🥈 **次席共识银胆**：**`{cs_silver}`** ｜ 🥉 **三席共识铜胆**：**`{cs_bronze}`**
 - 🛡️ **精选 5 码钢铁防线**：**`{cs_defense}`**
 - 💎 **选2冷热对冲阵容（当期报告原样摘录）**：
@@ -1139,7 +1193,7 @@ class StandardDailyReportEngine:
 
 ### 4. 🧬 三高特征 × 每日点位 深度共振引擎 (tri_high)
 
-- 👑 **共振尖刀金胆**：**`{format_num(tri_gold) if tri_gold else MISSING}`**
+- 👑 **共振突击首选号**：**`{format_num(tri_gold) if tri_gold else MISSING}`**
 - 🤝 **黄金选2搭档**：**`{f"{format_num(tri_pair[0])} - {format_num(tri_pair[1])}" if len(tri_pair) >= 2 else MISSING}`**
 - 🌟 **最优 3 码**：**`{_covers(tri_top3, "三高产物缺失")}`**
 - 🎯 **突击 Top 5**：`{_covers(tri_top5, "三高产物缺失")}`
@@ -1149,7 +1203,7 @@ class StandardDailyReportEngine:
 
 ### 5. 💎 定金选2决策推演 (gold_pick2)
 
-- 💎 **核心金胆**：`{pick2_gold}`
+- 💎 **核心首选号**：`{pick2_gold}`
 - 🥇 **动能热胆**：`{pick2_hot}`
 - 👑 **核心选2搭档**：**`[{pick2_top1}]`**
 - 备选搭档梯队：{pick2_alt_str}
@@ -1160,7 +1214,7 @@ class StandardDailyReportEngine:
 
 - **置信等级**：`{supp_level}` ｜ **区域 Lift**：`{supp_lift}`
 - **首重绝杀反弹胆**：**`{supp_lead}`**
-- **反弹 Top 3 金胆**：**`{supp_top3}`**
+- **反弹 Top 3 首选号**：**`{supp_top3}`**
 
 ---
 
@@ -1185,7 +1239,7 @@ class StandardDailyReportEngine:
 
 ### 9. 🧠 心理博弈论与逆向均值回归 (psychological_game)
 
-- **Top 3 逆向金胆**：**`{_covers(psych_top3, "心理博弈产物非当期")}`**
+- **Top 3 逆向首选号**：**`{_covers(psych_top3, "心理博弈产物非当期")}`**
 - **绝望点报复性回补冷门**：`{_covers(psych_cold, "无")}`
 - **单点健康重号**：`{_covers(psych_repeat, "无")}`
 
@@ -1193,13 +1247,13 @@ class StandardDailyReportEngine:
 
 ### 10. 🔢 质合尾数香农熵三大协同推演 (prime_composite)
 
-- **Top 3 金胆**：**`{_covers(prime_top3, "质合产物非当期")}`**（质数反弹前锋）
+- **Top 3 首选号**：**`{_covers(prime_top3, "质合产物非当期")}`**（质数反弹前锋）
 
 ---
 
 ### 11. 🌟 多维共振专家表决 (multi_resonance)
 
-- **至尊金胆 Top 5**：**`{_covers(multi_top5, "多维共振产物非当期")}`**
+- **共识首选号 Top 5**：**`{_covers(multi_top5, "多维共振产物非当期")}`**
 
 ---
 
@@ -1218,7 +1272,7 @@ class StandardDailyReportEngine:
 
 ### 14. 🧭 点位012偏态压缩器 (point_road_compressor) —— 【点位锚定 + 半径扩张 + 偏态剪枝】
 
-> **操盘手大白话说明**：以今日 20 个点位为绝对重心锚点，向外扩散正负 2 划定热力半径，并根据全盘 012 路饱和偏态与局部拥挤度精准剪枝剔除，打造最高纯度纯净金胆！
+> **操盘手大白话说明**：以今日 20 个点位为绝对重心锚点，向外扩散正负 2 划定热力半径，并根据全盘 012 路饱和偏态与局部拥挤度精准剪枝剔除，打造最高纯度的首选组合。
 
 - 🎯 **最优 3 码**：**`{_covers(prc_top3, "点位压缩器产物缺失")}`**
 - 🛡️ **精选 5 码**：`{_covers(prc_top5, "点位压缩器产物缺失")}`
@@ -1231,7 +1285,7 @@ class StandardDailyReportEngine:
 
 > **操盘手大白话说明**：利用决策树提取最管用的出号规则，配合 50 棵随机森林（AI 海选团）对 80 码逐一打分，并引入 100 期共现亲和矩阵加权，实现高共现选2搭档与 20/25/30 码三级金字塔式正交缩水！
 
-- 🎯 **尖刀金胆 Top 3**：**`{_covers(rps_top3, "决策树缩水器产物缺失")}`**
+- 🎯 **突击首选号 Top 3**：**`{_covers(rps_top3, "决策树缩水器产物缺失")}`**
 - 🛡️ **主力精选 Top 5**：`{_covers(rps_top5, "决策树缩水器产物缺失")}`
 - 🤝 **跨路对冲黄金选 2 搭档**：`{rps_pairs_str}`
 - 🔥 **20 码极致实战主力池**：`{format_nums(rps_top20)}`
@@ -1244,7 +1298,7 @@ class StandardDailyReportEngine:
 
 > **操盘手大白话说明**：以今日 20 个点位为底仓，叠加 7 维特征（热度/遗漏反弹/集群/周期/共现/马尔可夫/熵）打分，挑出点位里最可能开的号。
 
-- 🎯 **Top 3 金胆**：**`{_covers(po_top3, po_note or "无")}`**
+- 🎯 **Top 3 首选号**：**`{_covers(po_top3, po_note or "无")}`**
 - 🛡️ **Top 5 精选**：`{_covers(po_top5, po_note or "无")}`
 - 🤝 **5+2 组合**：`{_covers(po_pairs, po_note or "无")}`
 
@@ -1252,7 +1306,7 @@ class StandardDailyReportEngine:
 
 ## 二、research 研究舱 · 各前沿模型独立预测明细
 
-| 模块名称 | 算法核心（大白话） | 核心金胆 Top 3 | 选2搭档 / 特征亮点 |
+| 模块名称 | 算法核心（大白话） | 核心首选号 Top 3 | 选2搭档 / 特征亮点 |
 | :--- | :--- | :---: | :--- |
 {research_table}
 {_retired_note}
@@ -1298,6 +1352,23 @@ class StandardDailyReportEngine:
 {quick_block}
 ```
 """
+
+        # 在每个模块小节标题下补一行「理论期望 vs 历史实测」。
+        # 用后处理而不是逐个改模板：小节有 16 个，模板里逐个插容易漏、也难维护；
+        # 标题格式统一为 `### N. 名称 (module_id)`，一处正则即可全覆盖。
+        def _inject_stat(m: "re.Match") -> str:
+            mid = self._SECTION_MODULE_IDS.get(m.group(2))
+            if not mid:
+                return m.group(1)
+            line = self.module_stat_line(mid)
+            return m.group(1) + (line + "\n" if line else "")
+
+        doc = re.sub(
+            r"^(###\s+(\d+)\.[^\n]*\n)",
+            _inject_stat,
+            doc,
+            flags=re.M,
+        )
         return doc
 
     def generate_and_save(self, target_period: Optional[str] = None) -> Dict[str, str]:

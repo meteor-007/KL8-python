@@ -106,6 +106,6 @@ class TestBattleRankOptimizer:
 
         md = self.service.render_markdown_section_multi_period("2026292", res)
         assert "## 🏆 七、综合多期实战战绩排行榜驱动" in md
-        assert "【选1 (金胆独尊)】" in md
+        assert "【选1 (首选独尊)】" in md
         assert "【选10 (十全大满贯)】" in md
         assert "【快乐8 第 2026292 期" in md
