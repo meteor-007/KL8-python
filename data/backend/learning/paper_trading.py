@@ -125,6 +125,21 @@ def report_oos(rolling: int = 60) -> dict:
         summary['by_module'] = {}
         summary['by_module_error'] = str(e)
 
+    # 序贯检验 (e-value): anytime-valid 早停信号, 只作参考不改判决
+    try:
+        from core.sequential_testing import summarize_ledger
+        seq = summarize_ledger(min_picks=30)
+        summary['sequential'] = {
+            mid: {'e_value': round(v['e_value'], 4),
+                  'anytime_p': round(v['anytime_p'], 4),
+                  'decision': v['decision'],
+                  'n': v['n'], 'hit_rate': v['hit_rate']}
+            for mid, v in seq.items()
+        }
+    except Exception as e:
+        summary['sequential'] = {}
+        summary['sequential_error'] = str(e)
+
     os.makedirs(os.path.dirname(SUMMARY_FILE), exist_ok=True)
     with open(SUMMARY_FILE, 'w', encoding='utf-8') as f:
         json.dump(summary, f, ensure_ascii=False, indent=2)
