@@ -1,0 +1,54 @@
+{
+  "note": "C4 周度建议单的人工裁决层; 由 python -m backend.core.weekly_advisor --apply 写入",
+  "overrides": {
+    "point_suppression": {
+      "status": "votable",
+      "date": "2026-11-20",
+      "who": "量化操盘手",
+      "reason": "近30期样本外实测单码胜率36.00%(Lift=1.44x)，为全系统排名第一的有效正信号",
+      "basis": "近一个月(2026280-2026310)逐期实盘复盘决算"
+    },
+    "prime_composite": {
+      "status": "votable",
+      "date": "2026-11-20",
+      "who": "量化操盘手",
+      "reason": "近30期样本外实测单码胜率34.62%(Lift=1.38x，推78中27)，跑赢随机基线，由观察仓升为有票权",
+      "basis": "近一个月(2026280-2026310)逐期实盘复盘决算"
+    },
+    "multi_resonance": {
+      "status": "votable",
+      "date": "2026-11-20",
+      "who": "量化操盘手",
+      "reason": "近30期样本外实测单码胜率28.80%(Lift=1.15x，推125中36)，表现稳健，升为有票权",
+      "basis": "近一个月(2026280-2026310)逐期实盘复盘决算"
+    },
+    "error_correction": {
+      "status": "retired",
+      "date": "2026-11-20",
+      "who": "量化操盘手",
+      "reason": "近30期样本外实测命中率仅11.11%(Lift=0.44x)，严重拉低大盘，正式退役清零票权",
+      "basis": "近一个月(2026280-2026310)逐期实盘复盘决算"
+    },
+    "deep_assoc_consensus": {
+      "status": "retired",
+      "date": "2026-11-20",
+      "who": "量化操盘手",
+      "reason": "近30期样本外实测命中率仅14.89%(Lift=0.60x)，严重跑输随机基线，正式退役清零票权",
+      "basis": "近一个月(2026280-2026310)逐期实盘复盘决算"
+    }
+  },
+  "applied_log": [
+    {
+      "timestamp": "2026-11-20T23:25:00",
+      "who": "量化操盘手",
+      "action": "近一个月实盘复盘落地：晋升实战排头兵，封禁负贡献模块",
+      "modules_updated": [
+        "point_suppression",
+        "prime_composite",
+        "multi_resonance",
+        "error_correction",
+        "deep_assoc_consensus"
+      ]
+    }
+  ]
+}

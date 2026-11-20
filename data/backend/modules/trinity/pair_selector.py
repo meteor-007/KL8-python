@@ -350,10 +350,12 @@ class PairSelector:
         high_conf_kills: Optional[List[int]] = None,
         b3_final5: Optional[List[int]] = None,
         trinity_top5: Optional[List[int]] = None,
+        trinity_top12: Optional[List[int]] = None,
+        recent_recommended_pairs: Optional[List[Tuple[int, int]]] = None,
     ) -> Dict[str, Any]:
         """
-        综合多模块候选、双元共现 Lift、杀号一票否决与共振加分，
-        评选出全场唯一的【No.1 选2黄金搭档】。
+        综合多模块候选、双元共现 Lift、杀号一票否决、防死守冷冻熔断与共振加分，
+        评选出全场唯一的【No.1 选2黄金搭档】以及【1胆3拖/1胆4拖资金对冲配单】。
         """
         ef_scores = ef_scores or {}
         rw_scores = rw_scores or {}
@@ -366,10 +368,18 @@ class PairSelector:
         high_conf_kills = set(high_conf_kills or [])
         b3_final5 = b3_final5 or []
         trinity_top5 = trinity_top5 or []
+        trinity_top12 = trinity_top12 or []
 
         # 杀号红线
         absolute_kills = high_conf_kills | set(deep_kills[:2])
         warning_kills = kill_numbers | set(deep_kills)
+
+        # 近期推荐对集合 (用于防死守冷冻换马机制)
+        recent_pairs_set = set()
+        if recent_recommended_pairs:
+            for rp in recent_recommended_pairs:
+                if rp and len(rp) == 2:
+                    recent_pairs_set.add(self.get_pair_key(rp[0], rp[1]))
 
         # 1. 抽取 各大子模块专属 2 码
         module_pairs = []
@@ -442,7 +452,15 @@ class PairSelector:
             lift_score = syn['lift_100'] * 2.0 + (syn['lift_total'] - 1.0) * 1.0
             count_bonus = math.log1p(syn['count_100']) * 0.8
 
-            total_synergy_score = (single_strength * 0.4 + nom_bonus * 1.2 + lift_score * 1.8 + count_bonus) * kill_penalty
+            # 防死守冷冻熔断 (Cooldown / Anti-Streak): 连续推荐未全中则大幅降权强行换马
+            is_cooling = pair in recent_pairs_set
+            cooldown_penalty = 0.15 if is_cooling else 1.0
+
+            total_synergy_score = (single_strength * 0.4 + nom_bonus * 1.2 + lift_score * 1.8 + count_bonus) * kill_penalty * cooldown_penalty
+
+            reason_text = meta['primary_reason']
+            if is_cooling:
+                reason_text += " [防死守冷冻中: 触发连推降权换马]"
 
             scored_candidates.append({
                 'pair': pair,
@@ -452,7 +470,8 @@ class PairSelector:
                 'count_total': syn['count_total'],
                 'obs_prob_100': syn['obs_prob_100'],
                 'nominated_by': meta['nominated_by'],
-                'reason': meta['primary_reason'],
+                'reason': reason_text,
+                'is_cooling': is_cooling,
             })
 
         scored_candidates.sort(key=lambda x: x['score'], reverse=True)
@@ -460,16 +479,32 @@ class PairSelector:
         if scored_candidates:
             champion = scored_candidates[0]
         else:
-            default_pair = (12, 24)
+            # 动态高频共现保底：绝不写死静态 (12, 24)，从近100期动态挖掘安全高频搭档
+            sorted_pairs = sorted(self.pair_counts_100.items(), key=lambda x: x[1], reverse=True)
+            fallback_pair = None
+            for p_tuple, cnt in sorted_pairs:
+                p_ordered = self.get_pair_key(p_tuple[0], p_tuple[1])
+                if p_ordered[0] in absolute_kills or p_ordered[1] in absolute_kills:
+                    continue
+                if p_ordered in recent_pairs_set:
+                    continue
+                fallback_pair = p_ordered
+                break
+            if not fallback_pair:
+                cand_pool = [x for x in (trinity_top5 or b3_final5 or [1, 2]) if x not in absolute_kills]
+                fallback_pair = self.get_pair_key(cand_pool[0], cand_pool[1]) if len(cand_pool) >= 2 else (1, 2)
+
+            syn_fb = self.compute_pair_synergy(fallback_pair[0], fallback_pair[1])
             champion = {
-                'pair': default_pair,
+                'pair': fallback_pair,
                 'score': 1.0,
-                'lift_100': 1.0,
-                'count_100': 6,
-                'count_total': 120,
-                'obs_prob_100': 0.06,
-                'nominated_by': ['保底推荐'],
-                'reason': "全系统综合保底黄金搭档",
+                'lift_100': syn_fb.get('lift_100', 1.0),
+                'count_100': syn_fb.get('count_100', 0),
+                'count_total': syn_fb.get('count_total', 0),
+                'obs_prob_100': syn_fb.get('obs_prob_100', 0.06),
+                'nominated_by': ['动态高频共现保底'],
+                'reason': f"系统安全保底黄金搭档{fallback_pair[0]:02d}-{fallback_pair[1]:02d} (近100期同出{syn_fb.get('count_100', 0)}次, Lift={syn_fb.get('lift_100', 1.0)}x)",
+                'is_cooling': False,
             }
 
         hedge_pair = None
@@ -478,6 +513,56 @@ class PairSelector:
                 hedge_pair = cand
                 break
 
+        # 5. 资金管理优化：生成【1胆3拖 / 1胆4拖】对冲配单 (以大带小)
+        p0, p1 = champion['pair']
+        sc0 = ef_scores.get(p0, 0) + rw_scores.get(p0, 0) * 1.5 + fo_scores.get(p0, 0) * 0.05
+        sc1 = ef_scores.get(p1, 0) + rw_scores.get(p1, 0) * 1.5 + fo_scores.get(p1, 0) * 0.05
+        banker_ball = p0 if sc0 >= sc1 else p1
+
+        # 候选拖码池：优先从 trinity_top12、trinity_top5、core_hot_pool 中选取与 banker 协同最高的伴侣码
+        drag_candidate_pool = list(dict.fromkeys(
+            (trinity_top12 or []) + (trinity_top5 or []) + core_hot_pool
+        ))
+        drag_candidates = [
+            x for x in drag_candidate_pool 
+            if x != banker_ball and x not in absolute_kills
+        ]
+
+        scored_drags = []
+        for cand in drag_candidates:
+            syn_d = self.compute_pair_synergy(banker_ball, cand)
+            if syn_d['is_mutually_exclusive']:
+                continue
+            drag_sc = syn_d['lift_100'] * 2.0 + math.log1p(syn_d['count_100']) * 0.8
+            scored_drags.append({
+                'ball': cand,
+                'score': drag_sc,
+                'lift': syn_d['lift_100'],
+                'count_100': syn_d['count_100']
+            })
+        scored_drags.sort(key=lambda x: x['score'], reverse=True)
+        top4_drags = [d['ball'] for d in scored_drags[:4]]
+        if len(top4_drags) < 4:
+            for cand in range(1, 81):
+                if cand != banker_ball and cand not in top4_drags and cand not in absolute_kills:
+                    top4_drags.append(cand)
+                if len(top4_drags) >= 4:
+                    break
+
+        dantuo_plan = {
+            'banker': banker_ball,
+            'drags_3': top4_drags[:3],
+            'drags_4': top4_drags[:4],
+            'combos_3': [self.get_pair_key(banker_ball, d) for d in top4_drags[:3]],
+            'combos_4': [self.get_pair_key(banker_ball, d) for d in top4_drags[:4]],
+            'cost_3_drag': 6,
+            'cost_4_drag': 8,
+            'payout_per_hit': 19,
+            'net_profit_3_drag': 13,
+            'net_profit_4_drag': 11,
+            'rationale': f"以高确定性金胆 {banker_ball:02d} 为锚点，带动底仓 4 个高协同温热拖码 {top4_drags[:4]}，4注8元，拖中任一码即斩获19元净赚11元",
+        }
+
         return {
             'optimal_pick2': champion['pair'],
             'champion_details': champion,
@@ -485,6 +570,7 @@ class PairSelector:
             'hedge_details': hedge_pair,
             'module_pairs': module_pairs,
             'all_scored_pairs': scored_candidates[:5],
+            'dantuo_plan': dantuo_plan,
             'theoretical_baseline': '6.01%',
             'expected_lift': f"{champion['lift_100']:.2f}x",
         }

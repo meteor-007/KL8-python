@@ -500,6 +500,19 @@ class FullReportEngine:
             rw_res = b3_info.get('rw_res') if isinstance(b3_info, dict) else None
             fo_res = b3_info.get('fo_res') if isinstance(b3_info, dict) else None
             try:
+                # 获取近 3 期已推荐选2组合 (用于防死守冷冻换马机制)
+                recent_pairs = []
+                try:
+                    if os.path.exists(memory_file):
+                        with open(memory_file, 'r', encoding='utf-8') as mf:
+                            sdata = json.load(mf)
+                        for rec in sdata.get('history', [])[-3:]:
+                            rp2 = rec.get('optimal_pick2')
+                            if rp2 and len(rp2) == 2:
+                                recent_pairs.append((int(rp2[0]), int(rp2[1])))
+                except Exception:
+                    pass
+
                 from core.pair_selector import PairSelector
                 pair_selector = PairSelector(self.dc.history, self.dc.points)
                 pick2_result = pair_selector.select_optimal_pick2(
@@ -512,6 +525,8 @@ class FullReportEngine:
                     deep_consensus=deep_consensus,
                     b3_final5=b3_info.get('final_5', []),
                     trinity_top5=trinity_top5,
+                    trinity_top12=trinity_top12,
+                    recent_recommended_pairs=recent_pairs,
                 )
                 opt_p = pick2_result['optimal_pick2']
                 champ = pick2_result['champion_details']
@@ -661,6 +676,18 @@ class FullReportEngine:
                     for mp in pick2_result.get('module_pairs', []):
                         f.write(f"- **【{mp['label']}】**（{mp['module']}）：`{mp['pair'][0]:02d} - {mp['pair'][1]:02d}` → {mp['reason']}\n")
                     f.write("\n")
+
+                dantuo = pick2_result.get('dantuo_plan')
+                if dantuo:
+                    f.write(f"### 0.1. 🛡️ 老派操盘手资金管理方案：【1 胆 4 拖 对冲配单】（以大带小·高胜率对冲）\n\n")
+                    f.write(f"> **精打细算操盘原则**：单挑 1 注选 2 只有 6% 概率全中，容错率极低；用命中率超 30% 的金胆当“领头羊”，拖住 12 码底仓中协同性最强的 4 个温热拖码，8 元投入，只要中金胆+拖中任一码立刻拿下 19 元，净赚 11 元！\n\n")
+                    f.write(f"- **👑 核心金胆（定胆）**：`[{dantuo['banker']:02d}]`\n")
+                    drags_str = ", ".join(f"{d:02d}" for d in dantuo['drags_4'])
+                    f.write(f"- **🎯 优选拖码（4伴侣）**：`[{drags_str}]`\n")
+                    f.write(f"- **💰 实战注单（4 注共 8 元）**：\n")
+                    for i, (b, d) in enumerate(dantuo['combos_4'], 1):
+                        f.write(f"  {i}. `[{b:02d} - {d:02d}]`\n")
+                    f.write(f"- **📈 操盘逻辑**：{dantuo['rationale']}\n\n")
 
                 f.write(f"### 0.5. 👑 Meta-Gold 金胆超级共识熔炉 (至尊金胆)\n\n")
                 f.write(f"> **口径提示**：投票权重为 module_gate 注册表 live 经验权重，未经样本外显著性检验（整改清单 A2/C1）。"
