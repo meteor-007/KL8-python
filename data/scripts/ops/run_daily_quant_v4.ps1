@@ -1,4 +1,4 @@
-# 快乐8 每日全流程执行脚本 v4.2 (模块化重构版)
+﻿# 快乐8 每日全流程执行脚本 v4.2 (模块化重构版)
 # ============================================================
 # 用法：在 PowerShell 中执行：
 #   cd D:\Dpanqianyi\Python-Project\data
@@ -28,7 +28,9 @@ function ok  { Write-Host "  OK  $_" -ForegroundColor Green }
 function warn{ Write-Host "  **  $_" -ForegroundColor Yellow }
 function err { Write-Host "  !!  $_" -ForegroundColor Red }
 
-Set-Location "D:\Dpanqianyi\Python-Project\data"
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$DataRoot = Resolve-Path "$ScriptDir\..\.."
+if (Test-Path $DataRoot) { Set-Location $DataRoot } else { Set-Location "d:\project\Python-Project\data" }
 
 Write-Banner "快乐8预测系统 每日全流程分析脚本 v4.2 [模块化标准版] [$(Get-Date -Format 'yyyy-MM-dd HH:mm')]" "Cyan"
 
@@ -94,8 +96,11 @@ Write-Step "任务1.3" "历史数据同步到Excel"
 python backend\data_acquisition\sync_history_to_excel.py
 if ($LASTEXITCODE -eq 0) { ok "历史同步完成" }
 
-# ═══ 任务1.4：点位验证 ═══
-Write-Step "任务1.4" "点位数据验证"
+# ═══ 任务1.4：点位与三高特征Excel自动解析（含平稳降级） ═══
+Write-Step "任务1.4" "点位与三高特征Excel自动解析与入库"
+powershell -ExecutionPolicy Bypass -File "scripts\import_daily_excel.ps1"
+if ($LASTEXITCODE -eq 0) { ok "点位与三高解析处理完成" }
+
 $pointsFile = "daily_points.txt"
 if (-not (Test-Path $pointsFile)) { $pointsFile = "storage\raw\daily_points.txt" }
 if (Test-Path $pointsFile) {

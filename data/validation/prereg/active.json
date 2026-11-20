@@ -1,0 +1,120 @@
+{
+  "registration_id": "KL8-2026-11-13-003",
+  "created_at": "2026-11-13T21:29:58",
+  "status": "active",
+  "hypothesis": "主系统 Top5 每期命中数相对 Hypergeom(80,20,5) 期望 1.25 的 lift 高于 1（物理审计子试验；环境对齐 3.11.6）",
+  "model": "main",
+  "primary_endpoint": "top5_lift",
+  "n_pick": 5,
+  "alpha": 0.05,
+  "planned_periods": 30,
+  "start_period": 2026303,
+  "analysis": "final_only",
+  "mde_lift_at_plan": 0.3426,
+  "baselines": [
+    "same_pool_random",
+    "all80_random"
+  ],
+  "exclusions": [
+    "目标期开奖已入档（禁止补锁）",
+    "代码/配置/数据前缀哈希与登记不一致",
+    "点位缺失或数量不为 20"
+  ],
+  "stopping_rules": [
+    "达到计划期数后做唯一一次正式分析",
+    "代码、配置或数据前缀变化 → 登记立即失效",
+    "计划期数内不因中期结果提前停止或改口径"
+  ],
+  "frozen": {
+    "code_sha256": "a8c9e82cd85b83e0d51cd8f20e1def0be219aef7280526cf2f60630cd6f87e18",
+    "config_sha256": "0773878993a87769089d2e16fc94d68206950a895fed0def2474da35e4d0e1ef",
+    "config": {
+      "data": {
+        "python_project": {
+          "enabled": true,
+          "dir": "${KL8_DATA_DIR:-../Python-Project/data/storage/raw}",
+          "points_file": "daily_points.txt",
+          "history_file": "kl8_history_final.txt",
+          "mode": "read_only"
+        },
+        "upload_dir": "data/uploads",
+        "seed_dir": "data/seed",
+        "cache_dir": "data/cache",
+        "state_dir": "data/state",
+        "log_dir": "data/logs"
+      },
+      "fetch": {
+        "enabled": true,
+        "sources": [
+          "17500",
+          "cwl"
+        ],
+        "timeout_sec": 10,
+        "per_source_limit": 150,
+        "backup_before_write": true
+      },
+      "thresholds": {
+        "norm_method": "rank",
+        "signal_strong": 0.7,
+        "signal_medium": 0.4,
+        "contrarian_gate_z": 0.5,
+        "contrarian_veto": 0.75,
+        "adversarial_refute_max": 0.5,
+        "cyclic_alpha": 0.05,
+        "cyclic_correction": "bonferroni",
+        "remainder_z_alert": 2.0,
+        "entropy_low_quantile": 0.1,
+        "alpha": 0.05,
+        "fdr_method": "bh",
+        "staleness_days_warn": 2,
+        "staleness_days_critical": 4,
+        "svd_permutation_iters": 199
+      },
+      "scoring": {
+        "weights": {
+          "H1": 0.18,
+          "H2": 0.18,
+          "H3": 0.14,
+          "H4": 0.14,
+          "H5": 0.12,
+          "H6": 0.12,
+          "H7": 0.12
+        },
+        "top_n": 5,
+        "diversity_guard": true,
+        "diversity_max_per_zone": 3
+      },
+      "report": {
+        "out_dir": "output",
+        "defensive_picks": 2
+      },
+      "backtest": {
+        "default_n": 60,
+        "warmup_periods": 60,
+        "random_baseline_iters": 1000,
+        "random_seed": 42
+      },
+      "online_learner": {
+        "state_file": "data/state/online_learner_state.json",
+        "algorithm": "exp3",
+        "warmup_periods": 60,
+        "gamma": 0.1,
+        "weight_floor": 0.01
+      },
+      "reproducibility": {
+        "seed": 42
+      }
+    },
+    "data_cutoff_period": 2026302,
+    "history_prefix_sha256": "4d8983c44bc0dc2f12162f7136210f917bbaed2d559932cc139026ed1e925c27",
+    "history_prefix_lines": 2123,
+    "points_prefix_sha256": "9956d193b22465191a90139f6616b59f156dc9273a9e49f99648469bfe3cd1e3",
+    "points_prefix_lines": 338,
+    "environment": {
+      "python": "3.11.6",
+      "requirements_lock_sha256": "19071822342e0fbbe97492ee505e4d1ae7ed66371c374c98a31fee7259d2c951",
+      "requirements_sha256": "fdaddf79f7facefb87d2f5bf8e3d07da344653e0a53573ddf34c41ad0514dad8",
+      "git_commit": "c54d228a47780aadc50c5e44e8833e8ad0fdf999"
+    }
+  }
+}

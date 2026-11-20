@@ -1,0 +1,1592 @@
+{
+  "status": "ok",
+  "target_period": 2026304,
+  "last_period": 2026303,
+  "last_draw": {
+    "period": 2026303,
+    "date": "2026-11-13",
+    "numbers": [
+      1,
+      2,
+      5,
+      14,
+      18,
+      28,
+      38,
+      48,
+      50,
+      53,
+      58,
+      59,
+      61,
+      67,
+      68,
+      69,
+      73,
+      75,
+      79,
+      80
+    ]
+  },
+  "top1": 57,
+  "top3_orthogonal": [
+    57,
+    14,
+    46
+  ],
+  "top5": [
+    57,
+    14,
+    46,
+    30,
+    75
+  ],
+  "top10": [
+    57,
+    30,
+    75,
+    63,
+    14,
+    20,
+    60,
+    71,
+    33,
+    41
+  ],
+  "pick2_grid": [
+    {
+      "name": "A组王牌跨路",
+      "pair": [
+        14,
+        57
+      ],
+      "score": 0.6078
+    },
+    {
+      "name": "A组强粘连线",
+      "pair": [
+        46,
+        57
+      ],
+      "score": 0.603
+    },
+    {
+      "name": "A组三角闭环",
+      "pair": [
+        14,
+        46
+      ],
+      "score": 0.5386
+    },
+    {
+      "name": "B组抽屉对冲",
+      "pair": [
+        30,
+        75
+      ],
+      "score": 0.6309
+    }
+  ],
+  "pool_20": {
+    "balls": [
+      6,
+      8,
+      14,
+      19,
+      20,
+      22,
+      30,
+      31,
+      33,
+      37,
+      41,
+      46,
+      48,
+      57,
+      60,
+      63,
+      65,
+      69,
+      71,
+      75
+    ],
+    "sum": 815,
+    "odd_even": "11:9",
+    "corridor_status": "达标 [760, 860]",
+    "zones": {
+      "zone1": [
+        6,
+        8,
+        14,
+        19,
+        20
+      ],
+      "zone2": [
+        22,
+        30,
+        31,
+        33,
+        37
+      ],
+      "zone3": [
+        41,
+        46,
+        48,
+        57,
+        60
+      ],
+      "zone4": [
+        63,
+        65,
+        69,
+        71,
+        75
+      ],
+      "counts": [
+        5,
+        5,
+        5,
+        5
+      ]
+    }
+  },
+  "pool_25": {
+    "balls": [
+      6,
+      8,
+      14,
+      19,
+      20,
+      22,
+      30,
+      31,
+      33,
+      37,
+      39,
+      41,
+      45,
+      46,
+      48,
+      49,
+      57,
+      59,
+      60,
+      63,
+      65,
+      69,
+      70,
+      71,
+      75
+    ],
+    "zones": {
+      "zone1": [
+        6,
+        8,
+        14,
+        19,
+        20
+      ],
+      "zone2": [
+        22,
+        30,
+        31,
+        33,
+        37,
+        39
+      ],
+      "zone3": [
+        41,
+        45,
+        46,
+        48,
+        49,
+        57,
+        59,
+        60
+      ],
+      "zone4": [
+        63,
+        65,
+        69,
+        70,
+        71,
+        75
+      ],
+      "counts": [
+        5,
+        6,
+        8,
+        6
+      ]
+    }
+  },
+  "pool_30": {
+    "balls": [
+      6,
+      8,
+      14,
+      19,
+      20,
+      22,
+      26,
+      30,
+      31,
+      33,
+      37,
+      39,
+      41,
+      45,
+      46,
+      48,
+      49,
+      53,
+      57,
+      59,
+      60,
+      63,
+      64,
+      65,
+      66,
+      69,
+      70,
+      71,
+      75,
+      77
+    ],
+    "zones": {
+      "zone1": [
+        6,
+        8,
+        14,
+        19,
+        20
+      ],
+      "zone2": [
+        22,
+        26,
+        30,
+        31,
+        33,
+        37,
+        39
+      ],
+      "zone3": [
+        41,
+        45,
+        46,
+        48,
+        49,
+        53,
+        57,
+        59,
+        60
+      ],
+      "zone4": [
+        63,
+        64,
+        65,
+        66,
+        69,
+        70,
+        71,
+        75,
+        77
+      ],
+      "counts": [
+        5,
+        7,
+        9,
+        9
+      ]
+    },
+    "zero_blind_spot": true
+  },
+  "dhm_bets": [
+    {
+      "index": 1,
+      "label": "第01注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        14,
+        30,
+        57,
+        63,
+        75
+      ]
+    },
+    {
+      "index": 2,
+      "label": "第02注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        14,
+        20,
+        30,
+        63,
+        75
+      ]
+    },
+    {
+      "index": 3,
+      "label": "第03注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        14,
+        20,
+        60,
+        63,
+        75
+      ]
+    },
+    {
+      "index": 4,
+      "label": "第04注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        14,
+        20,
+        60,
+        63,
+        71
+      ]
+    },
+    {
+      "index": 5,
+      "label": "第05注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        14,
+        20,
+        33,
+        60,
+        71
+      ]
+    },
+    {
+      "index": 6,
+      "label": "第06注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        20,
+        33,
+        41,
+        60,
+        71
+      ]
+    },
+    {
+      "index": 7,
+      "label": "第07注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        6,
+        33,
+        41,
+        46,
+        71
+      ]
+    },
+    {
+      "index": 8,
+      "label": "第08注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        6,
+        22,
+        31,
+        37,
+        46
+      ]
+    },
+    {
+      "index": 9,
+      "label": "第09注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        8,
+        19,
+        22,
+        31,
+        65
+      ]
+    },
+    {
+      "index": 10,
+      "label": "第10注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        8,
+        19,
+        48,
+        65,
+        69
+      ]
+    },
+    {
+      "index": 11,
+      "label": "第11注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        8,
+        30,
+        57,
+        65,
+        75
+      ]
+    },
+    {
+      "index": 12,
+      "label": "第12注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        30,
+        48,
+        57,
+        69,
+        75
+      ]
+    },
+    {
+      "index": 13,
+      "label": "第13注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        19,
+        57,
+        60,
+        63,
+        65
+      ]
+    },
+    {
+      "index": 14,
+      "label": "第14注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        8,
+        20,
+        33,
+        48,
+        75
+      ]
+    },
+    {
+      "index": 15,
+      "label": "第15注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        6,
+        14,
+        65,
+        69,
+        71
+      ]
+    },
+    {
+      "index": 16,
+      "label": "第16注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        19,
+        37,
+        41,
+        48,
+        60
+      ]
+    },
+    {
+      "index": 17,
+      "label": "第17注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        8,
+        22,
+        33,
+        46,
+        69
+      ]
+    },
+    {
+      "index": 18,
+      "label": "第18注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        6,
+        19,
+        30,
+        31,
+        65
+      ]
+    },
+    {
+      "index": 19,
+      "label": "第19注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        8,
+        37,
+        48,
+        57,
+        63
+      ]
+    },
+    {
+      "index": 20,
+      "label": "第20注",
+      "type": "Pool_20纯血锁定",
+      "balls": [
+        20,
+        22,
+        65,
+        69,
+        75
+      ]
+    },
+    {
+      "index": 21,
+      "label": "第21注",
+      "type": "3α+2β外围耦合",
+      "balls": [
+        6,
+        20,
+        39,
+        45,
+        57
+      ]
+    },
+    {
+      "index": 22,
+      "label": "第22注",
+      "type": "3α+2β外围耦合",
+      "balls": [
+        26,
+        30,
+        46,
+        60,
+        66
+      ]
+    },
+    {
+      "index": 23,
+      "label": "第23注",
+      "type": "3α+2β外围耦合",
+      "balls": [
+        37,
+        59,
+        71,
+        75,
+        77
+      ]
+    },
+    {
+      "index": 24,
+      "label": "第24注",
+      "type": "3α+2β外围耦合",
+      "balls": [
+        31,
+        33,
+        49,
+        63,
+        70
+      ]
+    },
+    {
+      "index": 25,
+      "label": "第25注",
+      "type": "3α+2β外围耦合",
+      "balls": [
+        14,
+        22,
+        41,
+        53,
+        64
+      ]
+    },
+    {
+      "index": 26,
+      "label": "第26注",
+      "type": "3α+2β外围耦合",
+      "balls": [
+        19,
+        33,
+        45,
+        75,
+        77
+      ]
+    },
+    {
+      "index": 27,
+      "label": "第27注",
+      "type": "3α+2β外围耦合",
+      "balls": [
+        8,
+        26,
+        41,
+        63,
+        70
+      ]
+    },
+    {
+      "index": 28,
+      "label": "第28注",
+      "type": "3α+2β外围耦合",
+      "balls": [
+        6,
+        14,
+        59,
+        64,
+        65
+      ]
+    },
+    {
+      "index": 29,
+      "label": "第29注",
+      "type": "3α+2β外围耦合",
+      "balls": [
+        20,
+        39,
+        46,
+        48,
+        49
+      ]
+    },
+    {
+      "index": 30,
+      "label": "第30注",
+      "type": "3α+2β外围耦合",
+      "balls": [
+        37,
+        53,
+        60,
+        66,
+        69
+      ]
+    }
+  ],
+  "backtest_summary": {
+    "test_count": 30,
+    "mean_20": 5.5,
+    "lift_20": 1.1,
+    "mean_25": 6.7,
+    "lift_25": 1.072,
+    "mean_30": 8.23,
+    "lift_30": 1.098,
+    "p2_win_rate_pct": 9.17,
+    "p2_lift": 1.525,
+    "history": [
+      {
+        "period": "2026274",
+        "date": "2026-10-15",
+        "hit_20": 8,
+        "hit_25": 7,
+        "hit_30": 10,
+        "hit_p2": 0,
+        "sum_20": 765
+      },
+      {
+        "period": "2026275",
+        "date": "2026-10-16",
+        "hit_20": 4,
+        "hit_25": 5,
+        "hit_30": 6,
+        "hit_p2": 1,
+        "sum_20": 766
+      },
+      {
+        "period": "2026276",
+        "date": "2026-10-17",
+        "hit_20": 3,
+        "hit_25": 3,
+        "hit_30": 5,
+        "hit_p2": 0,
+        "sum_20": 855
+      },
+      {
+        "period": "2026277",
+        "date": "2026-10-18",
+        "hit_20": 5,
+        "hit_25": 7,
+        "hit_30": 8,
+        "hit_p2": 1,
+        "sum_20": 845
+      },
+      {
+        "period": "2026278",
+        "date": "2026-10-19",
+        "hit_20": 5,
+        "hit_25": 7,
+        "hit_30": 9,
+        "hit_p2": 0,
+        "sum_20": 858
+      },
+      {
+        "period": "2026279",
+        "date": "2026-10-20",
+        "hit_20": 6,
+        "hit_25": 7,
+        "hit_30": 8,
+        "hit_p2": 0,
+        "sum_20": 856
+      },
+      {
+        "period": "2026280",
+        "date": "2026-10-21",
+        "hit_20": 5,
+        "hit_25": 7,
+        "hit_30": 8,
+        "hit_p2": 1,
+        "sum_20": 802
+      },
+      {
+        "period": "2026281",
+        "date": "2026-10-22",
+        "hit_20": 4,
+        "hit_25": 4,
+        "hit_30": 6,
+        "hit_p2": 1,
+        "sum_20": 777
+      },
+      {
+        "period": "2026282",
+        "date": "2026-10-23",
+        "hit_20": 6,
+        "hit_25": 7,
+        "hit_30": 7,
+        "hit_p2": 0,
+        "sum_20": 767
+      },
+      {
+        "period": "2026283",
+        "date": "2026-10-24",
+        "hit_20": 5,
+        "hit_25": 7,
+        "hit_30": 7,
+        "hit_p2": 0,
+        "sum_20": 800
+      },
+      {
+        "period": "2026284",
+        "date": "2026-10-25",
+        "hit_20": 8,
+        "hit_25": 9,
+        "hit_30": 12,
+        "hit_p2": 1,
+        "sum_20": 802
+      },
+      {
+        "period": "2026285",
+        "date": "2026-10-26",
+        "hit_20": 2,
+        "hit_25": 3,
+        "hit_30": 6,
+        "hit_p2": 0,
+        "sum_20": 772
+      },
+      {
+        "period": "2026286",
+        "date": "2026-10-27",
+        "hit_20": 7,
+        "hit_25": 8,
+        "hit_30": 9,
+        "hit_p2": 0,
+        "sum_20": 768
+      },
+      {
+        "period": "2026287",
+        "date": "2026-10-28",
+        "hit_20": 9,
+        "hit_25": 12,
+        "hit_30": 13,
+        "hit_p2": 0,
+        "sum_20": 859
+      },
+      {
+        "period": "2026288",
+        "date": "2026-10-29",
+        "hit_20": 4,
+        "hit_25": 8,
+        "hit_30": 9,
+        "hit_p2": 0,
+        "sum_20": 852
+      },
+      {
+        "period": "2026289",
+        "date": "2026-10-30",
+        "hit_20": 4,
+        "hit_25": 6,
+        "hit_30": 7,
+        "hit_p2": 0,
+        "sum_20": 813
+      },
+      {
+        "period": "2026290",
+        "date": "2026-10-31",
+        "hit_20": 7,
+        "hit_25": 8,
+        "hit_30": 11,
+        "hit_p2": 1,
+        "sum_20": 783
+      },
+      {
+        "period": "2026291",
+        "date": "2026-11-01",
+        "hit_20": 8,
+        "hit_25": 9,
+        "hit_30": 10,
+        "hit_p2": 0,
+        "sum_20": 773
+      },
+      {
+        "period": "2026292",
+        "date": "2026-11-02",
+        "hit_20": 9,
+        "hit_25": 9,
+        "hit_30": 10,
+        "hit_p2": 1,
+        "sum_20": 824
+      },
+      {
+        "period": "2026293",
+        "date": "2026-11-03",
+        "hit_20": 5,
+        "hit_25": 6,
+        "hit_30": 9,
+        "hit_p2": 0,
+        "sum_20": 772
+      },
+      {
+        "period": "2026294",
+        "date": "2026-11-04",
+        "hit_20": 5,
+        "hit_25": 7,
+        "hit_30": 10,
+        "hit_p2": 0,
+        "sum_20": 787
+      },
+      {
+        "period": "2026295",
+        "date": "2026-11-05",
+        "hit_20": 6,
+        "hit_25": 7,
+        "hit_30": 8,
+        "hit_p2": 1,
+        "sum_20": 801
+      },
+      {
+        "period": "2026296",
+        "date": "2026-11-06",
+        "hit_20": 7,
+        "hit_25": 8,
+        "hit_30": 10,
+        "hit_p2": 1,
+        "sum_20": 778
+      },
+      {
+        "period": "2026297",
+        "date": "2026-11-07",
+        "hit_20": 6,
+        "hit_25": 6,
+        "hit_30": 9,
+        "hit_p2": 1,
+        "sum_20": 802
+      },
+      {
+        "period": "2026298",
+        "date": "2026-11-08",
+        "hit_20": 6,
+        "hit_25": 7,
+        "hit_30": 9,
+        "hit_p2": 0,
+        "sum_20": 844
+      },
+      {
+        "period": "2026299",
+        "date": "2026-11-09",
+        "hit_20": 4,
+        "hit_25": 4,
+        "hit_30": 5,
+        "hit_p2": 0,
+        "sum_20": 859
+      },
+      {
+        "period": "2026300",
+        "date": "2026-11-10",
+        "hit_20": 2,
+        "hit_25": 4,
+        "hit_30": 4,
+        "hit_p2": 0,
+        "sum_20": 826
+      },
+      {
+        "period": "2026301",
+        "date": "2026-11-11",
+        "hit_20": 6,
+        "hit_25": 7,
+        "hit_30": 9,
+        "hit_p2": 0,
+        "sum_20": 840
+      },
+      {
+        "period": "2026302",
+        "date": "2026-11-12",
+        "hit_20": 6,
+        "hit_25": 7,
+        "hit_30": 8,
+        "hit_p2": 0,
+        "sum_20": 772
+      },
+      {
+        "period": "2026303",
+        "date": "2026-11-13",
+        "hit_20": 3,
+        "hit_25": 5,
+        "hit_30": 5,
+        "hit_p2": 1,
+        "sum_20": 781
+      }
+    ]
+  },
+  "ball_scores": [
+    {
+      "num": 57,
+      "rank": 1,
+      "z_score": 1.8319,
+      "pool": "20码",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 30,
+      "rank": 2,
+      "z_score": 1.6619,
+      "pool": "20码",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 75,
+      "rank": 3,
+      "z_score": 1.6178,
+      "pool": "20码",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 63,
+      "rank": 4,
+      "z_score": 1.4966,
+      "pool": "20码",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 14,
+      "rank": 5,
+      "z_score": 1.3739,
+      "pool": "20码",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 20,
+      "rank": 6,
+      "z_score": 1.3547,
+      "pool": "20码",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 60,
+      "rank": 7,
+      "z_score": 1.3317,
+      "pool": "20码",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 71,
+      "rank": 8,
+      "z_score": 1.2747,
+      "pool": "20码",
+      "road": 2,
+      "is_prime": true
+    },
+    {
+      "num": 33,
+      "rank": 9,
+      "z_score": 1.2385,
+      "pool": "20码",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 41,
+      "rank": 10,
+      "z_score": 1.2322,
+      "pool": "20码",
+      "road": 2,
+      "is_prime": true
+    },
+    {
+      "num": 6,
+      "rank": 11,
+      "z_score": 1.1968,
+      "pool": "20码",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 46,
+      "rank": 12,
+      "z_score": 1.1854,
+      "pool": "20码",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 37,
+      "rank": 13,
+      "z_score": 1.1643,
+      "pool": "20码",
+      "road": 1,
+      "is_prime": true
+    },
+    {
+      "num": 39,
+      "rank": 14,
+      "z_score": 1.129,
+      "pool": "25码",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 31,
+      "rank": 15,
+      "z_score": 1.0588,
+      "pool": "20码",
+      "road": 1,
+      "is_prime": true
+    },
+    {
+      "num": 22,
+      "rank": 16,
+      "z_score": 1.0554,
+      "pool": "20码",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 19,
+      "rank": 17,
+      "z_score": 1.0189,
+      "pool": "20码",
+      "road": 1,
+      "is_prime": true
+    },
+    {
+      "num": 8,
+      "rank": 18,
+      "z_score": 0.9463,
+      "pool": "20码",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 45,
+      "rank": 19,
+      "z_score": 0.9302,
+      "pool": "25码",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 65,
+      "rank": 20,
+      "z_score": 0.9247,
+      "pool": "20码",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 66,
+      "rank": 21,
+      "z_score": 0.8023,
+      "pool": "30码",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 26,
+      "rank": 22,
+      "z_score": 0.7527,
+      "pool": "30码",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 77,
+      "rank": 23,
+      "z_score": 0.7245,
+      "pool": "30码",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 54,
+      "rank": 24,
+      "z_score": 0.6125,
+      "pool": "候补",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 12,
+      "rank": 25,
+      "z_score": 0.5094,
+      "pool": "候补",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 48,
+      "rank": 26,
+      "z_score": 0.4821,
+      "pool": "20码",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 59,
+      "rank": 27,
+      "z_score": 0.4604,
+      "pool": "25码",
+      "road": 2,
+      "is_prime": true
+    },
+    {
+      "num": 70,
+      "rank": 28,
+      "z_score": 0.4508,
+      "pool": "25码",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 27,
+      "rank": 29,
+      "z_score": 0.4176,
+      "pool": "候补",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 13,
+      "rank": 30,
+      "z_score": 0.3883,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": true
+    },
+    {
+      "num": 49,
+      "rank": 31,
+      "z_score": 0.3775,
+      "pool": "25码",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 72,
+      "rank": 32,
+      "z_score": 0.2851,
+      "pool": "候补",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 64,
+      "rank": 33,
+      "z_score": 0.2659,
+      "pool": "30码",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 10,
+      "rank": 34,
+      "z_score": 0.2445,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 38,
+      "rank": 35,
+      "z_score": 0.2445,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 51,
+      "rank": 36,
+      "z_score": 0.1769,
+      "pool": "候补",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 36,
+      "rank": 37,
+      "z_score": 0.1749,
+      "pool": "候补",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 4,
+      "rank": 38,
+      "z_score": 0.122,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 69,
+      "rank": 39,
+      "z_score": 0.0655,
+      "pool": "20码",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 15,
+      "rank": 40,
+      "z_score": 0.0546,
+      "pool": "候补",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 58,
+      "rank": 41,
+      "z_score": 0.0367,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 1,
+      "rank": 42,
+      "z_score": -0.0156,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 25,
+      "rank": 43,
+      "z_score": -0.052,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 53,
+      "rank": 44,
+      "z_score": -0.0611,
+      "pool": "30码",
+      "road": 2,
+      "is_prime": true
+    },
+    {
+      "num": 78,
+      "rank": 45,
+      "z_score": -0.0735,
+      "pool": "候补",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 7,
+      "rank": 46,
+      "z_score": -0.1104,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": true
+    },
+    {
+      "num": 52,
+      "rank": 47,
+      "z_score": -0.1366,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 3,
+      "rank": 48,
+      "z_score": -0.1679,
+      "pool": "候补",
+      "road": 0,
+      "is_prime": true
+    },
+    {
+      "num": 18,
+      "rank": 49,
+      "z_score": -0.1721,
+      "pool": "候补",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 76,
+      "rank": 50,
+      "z_score": -0.2008,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 42,
+      "rank": 51,
+      "z_score": -0.2193,
+      "pool": "候补",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 80,
+      "rank": 52,
+      "z_score": -0.3226,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 43,
+      "rank": 53,
+      "z_score": -0.3402,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": true
+    },
+    {
+      "num": 40,
+      "rank": 54,
+      "z_score": -0.3598,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 17,
+      "rank": 55,
+      "z_score": -0.3807,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": true
+    },
+    {
+      "num": 35,
+      "rank": 56,
+      "z_score": -0.4364,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 73,
+      "rank": 57,
+      "z_score": -0.468,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": true
+    },
+    {
+      "num": 34,
+      "rank": 58,
+      "z_score": -0.5443,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 11,
+      "rank": 59,
+      "z_score": -0.5599,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": true
+    },
+    {
+      "num": 23,
+      "rank": 60,
+      "z_score": -0.5651,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": true
+    },
+    {
+      "num": 32,
+      "rank": 61,
+      "z_score": -0.6228,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 61,
+      "rank": 62,
+      "z_score": -0.6354,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": true
+    },
+    {
+      "num": 74,
+      "rank": 63,
+      "z_score": -0.6375,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 44,
+      "rank": 64,
+      "z_score": -0.664,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 67,
+      "rank": 65,
+      "z_score": -0.704,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": true
+    },
+    {
+      "num": 79,
+      "rank": 66,
+      "z_score": -0.9179,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": true
+    },
+    {
+      "num": 47,
+      "rank": 67,
+      "z_score": -1.1218,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": true
+    },
+    {
+      "num": 16,
+      "rank": 68,
+      "z_score": -1.1422,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 24,
+      "rank": 69,
+      "z_score": -1.3131,
+      "pool": "候补",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 21,
+      "rank": 70,
+      "z_score": -1.3149,
+      "pool": "候补",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 68,
+      "rank": 71,
+      "z_score": -1.3535,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 56,
+      "rank": 72,
+      "z_score": -1.373,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 29,
+      "rank": 73,
+      "z_score": -1.4334,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": true
+    },
+    {
+      "num": 28,
+      "rank": 74,
+      "z_score": -1.4568,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 50,
+      "rank": 75,
+      "z_score": -1.5477,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 9,
+      "rank": 76,
+      "z_score": -1.6281,
+      "pool": "候补",
+      "road": 0,
+      "is_prime": false
+    },
+    {
+      "num": 2,
+      "rank": 77,
+      "z_score": -1.6421,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": true
+    },
+    {
+      "num": 55,
+      "rank": 78,
+      "z_score": -1.9341,
+      "pool": "候补",
+      "road": 1,
+      "is_prime": false
+    },
+    {
+      "num": 62,
+      "rank": 79,
+      "z_score": -2.2079,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": false
+    },
+    {
+      "num": 5,
+      "rank": 80,
+      "z_score": -2.5361,
+      "pool": "候补",
+      "road": 2,
+      "is_prime": true
+    }
+  ],
+  "updated_at": "2026-11-13"
+}

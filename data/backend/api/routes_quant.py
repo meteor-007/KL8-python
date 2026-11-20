@@ -188,3 +188,27 @@ def get_module_consensus():
         logger.exception("获取全模块共识叠加数据失败")
         return {"status": "error", "message": str(e), "modules": [], "consensus": {}}
 
+
+@router.get("/tprd-v40/latest")
+def get_tprd_v40_latest(force_refresh: bool = Query(False, description="是否强制重新运行")):
+    """获取 TPRD v4.0 双螺旋矩阵与智能缩水最新推演数据 (P2x)"""
+    try:
+        from backend.modules.tprd_v40.service import get_latest_tprd_summary
+        return get_latest_tprd_summary(force_refresh=force_refresh)
+    except Exception as e:
+        logger.exception("获取 TPRD v4.0 推演数据失败")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/tprd-v40/run")
+def run_tprd_v40_task(background_tasks: BackgroundTasks, backtest: int = Query(30, ge=5, le=100)):
+    """异步触发 TPRD v4.0 重新推演与全量对账"""
+    try:
+        from backend.modules.tprd_v40.service import update_tprd_cache
+        background_tasks.add_task(update_tprd_cache, backtest_periods=backtest)
+        return {"status": "accepted", "message": f"TPRD v4.0 任务已在后台启动 (回测期数: {backtest})"}
+    except Exception as e:
+        logger.exception("启动 TPRD v4.0 任务失败")
+        raise HTTPException(status_code=500, detail=str(e))
+
+

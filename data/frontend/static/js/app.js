@@ -3568,7 +3568,20 @@ const App = {
       triggerDTWRun,
       triggerTransformerRun,
       triggerMatrixProfileRun,
-      triggerTDARun
+      triggerTDARun,
+      // 专家号作战室 (hub_ops/expert_cockpit)
+      expertSubTab,
+      expertData,
+      expertPeriods,
+      expertSelectedPeriod,
+      expertReview,
+      expertRawInputText,
+      expertInputForm,
+      loadExpertPeriods,
+      loadExpertData,
+      loadExpertReview,
+      parseRawText,
+      submitExpertForm
     } = __k8PageBindings;
 
     // ═════════════════ 经典量化七大子模块汇总大盘 ═════════════════
@@ -3837,6 +3850,7 @@ const App = {
     });
 
     return {
+      ...__k8PageBindings,
       bootFailures,
       loadFirstScreen,
       isMobile,
@@ -4413,7 +4427,20 @@ const App = {
       sortedClassicResonanceList,
       activeClassicModelCount,
       fetchAllClassicModels,
-      runAllClassicModels
+      runAllClassicModels,
+      // 专家作战室
+      expertSubTab,
+      expertData,
+      expertPeriods,
+      expertSelectedPeriod,
+      expertReview,
+      expertRawInputText,
+      expertInputForm,
+      loadExpertPeriods,
+      loadExpertData,
+      loadExpertReview,
+      parseRawText,
+      submitExpertForm
     };
   }
 };

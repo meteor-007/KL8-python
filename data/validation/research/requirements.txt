@@ -1,0 +1,6 @@
+# Research-engine dependencies (optional; not required by the A production path).
+# Install from the A project root:
+#   pip install -r research/requirements.txt
+-r ../requirements-dev.txt
+openpyxl==3.1.5
+torch==2.13.0

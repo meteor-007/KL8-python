@@ -49,7 +49,7 @@ def _parse_txt_history(filepath: str) -> List[Dict]:
     history = []
     if not os.path.exists(filepath):
         return history
-    with open(filepath, 'r', encoding='utf-8') as f:
+    with open(filepath, 'r', encoding='utf-8-sig') as f:
         for line in f:
             line = line.strip()
             if 'numbers:' not in line:
@@ -75,7 +75,7 @@ def _parse_txt_points(filepath: str) -> Dict[str, Dict]:
     points = {}
     if not os.path.exists(filepath):
         return points
-    with open(filepath, 'r', encoding='utf-8') as f:
+    with open(filepath, 'r', encoding='utf-8-sig') as f:
         for line in f:
             line = line.strip()
             if not line:

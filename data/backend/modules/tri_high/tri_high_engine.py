@@ -48,7 +48,7 @@ _TRI_HIGH_BACKUP_RE = re.compile(r"^tri_high_points_\d{8}_\d{6}\.bak$")
 def _load_records_from(path: str) -> List[Dict[str, Any]]:
     """读一份手账文件的 records；解析失败返回空列表（只代表读不出来，不代表文件里没数据）。"""
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, "r", encoding="utf-8-sig") as f:
             data = json.load(f)
         recs = data.get("records", []) if isinstance(data, dict) else []
         return [r for r in recs if isinstance(r, dict) and str(r.get("period", "")).strip()]
@@ -182,7 +182,7 @@ class TriHighResonanceEngine:
         if not os.path.exists(self.storage_file):
             return []
         try:
-            with open(self.storage_file, "r", encoding="utf-8") as f:
+            with open(self.storage_file, "r", encoding="utf-8-sig") as f:
                 data = json.load(f)
                 records = data.get("records", [])
                 records.sort(key=lambda x: int(x.get("period", 0)), reverse=True)
@@ -264,7 +264,7 @@ class TriHighResonanceEngine:
             return {"period": "", "points": []}
         try:
             import re
-            with open(DAILY_POINTS_FILE, "r", encoding="utf-8") as f:
+            with open(DAILY_POINTS_FILE, "r", encoding="utf-8-sig") as f:
                 lines = [l.strip() for l in f if l.strip()]
             if not lines:
                 return {"period": "", "points": []}

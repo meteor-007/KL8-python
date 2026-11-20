@@ -42,6 +42,7 @@
 | `random_forest` | 随机森林 |
 | `error_correction` | 残差改错 |
 | `unified_brain` | 统一决策脑 |
+| `tprd_v40` | TPRD v4.0 双螺旋矩阵与智能缩水 (P2x) |
 
 ## `_retired/`（已退役代码）
 

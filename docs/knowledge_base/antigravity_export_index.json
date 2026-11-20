@@ -1,0 +1,5231 @@
+[
+  {
+    "conversation_id": "19777287-d302-4b82-bab1-6edf5b5c468e",
+    "title": "Lottery Data Analysis And Prediction",
+    "date": "2026-11-08",
+    "steps": 1076,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/点位+遗漏号分析"
+    ],
+    "file": "conversations/2026-11-08_19777287_Lottery Data Analysis And Prediction.md",
+    "transcript": true,
+    "preview": "Lottery Data Analysis And Prediction"
+  },
+  {
+    "conversation_id": "38f5b760-2202-463f-9063-f0cc4e0c7f9f",
+    "title": "System Implementation Status And Optimization",
+    "date": "2026-11-08",
+    "steps": 1252,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/yuce-kaiyuan"
+    ],
+    "file": "conversations/2026-11-08_38f5b760_System Implementation Status And Optimization.md",
+    "transcript": true,
+    "preview": "System Implementation Status And Optimization"
+  },
+  {
+    "conversation_id": "3ee42298-6757-457b-b186-d55b3629fad9",
+    "title": "",
+    "date": "2026-11-08",
+    "steps": 2453,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-11-08_3ee42298_未命名.md",
+    "transcript": true,
+    "preview": "控制台输出：要求：详细的各个分析推荐准确结果和美观展示"
+  },
+  {
+    "conversation_id": "0006a737-9676-456f-b0a3-26b064e3e617",
+    "title": "球小策足球智能体安装配置",
+    "date": "2026-11-08",
+    "steps": 707,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/ticai"
+    ],
+    "file": "conversations/2026-11-08_0006a737_球小策足球智能体安装配置.md",
+    "transcript": true,
+    "preview": "球小策足球智能体安装配置"
+  },
+  {
+    "conversation_id": "40037374-a070-4073-9d44-974776a84bf6",
+    "title": "Refactoring System Documentation Implementation",
+    "date": "2026-11-08",
+    "steps": 1580,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/微积分分区"
+    ],
+    "file": "conversations/2026-11-08_40037374_Refactoring System Documentation Implementation.md",
+    "transcript": true,
+    "preview": "Refactoring System Documentation Implementation"
+  },
+  {
+    "conversation_id": "c7a10034-c8fb-4bb5-a4a8-5e238cddb586",
+    "title": "去除特定报警通知",
+    "date": "2026-11-05",
+    "steps": 1132,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-11-05_c7a10034_去除特定报警通知.md",
+    "transcript": true,
+    "preview": "去除特定报警通知"
+  },
+  {
+    "conversation_id": "a5755245-6ad6-4cc8-ba70-84c6da371c68",
+    "title": "Null Pointer Exception Log Analysis",
+    "date": "2026-11-05",
+    "steps": 84,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-11-05_a5755245_Null Pointer Exception Log Analysis.md",
+    "transcript": true,
+    "preview": "Null Pointer Exception Log Analysis"
+  },
+  {
+    "conversation_id": "03ab1e3d-77ac-4e43-abb8-5acb49a2adbf",
+    "title": "Branch Comparison And Feature Analysis",
+    "date": "2026-11-05",
+    "steps": 1900,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-11-05_03ab1e3d_Branch Comparison And Feature Analysis.md",
+    "transcript": true,
+    "preview": "Branch Comparison And Feature Analysis"
+  },
+  {
+    "conversation_id": "b2a6203b-e78c-43fb-8bd5-72541ec17921",
+    "title": "Failed Test Cases Analysis",
+    "date": "2026-11-05",
+    "steps": 536,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-11-05_b2a6203b_Failed Test Cases Analysis.md",
+    "transcript": true,
+    "preview": "Failed Test Cases Analysis"
+  },
+  {
+    "conversation_id": "dc009295-c26e-46b5-ad7d-7786af0385f1",
+    "title": "生成项目自定义短语文件",
+    "date": "2026-11-05",
+    "steps": 215,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-11-05_dc009295_生成项目自定义短语文件.md",
+    "transcript": true,
+    "preview": "生成项目自定义短语文件"
+  },
+  {
+    "conversation_id": "f64c28e9-0620-4a31-9175-8ff374d19ef4",
+    "title": "Arsenic Trioxide in Fiction",
+    "date": "2026-11-04",
+    "steps": 446,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-11-04_f64c28e9_Arsenic Trioxide in Fiction.md",
+    "transcript": true,
+    "preview": "Arsenic Trioxide in Fiction"
+  },
+  {
+    "conversation_id": "3c458769-678a-468c-89e4-3a9aed5896a2",
+    "title": "Missing Operator Field in API",
+    "date": "2026-11-04",
+    "steps": 549,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-zwy"
+    ],
+    "file": "conversations/2026-11-04_3c458769_Missing Operator Field in API.md",
+    "transcript": true,
+    "preview": "Missing Operator Field in API"
+  },
+  {
+    "conversation_id": "ffc17acc-9e7e-4ff7-86d0-52526d1c5cfd",
+    "title": "需求与实现差异分析",
+    "date": "2026-11-04",
+    "steps": 418,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-client"
+    ],
+    "file": "conversations/2026-11-04_ffc17acc_需求与实现差异分析.md",
+    "transcript": true,
+    "preview": "需求与实现差异分析"
+  },
+  {
+    "conversation_id": "0324dbf9-724b-40da-85bf-b7717e022183",
+    "title": "Bypassing User Token Login",
+    "date": "2026-11-04",
+    "steps": 883,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-client"
+    ],
+    "file": "conversations/2026-11-04_0324dbf9_Bypassing User Token Login.md",
+    "transcript": true,
+    "preview": "Bypassing User Token Login"
+  },
+  {
+    "conversation_id": "33faa8f2-d2b2-44ff-b1c4-ed2da8b51979",
+    "title": "AI Agent Selection And Usage",
+    "date": "2026-11-04",
+    "steps": 2,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/ticai"
+    ],
+    "file": "conversations/2026-11-04_33faa8f2_AI Agent Selection And Usage.md",
+    "transcript": true,
+    "preview": "AI Agent Selection And Usage"
+  },
+  {
+    "conversation_id": "39805195-5ddb-48c7-ba4a-1f9c6c08a4a6",
+    "title": "Seata配置异常排查",
+    "date": "2026-11-03",
+    "steps": 27,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-11-03_39805195_Seata配置异常排查.md",
+    "transcript": true,
+    "preview": "Seata配置异常排查"
+  },
+  {
+    "conversation_id": "1ef957f6-109f-4808-9179-92a72b16e5fb",
+    "title": "Java Controller Code Review",
+    "date": "2026-11-02",
+    "steps": 496,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-zwy"
+    ],
+    "file": "conversations/2026-11-02_1ef957f6_Java Controller Code Review.md",
+    "transcript": true,
+    "preview": "Java Controller Code Review"
+  },
+  {
+    "conversation_id": "e45709c6-1ec8-4329-ad1c-849fe1d82986",
+    "title": "生产环境钉钉报警日志分析",
+    "date": "2026-11-02",
+    "steps": 214,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-11-02_e45709c6_生产环境钉钉报警日志分析.md",
+    "transcript": true,
+    "preview": "生产环境钉钉报警日志分析"
+  },
+  {
+    "conversation_id": "30e97509-31c0-4783-8249-35ebe9d9b383",
+    "title": "撤案接口查询",
+    "date": "2026-11-02",
+    "steps": 98,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-11-02_30e97509_撤案接口查询.md",
+    "transcript": true,
+    "preview": "撤案接口查询"
+  },
+  {
+    "conversation_id": "dbc642df-a9fd-43b7-82ea-6e1fe99995fb",
+    "title": "Fullstack 5 Agent Matrix Execution",
+    "date": "2026-11-02",
+    "steps": 12,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/微积分分区"
+    ],
+    "file": "conversations/2026-11-02_dbc642df_Fullstack 5 Agent Matrix Execution.md",
+    "transcript": true,
+    "preview": "Fullstack 5 Agent Matrix Execution"
+  },
+  {
+    "conversation_id": "f44e032e-4a07-42ef-ade7-01f67c89ee6c",
+    "title": "清理陈志伟案件数据",
+    "date": "2026-11-02",
+    "steps": 478,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-client"
+    ],
+    "file": "conversations/2026-11-02_f44e032e_清理陈志伟案件数据.md",
+    "transcript": true,
+    "preview": "清理陈志伟案件数据"
+  },
+  {
+    "conversation_id": "1b5a1b8e-04cc-43f9-a486-f35c8d0500b7",
+    "title": "Evaluating Lottery Analysis Methods",
+    "date": "2026-11-02",
+    "steps": 1111,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/微积分分区"
+    ],
+    "file": "conversations/2026-11-02_1b5a1b8e_Evaluating Lottery Analysis Methods.md",
+    "transcript": true,
+    "preview": "Evaluating Lottery Analysis Methods"
+  },
+  {
+    "conversation_id": "9b2211f1-3cbb-4694-8ccd-363cc2267175",
+    "title": "Lottery Wheel Reduction Algorithm",
+    "date": "2026-11-01",
+    "steps": 258,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/微积分分区"
+    ],
+    "file": "conversations/2026-11-01_9b2211f1_Lottery Wheel Reduction Algorithm.md",
+    "transcript": true,
+    "preview": "Lottery Wheel Reduction Algorithm"
+  },
+  {
+    "conversation_id": "f8e008da-d15c-4ef4-9853-a5a1d434caaf",
+    "title": "快乐8走势图智能规律分析",
+    "date": "2026-10-30",
+    "steps": 534,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-10-30_f8e008da_快乐8走势图智能规律分析.md",
+    "transcript": true,
+    "preview": "快乐8走势图智能规律分析"
+  },
+  {
+    "conversation_id": "e7e355fb-9c54-42f0-834e-846b1090144e",
+    "title": "SMS Requirement Changes Review",
+    "date": "2026-10-30",
+    "steps": 4541,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-client"
+    ],
+    "file": "conversations/2026-10-30_e7e355fb_SMS Requirement Changes Review.md",
+    "transcript": true,
+    "preview": "SMS Requirement Changes Review"
+  },
+  {
+    "conversation_id": "4eac4819-8b30-4363-aad9-de36659ce767",
+    "title": "Fastclaim 文件推送异常分析",
+    "date": "2026-10-29",
+    "steps": 58,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-10-29_4eac4819_Fastclaim 文件推送异常分析.md",
+    "transcript": true,
+    "preview": "Fastclaim 文件推送异常分析"
+  },
+  {
+    "conversation_id": "d8ca9b60-897c-4243-a545-09bf21ff67dc",
+    "title": "保单推送性能优化方案",
+    "date": "2026-10-29",
+    "steps": 285,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-29_d8ca9b60_保单推送性能优化方案.md",
+    "transcript": true,
+    "preview": "保单推送性能优化方案"
+  },
+  {
+    "conversation_id": "82d7ce07-0e24-4e31-96b2-b573e02b17a1",
+    "title": "保险公司对接跳转方案确认",
+    "date": "2026-10-29",
+    "steps": 355,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-29_82d7ce07_保险公司对接跳转方案确认.md",
+    "transcript": true,
+    "preview": "保险公司对接跳转方案确认"
+  },
+  {
+    "conversation_id": "5781b878-ef59-4cee-a1e8-9ed3f5f52314",
+    "title": "Updating Cms Service Tag Encoding",
+    "date": "2026-10-28",
+    "steps": 1432,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-28_5781b878_Updating Cms Service Tag Encoding.md",
+    "transcript": true,
+    "preview": "Updating Cms Service Tag Encoding"
+  },
+  {
+    "conversation_id": "19ffb705-943d-4849-ac76-1f36cdab6487",
+    "title": "Format JSON Data",
+    "date": "2026-10-28",
+    "steps": 2,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-28_19ffb705_Format JSON Data.md",
+    "transcript": true,
+    "preview": "Format JSON Data"
+  },
+  {
+    "conversation_id": "f4b3e5d8-4fd9-43e1-ab23-18283510b495",
+    "title": "Confluence Requirements Document Reading",
+    "date": "2026-10-28",
+    "steps": 2612,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-10-28_f4b3e5d8_Confluence Requirements Document Reading.md",
+    "transcript": true,
+    "preview": "Confluence Requirements Document Reading"
+  },
+  {
+    "conversation_id": "db8ff327-a934-4cd1-91ac-004ad39276ad",
+    "title": "Claim Accident Tag Analysis",
+    "date": "2026-10-28",
+    "steps": 739,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-10-28_db8ff327_Claim Accident Tag Analysis.md",
+    "transcript": true,
+    "preview": "Claim Accident Tag Analysis"
+  },
+  {
+    "conversation_id": "de9fb71f-c5c2-4166-86cb-ebfa085f6540",
+    "title": "Minor API Integration Verification",
+    "date": "2026-10-28",
+    "steps": 851,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-client"
+    ],
+    "file": "conversations/2026-10-28_de9fb71f_Minor API Integration Verification.md",
+    "transcript": true,
+    "preview": "Minor API Integration Verification"
+  },
+  {
+    "conversation_id": "99f809bc-cabd-4fc5-a5f9-2c9e4951e415",
+    "title": "Generating Prod Environment Unit Test",
+    "date": "2026-10-27",
+    "steps": 89,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-27_99f809bc_Generating Prod Environment Unit Test.md",
+    "transcript": true,
+    "preview": "Generating Prod Environment Unit Test"
+  },
+  {
+    "conversation_id": "7fbb1045-327d-4a64-955a-6811a260fcbd",
+    "title": "Product Service Query SQL",
+    "date": "2026-10-27",
+    "steps": 141,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-27_7fbb1045_Product Service Query SQL.md",
+    "transcript": true,
+    "preview": "Product Service Query SQL"
+  },
+  {
+    "conversation_id": "6db03754-4ca7-4bd4-a33a-5ca745696fac",
+    "title": "三星财保单号修正SQL生成",
+    "date": "2026-10-26",
+    "steps": 176,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-26_6db03754_三星财保单号修正SQL生成.md",
+    "transcript": true,
+    "preview": "三星财保单号修正SQL生成"
+  },
+  {
+    "conversation_id": "856a275d-412a-4757-8da8-77b52a675e6b",
+    "title": "Samsung API Log Decryption",
+    "date": "2026-10-26",
+    "steps": 62,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-26_856a275d_Samsung API Log Decryption.md",
+    "transcript": true,
+    "preview": "Samsung API Log Decryption"
+  },
+  {
+    "conversation_id": "af0ed7e1-7afd-4b31-bd95-0449f610746f",
+    "title": "Analyzing Login Request Failure",
+    "date": "2026-10-26",
+    "steps": 253,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/galaxy/galaxy"
+    ],
+    "file": "conversations/2026-10-26_af0ed7e1_Analyzing Login Request Failure.md",
+    "transcript": true,
+    "preview": "Analyzing Login Request Failure"
+  },
+  {
+    "conversation_id": "29004187-5ff8-4f0a-ba04-dbc1f8e9cf0b",
+    "title": "Master Branch Code Conflict Resolution",
+    "date": "2026-10-26",
+    "steps": 331,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-zwy"
+    ],
+    "file": "conversations/2026-10-26_29004187_Master Branch Code Conflict Resolution.md",
+    "transcript": true,
+    "preview": "Master Branch Code Conflict Resolution"
+  },
+  {
+    "conversation_id": "43a03f84-3745-4081-93f5-982a2e65a325",
+    "title": "Invoice Amount Missing Investigation",
+    "date": "2026-10-23",
+    "steps": 970,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-10-23_43a03f84_Invoice Amount Missing Investigation.md",
+    "transcript": true,
+    "preview": "Invoice Amount Missing Investigation"
+  },
+  {
+    "conversation_id": "0293976b-5449-492a-ab7f-00fd94867a4e",
+    "title": "免费 AI 模型水平评估",
+    "date": "2026-10-23",
+    "steps": 2,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-10-23_0293976b_免费 AI 模型水平评估.md",
+    "transcript": true,
+    "preview": "免费 AI 模型水平评估"
+  },
+  {
+    "conversation_id": "8ae50313-7329-4efb-90e1-0684b03b3268",
+    "title": "项目需求确认与核对",
+    "date": "2026-10-23",
+    "steps": 366,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/galaxy/galaxy"
+    ],
+    "file": "conversations/2026-10-23_8ae50313_项目需求确认与核对.md",
+    "transcript": true,
+    "preview": "项目需求确认与核对"
+  },
+  {
+    "conversation_id": "b209e72f-6fa5-4f9a-8a25-28044a411bf2",
+    "title": "Integrating Alibaba Open Code Review With Agent",
+    "date": "2026-10-23",
+    "steps": 96,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-10-23_b209e72f_Integrating Alibaba Open Code Review With Agent.md",
+    "transcript": true,
+    "preview": "Integrating Alibaba Open Code Review With Agent"
+  },
+  {
+    "conversation_id": "6f9c7a5d-f634-4f76-b257-83670f4434b1",
+    "title": "案件总数统计异常排查",
+    "date": "2026-10-23",
+    "steps": 164,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-client"
+    ],
+    "file": "conversations/2026-10-23_6f9c7a5d_案件总数统计异常排查.md",
+    "transcript": true,
+    "preview": "案件总数统计异常排查"
+  },
+  {
+    "conversation_id": "4acac8a7-be6c-41a2-8989-7fede430f9b4",
+    "title": "案件详情字段数据丢失排查",
+    "date": "2026-10-23",
+    "steps": 94,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-client"
+    ],
+    "file": "conversations/2026-10-23_4acac8a7_案件详情字段数据丢失排查.md",
+    "transcript": true,
+    "preview": "案件详情字段数据丢失排查"
+  },
+  {
+    "conversation_id": "ddae3b08-0ddb-4bbc-b905-dc88d56b57a5",
+    "title": "Find DingTalk Notification Method",
+    "date": "2026-10-23",
+    "steps": 26,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/direct-payment/direct-payment"
+    ],
+    "file": "conversations/2026-10-23_ddae3b08_Find DingTalk Notification Method.md",
+    "transcript": true,
+    "preview": "Find DingTalk Notification Method"
+  },
+  {
+    "conversation_id": "7fda6e44-44c1-4af9-b61a-c0f23296fde2",
+    "title": "Local Server API Testing",
+    "date": "2026-10-22",
+    "steps": 2241,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-client"
+    ],
+    "file": "conversations/2026-10-22_7fda6e44_Local Server API Testing.md",
+    "transcript": true,
+    "preview": "Local Server API Testing"
+  },
+  {
+    "conversation_id": "8750a4b0-7583-4430-b2fa-08872f4a0f78",
+    "title": "确认需求归属项目",
+    "date": "2026-10-22",
+    "steps": 56,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/uic"
+    ],
+    "file": "conversations/2026-10-22_8750a4b0_确认需求归属项目.md",
+    "transcript": true,
+    "preview": "确认需求归属项目"
+  },
+  {
+    "conversation_id": "fa66268a-a99d-4478-9bd2-ec8216f53c91",
+    "title": "Decryption Error In Login",
+    "date": "2026-10-22",
+    "steps": 113,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-client"
+    ],
+    "file": "conversations/2026-10-22_fa66268a_Decryption Error In Login.md",
+    "transcript": true,
+    "preview": "Decryption Error In Login"
+  },
+  {
+    "conversation_id": "7d3db98d-e0a9-42ad-841b-cbea8b6413b6",
+    "title": "",
+    "date": "2026-10-22",
+    "steps": 18,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-client"
+    ],
+    "file": "conversations/2026-10-22_7d3db98d_未命名.md",
+    "transcript": true,
+    "preview": ""
+  },
+  {
+    "conversation_id": "9a68d367-332c-4bf1-a525-d3e34c9cc291",
+    "title": "",
+    "date": "2026-10-22",
+    "steps": 224,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-client"
+    ],
+    "file": "conversations/2026-10-22_9a68d367_未命名.md",
+    "transcript": true,
+    "preview": ""
+  },
+  {
+    "conversation_id": "28986dd7-ff3b-4dca-88d8-6e31385b9c37",
+    "title": "",
+    "date": "2026-10-22",
+    "steps": 273,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-client"
+    ],
+    "file": "conversations/2026-10-22_28986dd7_未命名.md",
+    "transcript": true,
+    "preview": ""
+  },
+  {
+    "conversation_id": "64a5784e-9406-463d-9abb-905a41cb5df9",
+    "title": "AI 插件功能解析",
+    "date": "2026-10-22",
+    "steps": 2,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-client"
+    ],
+    "file": "conversations/2026-10-22_64a5784e_AI 插件功能解析.md",
+    "transcript": true,
+    "preview": "AI 插件功能解析"
+  },
+  {
+    "conversation_id": "bc8cb963-4ebb-4aad-b49c-002e7060eaf9",
+    "title": "案件号未返回异常排查",
+    "date": "2026-10-21",
+    "steps": 272,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-zwy"
+    ],
+    "file": "conversations/2026-10-21_bc8cb963_案件号未返回异常排查.md",
+    "transcript": true,
+    "preview": "案件号未返回异常排查"
+  },
+  {
+    "conversation_id": "b76f62ad-8732-44ee-a376-827929ef9e1c",
+    "title": "Maven Build Success Log Analysis",
+    "date": "2026-10-21",
+    "steps": 754,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-10-21_b76f62ad_Maven Build Success Log Analysis.md",
+    "transcript": true,
+    "preview": "Maven Build Success Log Analysis"
+  },
+  {
+    "conversation_id": "12c9c6a8-2604-4b04-90b0-b393af98d8e6",
+    "title": "保险公司服务回传数据查询",
+    "date": "2026-10-21",
+    "steps": 222,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-21_12c9c6a8_保险公司服务回传数据查询.md",
+    "transcript": true,
+    "preview": "保险公司服务回传数据查询"
+  },
+  {
+    "conversation_id": "52793613-bee8-43a7-87f3-1c2e3a6797a0",
+    "title": "数据库表名前缀确认",
+    "date": "2026-10-21",
+    "steps": 138,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-10-21_52793613_数据库表名前缀确认.md",
+    "transcript": true,
+    "preview": "数据库表名前缀确认"
+  },
+  {
+    "conversation_id": "025ea8e8-073c-45d4-b696-93613fb1e0eb",
+    "title": "Export Workspace Chat History",
+    "date": "2026-10-21",
+    "steps": 724,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-10-21_025ea8e8_Export Workspace Chat History.md",
+    "transcript": true,
+    "preview": "Export Workspace Chat History"
+  },
+  {
+    "conversation_id": "fbfb3303-ae8d-499f-9317-466597b0de7f",
+    "title": "Case Management System Bug Feedback",
+    "date": "2026-10-20",
+    "steps": 383,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-10-20_fbfb3303_Case Management System Bug Feedback.md",
+    "transcript": true,
+    "preview": "Case Management System Bug Feedback"
+  },
+  {
+    "conversation_id": "09f3bffa-ad6c-4888-b00e-1094b2cf5884",
+    "title": "",
+    "date": "2026-10-20",
+    "steps": 1,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "C:/D-pan/Dpanqianyi/git-project/czzp/cz-claim-client"
+    ],
+    "file": null,
+    "transcript": false
+  },
+  {
+    "conversation_id": "45f85e6f-0633-465d-b15a-b91c9786c953",
+    "title": "商保直赔流程与接口测试",
+    "date": "2026-10-20",
+    "steps": 864,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-10-20_45f85e6f_商保直赔流程与接口测试.md",
+    "transcript": true,
+    "preview": "商保直赔流程与接口测试"
+  },
+  {
+    "conversation_id": "a2395de5-45e5-46c2-ac3f-3371d4b6ef00",
+    "title": "Database Table Population Source",
+    "date": "2026-10-20",
+    "steps": 3,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-10-20_a2395de5_Database Table Population Source.md",
+    "transcript": true,
+    "preview": "Database Table Population Source"
+  },
+  {
+    "conversation_id": "a6c2b692-1d8e-416b-ae53-7850937b601a",
+    "title": "System Integration And Testing Verification",
+    "date": "2026-10-20",
+    "steps": 7,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-10-20_a6c2b692_System Integration And Testing Verification.md",
+    "transcript": true,
+    "preview": "System Integration And Testing Verification"
+  },
+  {
+    "conversation_id": "bbb75ed7-eaec-4dd3-8190-e2cca98ef636",
+    "title": "表格内容填写指导",
+    "date": "2026-10-20",
+    "steps": 2,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-20_bbb75ed7_表格内容填写指导.md",
+    "transcript": true,
+    "preview": "表格内容填写指导"
+  },
+  {
+    "conversation_id": "3bdb0044-3227-4f53-96a1-d20e72061966",
+    "title": "Comparing New And Old Project Versions",
+    "date": "2026-10-20",
+    "steps": 3281,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-10-20_3bdb0044_Comparing New And Old Project Versions.md",
+    "transcript": true,
+    "preview": "Comparing New And Old Project Versions"
+  },
+  {
+    "conversation_id": "2edebf7d-2271-4fec-b920-456e6f5b4696",
+    "title": "MySQL Index Missing Error Troubleshooting",
+    "date": "2026-10-20",
+    "steps": 20,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-20_2edebf7d_MySQL Index Missing Error Troubleshooting.md",
+    "transcript": true,
+    "preview": "MySQL Index Missing Error Troubleshooting"
+  },
+  {
+    "conversation_id": "eedca23c-2954-4a27-8b6a-9a7b9b72a492",
+    "title": "",
+    "date": "2026-10-20",
+    "steps": 9,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-10-20_eedca23c_未命名.md",
+    "transcript": true,
+    "preview": ""
+  },
+  {
+    "conversation_id": "34d8581f-9bb6-4aa3-8197-db5af134263d",
+    "title": "三方供应商对接输出",
+    "date": "2026-10-20",
+    "steps": 106,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-20_34d8581f_三方供应商对接输出.md",
+    "transcript": true,
+    "preview": "三方供应商对接输出"
+  },
+  {
+    "conversation_id": "998c1bc7-c4a6-468f-a420-75c3b44370b3",
+    "title": "AI 智能纠偏与问卷描述",
+    "date": "2026-10-20",
+    "steps": 46,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-20_998c1bc7_AI 智能纠偏与问卷描述.md",
+    "transcript": true,
+    "preview": "AI 智能纠偏与问卷描述"
+  },
+  {
+    "conversation_id": "eb987fb2-e2c2-41d0-9ed9-457055586bc4",
+    "title": "Shennongmei Model Internal Identifier",
+    "date": "2026-10-20",
+    "steps": 119,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-10-20_eb987fb2_Shennongmei Model Internal Identifier.md",
+    "transcript": true,
+    "preview": "Shennongmei Model Internal Identifier"
+  },
+  {
+    "conversation_id": "068f1b34-f5a5-4be3-903b-3e60b61cb723",
+    "title": "Policy Data Import Issue Troubleshooting",
+    "date": "2026-10-19",
+    "steps": 650,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-19_068f1b34_Policy Data Import Issue Troubleshooting.md",
+    "transcript": true,
+    "preview": "Policy Data Import Issue Troubleshooting"
+  },
+  {
+    "conversation_id": "8172c764-e76e-47ce-ba3d-ab45a4d21273",
+    "title": "Mini Program WebView Payment Return Flow",
+    "date": "2026-10-19",
+    "steps": 25,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-19_8172c764_Mini Program WebView Payment Return Flow.md",
+    "transcript": true,
+    "preview": "Mini Program WebView Payment Return Flow"
+  },
+  {
+    "conversation_id": "843f008e-857b-471e-af61-7896ee234c9b",
+    "title": "",
+    "date": "2026-10-18",
+    "steps": 324,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/yuce-kaiyuan"
+    ],
+    "file": "conversations/2026-10-18_843f008e_未命名.md",
+    "transcript": true,
+    "preview": "控制台输出：要求：详细的各个分析推荐准确结果和美观展示"
+  },
+  {
+    "conversation_id": "f2b0035c-bd24-4ff9-a2c8-09e6c48fb79d",
+    "title": "Extract Numbers From Image",
+    "date": "2026-10-18",
+    "steps": 2,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/yuce-kaiyuan"
+    ],
+    "file": "conversations/2026-10-18_f2b0035c_Extract Numbers From Image.md",
+    "transcript": true,
+    "preview": "Extract Numbers From Image"
+  },
+  {
+    "conversation_id": "239e993a-f4fa-4ff7-a5d8-13b3606acac7",
+    "title": "Archive Table Script And Idempotency",
+    "date": "2026-10-15",
+    "steps": 830,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-15_239e993a_Archive Table Script And Idempotency.md",
+    "transcript": true,
+    "preview": "Archive Table Script And Idempotency"
+  },
+  {
+    "conversation_id": "4787d518-7448-4bb2-8633-95496fb95d65",
+    "title": "虚拟分页数据总数处理方案",
+    "date": "2026-10-15",
+    "steps": 1992,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-15_4787d518_虚拟分页数据总数处理方案.md",
+    "transcript": true,
+    "preview": "虚拟分页数据总数处理方案"
+  },
+  {
+    "conversation_id": "9e8d84f7-3c2d-4615-b277-c3a04942013c",
+    "title": "",
+    "date": "2026-10-15",
+    "steps": 1334,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-10-15_9e8d84f7_未命名.md",
+    "transcript": true,
+    "preview": "1.开始同步 最新开奖数据  2. 点位：02 03 06 10 16 18 20 22 28 30 35 46 48 50 58 62 67 77 78 80"
+  },
+  {
+    "conversation_id": "59bfd25b-fed0-4a5d-96dd-ac7418cd6f4b",
+    "title": "福彩3d两码投注方法",
+    "date": "2026-10-14",
+    "steps": 4,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-10-14_59bfd25b_福彩3d两码投注方法.md",
+    "transcript": true,
+    "preview": "福彩3d两码投注方法"
+  },
+  {
+    "conversation_id": "b00a271d-e2ab-472e-8e80-b91e0f505930",
+    "title": "保单关联人信息不显示问题排查",
+    "date": "2026-10-14",
+    "steps": 126,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-14_b00a271d_保单关联人信息不显示问题排查.md",
+    "transcript": true,
+    "preview": "保单关联人信息不显示问题排查"
+  },
+  {
+    "conversation_id": "467ff8a1-5438-4fca-bf54-8a37cb7d90a3",
+    "title": "URL Accessibility Check",
+    "date": "2026-10-14",
+    "steps": 28,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-10-14_467ff8a1_URL Accessibility Check.md",
+    "transcript": true,
+    "preview": "URL Accessibility Check"
+  },
+  {
+    "conversation_id": "ee847700-a8a8-4e4d-86a8-71be40ee75e7",
+    "title": "Get Free Cursor Pro",
+    "date": "2026-10-14",
+    "steps": 36,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-10-14_ee847700_Get Free Cursor Pro.md",
+    "transcript": true,
+    "preview": "Get Free Cursor Pro"
+  },
+  {
+    "conversation_id": "4f09f831-47ae-44d3-bfb4-9b3d7d255ff9",
+    "title": "Lottery Number Combination Split",
+    "date": "2026-10-13",
+    "steps": 47,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/yuce-kaiyuan"
+    ],
+    "file": "conversations/2026-10-13_4f09f831_Lottery Number Combination Split.md",
+    "transcript": true,
+    "preview": "Lottery Number Combination Split"
+  },
+  {
+    "conversation_id": "16e8b8b6-77f8-49d1-8adf-a016a18246e5",
+    "title": "查找账户会话历史记录",
+    "date": "2026-10-13",
+    "steps": 1351,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-10-13_16e8b8b6_查找账户会话历史记录.md",
+    "transcript": true,
+    "preview": "查找账户会话历史记录"
+  },
+  {
+    "conversation_id": "950da41f-0e59-45e5-b334-120c3c969a82",
+    "title": "Bypass VPN For Specific IP",
+    "date": "2026-10-13",
+    "steps": 83,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-10-13_950da41f_Bypass VPN For Specific IP.md",
+    "transcript": true,
+    "preview": "Bypass VPN For Specific IP"
+  },
+  {
+    "conversation_id": "50d79ed4-ffe6-4194-9f7e-f4fdd7dc0348",
+    "title": "Generate SQL Script For Configuration",
+    "date": "2026-10-13",
+    "steps": 146,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-13_50d79ed4_Generate SQL Script For Configuration.md",
+    "transcript": true,
+    "preview": "Generate SQL Script For Configuration"
+  },
+  {
+    "conversation_id": "ea3ba0d9-35b9-4e79-ae4b-afa9fa9dd411",
+    "title": "Removing Unwanted Invoice Fields",
+    "date": "2026-10-13",
+    "steps": 186,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-10-13_ea3ba0d9_Removing Unwanted Invoice Fields.md",
+    "transcript": true,
+    "preview": "Removing Unwanted Invoice Fields"
+  },
+  {
+    "conversation_id": "e6d8e216-3e94-425a-9b70-8f2e706f6377",
+    "title": "Java Socket Timeout Error Analysis",
+    "date": "2026-10-13",
+    "steps": 70,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-13_e6d8e216_Java Socket Timeout Error Analysis.md",
+    "transcript": true,
+    "preview": "Java Socket Timeout Error Analysis"
+  },
+  {
+    "conversation_id": "03b9ec3a-e5ec-4873-8355-9c4f4cfa1288",
+    "title": "Retrieving IDEA Data Project Chat",
+    "date": "2026-10-12",
+    "steps": 283,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-10-12_03b9ec3a_Retrieving IDEA Data Project Chat.md",
+    "transcript": true,
+    "preview": "Retrieving IDEA Data Project Chat"
+  },
+  {
+    "conversation_id": "dffa4900-9550-4d62-ae0f-269a9cac0396",
+    "title": "MySQL Lock Wait Timeout Error",
+    "date": "2026-10-12",
+    "steps": 252,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-12_dffa4900_MySQL Lock Wait Timeout Error.md",
+    "transcript": true,
+    "preview": "MySQL Lock Wait Timeout Error"
+  },
+  {
+    "conversation_id": "629c451c-eaec-452a-9581-52ee9a3ddfb5",
+    "title": "Great Wall Equity Platform Advance Payment Service",
+    "date": "2026-10-12",
+    "steps": 154,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-12_629c451c_Great Wall Equity Platform Advance Payment Servi.md",
+    "transcript": true,
+    "preview": "Great Wall Equity Platform Advance Payment Service"
+  },
+  {
+    "conversation_id": "ecfff76c-e4aa-43a6-9eed-1599ceb30561",
+    "title": "多账户会话记录同步问题",
+    "date": "2026-10-12",
+    "steps": 2,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-10-12_ecfff76c_多账户会话记录同步问题.md",
+    "transcript": true,
+    "preview": "多账户会话记录同步问题"
+  },
+  {
+    "conversation_id": "7238e4ef-debb-4c21-8102-70f6dcbb8249",
+    "title": "FastClaim Rule Tree Debugging",
+    "date": "2026-10-10",
+    "steps": 25,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-10-10_7238e4ef_FastClaim Rule Tree Debugging.md",
+    "transcript": true,
+    "preview": "FastClaim Rule Tree Debugging"
+  },
+  {
+    "conversation_id": "f4b29a80-2af4-4d96-96ae-e61751d80c66",
+    "title": "数据导出性能优化",
+    "date": "2026-10-10",
+    "steps": 608,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-10_f4b29a80_数据导出性能优化.md",
+    "transcript": true,
+    "preview": "数据导出性能优化"
+  },
+  {
+    "conversation_id": "56e33d4b-f748-41bf-8fef-d572faaad8e2",
+    "title": "Medical Claim Validation Rule Adjustment",
+    "date": "2026-10-10",
+    "steps": 151,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-10-10_56e33d4b_Medical Claim Validation Rule Adjustment.md",
+    "transcript": true,
+    "preview": "Medical Claim Validation Rule Adjustment"
+  },
+  {
+    "conversation_id": "c2b99e62-588b-407d-b583-c0fa5e1ed051",
+    "title": "Git Branch Code Merge",
+    "date": "2026-10-10",
+    "steps": 408,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-10_c2b99e62_Git Branch Code Merge.md",
+    "transcript": true,
+    "preview": "Git Branch Code Merge"
+  },
+  {
+    "conversation_id": "2bbbc304-e748-431f-88b1-d1eb7abacc0b",
+    "title": "AI模型性能对比与选择",
+    "date": "2026-10-10",
+    "steps": 7,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-10-10_2bbbc304_AI模型性能对比与选择.md",
+    "transcript": true,
+    "preview": "AI模型性能对比与选择"
+  },
+  {
+    "conversation_id": "c511078c-9ef1-423a-985e-c160af0ccffd",
+    "title": "北京人寿护工服务任务卡死排查",
+    "date": "2026-10-10",
+    "steps": 274,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-10_c511078c_北京人寿护工服务任务卡死排查.md",
+    "transcript": true,
+    "preview": "北京人寿护工服务任务卡死排查"
+  },
+  {
+    "conversation_id": "8693c566-aed9-43bd-9986-c51aa257d1c8",
+    "title": "企業微信群同步日志分析",
+    "date": "2026-10-10",
+    "steps": 24,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-10_8693c566_企業微信群同步日志分析.md",
+    "transcript": true,
+    "preview": "企業微信群同步日志分析"
+  },
+  {
+    "conversation_id": "3bfde2ed-e609-496f-9107-ff78188a43f4",
+    "title": "Database Task Performance Troubleshooting",
+    "date": "2026-10-10",
+    "steps": 264,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-10_3bfde2ed_Database Task Performance Troubleshooting.md",
+    "transcript": true,
+    "preview": "Database Task Performance Troubleshooting"
+  },
+  {
+    "conversation_id": "3ff653b3-e4ea-443b-b9de-50dd317bfbaf",
+    "title": "Domain Whitelist and Verification Request",
+    "date": "2026-10-10",
+    "steps": 26,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-10_3ff653b3_Domain Whitelist and Verification Request.md",
+    "transcript": true,
+    "preview": "Domain Whitelist and Verification Request"
+  },
+  {
+    "conversation_id": "3ca561e2-e3b6-4625-9906-e7545caa9b34",
+    "title": "Longcheng Equity Platform Unit Test",
+    "date": "2026-10-09",
+    "steps": 90,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-09_3ca561e2_Longcheng Equity Platform Unit Test.md",
+    "transcript": true,
+    "preview": "Longcheng Equity Platform Unit Test"
+  },
+  {
+    "conversation_id": "eabbb045-f27d-471b-b110-a7c562b21fb8",
+    "title": "微信小程序跳转方法区别",
+    "date": "2026-10-09",
+    "steps": 2,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-09_eabbb045_微信小程序跳转方法区别.md",
+    "transcript": true,
+    "preview": "微信小程序跳转方法区别"
+  },
+  {
+    "conversation_id": "1b0941d7-0952-4216-88fe-dfaa0c5613f3",
+    "title": "Online Issue Data Desensitization",
+    "date": "2026-10-09",
+    "steps": 230,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-10-09_1b0941d7_Online Issue Data Desensitization.md",
+    "transcript": true,
+    "preview": "Online Issue Data Desensitization"
+  },
+  {
+    "conversation_id": "57c93ea1-d7b7-4b82-a855-2636640a7e1b",
+    "title": "Spring RestTemplate Bean Missing",
+    "date": "2026-10-09",
+    "steps": 68,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-10-09_57c93ea1_Spring RestTemplate Bean Missing.md",
+    "transcript": true,
+    "preview": "Spring RestTemplate Bean Missing"
+  },
+  {
+    "conversation_id": "d5588d3f-33b0-4012-816c-d2b18282f57b",
+    "title": "Fastclaim Rule Tree Requirements Synthesis",
+    "date": "2026-10-09",
+    "steps": 14,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-10-09_d5588d3f_Fastclaim Rule Tree Requirements Synthesis.md",
+    "transcript": true,
+    "preview": "Fastclaim Rule Tree Requirements Synthesis"
+  },
+  {
+    "conversation_id": "ea4a02d6-f591-46fa-a532-c330818bac44",
+    "title": "招商信诺保单测试免登链接修复",
+    "date": "2026-10-09",
+    "steps": 622,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-09_ea4a02d6_招商信诺保单测试免登链接修复.md",
+    "transcript": true,
+    "preview": "招商信诺保单测试免登链接修复"
+  },
+  {
+    "conversation_id": "5f9dcea1-2fc2-412c-8ea4-dcfb7cfba164",
+    "title": "Excel制卡成本无数据问题",
+    "date": "2026-10-09",
+    "steps": 70,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-09_5f9dcea1_Excel制卡成本无数据问题.md",
+    "transcript": true,
+    "preview": "Excel制卡成本无数据问题"
+  },
+  {
+    "conversation_id": "221f5db9-5206-4208-9037-fc92882b5d1c",
+    "title": "商保直赔后端接口设计",
+    "date": "2026-10-09",
+    "steps": 143,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-10-09_221f5db9_商保直赔后端接口设计.md",
+    "transcript": true,
+    "preview": "商保直赔后端接口设计"
+  },
+  {
+    "conversation_id": "3ca1cd0d-4698-4d4e-88e6-5d5041c340f8",
+    "title": "Refactoring Large Java File",
+    "date": "2026-10-09",
+    "steps": 1771,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-10-09_3ca1cd0d_Refactoring Large Java File.md",
+    "transcript": true,
+    "preview": "Refactoring Large Java File"
+  },
+  {
+    "conversation_id": "fcb42f39-6bb4-4b17-ad71-07923502b8dd",
+    "title": "API Response Data Debugging",
+    "date": "2026-10-09",
+    "steps": 486,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-10-09_fcb42f39_API Response Data Debugging.md",
+    "transcript": true,
+    "preview": "API Response Data Debugging"
+  },
+  {
+    "conversation_id": "999b4de9-505d-4e06-850a-8a159fc3a337",
+    "title": "OCR结构化数据异常排查",
+    "date": "2026-10-08",
+    "steps": 1269,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-10-08_999b4de9_OCR结构化数据异常排查.md",
+    "transcript": true,
+    "preview": "OCR结构化数据异常排查"
+  },
+  {
+    "conversation_id": "c7044956-4317-4153-8eb3-c8b5b0aae847",
+    "title": "Query API Average Response Time",
+    "date": "2026-10-08",
+    "steps": 50,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-08_c7044956_Query API Average Response Time.md",
+    "transcript": true,
+    "preview": "Query API Average Response Time"
+  },
+  {
+    "conversation_id": "1c7b6be3-5810-4dd0-9436-447ff8f6f4e5",
+    "title": "住院诊断证明缺失问题排查",
+    "date": "2026-10-08",
+    "steps": 1548,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-10-08_1c7b6be3_住院诊断证明缺失问题排查.md",
+    "transcript": true,
+    "preview": "住院诊断证明缺失问题排查"
+  },
+  {
+    "conversation_id": "2df50133-deb8-44e3-ad95-6db0a6a1827c",
+    "title": "Fix Unknown Column SQL Error",
+    "date": "2026-10-08",
+    "steps": 106,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-08_2df50133_Fix Unknown Column SQL Error.md",
+    "transcript": true,
+    "preview": "Fix Unknown Column SQL Error"
+  },
+  {
+    "conversation_id": "4591e7c3-2eae-471b-b1ef-e706bd76face",
+    "title": "Java Code Error Resolution",
+    "date": "2026-10-08",
+    "steps": 885,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-10-08_4591e7c3_Java Code Error Resolution.md",
+    "transcript": true,
+    "preview": "Java Code Error Resolution"
+  },
+  {
+    "conversation_id": "e1acdb2d-100d-4184-a074-064028de8e18",
+    "title": "Astrological Compatibility Analysis",
+    "date": "2026-10-07",
+    "steps": 4,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-10-07_e1acdb2d_Astrological Compatibility Analysis.md",
+    "transcript": true,
+    "preview": "Astrological Compatibility Analysis"
+  },
+  {
+    "conversation_id": "5ef3d9bb-1c7f-4ced-a209-555c231c66c0",
+    "title": "",
+    "date": "2026-10-07",
+    "steps": 143,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-07_5ef3d9bb_未命名.md",
+    "transcript": true,
+    "preview": "UPDATE `hmsp`.`hmsp_batch_task` SET `ID` = 2427937,`CREATOR` = 'system',`GMT_CREATE` = '2026-10-07 09:50:40',`MODIFIER` = 'system',`GMT_MODIFIED` = '2026-10-07 09:50:40',`IS_DELETED` = 'n',`TASK_TYPE`"
+  },
+  {
+    "conversation_id": "bf876a24-9de8-4829-ba4c-0d30f5e388af",
+    "title": "Database Duplicate Key Error",
+    "date": "2026-10-04",
+    "steps": 130,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-10-04_bf876a24_Database Duplicate Key Error.md",
+    "transcript": true,
+    "preview": "Database Duplicate Key Error"
+  },
+  {
+    "conversation_id": "a78b7356-e246-4a98-b1d6-3c52650589ba",
+    "title": "Window Data Prediction Upgrade",
+    "date": "2026-10-02",
+    "steps": 602,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-10-02_a78b7356_Window Data Prediction Upgrade.md",
+    "transcript": true,
+    "preview": "Window Data Prediction Upgrade"
+  },
+  {
+    "conversation_id": "c8098208-3ca8-454a-839b-65e0a6402339",
+    "title": "API Documentation Review",
+    "date": "2026-10-02",
+    "steps": 330,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-10-02_c8098208_API Documentation Review.md",
+    "transcript": true,
+    "preview": "API Documentation Review"
+  },
+  {
+    "conversation_id": "e04059ed-86f6-488b-8d2b-afa2b1ef0f2f",
+    "title": "开奖数据分析方案",
+    "date": "2026-09-29",
+    "steps": 3629,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-29_e04059ed_开奖数据分析方案.md",
+    "transcript": true,
+    "preview": "开奖数据分析方案"
+  },
+  {
+    "conversation_id": "2326de2d-c5c8-42ff-93f0-f214e77a7319",
+    "title": "Website Analysis Request",
+    "date": "2026-09-29",
+    "steps": 612,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-09-29_2326de2d_Website Analysis Request.md",
+    "transcript": true,
+    "preview": "Website Analysis Request"
+  },
+  {
+    "conversation_id": "b1d6a229-2177-48b3-ae20-130a1022415e",
+    "title": "Identify All Numbers",
+    "date": "2026-09-28",
+    "steps": 2,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-09-28_b1d6a229_Identify All Numbers.md",
+    "transcript": true,
+    "preview": "Identify All Numbers"
+  },
+  {
+    "conversation_id": "470e1275-a807-44b2-9334-2d5cd24fc00d",
+    "title": "Troubleshooting Payment Redirection Issue",
+    "date": "2026-09-28",
+    "steps": 12,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-28_470e1275_Troubleshooting Payment Redirection Issue.md",
+    "transcript": true,
+    "preview": "Troubleshooting Payment Redirection Issue"
+  },
+  {
+    "conversation_id": "8e7aec32-7beb-4695-ad69-febe9aa3371c",
+    "title": "保单导入产品名称排查",
+    "date": "2026-09-24",
+    "steps": 532,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-24_8e7aec32_保单导入产品名称排查.md",
+    "transcript": true,
+    "preview": "保单导入产品名称排查"
+  },
+  {
+    "conversation_id": "4b16b084-1d29-41ae-bc3e-a067e9a305ae",
+    "title": "招商信诺免登次数跳转",
+    "date": "2026-09-24",
+    "steps": 257,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-24_4b16b084_招商信诺免登次数跳转.md",
+    "transcript": true,
+    "preview": "招商信诺免登次数跳转"
+  },
+  {
+    "conversation_id": "0e38b9ce-f6bd-4985-b65d-6455ca3edae0",
+    "title": "Lottery Number Follow Statistics",
+    "date": "2026-09-23",
+    "steps": 229,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-23_0e38b9ce_Lottery Number Follow Statistics.md",
+    "transcript": true,
+    "preview": "Lottery Number Follow Statistics"
+  },
+  {
+    "conversation_id": "75df34b0-db96-4754-994e-af01453aa53f",
+    "title": "Video Consultation VipId Configuration",
+    "date": "2026-09-23",
+    "steps": 964,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-23_75df34b0_Video Consultation VipId Configuration.md",
+    "transcript": true,
+    "preview": "Video Consultation VipId Configuration"
+  },
+  {
+    "conversation_id": "58e2e543-c5b8-4ae2-b1de-b701549bfb37",
+    "title": "Global Operational Red Lines",
+    "date": "2026-09-23",
+    "steps": 26,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-09-23_58e2e543_Global Operational Red Lines.md",
+    "transcript": true,
+    "preview": "Global Operational Red Lines"
+  },
+  {
+    "conversation_id": "f3d9cf2d-4046-4b6e-96ae-757a463d1eb8",
+    "title": "iOS URL Types Meaning",
+    "date": "2026-09-23",
+    "steps": 53,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-23_f3d9cf2d_iOS URL Types Meaning.md",
+    "transcript": true,
+    "preview": "iOS URL Types Meaning"
+  },
+  {
+    "conversation_id": "1c8760a1-b6b2-44db-830e-751220d33f02",
+    "title": "Fix Ticket Cast Error",
+    "date": "2026-09-23",
+    "steps": 365,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-23_1c8760a1_Fix Ticket Cast Error.md",
+    "transcript": true,
+    "preview": "Fix Ticket Cast Error"
+  },
+  {
+    "conversation_id": "298c486b-ac7b-4ab8-b836-00656bc70dd4",
+    "title": "Generic Signature Verification Demo",
+    "date": "2026-09-23",
+    "steps": 26,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-23_298c486b_Generic Signature Verification Demo.md",
+    "transcript": true,
+    "preview": "Generic Signature Verification Demo"
+  },
+  {
+    "conversation_id": "486f7509-c88f-41ed-8695-a8b553af7e77",
+    "title": "JSON Parse Error Debugging",
+    "date": "2026-09-23",
+    "steps": 72,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-23_486f7509_JSON Parse Error Debugging.md",
+    "transcript": true,
+    "preview": "JSON Parse Error Debugging"
+  },
+  {
+    "conversation_id": "1b595b84-1c92-4998-9867-2f7e0124f255",
+    "title": "B-End Data Sync Issue",
+    "date": "2026-09-23",
+    "steps": 204,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-23_1b595b84_B-End Data Sync Issue.md",
+    "transcript": true,
+    "preview": "B-End Data Sync Issue"
+  },
+  {
+    "conversation_id": "509ecd5c-a799-4a7a-a34c-a992540fa7db",
+    "title": "Troubleshooting Product Code Error",
+    "date": "2026-09-22",
+    "steps": 222,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-22_509ecd5c_Troubleshooting Product Code Error.md",
+    "transcript": true,
+    "preview": "Troubleshooting Product Code Error"
+  },
+  {
+    "conversation_id": "ee805d7b-d900-4775-8349-cbd24e9663ba",
+    "title": "状态回传服务编码问题",
+    "date": "2026-09-22",
+    "steps": 318,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-22_ee805d7b_状态回传服务编码问题.md",
+    "transcript": true,
+    "preview": "状态回传服务编码问题"
+  },
+  {
+    "conversation_id": "374b5d69-b676-4dee-9b67-41fcf783512c",
+    "title": "问题原因分析",
+    "date": "2026-09-22",
+    "steps": 387,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-22_374b5d69_问题原因分析.md",
+    "transcript": true,
+    "preview": "问题原因分析"
+  },
+  {
+    "conversation_id": "8704484c-f4e5-49af-86f5-6d7e88edd6b1",
+    "title": "招商信诺对接配置开发",
+    "date": "2026-09-22",
+    "steps": 886,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-22_8704484c_招商信诺对接配置开发.md",
+    "transcript": true,
+    "preview": "招商信诺对接配置开发"
+  },
+  {
+    "conversation_id": "0a924fdc-6926-4625-bd36-922c311d3e4f",
+    "title": "Re-run Case Data Collection",
+    "date": "2026-09-22",
+    "steps": 40,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-22_0a924fdc_Re-run Case Data Collection.md",
+    "transcript": true,
+    "preview": "Re-run Case Data Collection"
+  },
+  {
+    "conversation_id": "e6b1e0ca-c6d7-4158-b8aa-7bbecd750f4d",
+    "title": "发票审核规则排查",
+    "date": "2026-09-22",
+    "steps": 660,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-22_e6b1e0ca_发票审核规则排查.md",
+    "transcript": true,
+    "preview": "发票审核规则排查"
+  },
+  {
+    "conversation_id": "c5369b00-795b-44e4-b6be-7234c0a7c14b",
+    "title": "WeChat API Concurrency Limit",
+    "date": "2026-09-22",
+    "steps": 207,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-22_c5369b00_WeChat API Concurrency Limit.md",
+    "transcript": true,
+    "preview": "WeChat API Concurrency Limit"
+  },
+  {
+    "conversation_id": "8a6b24d8-22ed-4d27-b944-8ff0dac537b9",
+    "title": "核对风控疾病表接口",
+    "date": "2026-09-22",
+    "steps": 60,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-22_8a6b24d8_核对风控疾病表接口.md",
+    "transcript": true,
+    "preview": "核对风控疾病表接口"
+  },
+  {
+    "conversation_id": "8bd63f04-e29e-40ed-b6fc-81a3c66098a0",
+    "title": "JEV 模型搭配方法",
+    "date": "2026-09-21",
+    "steps": 110,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-21_8bd63f04_JEV 模型搭配方法.md",
+    "transcript": true,
+    "preview": "JEV 模型搭配方法"
+  },
+  {
+    "conversation_id": "0d14755a-9681-45d9-b025-9735f21c0a48",
+    "title": "Production Invoice Mismatch Check",
+    "date": "2026-09-21",
+    "steps": 561,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-21_0d14755a_Production Invoice Mismatch Check.md",
+    "transcript": true,
+    "preview": "Production Invoice Mismatch Check"
+  },
+  {
+    "conversation_id": "9f595eb7-4845-41d7-bfeb-7f9c4ddf22ef",
+    "title": "Service Package Error Troubleshooting",
+    "date": "2026-09-21",
+    "steps": 80,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-21_9f595eb7_Service Package Error Troubleshooting.md",
+    "transcript": true,
+    "preview": "Service Package Error Troubleshooting"
+  },
+  {
+    "conversation_id": "b889b841-ae4c-4393-8d9a-07df3faab2ec",
+    "title": "Policy Push Signature Error",
+    "date": "2026-09-21",
+    "steps": 192,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-21_b889b841_Policy Push Signature Error.md",
+    "transcript": true,
+    "preview": "Policy Push Signature Error"
+  },
+  {
+    "conversation_id": "76d7fd72-08d0-491e-8816-c8716a909bfd",
+    "title": "Update Company Name SQL",
+    "date": "2026-09-21",
+    "steps": 90,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-21_76d7fd72_Update Company Name SQL.md",
+    "transcript": true,
+    "preview": "Update Company Name SQL"
+  },
+  {
+    "conversation_id": "870da878-9b33-43de-8b0b-ebfba9ce393d",
+    "title": "规则内容解析",
+    "date": "2026-09-21",
+    "steps": 2,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-21_870da878_规则内容解析.md",
+    "transcript": true,
+    "preview": "规则内容解析"
+  },
+  {
+    "conversation_id": "e1533f9a-4ae0-45ef-97b2-e4b51806c2bc",
+    "title": "Scheduled Task Inquiry",
+    "date": "2026-09-21",
+    "steps": 106,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-21_e1533f9a_Scheduled Task Inquiry.md",
+    "transcript": true,
+    "preview": "Scheduled Task Inquiry"
+  },
+  {
+    "conversation_id": "149b2f92-a773-404d-8f70-303a6651fe9f",
+    "title": "",
+    "date": "2026-09-21",
+    "steps": 75,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-21_149b2f92_未命名.md",
+    "transcript": true,
+    "preview": "另外对接先锋公司的话  对方只传保单号和服务生效时间其他都不传，能正常推送保单和服务免登使用么？"
+  },
+  {
+    "conversation_id": "cb0fe6f8-4fe8-491e-b5d8-ac00c3914445",
+    "title": "先锋科技对接密钥与Demo",
+    "date": "2026-09-21",
+    "steps": 114,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-21_cb0fe6f8_先锋科技对接密钥与Demo.md",
+    "transcript": true,
+    "preview": "先锋科技对接密钥与Demo"
+  },
+  {
+    "conversation_id": "05a89d2c-fdfd-4398-a316-4c7b51ee6582",
+    "title": "Fix Java NullPointerException",
+    "date": "2026-09-21",
+    "steps": 179,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-21_05a89d2c_Fix Java NullPointerException.md",
+    "transcript": true,
+    "preview": "Fix Java NullPointerException"
+  },
+  {
+    "conversation_id": "1a65ab8c-a31d-43b2-ae28-1f3ec4bca03a",
+    "title": "Java Error Log Analysis",
+    "date": "2026-09-21",
+    "steps": 454,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-21_1a65ab8c_Java Error Log Analysis.md",
+    "transcript": true,
+    "preview": "Java Error Log Analysis"
+  },
+  {
+    "conversation_id": "235450e9-39af-4ff1-bef0-c15f62881e59",
+    "title": "Java Error Log Analysis",
+    "date": "2026-09-21",
+    "steps": 118,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-21_235450e9_Java Error Log Analysis.md",
+    "transcript": true,
+    "preview": "Java Error Log Analysis"
+  },
+  {
+    "conversation_id": "6d2678ab-9db1-4cc4-ba9c-0535ab4b7ee9",
+    "title": "Company Secret Decryption Error",
+    "date": "2026-09-21",
+    "steps": 323,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-21_6d2678ab_Company Secret Decryption Error.md",
+    "transcript": true,
+    "preview": "Company Secret Decryption Error"
+  },
+  {
+    "conversation_id": "0aa97938-7d5a-4708-8bf9-9bb34dc550ec",
+    "title": "Rollback And Fix Script",
+    "date": "2026-09-21",
+    "steps": 109,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-21_0aa97938_Rollback And Fix Script.md",
+    "transcript": true,
+    "preview": "Rollback And Fix Script"
+  },
+  {
+    "conversation_id": "3197be86-9656-4346-a12c-74dc692b7fc5",
+    "title": "小程序支付接口配置",
+    "date": "2026-09-21",
+    "steps": 52,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-21_3197be86_小程序支付接口配置.md",
+    "transcript": true,
+    "preview": "小程序支付接口配置"
+  },
+  {
+    "conversation_id": "d30f8f1f-632d-4690-8387-0554660e0a72",
+    "title": "Insurance Product Requirement Review",
+    "date": "2026-09-21",
+    "steps": 2755,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-21_d30f8f1f_Insurance Product Requirement Review.md",
+    "transcript": true,
+    "preview": "Insurance Product Requirement Review"
+  },
+  {
+    "conversation_id": "b83785db-02fb-44c1-b43e-eae9b51a716d",
+    "title": "马尔可夫链简介",
+    "date": "2026-09-20",
+    "steps": 496,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-20_b83785db_马尔可夫链简介.md",
+    "transcript": true,
+    "preview": "马尔可夫链简介"
+  },
+  {
+    "conversation_id": "d687bdf1-cb23-4bbf-81c5-bfdcbb01f5c5",
+    "title": "生成配置迁移SQL脚本",
+    "date": "2026-09-20",
+    "steps": 256,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-20_d687bdf1_生成配置迁移SQL脚本.md",
+    "transcript": true,
+    "preview": "生成配置迁移SQL脚本"
+  },
+  {
+    "conversation_id": "16bf2666-8126-48bd-a523-63735584f0cf",
+    "title": "图表内容解析",
+    "date": "2026-09-20",
+    "steps": 152,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-20_16bf2666_图表内容解析.md",
+    "transcript": true,
+    "preview": "图表内容解析"
+  },
+  {
+    "conversation_id": "6bd0fcb1-08e5-4366-a99e-8c6d7c6713de",
+    "title": "",
+    "date": "2026-09-20",
+    "steps": 50,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-20_6bd0fcb1_未命名.md",
+    "transcript": true,
+    "preview": "你是一个极其严厉、绝不妥协的量化工程质量审计专家 (Code Quality & Security Auditor)。"
+  },
+  {
+    "conversation_id": "a6f92885-229e-4353-a9fc-5322e5199079",
+    "title": "Outbound Call Time Restriction",
+    "date": "2026-09-20",
+    "steps": 211,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-20_a6f92885_Outbound Call Time Restriction.md",
+    "transcript": true,
+    "preview": "Outbound Call Time Restriction"
+  },
+  {
+    "conversation_id": "e132bf0c-5cec-40d3-a7cd-fe0c46510905",
+    "title": "案件赔付比例咨询",
+    "date": "2026-09-18",
+    "steps": 350,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-18_e132bf0c_案件赔付比例咨询.md",
+    "transcript": true,
+    "preview": "案件赔付比例咨询"
+  },
+  {
+    "conversation_id": "dd0ae0de-7d4e-4c5c-aaf6-3c9272706de5",
+    "title": "微信桶16期命中分析",
+    "date": "2026-09-18",
+    "steps": 205,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-18_dd0ae0de_微信桶16期命中分析.md",
+    "transcript": true,
+    "preview": "微信桶16期命中分析"
+  },
+  {
+    "conversation_id": "26f649e1-ddd7-456d-a8bd-647ee6e7574e",
+    "title": "",
+    "date": "2026-09-18",
+    "steps": 12,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-18_26f649e1_未命名.md",
+    "transcript": true,
+    "preview": "研究 c:\\D-pan\\Dpanqianyi\\Python-Project\\data 工程中所有可以用来提升 16期中热号(sixteen模块)命中率的现有维度和模块。具体要求："
+  },
+  {
+    "conversation_id": "3870f8af-6bb3-4683-802d-87b23ad6c7de",
+    "title": "Unified Brain Code Audit",
+    "date": "2026-09-18",
+    "steps": 767,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-18_3870f8af_Unified Brain Code Audit.md",
+    "transcript": true,
+    "preview": "Unified Brain Code Audit"
+  },
+  {
+    "conversation_id": "3763335e-2a8c-419a-8af6-6633dbd7396e",
+    "title": "Meaning Of I",
+    "date": "2026-09-18",
+    "steps": 2,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-09-18_3763335e_Meaning Of I.md",
+    "transcript": true,
+    "preview": "Meaning Of I"
+  },
+  {
+    "conversation_id": "6340a606-4ea0-4421-99d5-98f79753838d",
+    "title": "查询服务包配置供应商",
+    "date": "2026-09-18",
+    "steps": 776,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-18_6340a606_查询服务包配置供应商.md",
+    "transcript": true,
+    "preview": "查询服务包配置供应商"
+  },
+  {
+    "conversation_id": "7ff87e50-5ece-4942-b0db-18c956ffe11c",
+    "title": "3D Pelican Bicycle Animation",
+    "date": "2026-09-18",
+    "steps": 52,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-09-18_7ff87e50_3D Pelican Bicycle Animation.md",
+    "transcript": true,
+    "preview": "3D Pelican Bicycle Animation"
+  },
+  {
+    "conversation_id": "d902d334-703a-4067-b44f-d2efffb2a352",
+    "title": "Great Wall Rights Platform Integration",
+    "date": "2026-09-18",
+    "steps": 40,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-18_d902d334_Great Wall Rights Platform Integration.md",
+    "transcript": true,
+    "preview": "Great Wall Rights Platform Integration"
+  },
+  {
+    "conversation_id": "e1d1e6a1-bd83-4d85-9112-06304e324a29",
+    "title": "Extract Copyable Phone Numbers",
+    "date": "2026-09-17",
+    "steps": 2,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-17_e1d1e6a1_Extract Copyable Phone Numbers.md",
+    "transcript": true,
+    "preview": "Extract Copyable Phone Numbers"
+  },
+  {
+    "conversation_id": "e04fcd1e-0f06-4208-addd-7fbdc73fee48",
+    "title": "Money Or Coworker Dilemma",
+    "date": "2026-09-17",
+    "steps": 2,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-09-17_e04fcd1e_Money Or Coworker Dilemma.md",
+    "transcript": true,
+    "preview": "Money Or Coworker Dilemma"
+  },
+  {
+    "conversation_id": "04a9d136-41d1-4388-9038-84b6b84bb2f8",
+    "title": "招商信诺产品对接测试",
+    "date": "2026-09-17",
+    "steps": 811,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-17_04a9d136_招商信诺产品对接测试.md",
+    "transcript": true,
+    "preview": "招商信诺产品对接测试"
+  },
+  {
+    "conversation_id": "5aa64898-e918-4eb7-a8f1-4cbdd5c83755",
+    "title": "微信小程序授权配置疑问",
+    "date": "2026-09-17",
+    "steps": 2,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-17_5aa64898_微信小程序授权配置疑问.md",
+    "transcript": true,
+    "preview": "微信小程序授权配置疑问"
+  },
+  {
+    "conversation_id": "b12b5bd7-e7d2-4540-a02e-74d4ffa63277",
+    "title": "赶黄草功效与注意事项",
+    "date": "2026-09-17",
+    "steps": 4,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-09-17_b12b5bd7_赶黄草功效与注意事项.md",
+    "transcript": true,
+    "preview": "赶黄草功效与注意事项"
+  },
+  {
+    "conversation_id": "0623171f-5c12-41a6-b83b-2badbf0d8ea0",
+    "title": "历史保单同步遗漏分析",
+    "date": "2026-09-17",
+    "steps": 124,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-17_0623171f_历史保单同步遗漏分析.md",
+    "transcript": true,
+    "preview": "历史保单同步遗漏分析"
+  },
+  {
+    "conversation_id": "8b77fdd3-0d2b-4794-8e7b-fe4b3bea1db0",
+    "title": "太平供应商回传SQL脚本",
+    "date": "2026-09-17",
+    "steps": 56,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-17_8b77fdd3_太平供应商回传SQL脚本.md",
+    "transcript": true,
+    "preview": "太平供应商回传SQL脚本"
+  },
+  {
+    "conversation_id": "1a19d238-2673-4797-bcff-af615ce8e7b7",
+    "title": "免赔额取值逻辑变动影响",
+    "date": "2026-09-16",
+    "steps": 208,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-16_1a19d238_免赔额取值逻辑变动影响.md",
+    "transcript": true,
+    "preview": "免赔额取值逻辑变动影响"
+  },
+  {
+    "conversation_id": "f8b67f0d-892b-45b9-8c6a-1d732a5ca8aa",
+    "title": "Refactor 3-Code And Remove Kill",
+    "date": "2026-09-15",
+    "steps": 320,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-15_f8b67f0d_Refactor 3-Code And Remove Kill.md",
+    "transcript": true,
+    "preview": "Refactor 3-Code And Remove Kill"
+  },
+  {
+    "conversation_id": "d8000089-ca9a-4c43-8d35-2e32f0319cfd",
+    "title": "全栈重构与架构规划",
+    "date": "2026-09-15",
+    "steps": 206,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-15_d8000089_全栈重构与架构规划.md",
+    "transcript": true,
+    "preview": "全栈重构与架构规划"
+  },
+  {
+    "conversation_id": "4ebdcbe4-5403-4b58-9467-2209f19963ae",
+    "title": "SQL Import Next Step",
+    "date": "2026-09-15",
+    "steps": 430,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-lipei-duli"
+    ],
+    "file": "conversations/2026-09-15_4ebdcbe4_SQL Import Next Step.md",
+    "transcript": true,
+    "preview": "SQL Import Next Step"
+  },
+  {
+    "conversation_id": "aaa1ad34-4772-483a-a10c-47ad991670f3",
+    "title": "Understanding GBDT Algorithm",
+    "date": "2026-09-15",
+    "steps": 522,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-15_aaa1ad34_Understanding GBDT Algorithm.md",
+    "transcript": true,
+    "preview": "Understanding GBDT Algorithm"
+  },
+  {
+    "conversation_id": "24e4a991-bd78-4c9a-a585-a9eca2b44777",
+    "title": "Unconfigured Liability Calculation Query",
+    "date": "2026-09-15",
+    "steps": 273,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-15_24e4a991_Unconfigured Liability Calculation Query.md",
+    "transcript": true,
+    "preview": "Unconfigured Liability Calculation Query"
+  },
+  {
+    "conversation_id": "9d4921a9-bcf9-4a82-9822-4729549533dc",
+    "title": "Debugging Vue JS Errors",
+    "date": "2026-09-13",
+    "steps": 74,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-13_9d4921a9_Debugging Vue JS Errors.md",
+    "transcript": true,
+    "preview": "Debugging Vue JS Errors"
+  },
+  {
+    "conversation_id": "2c55d1f4-a319-42e7-84ac-db8655618061",
+    "title": "界面交互优化建议",
+    "date": "2026-09-11",
+    "steps": 449,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-11_2c55d1f4_界面交互优化建议.md",
+    "transcript": true,
+    "preview": "界面交互优化建议"
+  },
+  {
+    "conversation_id": "6ca63333-e05c-485b-9b38-19c45a20eaed",
+    "title": "一键关闭所有标签页",
+    "date": "2026-09-11",
+    "steps": 126,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-11_6ca63333_一键关闭所有标签页.md",
+    "transcript": true,
+    "preview": "一键关闭所有标签页"
+  },
+  {
+    "conversation_id": "32f819ae-07bd-4c19-bad6-ad12f70fefc8",
+    "title": "线性代数知识探讨",
+    "date": "2026-09-11",
+    "steps": 568,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-11_32f819ae_线性代数知识探讨.md",
+    "transcript": true,
+    "preview": "线性代数知识探讨"
+  },
+  {
+    "conversation_id": "ab5ec27e-21e9-4300-9585-917ab37bdb30",
+    "title": "设置主菜单默认展开",
+    "date": "2026-09-11",
+    "steps": 28,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-11_ab5ec27e_设置主菜单默认展开.md",
+    "transcript": true,
+    "preview": "设置主菜单默认展开"
+  },
+  {
+    "conversation_id": "500b8a7d-9efa-404e-9d98-85adb6f7f3e3",
+    "title": "功能实现与落地开发",
+    "date": "2026-09-11",
+    "steps": 102,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-11_500b8a7d_功能实现与落地开发.md",
+    "transcript": true,
+    "preview": "功能实现与落地开发"
+  },
+  {
+    "conversation_id": "9928e81e-4283-41a9-90f3-c7b748e82507",
+    "title": "遗传算法原理解析",
+    "date": "2026-09-11",
+    "steps": 250,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-11_9928e81e_遗传算法原理解析.md",
+    "transcript": true,
+    "preview": "遗传算法原理解析"
+  },
+  {
+    "conversation_id": "fdf7fa95-3e26-4e06-9678-02fcea02d95b",
+    "title": "数据分析与命中率优化",
+    "date": "2026-09-11",
+    "steps": 869,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-11_fdf7fa95_数据分析与命中率优化.md",
+    "transcript": true,
+    "preview": "数据分析与命中率优化"
+  },
+  {
+    "conversation_id": "7db8ba0c-4057-4887-b9bd-e8511b59590c",
+    "title": "",
+    "date": "2026-09-11",
+    "steps": 92,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-11_7db8ba0c_未命名.md",
+    "transcript": true,
+    "preview": "我需要你研究16期中热模块的历史复盘数据和实战表现。请完成以下任务："
+  },
+  {
+    "conversation_id": "3aa76de8-0eca-4345-9554-184698fb3813",
+    "title": "",
+    "date": "2026-09-11",
+    "steps": 14,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-11_3aa76de8_未命名.md",
+    "transcript": true,
+    "preview": "我需要你深入研究16期中热模块的核心引擎代码。请完整阅读以下文件并给出详细的技术分析报告："
+  },
+  {
+    "conversation_id": "8eba339b-b016-4030-8443-4c02534abea9",
+    "title": "Verify Patient Name Field",
+    "date": "2026-09-11",
+    "steps": 44,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-11_8eba339b_Verify Patient Name Field.md",
+    "transcript": true,
+    "preview": "Verify Patient Name Field"
+  },
+  {
+    "conversation_id": "86d29f1b-c4ef-4464-8751-adf7949f7946",
+    "title": "Analyze Java Code Issues",
+    "date": "2026-09-11",
+    "steps": 598,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-11_86d29f1b_Analyze Java Code Issues.md",
+    "transcript": true,
+    "preview": "Analyze Java Code Issues"
+  },
+  {
+    "conversation_id": "c405da99-88d8-4ea8-be1b-4f81fca886a0",
+    "title": "分析服务器内存溢出故障",
+    "date": "2026-09-11",
+    "steps": 287,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-11_c405da99_分析服务器内存溢出故障.md",
+    "transcript": true,
+    "preview": "分析服务器内存溢出故障"
+  },
+  {
+    "conversation_id": "3471f974-5cf2-4fcb-8a68-0994247711ce",
+    "title": "权限对接流程咨询",
+    "date": "2026-09-11",
+    "steps": 209,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-09-11_3471f974_权限对接流程咨询.md",
+    "transcript": true,
+    "preview": "权限对接流程咨询"
+  },
+  {
+    "conversation_id": "a9460fb7-21b0-4032-92ec-d69261f7d0a8",
+    "title": "分析 Java 系统内存溢出",
+    "date": "2026-09-11",
+    "steps": 143,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-11_a9460fb7_分析 Java 系统内存溢出.md",
+    "transcript": true,
+    "preview": "分析 Java 系统内存溢出"
+  },
+  {
+    "conversation_id": "45de883c-d5b4-4e4a-998a-75ba59c3f021",
+    "title": "排查后台日志故障",
+    "date": "2026-09-10",
+    "steps": 255,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-10_45de883c_排查后台日志故障.md",
+    "transcript": true,
+    "preview": "排查后台日志故障"
+  },
+  {
+    "conversation_id": "d1ee8cea-da8f-48c4-8b0d-3788b11f7ff1",
+    "title": "Task Progress Tracking Summary",
+    "date": "2026-09-10",
+    "steps": 732,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-10_d1ee8cea_Task Progress Tracking Summary.md",
+    "transcript": true,
+    "preview": "Task Progress Tracking Summary"
+  },
+  {
+    "conversation_id": "62b07d67-b0a5-4139-95ba-6578eb4fa5d5",
+    "title": "系统模块迁移整合方案",
+    "date": "2026-09-10",
+    "steps": 309,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-10_62b07d67_系统模块迁移整合方案.md",
+    "transcript": true,
+    "preview": "系统模块迁移整合方案"
+  },
+  {
+    "conversation_id": "9718686f-a519-46c5-b1d6-074949c6e8ae",
+    "title": "",
+    "date": "2026-09-09",
+    "steps": 12,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-09-09_9718686f_未命名.md",
+    "transcript": true,
+    "preview": "帮我生成一个 html 文件，使用 svg 生成鳄鱼骑车的 2d 动画"
+  },
+  {
+    "conversation_id": "3a255279-7637-48aa-b106-968ce97064c5",
+    "title": "鳄鱼骑车 SVG 动画",
+    "date": "2026-09-09",
+    "steps": 8,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-09_3a255279_鳄鱼骑车 SVG 动画.md",
+    "transcript": true,
+    "preview": "鳄鱼骑车 SVG 动画"
+  },
+  {
+    "conversation_id": "f4a28a3d-2390-4913-9d1c-e5ed6344b5d2",
+    "title": "医保字段校验结果转换",
+    "date": "2026-09-09",
+    "steps": 578,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-09_f4a28a3d_医保字段校验结果转换.md",
+    "transcript": true,
+    "preview": "医保字段校验结果转换"
+  },
+  {
+    "conversation_id": "3c91a7fd-4cb7-4643-9432-ab47e503586a",
+    "title": "配置代理分流规则",
+    "date": "2026-09-09",
+    "steps": 91,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-09-09_3c91a7fd_配置代理分流规则.md",
+    "transcript": true,
+    "preview": "配置代理分流规则"
+  },
+  {
+    "conversation_id": "9731aedd-1520-464e-b953-8c68dec35565",
+    "title": "Code Generation Type Correction",
+    "date": "2026-09-09",
+    "steps": 953,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-09-09_9731aedd_Code Generation Type Correction.md",
+    "transcript": true,
+    "preview": "Code Generation Type Correction"
+  },
+  {
+    "conversation_id": "0eb8e730-1d6d-418e-bb15-03da43f679e0",
+    "title": "Database Data Truncation Error",
+    "date": "2026-09-09",
+    "steps": 110,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-09_0eb8e730_Database Data Truncation Error.md",
+    "transcript": true,
+    "preview": "Database Data Truncation Error"
+  },
+  {
+    "conversation_id": "269f4d1e-f8a1-4ac4-8a71-37931b3f675e",
+    "title": "查询保险产品案件数据",
+    "date": "2026-09-09",
+    "steps": 16,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-09_269f4d1e_查询保险产品案件数据.md",
+    "transcript": true,
+    "preview": "查询保险产品案件数据"
+  },
+  {
+    "conversation_id": "83585615-c905-4fc2-8730-00a0c0ed3ee3",
+    "title": "AI质检日志录入排查",
+    "date": "2026-09-08",
+    "steps": 289,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-08_83585615_AI质检日志录入排查.md",
+    "transcript": true,
+    "preview": "AI质检日志录入排查"
+  },
+  {
+    "conversation_id": "f22cfee1-2f7a-4e5d-9cc8-f630e2c02cf7",
+    "title": "数据同步异常处理",
+    "date": "2026-09-08",
+    "steps": 172,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-08_f22cfee1_数据同步异常处理.md",
+    "transcript": true,
+    "preview": "数据同步异常处理"
+  },
+  {
+    "conversation_id": "7a2a7078-6a06-4799-83a8-39e5bba687a5",
+    "title": "Insurance Claim Data Verification",
+    "date": "2026-09-08",
+    "steps": 531,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-08_7a2a7078_Insurance Claim Data Verification.md",
+    "transcript": true,
+    "preview": "Insurance Claim Data Verification"
+  },
+  {
+    "conversation_id": "17638ade-7718-4000-a169-fa7f3690827e",
+    "title": "生成异常规则清理脚本",
+    "date": "2026-09-08",
+    "steps": 579,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-08_17638ade_生成异常规则清理脚本.md",
+    "transcript": true,
+    "preview": "生成异常规则清理脚本"
+  },
+  {
+    "conversation_id": "27ec802c-8a8a-48e6-8221-d64eebee7482",
+    "title": "理算参数对比方法",
+    "date": "2026-09-08",
+    "steps": 746,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-08_27ec802c_理算参数对比方法.md",
+    "transcript": true,
+    "preview": "理算参数对比方法"
+  },
+  {
+    "conversation_id": "a5597026-2b27-4727-846c-e29661a312e0",
+    "title": "理算流程数据异常分析",
+    "date": "2026-09-08",
+    "steps": 630,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-08_a5597026_理算流程数据异常分析.md",
+    "transcript": true,
+    "preview": "理算流程数据异常分析"
+  },
+  {
+    "conversation_id": "aefbba94-9065-478e-bb3e-1027b874a0ee",
+    "title": "SQL Script Correction Request",
+    "date": "2026-09-08",
+    "steps": 38,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-08_aefbba94_SQL Script Correction Request.md",
+    "transcript": true,
+    "preview": "SQL Script Correction Request"
+  },
+  {
+    "conversation_id": "b0f348b4-4bfe-4c41-9c00-4267d841689e",
+    "title": "高并发保司推送处理",
+    "date": "2026-09-08",
+    "steps": 246,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-08_b0f348b4_高并发保司推送处理.md",
+    "transcript": true,
+    "preview": "高并发保司推送处理"
+  },
+  {
+    "conversation_id": "19615553-a791-434b-8609-1411b05d0045",
+    "title": "系统运行错误日志分析",
+    "date": "2026-09-08",
+    "steps": 307,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-08_19615553_系统运行错误日志分析.md",
+    "transcript": true,
+    "preview": "系统运行错误日志分析"
+  },
+  {
+    "conversation_id": "0a34942e-4769-4f9e-b037-207c246979a2",
+    "title": "模块回测数据复盘",
+    "date": "2026-09-07",
+    "steps": 184,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-07_0a34942e_模块回测数据复盘.md",
+    "transcript": true,
+    "preview": "模块回测数据复盘"
+  },
+  {
+    "conversation_id": "adcf8ad4-5859-4ec8-bc23-ca4f55124e60",
+    "title": "Dubbo 服务调用超时分析",
+    "date": "2026-09-07",
+    "steps": 90,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-07_adcf8ad4_Dubbo 服务调用超时分析.md",
+    "transcript": true,
+    "preview": "Dubbo 服务调用超时分析"
+  },
+  {
+    "conversation_id": "39e5b0f1-52e7-458e-a436-bb3a5fa1417b",
+    "title": "重新运行功能咨询",
+    "date": "2026-09-07",
+    "steps": 76,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-07_39e5b0f1_重新运行功能咨询.md",
+    "transcript": true,
+    "preview": "重新运行功能咨询"
+  },
+  {
+    "conversation_id": "fac9922b-7a5b-4bf6-8250-fa8e45af5732",
+    "title": "数据更新延迟咨询",
+    "date": "2026-09-07",
+    "steps": 957,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-07_fac9922b_数据更新延迟咨询.md",
+    "transcript": true,
+    "preview": "数据更新延迟咨询"
+  },
+  {
+    "conversation_id": "97a87297-51b7-40be-8092-4d650a796aa8",
+    "title": "自动化理赔服务拆分方案",
+    "date": "2026-09-07",
+    "steps": 173,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-lipei-duli"
+    ],
+    "file": "conversations/2026-09-07_97a87297_自动化理赔服务拆分方案.md",
+    "transcript": true,
+    "preview": "自动化理赔服务拆分方案"
+  },
+  {
+    "conversation_id": "1d74f646-a95d-4fae-bc5c-2ed274059d1a",
+    "title": "保单列表查询优化建议",
+    "date": "2026-09-07",
+    "steps": 1471,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-07_1d74f646_保单列表查询优化建议.md",
+    "transcript": true,
+    "preview": "保单列表查询优化建议"
+  },
+  {
+    "conversation_id": "8ce0a87d-ba8b-4142-b788-bd82f5e1955f",
+    "title": "",
+    "date": "2026-09-07",
+    "steps": 108,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-lipei-duli"
+    ],
+    "file": "conversations/2026-09-07_8ce0a87d_未命名.md",
+    "transcript": true,
+    "preview": "请你作为一名【资深保险核心系统架构师与代码质量专家】，深度审查位于 `c:\\D-pan\\Dpanqianyi\\git-project\\fastclaim-lipei-duli\\理赔理算独立服务拆分与标准化映射落地可行性方案.md` 的可行性方案文档。"
+  },
+  {
+    "conversation_id": "112eae34-327d-438b-a7f9-d354942e1005",
+    "title": "优化Jenkins部署与启动",
+    "date": "2026-09-07",
+    "steps": 54,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-07_112eae34_优化Jenkins部署与启动.md",
+    "transcript": true,
+    "preview": "优化Jenkins部署与启动"
+  },
+  {
+    "conversation_id": "f16c55c1-7b0a-4995-84ff-5fa1ade4a02d",
+    "title": "规则触发环节确认",
+    "date": "2026-09-07",
+    "steps": 74,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-07_f16c55c1_规则触发环节确认.md",
+    "transcript": true,
+    "preview": "规则触发环节确认"
+  },
+  {
+    "conversation_id": "244b2bde-5d9e-482f-93b2-e047e19dbcd8",
+    "title": "查询理算接口调用日志",
+    "date": "2026-09-07",
+    "steps": 531,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-07_244b2bde_查询理算接口调用日志.md",
+    "transcript": true,
+    "preview": "查询理算接口调用日志"
+  },
+  {
+    "conversation_id": "aa6a0041-b20d-4a7d-acd5-767ca3753623",
+    "title": "Analyzing Java Application Errors",
+    "date": "2026-09-07",
+    "steps": 262,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-07_aa6a0041_Analyzing Java Application Errors.md",
+    "transcript": true,
+    "preview": "Analyzing Java Application Errors"
+  },
+  {
+    "conversation_id": "ff17040c-72a7-461e-9da9-15f8f96374e0",
+    "title": "查询疾病码表报警来源",
+    "date": "2026-09-07",
+    "steps": 54,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-07_ff17040c_查询疾病码表报警来源.md",
+    "transcript": true,
+    "preview": "查询疾病码表报警来源"
+  },
+  {
+    "conversation_id": "10d7adf6-35aa-4f15-9780-c3acca54dcd3",
+    "title": "导出文件异常排查分析",
+    "date": "2026-09-07",
+    "steps": 86,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-07_10d7adf6_导出文件异常排查分析.md",
+    "transcript": true,
+    "preview": "导出文件异常排查分析"
+  },
+  {
+    "conversation_id": "6879a5ad-7206-4e23-bffe-fc80858a4b38",
+    "title": "Dubbo 服务超时告警分析",
+    "date": "2026-09-06",
+    "steps": 499,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-06_6879a5ad_Dubbo 服务超时告警分析.md",
+    "transcript": true,
+    "preview": "Dubbo 服务超时告警分析"
+  },
+  {
+    "conversation_id": "483d790c-582d-47e6-829d-a20ceaee1c2d",
+    "title": "Web端数据与代码解耦",
+    "date": "2026-09-05",
+    "steps": 718,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-05_483d790c_Web端数据与代码解耦.md",
+    "transcript": true,
+    "preview": "Web端数据与代码解耦"
+  },
+  {
+    "conversation_id": "3a843f28-326c-48a2-a165-125ed8b06e68",
+    "title": "物品实用性评估",
+    "date": "2026-09-05",
+    "steps": 558,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-05_3a843f28_物品实用性评估.md",
+    "transcript": true,
+    "preview": "物品实用性评估"
+  },
+  {
+    "conversation_id": "b6a23586-e7fc-4493-b0d7-e90eb43ef344",
+    "title": "系统运行异常排查",
+    "date": "2026-09-05",
+    "steps": 106,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-05_b6a23586_系统运行异常排查.md",
+    "transcript": true,
+    "preview": "系统运行异常排查"
+  },
+  {
+    "conversation_id": "7c0fdd2f-1b3d-41c2-907a-555a63a373fe",
+    "title": "",
+    "date": "2026-09-05",
+    "steps": 287,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-09-05_7c0fdd2f_未命名.md",
+    "transcript": true,
+    "preview": "C:\\D-pan\\Dpanqianyi\\git-project\\czzp\\cz-claim-acct\\docs\\20260902-czw\\http --你能自动化测试，启动本地项目，然后 调用这个http的所有接口"
+  },
+  {
+    "conversation_id": "90aeb434-eec9-4638-8f2a-86773bddac55",
+    "title": "数据加载失败修复",
+    "date": "2026-09-05",
+    "steps": 158,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-05_90aeb434_数据加载失败修复.md",
+    "transcript": true,
+    "preview": "数据加载失败修复"
+  },
+  {
+    "conversation_id": "c507d488-2b6b-4465-b173-82a00dc45ce8",
+    "title": "",
+    "date": "2026-09-05",
+    "steps": 1029,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-05_c507d488_未命名.md",
+    "transcript": true,
+    "preview": "Understanding Lottery Analysis Concepts"
+  },
+  {
+    "conversation_id": "05b00e00-db28-4a4c-913d-94b6b0ae0fc9",
+    "title": "",
+    "date": "2026-09-05",
+    "steps": 442,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-05_05b00e00_未命名.md",
+    "transcript": true,
+    "preview": "大白话："
+  },
+  {
+    "conversation_id": "308fdcc5-8226-4e85-af14-1d072d1f579f",
+    "title": "历史预测数据复盘查询",
+    "date": "2026-09-05",
+    "steps": 58,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-05_308fdcc5_历史预测数据复盘查询.md",
+    "transcript": true,
+    "preview": "历史预测数据复盘查询"
+  },
+  {
+    "conversation_id": "e7fc6bac-c460-4a40-b9c9-4d76bbb0a2d7",
+    "title": "Public Domain Access Issue",
+    "date": "2026-09-04",
+    "steps": 372,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-04_e7fc6bac_Public Domain Access Issue.md",
+    "transcript": true,
+    "preview": "Public Domain Access Issue"
+  },
+  {
+    "conversation_id": "91ec1bc5-b02a-4018-89c0-dd54c3a9227b",
+    "title": "代码生成与加密优化",
+    "date": "2026-09-04",
+    "steps": 741,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-09-04_91ec1bc5_代码生成与加密优化.md",
+    "transcript": true,
+    "preview": "代码生成与加密优化"
+  },
+  {
+    "conversation_id": "64cda293-3a5f-49f5-bc09-d23f46b770b0",
+    "title": "Update Benchmark API Whitelist",
+    "date": "2026-09-04",
+    "steps": 505,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-04_64cda293_Update Benchmark API Whitelist.md",
+    "transcript": true,
+    "preview": "Update Benchmark API Whitelist"
+  },
+  {
+    "conversation_id": "4c126d2c-a445-447f-bdff-be61ab467115",
+    "title": "异常知识库规则优化",
+    "date": "2026-09-04",
+    "steps": 865,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-04_4c126d2c_异常知识库规则优化.md",
+    "transcript": true,
+    "preview": "异常知识库规则优化"
+  },
+  {
+    "conversation_id": "6d9f0e4d-ab21-446d-bed4-43f92158a9a2",
+    "title": "生产环境任务处理异常",
+    "date": "2026-09-04",
+    "steps": 95,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-04_6d9f0e4d_生产环境任务处理异常.md",
+    "transcript": true,
+    "preview": "生产环境任务处理异常"
+  },
+  {
+    "conversation_id": "e3f22ad1-647a-4162-95b6-c455e4b1ff47",
+    "title": "工单状态同步异常分析",
+    "date": "2026-09-04",
+    "steps": 74,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-04_e3f22ad1_工单状态同步异常分析.md",
+    "transcript": true,
+    "preview": "工单状态同步异常分析"
+  },
+  {
+    "conversation_id": "c19ab3c2-8bd2-4205-a5e9-01a620d4d3de",
+    "title": "Mem Reduct Startup Settings",
+    "date": "2026-09-04",
+    "steps": 99,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-09-04_c19ab3c2_Mem Reduct Startup Settings.md",
+    "transcript": true,
+    "preview": "Mem Reduct Startup Settings"
+  },
+  {
+    "conversation_id": "d7fd78d3-dc21-47fa-9d6b-177d5561e4e0",
+    "title": "电脑卡顿原因排查",
+    "date": "2026-09-04",
+    "steps": 32,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-09-04_d7fd78d3_电脑卡顿原因排查.md",
+    "transcript": true,
+    "preview": "电脑卡顿原因排查"
+  },
+  {
+    "conversation_id": "b52bbb95-42a7-478c-874e-65b88d9c5797",
+    "title": "",
+    "date": "2026-09-03",
+    "steps": 290,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-09-03_b52bbb95_未命名.md",
+    "transcript": true,
+    "preview": "Creating Persistent Background Services"
+  },
+  {
+    "conversation_id": "68056ccc-d9b4-462f-ae52-44bf0a1dd27d",
+    "title": "",
+    "date": "2026-09-03",
+    "steps": 559,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-03_68056ccc_未命名.md",
+    "transcript": true,
+    "preview": "Request For An Explanation"
+  },
+  {
+    "conversation_id": "4671354d-267a-40f6-8451-bf71f8a82738",
+    "title": "",
+    "date": "2026-09-03",
+    "steps": 210,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-03_4671354d_未命名.md",
+    "transcript": true,
+    "preview": "Mobile Public IP Access Issue"
+  },
+  {
+    "conversation_id": "020a9273-e6ea-4652-9bfc-112988ca0c18",
+    "title": "",
+    "date": "2026-09-03",
+    "steps": 1095,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-09-03_020a9273_未命名.md",
+    "transcript": true,
+    "preview": "Enforcing Strict Code Standards"
+  },
+  {
+    "conversation_id": "012ebc6c-5cc5-4060-8b56-58089f1f3ea9",
+    "title": "",
+    "date": "2026-09-03",
+    "steps": 224,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-09-03_012ebc6c_未命名.md",
+    "transcript": true,
+    "preview": "Code Quality And Performance"
+  },
+  {
+    "conversation_id": "c81bd14a-e86b-45e9-baa8-ff937d1f7292",
+    "title": "",
+    "date": "2026-09-03",
+    "steps": 260,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-09-03_c81bd14a_未命名.md",
+    "transcript": true,
+    "preview": "UI Rule Configuration Verification"
+  },
+  {
+    "conversation_id": "93255457-814a-4608-8289-a8ca68be1c23",
+    "title": "",
+    "date": "2026-09-03",
+    "steps": 751,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-09-03_93255457_未命名.md",
+    "transcript": true,
+    "preview": "Direct Claim Projects Confirmation"
+  },
+  {
+    "conversation_id": "485f9662-115a-45bb-88ee-f2ef6a4f16dc",
+    "title": "",
+    "date": "2026-09-03",
+    "steps": 5,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/czzp"
+    ],
+    "file": "conversations/2026-09-03_485f9662_未命名.md",
+    "transcript": true,
+    "preview": "Check MySQL Installation Command"
+  },
+  {
+    "conversation_id": "6d51e2e7-77d4-4fa7-9a1e-769dbc056cc7",
+    "title": "",
+    "date": "2026-09-03",
+    "steps": 3,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/milan-3d"
+    ],
+    "file": "conversations/2026-09-03_6d51e2e7_未命名.md",
+    "transcript": true,
+    "preview": "Inquiring About the Cause"
+  },
+  {
+    "conversation_id": "cd337a43-c552-46db-8e3e-d320b1db9474",
+    "title": "",
+    "date": "2026-09-03",
+    "steps": 194,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-03_cd337a43_未命名.md",
+    "transcript": true,
+    "preview": "Handling Missing User Phone Number"
+  },
+  {
+    "conversation_id": "05195e1b-2d03-45fd-9202-d0cd7d5f2da8",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 166,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_05195e1b_未命名.md",
+    "transcript": true,
+    "preview": "Troubleshooting Missing Log Output"
+  },
+  {
+    "conversation_id": "66d5a0be-bb3b-42f2-99dc-a83b41d3b98a",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 51,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-02_66d5a0be_未命名.md",
+    "transcript": true,
+    "preview": "Policy Service Provider Inquiry"
+  },
+  {
+    "conversation_id": "9e3892b3-3eab-4f04-a3e9-2619927e045a",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 69,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_9e3892b3_未命名.md",
+    "transcript": true,
+    "preview": "500 Internal Server Error Explained"
+  },
+  {
+    "conversation_id": "b7aaca55-f409-4b0f-95bd-ac1b11648090",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 1685,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-02_b7aaca55_未命名.md",
+    "transcript": true,
+    "preview": "Policy System Performance Review"
+  },
+  {
+    "conversation_id": "ae70b051-d1c7-40f6-b66d-5b16c2f0c527",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 170,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-02_ae70b051_未命名.md",
+    "transcript": true,
+    "preview": "Troubleshooting Batch Export Data"
+  },
+  {
+    "conversation_id": "a6f3c539-2d64-4c39-9dc1-616eb7e4d004",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 574,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_a6f3c539_未命名.md",
+    "transcript": true,
+    "preview": "Troubleshooting Unresponsive Execution"
+  },
+  {
+    "conversation_id": "d1186ef0-7464-48f0-9caa-e4215f1835d9",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 250,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_d1186ef0_未命名.md",
+    "transcript": true,
+    "preview": "Happy 8 Decision Brain Refactor"
+  },
+  {
+    "conversation_id": "2b908171-7442-4425-96d5-22ebbb02c2e3",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 168,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_2b908171_未命名.md",
+    "transcript": true,
+    "preview": "Happy 8 Brain Refactoring"
+  },
+  {
+    "conversation_id": "212657b4-885a-4447-9640-e4407957fcc5",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 10,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_212657b4_未命名.md",
+    "transcript": true,
+    "preview": "Unified Decision Brain Orchestration"
+  },
+  {
+    "conversation_id": "533c8ad5-61f2-455c-bb84-5dd0e115ccb0",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 103,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_533c8ad5_未命名.md",
+    "transcript": true,
+    "preview": "Unified Brain Evolution Engine"
+  },
+  {
+    "conversation_id": "3b186b88-f907-4e1b-a2d4-5e277ee52be6",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 101,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_3b186b88_未命名.md",
+    "transcript": true,
+    "preview": "M2 Unified Brain Implementation"
+  },
+  {
+    "conversation_id": "42373f81-3f6f-40d9-b5f9-ea795255ab0e",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 114,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_42373f81_未命名.md",
+    "transcript": true,
+    "preview": "Feature Extractor Defect Hardening"
+  },
+  {
+    "conversation_id": "b5a08e53-b59a-4035-a025-e94829dc58bd",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 91,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_b5a08e53_未命名.md",
+    "transcript": true,
+    "preview": "Milestone M1 Forensic Audit"
+  },
+  {
+    "conversation_id": "b6b31677-d4ea-454a-85e2-ad5a3b87b8d4",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 170,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_b6b31677_未命名.md",
+    "transcript": true,
+    "preview": "Defense Mask Adversarial Challenge"
+  },
+  {
+    "conversation_id": "b244c8b7-2c03-4e34-a013-08e3d86200c9",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 51,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_b244c8b7_未命名.md",
+    "transcript": true,
+    "preview": "Milestone M1 Code Review"
+  },
+  {
+    "conversation_id": "edc627ca-9608-4195-98b1-6de0dd775f2c",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 76,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_edc627ca_未命名.md",
+    "transcript": true,
+    "preview": "Milestone 1 Code Review"
+  },
+  {
+    "conversation_id": "07e505f0-ec7d-4aec-aa8c-8823f2a2b2e9",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 73,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_07e505f0_未命名.md",
+    "transcript": true,
+    "preview": "Feature Extractor Stress Testing"
+  },
+  {
+    "conversation_id": "0b3e602f-4e82-4b1e-8cfd-251358060e29",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 166,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_0b3e602f_未命名.md",
+    "transcript": true,
+    "preview": "Feature Extractor Pipeline Refactoring"
+  },
+  {
+    "conversation_id": "54d84bb4-2cbc-463a-92e1-99fd303b4da9",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 120,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_54d84bb4_未命名.md",
+    "transcript": true,
+    "preview": "E2E Test Architecture Setup"
+  },
+  {
+    "conversation_id": "82269c5c-8df6-499d-ae11-9796c6834f4e",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 69,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_82269c5c_未命名.md",
+    "transcript": true,
+    "preview": "Rule and Topology Extractor Design"
+  },
+  {
+    "conversation_id": "b5b6de96-d9c7-4b9c-a30e-df94aa2e6b97",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 71,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_b5b6de96_未命名.md",
+    "transcript": true,
+    "preview": "M1 Defense Mask Design"
+  },
+  {
+    "conversation_id": "85c9d492-e8e7-45aa-ba58-31cf932670d7",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 57,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_85c9d492_未命名.md",
+    "transcript": true,
+    "preview": "Spatiotemporal Feature Extraction Design"
+  },
+  {
+    "conversation_id": "75fda26a-281b-434b-87ed-f98016635309",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 176,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_75fda26a_未命名.md",
+    "transcript": true,
+    "preview": "Web Dashboard Integration Survey"
+  },
+  {
+    "conversation_id": "8068da7b-f032-433e-8e32-a8c54bb59764",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 111,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_8068da7b_未命名.md",
+    "transcript": true,
+    "preview": "Kl8 Physical Feature Survey"
+  },
+  {
+    "conversation_id": "f8358eb2-3e36-4c0c-b45e-ee2ae9f56c88",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 93,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-02_f8358eb2_未命名.md",
+    "transcript": true,
+    "preview": "Decision Brain Pipeline Survey"
+  },
+  {
+    "conversation_id": "f13c3e7f-1986-4f8c-9bf0-8955c5a63e76",
+    "title": "",
+    "date": "2026-09-02",
+    "steps": 39,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-02_f13c3e7f_未命名.md",
+    "transcript": true,
+    "preview": "Jenkins Deployment Seata Errors"
+  },
+  {
+    "conversation_id": "8e0b7bc8-3a3e-4aae-9d0b-694e3d9c1d5f",
+    "title": "",
+    "date": "2026-09-01",
+    "steps": 720,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-01_8e0b7bc8_未命名.md",
+    "transcript": true,
+    "preview": "Prediction Hit Rate Optimization"
+  },
+  {
+    "conversation_id": "ddb84f1a-eac0-4340-919f-b638480dff1d",
+    "title": "",
+    "date": "2026-09-01",
+    "steps": 35,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-09-01_ddb84f1a_未命名.md",
+    "transcript": true,
+    "preview": "Fixing Vue Function TypeError"
+  },
+  {
+    "conversation_id": "6fc85d42-ff0a-4352-a095-639a9dae0ecf",
+    "title": "",
+    "date": "2026-09-01",
+    "steps": 715,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-01_6fc85d42_未命名.md",
+    "transcript": true,
+    "preview": "Import Header Template Validation"
+  },
+  {
+    "conversation_id": "eb042a6e-0504-4e64-a81a-31da13583446",
+    "title": "",
+    "date": "2026-09-01",
+    "steps": 275,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-01_eb042a6e_未命名.md",
+    "transcript": true,
+    "preview": "Sonar Code Smell Progress"
+  },
+  {
+    "conversation_id": "b5398405-788d-4227-b4f3-92b4cf0d0aa3",
+    "title": "",
+    "date": "2026-09-01",
+    "steps": 100,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-09-01_b5398405_未命名.md",
+    "transcript": true,
+    "preview": "Druid Connection Pool Timeout"
+  },
+  {
+    "conversation_id": "3a709bbe-3819-4969-8125-eb3287579df3",
+    "title": "",
+    "date": "2026-09-01",
+    "steps": 131,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-09-01_3a709bbe_未命名.md",
+    "transcript": true,
+    "preview": "Debugging Unresponsive API Request"
+  },
+  {
+    "conversation_id": "b34390a8-ebc6-4ddb-a62d-0bc8e6e23e3e",
+    "title": "",
+    "date": "2026-09-01",
+    "steps": 263,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-01_b34390a8_未命名.md",
+    "transcript": true,
+    "preview": "Slow Execution Time Inquiry"
+  },
+  {
+    "conversation_id": "ae6e981f-58b4-4695-8d0b-16eb7638c4d5",
+    "title": "",
+    "date": "2026-09-01",
+    "steps": 1298,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-09-01_ae6e981f_未命名.md",
+    "transcript": true,
+    "preview": "Branch Feature Inquiry"
+  },
+  {
+    "conversation_id": "449ae967-c33c-405b-abd6-f79d64145e04",
+    "title": "",
+    "date": "2026-08-31",
+    "steps": 297,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-31_449ae967_未命名.md",
+    "transcript": true,
+    "preview": "Data Not Refreshing Issue"
+  },
+  {
+    "conversation_id": "d576a82a-150a-45d5-a661-1c9bd678f2b6",
+    "title": "",
+    "date": "2026-08-31",
+    "steps": 97,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-31_d576a82a_未命名.md",
+    "transcript": true,
+    "preview": "Deploying AI Apps via Git"
+  },
+  {
+    "conversation_id": "0377b44e-6ddd-4557-9d30-2de8a299957b",
+    "title": "",
+    "date": "2026-08-31",
+    "steps": 396,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-31_0377b44e_未命名.md",
+    "transcript": true,
+    "preview": "Creating Web Background Service"
+  },
+  {
+    "conversation_id": "4df67d9d-b11d-4a0e-ae5f-8cd9ffc6bdba",
+    "title": "",
+    "date": "2026-08-31",
+    "steps": 51,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-31_4df67d9d_未命名.md",
+    "transcript": true,
+    "preview": "GitHub Branch Verification"
+  },
+  {
+    "conversation_id": "e68674bf-ff9c-4089-ade3-41c148f3274b",
+    "title": "",
+    "date": "2026-08-31",
+    "steps": 41,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-31_e68674bf_未命名.md",
+    "transcript": true,
+    "preview": "Policy Push Timeout Analysis"
+  },
+  {
+    "conversation_id": "4c861245-aee9-4b60-a4db-a7b45778cd18",
+    "title": "",
+    "date": "2026-08-31",
+    "steps": 156,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-31_4c861245_未命名.md",
+    "transcript": true,
+    "preview": "API Request Error Diagnosis"
+  },
+  {
+    "conversation_id": "dba034a2-32d0-44c3-9523-50127f8e81e7",
+    "title": "",
+    "date": "2026-08-31",
+    "steps": 27,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-31_dba034a2_未命名.md",
+    "transcript": true,
+    "preview": "Interface Error Log Troubleshooting"
+  },
+  {
+    "conversation_id": "71e9f777-bd59-4cb2-90ca-e564a523fc26",
+    "title": "",
+    "date": "2026-08-31",
+    "steps": 37,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-31_71e9f777_未命名.md",
+    "transcript": true,
+    "preview": "Locating Error Request Parameters"
+  },
+  {
+    "conversation_id": "298d633f-21bc-4cbf-b453-7db1b899aec3",
+    "title": "",
+    "date": "2026-08-31",
+    "steps": 51,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-31_298d633f_未命名.md",
+    "transcript": true,
+    "preview": "Troubleshooting Beijing Life Callback"
+  },
+  {
+    "conversation_id": "f9820d09-b966-4e49-a50c-6db6e9d05195",
+    "title": "",
+    "date": "2026-08-31",
+    "steps": 118,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-31_f9820d09_未命名.md",
+    "transcript": true,
+    "preview": "Beijing Life Data Query"
+  },
+  {
+    "conversation_id": "fec57927-cb13-4ec3-8162-a68f842c6e0d",
+    "title": "",
+    "date": "2026-08-31",
+    "steps": 178,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-31_fec57927_未命名.md",
+    "transcript": true,
+    "preview": "Samsung SSO Error Message Update"
+  },
+  {
+    "conversation_id": "ddb4c2ed-e49c-4b93-925e-72bc5aab3788",
+    "title": "",
+    "date": "2026-08-31",
+    "steps": 10,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-31_ddb4c2ed_未命名.md",
+    "transcript": true,
+    "preview": "Assistant Identity Inquiry"
+  },
+  {
+    "conversation_id": "97e68a46-b879-41e8-bf91-7347fda031e7",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 61,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/milan-3d"
+    ],
+    "file": "conversations/2026-08-30_97e68a46_未命名.md",
+    "transcript": true,
+    "preview": "Milan 3D Optimization Survey"
+  },
+  {
+    "conversation_id": "e16ff230-6c81-4a98-936c-638be0279a13",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 59,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/milan-3d"
+    ],
+    "file": "conversations/2026-08-30_e16ff230_未命名.md",
+    "transcript": true,
+    "preview": "3D Lottery Pattern Prediction"
+  },
+  {
+    "conversation_id": "53012a02-aca2-463f-9697-d66dcf4ac724",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 571,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-30_53012a02_未命名.md",
+    "transcript": true,
+    "preview": "Prediction History And Review"
+  },
+  {
+    "conversation_id": "d84bd9bf-6c63-4dab-9bea-4ed5b3e0c999",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 43,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/milan-3d"
+    ],
+    "file": "conversations/2026-08-30_d84bd9bf_未命名.md",
+    "transcript": true,
+    "preview": "Milan 3D Prediction Pipeline"
+  },
+  {
+    "conversation_id": "50c222ce-0814-4732-9ed1-7f38b13c38e7",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 87,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-30_50c222ce_未命名.md",
+    "transcript": true,
+    "preview": "K8-Quant Prediction Module Refactoring"
+  },
+  {
+    "conversation_id": "6b737b59-60d0-4828-b1b2-cd7bfbde95c7",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 175,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/milan-3d"
+    ],
+    "file": "conversations/2026-08-30_6b737b59_未命名.md",
+    "transcript": true,
+    "preview": "Milan 3D Model Optimization"
+  },
+  {
+    "conversation_id": "ead46fbd-85bf-49df-b8bc-2da279111d9a",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 93,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-30_ead46fbd_未命名.md",
+    "transcript": true,
+    "preview": "K8 Quant System Refactoring"
+  },
+  {
+    "conversation_id": "c5af84f4-e6dc-41bf-8f6e-7b706fd3d2b8",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 135,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-30_c5af84f4_未命名.md",
+    "transcript": true,
+    "preview": "Milestone M1 Exploration Plan"
+  },
+  {
+    "conversation_id": "fd8375f3-c644-4aae-8cd7-6e14138216c8",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 79,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/milan-3d"
+    ],
+    "file": "conversations/2026-08-30_fd8375f3_未命名.md",
+    "transcript": true,
+    "preview": "Milan 3D Pipeline Implementation"
+  },
+  {
+    "conversation_id": "29277663-e7e9-4a06-a277-03492f05330b",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 82,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/milan-3d"
+    ],
+    "file": "conversations/2026-08-30_29277663_未命名.md",
+    "transcript": true,
+    "preview": "Milan 3D Backtesting Optimization"
+  },
+  {
+    "conversation_id": "741e5741-efa9-475f-a38e-7a1dfc4ea35c",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 113,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-30_741e5741_未命名.md",
+    "transcript": true,
+    "preview": "Milestone M1 System Inspection"
+  },
+  {
+    "conversation_id": "168ddea9-b13f-4f4d-93b0-12d31f067150",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 98,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-30_168ddea9_未命名.md",
+    "transcript": true,
+    "preview": "Milestone M1 Backend Exploration"
+  },
+  {
+    "conversation_id": "c3a2cf15-72eb-49e6-8b2e-58f3120d4c68",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 63,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/milan-3d"
+    ],
+    "file": "conversations/2026-08-30_c3a2cf15_未命名.md",
+    "transcript": true,
+    "preview": "Walk-Forward Backtesting Survey"
+  },
+  {
+    "conversation_id": "5e6ca19f-d508-42a3-8e18-32e9ff4a40b0",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 51,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/milan-3d"
+    ],
+    "file": "conversations/2026-08-30_5e6ca19f_未命名.md",
+    "transcript": true,
+    "preview": "Milan 3D Model Formulations"
+  },
+  {
+    "conversation_id": "d65d4320-7217-42f9-abb1-708b1e62d50d",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 123,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-30_d65d4320_未命名.md",
+    "transcript": true,
+    "preview": "Backend API Testing Survey"
+  },
+  {
+    "conversation_id": "bfd55c85-7e42-4f4a-9251-d41caed8f644",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 127,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-30_bfd55c85_未命名.md",
+    "transcript": true,
+    "preview": "Backend Prediction Service Survey"
+  },
+  {
+    "conversation_id": "bd50f17b-65e1-4042-8e7b-eca4b8a38eac",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 82,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-30_bd50f17b_未命名.md",
+    "transcript": true,
+    "preview": "Frontend UI Theme Survey"
+  },
+  {
+    "conversation_id": "c1219037-342b-4e8d-9199-4b451bbaedf3",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 378,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-30_c1219037_未命名.md",
+    "transcript": true,
+    "preview": "Implementing New Project Module"
+  },
+  {
+    "conversation_id": "c43ac57d-7532-4f36-bbda-b409521a08ce",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 87,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-30_c43ac57d_未命名.md",
+    "transcript": true,
+    "preview": "Font and Style Color Fix"
+  },
+  {
+    "conversation_id": "f38735a8-829f-41f0-a79e-0f33f788d1f7",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 107,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-30_f38735a8_未命名.md",
+    "transcript": true,
+    "preview": "Image Layout Style Fix"
+  },
+  {
+    "conversation_id": "ab7fb6f3-76a0-4aca-ba82-b597c45e6126",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 67,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-30_ab7fb6f3_未命名.md",
+    "transcript": true,
+    "preview": "Style And Color Optimization"
+  },
+  {
+    "conversation_id": "78bf458f-b1bb-41cd-ba9a-b4c1e058bbfa",
+    "title": "",
+    "date": "2026-08-30",
+    "steps": 254,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-30_78bf458f_未命名.md",
+    "transcript": true,
+    "preview": "Implementing Daily Point Input"
+  },
+  {
+    "conversation_id": "ced7321c-3704-4845-a68a-7aa883993a60",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 112,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_ced7321c_未命名.md",
+    "transcript": true,
+    "preview": "Full Pipeline Daily Prediction"
+  },
+  {
+    "conversation_id": "07c3ceae-76f6-442d-bf93-5fa341b70720",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 45,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_07c3ceae_未命名.md",
+    "transcript": true,
+    "preview": "Pipeline Execution Error Debugging"
+  },
+  {
+    "conversation_id": "e11a548e-fec5-4780-9b05-32f94e1bada0",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 175,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_e11a548e_未命名.md",
+    "transcript": true,
+    "preview": "Fixing Uncaught SyntaxError"
+  },
+  {
+    "conversation_id": "64586569-f3c8-4a11-b4ad-f9ace974ac0a",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 236,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_64586569_未命名.md",
+    "transcript": true,
+    "preview": "Project Data Directory Organization"
+  },
+  {
+    "conversation_id": "a89fce1d-7b46-495f-8ab7-8c20e3c9f58d",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 304,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_a89fce1d_未命名.md",
+    "transcript": true,
+    "preview": "Quant System Directory Refactoring"
+  },
+  {
+    "conversation_id": "030e4cd9-8dea-40bc-9b69-8f1d4d37026c",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 200,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_030e4cd9_未命名.md",
+    "transcript": true,
+    "preview": "Quant System Refactoring Project"
+  },
+  {
+    "conversation_id": "467200f6-51a5-438f-bf35-c806d7e49c9d",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 152,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_467200f6_未命名.md",
+    "transcript": true,
+    "preview": "Milestone Three Runtime Centralization"
+  },
+  {
+    "conversation_id": "dbf39eed-ca39-41cd-a0d6-00923a47a500",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 388,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_dbf39eed_未命名.md",
+    "transcript": true,
+    "preview": "Milestone 2 Architecture Review"
+  },
+  {
+    "conversation_id": "73259187-49d7-4da7-aac1-20a73a889f16",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 85,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_73259187_未命名.md",
+    "transcript": true,
+    "preview": "Milestone 2 Architecture Verification"
+  },
+  {
+    "conversation_id": "50f406b6-674b-4b5f-9aee-a686283b7f57",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 140,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_50f406b6_未命名.md",
+    "transcript": true,
+    "preview": "Milestone 2 Architecture Verification"
+  },
+  {
+    "conversation_id": "25b82c24-be9a-4be3-8ea5-c69b91f46da9",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 157,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_25b82c24_未命名.md",
+    "transcript": true,
+    "preview": "Milestone Two Forensic Audit"
+  },
+  {
+    "conversation_id": "9c664cc7-552f-4246-bf65-099b780b5a87",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 115,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_9c664cc7_未命名.md",
+    "transcript": true,
+    "preview": "Milestone Two Architecture Review"
+  },
+  {
+    "conversation_id": "6f1e3ff2-0b94-4976-85f4-fa223fc89c0d",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 345,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_6f1e3ff2_未命名.md",
+    "transcript": true,
+    "preview": "Milestone Two Architecture Consolidation"
+  },
+  {
+    "conversation_id": "19e1eb24-6f6c-4a19-ad51-5b62c6e6768d",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 313,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_19e1eb24_未命名.md",
+    "transcript": true,
+    "preview": "E2E Test Suite Setup"
+  },
+  {
+    "conversation_id": "0cb39a7f-db42-435f-ac29-205ba5059534",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 274,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_0cb39a7f_未命名.md",
+    "transcript": true,
+    "preview": "Pipeline And Test Exploration"
+  },
+  {
+    "conversation_id": "a033f0d3-9505-440f-85c6-61cf92bd1217",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 278,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_a033f0d3_未命名.md",
+    "transcript": true,
+    "preview": "Python Import Dependency Analysis"
+  },
+  {
+    "conversation_id": "8cb6dc1d-618f-410e-98c4-03c81547d7ea",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 102,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_8cb6dc1d_未命名.md",
+    "transcript": true,
+    "preview": "Codebase Mirror Diff Audit"
+  },
+  {
+    "conversation_id": "cc59538d-26c0-428b-976d-558e59970f64",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 222,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_cc59538d_未命名.md",
+    "transcript": true,
+    "preview": "Organizing Python Project Files"
+  },
+  {
+    "conversation_id": "518b5042-9cb0-49bf-aaf9-141488a56d6e",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 232,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_518b5042_未命名.md",
+    "transcript": true,
+    "preview": "Python Subsystem Module Integration"
+  },
+  {
+    "conversation_id": "b346ff60-709c-4a79-8c40-1eb007f88c20",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 288,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_b346ff60_未命名.md",
+    "transcript": true,
+    "preview": "KillSeeker模块系统整合迁移"
+  },
+  {
+    "conversation_id": "cd28623f-bbaf-49ec-add9-b1ab7989fc20",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 330,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_cd28623f_未命名.md",
+    "transcript": true,
+    "preview": "Lottery Trend Chart Feature"
+  },
+  {
+    "conversation_id": "7ce84c64-d2d2-4068-a406-f96933d1ee22",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 251,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_7ce84c64_未命名.md",
+    "transcript": true,
+    "preview": "Web Frontend Redesign Planning"
+  },
+  {
+    "conversation_id": "1a944c02-152f-42b6-b29b-6b0c7ad05cb0",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 178,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_1a944c02_未命名.md",
+    "transcript": true,
+    "preview": "Project Subsystem Module Integration"
+  },
+  {
+    "conversation_id": "9d44972b-d524-445a-84ba-305610608988",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 292,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_9d44972b_未命名.md",
+    "transcript": true,
+    "preview": "Starting Background Local Server"
+  },
+  {
+    "conversation_id": "7fcd13ac-6893-46eb-bf48-732bbc726f40",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 192,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_7fcd13ac_未命名.md",
+    "transcript": true,
+    "preview": "Subsystem Project Integration Migration"
+  },
+  {
+    "conversation_id": "9d85524b-e150-426b-a816-b1c3cc1b0356",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 198,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_9d85524b_未命名.md",
+    "transcript": true,
+    "preview": "Subsystem Project Integration"
+  },
+  {
+    "conversation_id": "452bc775-fd3d-4803-a05e-b8370e78240b",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 29,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_452bc775_未命名.md",
+    "transcript": true,
+    "preview": "Prediction Modules Web Implementation"
+  },
+  {
+    "conversation_id": "de63ba77-7ddc-4696-a822-e49b96797955",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 352,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_de63ba77_未命名.md",
+    "transcript": true,
+    "preview": "LSTM Subsystem Module Integration"
+  },
+  {
+    "conversation_id": "8a2624dc-8447-4216-959e-014ec0cb151b",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 248,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_8a2624dc_未命名.md",
+    "transcript": true,
+    "preview": "Subsystem Project Module Integration"
+  },
+  {
+    "conversation_id": "45b27956-a145-4bd9-b3cf-2533f8a0ca1c",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 156,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_45b27956_未命名.md",
+    "transcript": true,
+    "preview": "Debugging Blank Tab Issue"
+  },
+  {
+    "conversation_id": "267e28ba-d7dd-476a-a70b-d9675af529fa",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 25,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_267e28ba_未命名.md",
+    "transcript": true,
+    "preview": "Theme Selection Style Overrides"
+  },
+  {
+    "conversation_id": "524b83e1-6c9d-4be2-b624-17980af7cc5f",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 144,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_524b83e1_未命名.md",
+    "transcript": true,
+    "preview": "Project Directory Structure Reorganization"
+  },
+  {
+    "conversation_id": "93f359ff-706d-4116-9fab-3d992544b0ba",
+    "title": "",
+    "date": "2026-08-29",
+    "steps": 75,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-29_93f359ff_未命名.md",
+    "transcript": true,
+    "preview": "Adding System Theme Styles"
+  },
+  {
+    "conversation_id": "39a558a6-b548-48d6-9bc5-10b774fceddb",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 185,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project"
+    ],
+    "file": "conversations/2026-08-28_39a558a6_未命名.md",
+    "transcript": true,
+    "preview": "Multi-Project Daily Analysis Execution"
+  },
+  {
+    "conversation_id": "b08a8271-b9ba-49af-a436-a97b7bf838ab",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 6,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project"
+    ],
+    "file": "conversations/2026-08-28_b08a8271_未命名.md",
+    "transcript": true,
+    "preview": "Extracting Copyable Text"
+  },
+  {
+    "conversation_id": "46efb24c-0afb-443b-9b92-fd4afdfde4bb",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 337,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/基于LLM预测系统"
+    ],
+    "file": "conversations/2026-08-28_46efb24c_未命名.md",
+    "transcript": true,
+    "preview": "Pick Two Prediction System Design"
+  },
+  {
+    "conversation_id": "ecc084e1-615f-4b59-8beb-dd13aa7cc4f0",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 347,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/数据雷达图预测系统"
+    ],
+    "file": "conversations/2026-08-28_ecc084e1_未命名.md",
+    "transcript": true,
+    "preview": "Two-Number Prediction Strategies"
+  },
+  {
+    "conversation_id": "d07d9eb2-3577-4158-99c1-3c7e766ccce8",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 230,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/sijing"
+    ],
+    "file": "conversations/2026-08-28_d07d9eb2_未命名.md",
+    "transcript": true,
+    "preview": "PDF Parsing To Markdown"
+  },
+  {
+    "conversation_id": "59e446e3-ed5b-4dd5-a279-9d91dc822833",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 313,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-28_59e446e3_未命名.md",
+    "transcript": true,
+    "preview": "Seata Startup Context Error"
+  },
+  {
+    "conversation_id": "8c9ca520-ef70-476c-a130-d7a4eb0e5e2b",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 154,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-28_8c9ca520_未命名.md",
+    "transcript": true,
+    "preview": "Seata Global Transaction Error"
+  },
+  {
+    "conversation_id": "48710757-b1d0-430a-a80f-5e130534eec0",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 562,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-28_48710757_未命名.md",
+    "transcript": true,
+    "preview": "Student Insurance Import Implementation"
+  },
+  {
+    "conversation_id": "e46b1862-d437-418a-b5cd-b0d99fcf7193",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 155,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "C:/Users/zhiwei.chen/.gemini/antigravity/worktrees/hmsp/fix_zodiac_shell_execution"
+    ],
+    "file": "conversations/2026-08-28_e46b1862_未命名.md",
+    "transcript": true,
+    "preview": "Debugging Terminal Zodiac Script"
+  },
+  {
+    "conversation_id": "6e78a3bd-3ae5-465e-8ea7-f5e726b5a00d",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 217,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "C:/Users/zhiwei.chen/.gemini/antigravity/worktrees/hmsp/fix_wechat_preview_incompatibility"
+    ],
+    "file": "conversations/2026-08-28_6e78a3bd_未命名.md",
+    "transcript": true,
+    "preview": "WeChat PDF Preview Differences"
+  },
+  {
+    "conversation_id": "e7aab6c8-915a-4e4c-9f68-ebd86ea1fc2c",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 11,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "C:/Users/zhiwei.chen/.gemini/antigravity/worktrees/hmsp/fix_zodiac_shell_execution"
+    ],
+    "file": "conversations/2026-08-28_e7aab6c8_未命名.md",
+    "transcript": true,
+    "preview": "Python And Git Command Test"
+  },
+  {
+    "conversation_id": "04c36946-dbd8-49b5-a559-42d7ad514802",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 7,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "C:/Users/zhiwei.chen/.gemini/antigravity/worktrees/hmsp/fix_zodiac_shell_execution"
+    ],
+    "file": "conversations/2026-08-28_04c36946_未命名.md",
+    "transcript": true,
+    "preview": "PowerShell Command Execution Test"
+  },
+  {
+    "conversation_id": "6d5613f3-dd08-4816-a629-0a91c3e108e1",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 7,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "C:/Users/zhiwei.chen/.gemini/antigravity/worktrees/hmsp/fix_zodiac_shell_execution"
+    ],
+    "file": "conversations/2026-08-28_6d5613f3_未命名.md",
+    "transcript": true,
+    "preview": "PowerShell Command Execution Test"
+  },
+  {
+    "conversation_id": "00042610-f1b2-4379-bc8a-01dc034aaff4",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 53,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "C:/Users/zhiwei.chen/.gemini/antigravity/worktrees/hmsp/query_product_by_code"
+    ],
+    "file": "conversations/2026-08-28_00042610_未命名.md",
+    "transcript": true,
+    "preview": "Query Products by Service Code"
+  },
+  {
+    "conversation_id": "df6b2229-5b01-41e1-a2d9-4bdc7d9ac57f",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 7,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "C:/Users/zhiwei.chen/.gemini/antigravity/worktrees/hmsp/fix_zodiac_shell_execution"
+    ],
+    "file": "conversations/2026-08-28_df6b2229_未命名.md",
+    "transcript": true,
+    "preview": "PowerShell Command Execution Test"
+  },
+  {
+    "conversation_id": "1c30080a-d9ee-4d0c-aa22-bb72a50a2c1c",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 7,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "C:/Users/zhiwei.chen/.gemini/antigravity/worktrees/hmsp/fix_zodiac_shell_execution"
+    ],
+    "file": "conversations/2026-08-28_1c30080a_未命名.md",
+    "transcript": true,
+    "preview": "Terminal Command Execution Test"
+  },
+  {
+    "conversation_id": "5700463c-8778-49db-862e-87290729ddfd",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 3,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "C:/Users/zhiwei.chen/.gemini/antigravity/worktrees/hmsp/parse_third_party_redirect_path"
+    ],
+    "file": "conversations/2026-08-28_5700463c_未命名.md",
+    "transcript": true,
+    "preview": "URL Path Parameter Parsing"
+  },
+  {
+    "conversation_id": "40764d60-4765-4a53-b256-c4491c677f4e",
+    "title": "",
+    "date": "2026-08-28",
+    "steps": 27,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "C:/Users/zhiwei.chen/.gemini/antigravity/worktrees/hmsp/fix_wechat_api_quota"
+    ],
+    "file": "conversations/2026-08-28_40764d60_未命名.md",
+    "transcript": true,
+    "preview": "Resolving WeChat Error 45009"
+  },
+  {
+    "conversation_id": "3e76be31-d1db-4b8a-a015-20dd842ba734",
+    "title": "",
+    "date": "2026-08-27",
+    "steps": 418,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-27_3e76be31_未命名.md",
+    "transcript": true,
+    "preview": "WeChat Mini Program Redirection Review"
+  },
+  {
+    "conversation_id": "a85b9ea0-d937-44ea-b6d0-c0bbe4a023b9",
+    "title": "",
+    "date": "2026-08-27",
+    "steps": 61,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/sijing"
+    ],
+    "file": "conversations/2026-08-27_a85b9ea0_未命名.md",
+    "transcript": true,
+    "preview": "Extracting PDF Requirements to Markdown"
+  },
+  {
+    "conversation_id": "12a0f86b-3793-48ec-8850-1c416e4f1e37",
+    "title": "",
+    "date": "2026-08-27",
+    "steps": 53,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/sijing"
+    ],
+    "file": "conversations/2026-08-27_12a0f86b_未命名.md",
+    "transcript": true,
+    "preview": "Recurring Issue in New Projects"
+  },
+  {
+    "conversation_id": "b5b0dc40-944e-4b38-944c-30fbfbb612f1",
+    "title": "",
+    "date": "2026-08-27",
+    "steps": 117,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "C:/Users/zhiwei.chen/.gemini/antigravity/worktrees/hmsp/remove_chat_acl_checks"
+    ],
+    "file": "conversations/2026-08-27_b5b0dc40_未命名.md",
+    "transcript": true,
+    "preview": "Removing Chat Whitelist Configuration"
+  },
+  {
+    "conversation_id": "3cc70bf1-8138-4cef-8652-bbed91b510e4",
+    "title": "",
+    "date": "2026-08-27",
+    "steps": 195,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project/data"
+    ],
+    "file": "conversations/2026-08-27_3cc70bf1_未命名.md",
+    "transcript": true,
+    "preview": "Dual Number Prediction Design"
+  },
+  {
+    "conversation_id": "5fd2efb6-8514-4ffc-a8a2-2de67f271131",
+    "title": "",
+    "date": "2026-08-27",
+    "steps": 150,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "C:/Users/zhiwei.chen/.gemini/antigravity/worktrees/hmsp/fix_service_instance_logic"
+    ],
+    "file": "conversations/2026-08-27_5fd2efb6_未命名.md",
+    "transcript": true,
+    "preview": "Service Instance Table Analysis"
+  },
+  {
+    "conversation_id": "28f51f1a-0b02-4f68-a63c-579f5b5000a7",
+    "title": "",
+    "date": "2026-08-27",
+    "steps": 95,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "C:/Users/zhiwei.chen/.gemini/antigravity/worktrees/hmsp/export_config_diff_release"
+    ],
+    "file": "conversations/2026-08-27_28f51f1a_未命名.md",
+    "transcript": true,
+    "preview": "Export Branch Config Differences"
+  },
+  {
+    "conversation_id": "308ca4a9-d9f5-4071-a4da-11048e2e7501",
+    "title": "",
+    "date": "2026-08-27",
+    "steps": 126,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-08-27_308ca4a9_未命名.md",
+    "transcript": true,
+    "preview": "Auto Authorize Command Execution"
+  },
+  {
+    "conversation_id": "e23f9003-2676-4cab-9baf-ca6e88dcc4c0",
+    "title": "",
+    "date": "2026-08-27",
+    "steps": 11,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-27_e23f9003_未命名.md",
+    "transcript": true,
+    "preview": "Fast Model Toggle Settings"
+  },
+  {
+    "conversation_id": "02cab585-6f7e-44b9-a103-8f7929b734be",
+    "title": "",
+    "date": "2026-08-26",
+    "steps": 195,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project"
+    ],
+    "file": "conversations/2026-08-26_02cab585_未命名.md",
+    "transcript": true,
+    "preview": "Daily Subsystem Analysis Execution"
+  },
+  {
+    "conversation_id": "0cdfcb74-6133-4fb7-91dd-b5aa706e2fb9",
+    "title": "",
+    "date": "2026-08-26",
+    "steps": 17,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-26_0cdfcb74_未命名.md",
+    "transcript": true,
+    "preview": "Production Error Log Analysis"
+  },
+  {
+    "conversation_id": "2bbaea89-23a9-4144-a56d-8583549f98c1",
+    "title": "",
+    "date": "2026-08-26",
+    "steps": 440,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-26_2bbaea89_未命名.md",
+    "transcript": true,
+    "preview": "Mini Program Redirection Logic"
+  },
+  {
+    "conversation_id": "16152f55-5ddc-46c3-b1c6-295fb4ab390e",
+    "title": "",
+    "date": "2026-08-26",
+    "steps": 92,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-26_16152f55_未命名.md",
+    "transcript": true,
+    "preview": "WeSure Redirect Parameter Query"
+  },
+  {
+    "conversation_id": "465d0657-c105-48ff-8c5e-195429a741c1",
+    "title": "",
+    "date": "2026-08-25",
+    "steps": 307,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/数据雷达图预测系统"
+    ],
+    "file": "conversations/2026-08-25_465d0657_未命名.md",
+    "transcript": true,
+    "preview": "System Implementation Status"
+  },
+  {
+    "conversation_id": "bd1f29b4-aeaa-41b3-a7a0-044fca894be9",
+    "title": "",
+    "date": "2026-08-25",
+    "steps": 343,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/基于LLM预测系统"
+    ],
+    "file": "conversations/2026-08-25_bd1f29b4_未命名.md",
+    "transcript": true,
+    "preview": "System Implementation Status"
+  },
+  {
+    "conversation_id": "e14771b2-7fe1-46af-b5ef-24e106d8296f",
+    "title": "",
+    "date": "2026-08-25",
+    "steps": 57,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/Python-Project"
+    ],
+    "file": "conversations/2026-08-25_e14771b2_未命名.md",
+    "transcript": true,
+    "preview": "Cold Number Tracking Analysis"
+  },
+  {
+    "conversation_id": "0cf4d064-a69d-4cda-a1fa-2b1364f61755",
+    "title": "",
+    "date": "2026-08-25",
+    "steps": 657,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-08-25_0cf4d064_未命名.md",
+    "transcript": true,
+    "preview": "Cross Mini Program Redirection"
+  },
+  {
+    "conversation_id": "26d3ede3-fbac-4ada-ab6b-44cf45b73b43",
+    "title": "",
+    "date": "2026-08-25",
+    "steps": 329,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-25_26d3ede3_未命名.md",
+    "transcript": true,
+    "preview": "服务申请天数拦截排查"
+  },
+  {
+    "conversation_id": "880d267b-1197-4656-b3bc-4f409b0d670a",
+    "title": "",
+    "date": "2026-08-25",
+    "steps": 352,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-25_880d267b_未命名.md",
+    "transcript": true,
+    "preview": "Configure API Log Whitelist"
+  },
+  {
+    "conversation_id": "4c5e5f06-47ec-4177-8c3d-fb0e7caee6b0",
+    "title": "",
+    "date": "2026-08-25",
+    "steps": 29,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-08-25_4c5e5f06_未命名.md",
+    "transcript": true,
+    "preview": "Git Branch Implementation Details"
+  },
+  {
+    "conversation_id": "fc6f2a1a-0ccb-4f41-935e-ee9dbf8f2da2",
+    "title": "",
+    "date": "2026-08-25",
+    "steps": 39,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-08-25_fc6f2a1a_未命名.md",
+    "transcript": true,
+    "preview": "Branch Feature Inquiry"
+  },
+  {
+    "conversation_id": "afc27a61-3fb4-4551-a203-4548790842ae",
+    "title": "",
+    "date": "2026-08-25",
+    "steps": 109,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-08-25_afc27a61_未命名.md",
+    "transcript": true,
+    "preview": "Insurance Claim Process Implementation"
+  },
+  {
+    "conversation_id": "218db2c9-d365-4496-b3e6-b720f034c313",
+    "title": "",
+    "date": "2026-08-25",
+    "steps": 58,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/fastclaim-ruletree-czw/fastclaim"
+    ],
+    "file": "conversations/2026-08-25_218db2c9_未命名.md",
+    "transcript": true,
+    "preview": "Main Method Test Refactoring"
+  },
+  {
+    "conversation_id": "a892ca81-73eb-4289-a0fe-b5778804bcaf",
+    "title": "",
+    "date": "2026-08-25",
+    "steps": 103,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-25_a892ca81_未命名.md",
+    "transcript": true,
+    "preview": "Workflow Degradation Alert Analysis"
+  },
+  {
+    "conversation_id": "ea295e01-d5f8-402b-aaa2-eed6ebce93d3",
+    "title": "",
+    "date": "2026-08-25",
+    "steps": 180,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-25_ea295e01_未命名.md",
+    "transcript": true,
+    "preview": "Production Error Log Analysis"
+  },
+  {
+    "conversation_id": "c63c80e2-f938-46d5-b23e-ac92b9ed10dd",
+    "title": "",
+    "date": "2026-08-25",
+    "steps": 56,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "c:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": "conversations/2026-08-25_c63c80e2_未命名.md",
+    "transcript": true,
+    "preview": "Improving Task Error Logging"
+  },
+  {
+    "conversation_id": "1416448a-9f11-4c24-8a90-94fc6813ca45",
+    "title": "",
+    "date": "2026-08-21",
+    "steps": 5,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-08-21_1416448a_未命名.md",
+    "transcript": true,
+    "preview": "请求帮助解决问题"
+  },
+  {
+    "conversation_id": "b6c29f99-35dc-434a-bdde-7ea368512e95",
+    "title": "",
+    "date": "2026-08-20",
+    "steps": 188,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-08-20_b6c29f99_未命名.md",
+    "transcript": true,
+    "preview": "API Location Error Report"
+  },
+  {
+    "conversation_id": "5c830052-26eb-45ef-81d0-df106891b202",
+    "title": "",
+    "date": "2026-08-20",
+    "steps": 43,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [
+      "C:/D-pan/Dpanqianyi/git-project/hmsp"
+    ],
+    "file": null,
+    "transcript": false
+  },
+  {
+    "conversation_id": "34585328-ce1c-46b6-8408-e85df2703fb4",
+    "title": "",
+    "date": "2026-08-19",
+    "steps": 16,
+    "status": "CASCADE_RUN_STATUS_IDLE",
+    "workspaces": [],
+    "file": "conversations/2026-08-19_34585328_未命名.md",
+    "transcript": true,
+    "preview": "期望是自动执行命令 这个都已经设置好了么 请确认"
+  }
+]

@@ -1,0 +1,103 @@
+{
+  "summaries": {
+    "A_history": {
+      "path": "C:\\D-pan\\Dpanqianyi\\Python-Project\\data\\storage\\raw\\kl8_history_final.txt",
+      "count": 2123,
+      "latest": 2026302,
+      "oldest": 2020001,
+      "invalid_count": 0,
+      "invalid_samples": []
+    },
+    "A_points": {
+      "path": "C:\\D-pan\\Dpanqianyi\\点位+遗漏号分析\\data\\cache\\points_archive.txt",
+      "count": 337,
+      "latest": 2026302,
+      "oldest": 2025316,
+      "invalid_count": 0,
+      "invalid_samples": []
+    },
+    "B_history": {
+      "path": "C:\\D-pan\\Dpanqianyi\\yuce-kaiyuan\\kl8_history_final.txt",
+      "count": 2122,
+      "latest": 2026301,
+      "oldest": 2020001,
+      "invalid_count": 0,
+      "invalid_samples": []
+    },
+    "B_points": {
+      "path": "C:\\D-pan\\Dpanqianyi\\yuce-kaiyuan\\daily_points.txt",
+      "count": 337,
+      "latest": 2026302,
+      "oldest": 2025316,
+      "invalid_count": 0,
+      "invalid_samples": []
+    },
+    "C_history": {
+      "path": "C:\\D-pan\\Dpanqianyi\\微积分分区\\kl8_history.txt",
+      "count": 2122,
+      "latest": 2026301,
+      "oldest": 2020001,
+      "invalid_count": 0,
+      "invalid_samples": []
+    }
+  },
+  "comparisons": [
+    {
+      "kind": "history",
+      "source": "C:\\D-pan\\Dpanqianyi\\Python-Project\\data\\storage\\raw\\kl8_history_final.txt",
+      "target": "C:\\D-pan\\Dpanqianyi\\yuce-kaiyuan\\kl8_history_final.txt",
+      "source_count": 2123,
+      "target_count": 2122,
+      "source_latest": 2026302,
+      "target_latest": 2026301,
+      "missing": [
+        2026302
+      ],
+      "extra": [],
+      "mismatched": [
+        2023179,
+        2024295,
+        2025037
+      ],
+      "source_invalid": 0,
+      "target_invalid": 0,
+      "ok": false
+    },
+    {
+      "kind": "history",
+      "source": "C:\\D-pan\\Dpanqianyi\\Python-Project\\data\\storage\\raw\\kl8_history_final.txt",
+      "target": "C:\\D-pan\\Dpanqianyi\\微积分分区\\kl8_history.txt",
+      "source_count": 2123,
+      "target_count": 2122,
+      "source_latest": 2026302,
+      "target_latest": 2026301,
+      "missing": [
+        2026302
+      ],
+      "extra": [],
+      "mismatched": [
+        2023179,
+        2024295,
+        2025037
+      ],
+      "source_invalid": 0,
+      "target_invalid": 0,
+      "ok": false
+    },
+    {
+      "kind": "points",
+      "source": "C:\\D-pan\\Dpanqianyi\\点位+遗漏号分析\\data\\cache\\points_archive.txt",
+      "target": "C:\\D-pan\\Dpanqianyi\\yuce-kaiyuan\\daily_points.txt",
+      "source_count": 337,
+      "target_count": 337,
+      "source_latest": 2026302,
+      "target_latest": 2026302,
+      "missing": [],
+      "extra": [],
+      "mismatched": [],
+      "source_invalid": 0,
+      "target_invalid": 0,
+      "ok": true
+    }
+  ]
+}

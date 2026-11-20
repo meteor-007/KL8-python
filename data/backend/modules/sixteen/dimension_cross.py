@@ -412,11 +412,14 @@ PENALTY_LAMBDA = 200.0
 
 
 def _constraint_violation(picks: List[Dict[str, Any]]) -> Tuple[float, Dict[str, Any]]:
+    unique_nums = {p["number"] for p in picks}
+    dup_violation = len(picks) - len(unique_nums)
+
     tails = {p["tail"] for p in picks}
     roads = Counter(p["road012"] for p in picks)
     primes = sum(1 for p in picks if p["prime_class"] == "prime")
 
-    v = 0.0
+    v = dup_violation * 1000.0
     detail = {
         "tail_coverage": len(tails),
         "tail_violation": max(0, CONSTRAINTS["min_tail_coverage"] - len(tails)),
@@ -424,6 +427,7 @@ def _constraint_violation(picks: List[Dict[str, Any]]) -> Tuple[float, Dict[str,
         "road_violation": 0,
         "prime_count": primes,
         "prime_violation": 0,
+        "duplicate_count": dup_violation,
     }
     v += detail["tail_violation"] * 10.0
 
@@ -490,29 +494,34 @@ def select_optimal_picks(
 
     for _ in range(restarts):
         # 起点：按动量序取前 pick_size，再加一点随机扰动
-        start = pool[:pick_size]
+        start = list(pool[:pick_size])
         if rng.random() < 0.5 and n > pick_size:
-            # 随机替换 1~3 个，制造多样性
-            for _k in range(rng.randint(1, 3)):
-                if n <= pick_size:
-                    break
-                idx_out = rng.randrange(pick_size)
-                idx_in = rng.randrange(pick_size, n)
-                start[idx_out] = pool[idx_in]
+            # 随机替换 1~3 个，制造多样性且保证去重
+            curr_nums = {p["number"] for p in start}
+            avail_pool = [p for p in pool[pick_size:] if p["number"] not in curr_nums]
+            k_replace = min(rng.randint(1, 3), len(avail_pool), pick_size)
+            if k_replace > 0:
+                replace_outs = rng.sample(range(pick_size), k_replace)
+                replace_ins = rng.sample(avail_pool, k_replace)
+                for oi, in_p in zip(replace_outs, replace_ins):
+                    start[oi] = in_p
         current = list(start)
         cur_obj = _objective(current)
 
         for _step in range(max_steps):
             improved = False
-            # 邻域：所有 (选内, 选外) 交换
+            # 选内选外严格按集合划分，彻底杜绝同号重复
+            curr_nums = {p["number"] for p in current}
+            in_pool = [p for p in pool if p["number"] not in curr_nums]
+            if not in_pool:
+                break
             out_indices = list(range(pick_size))
-            in_indices = list(range(pick_size, n))
             rng.shuffle(out_indices)
-            rng.shuffle(in_indices)
+            rng.shuffle(in_pool)
             for oi in out_indices:
-                for ii in in_indices:
+                for in_p in in_pool:
                     cand = list(current)
-                    cand[oi] = pool[ii]
+                    cand[oi] = in_p
                     obj = _objective(cand)
                     if obj > cur_obj + 1e-9:
                         current = cand

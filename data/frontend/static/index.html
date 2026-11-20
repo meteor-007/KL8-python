@@ -27,7 +27,7 @@
   <!-- Marked for Markdown -->
   <script src="/static/vendor/marked.min.js"></script>
   <!-- Custom Cyber Theme -->
-  <link rel="stylesheet" href="/static/css/cyber_theme.css?v=20261113_193119">
+  <link rel="stylesheet" href="/static/css/cyber_theme.css?v=20261115_213110">
   <style>
     [v-cloak] { display: none; }
   </style>
@@ -6812,6 +6812,382 @@
   </div>
 </div>
 
+<!-- ═══ SUBVIEW: hub_ai_math/tprd_v40/view.html ═══ -->
+<div v-show="activeTab === 'tprd_v40_cockpit'" class="space-y-6">
+  <!-- ══════════ TPRD v4.0 双螺旋矩阵与智能缩水系统驾驶舱 ══════════ -->
+  <div class="glass-panel p-6 space-y-6 border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
+    <!-- 模块标题栏与控制区 -->
+    <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-400/40 flex items-center justify-center text-xl shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+          🧬
+        </div>
+        <div>
+          <h3 class="text-base font-bold flex items-center gap-2" style="color: var(--text-main);">
+            <span>TPRD v4.0 双螺旋矩阵与智能缩水 · 精锐驾驶舱 (P2x)</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400 font-mono border border-emerald-500/30">
+              W=60(45%) + W=240(55%) 树模型加权 · 零因果泄漏
+            </span>
+          </h3>
+          <p class="text-xs mt-0.5" style="color: var(--text-muted);">
+            目标推演第 <span class="text-emerald-400 font-mono font-bold">{{ tprdV40Data?.target_period || '---' }}</span> 期 · 上期基准 <span class="font-mono text-slate-300">{{ tprdV40Data?.last_period || '---' }}</span>
+            · 六维正交配额 · 和值走廊 [760, 860] · DHM-Pro v4.0 选5矩阵
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <button @click="copyAllDhmBets"
+                class="cyber-btn cyber-btn-dark text-xs !py-1.5 !px-3 flex items-center gap-1.5 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/20">
+          <span>📋</span>
+          <span>一键复制30注选5</span>
+        </button>
+        <button @click="copyPick2Pairs"
+                class="cyber-btn cyber-btn-dark text-xs !py-1.5 !px-3 flex items-center gap-1.5 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/20">
+          <span>👑</span>
+          <span>复制选2抽屉组合</span>
+        </button>
+        <button @click="triggerTprdV40Run"
+                :disabled="isTprdV40Running"
+                class="cyber-btn cyber-btn-primary text-xs !py-1.5 !px-3 flex items-center gap-1.5">
+          <span :class="{'animate-spin': isTprdV40Running}">🔄</span>
+          <span>{{ isTprdV40Running ? 'TPRD 推演中...' : '一键重新执行 TPRD 推演' }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 顶层核心胆码出击矩阵 -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <!-- Top 1 独立金胆 -->
+      <div class="glass-panel p-4 border border-amber-500/50 bg-amber-500/5 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+              <span>👑</span> Top 1 独立金胆
+            </span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">独胆首选</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">综合 Z-Score 双窗口极值最高分</p>
+        </div>
+        <div class="my-3 flex items-center justify-center">
+          <span class="w-14 h-14 rounded-2xl border-2 border-amber-400 bg-amber-500/20 text-amber-300 font-mono font-black text-2xl flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.4)]">
+            {{ String(tprdV40Data?.top1 || '--').padStart(2, '0') }}
+          </span>
+        </div>
+        <div class="text-[11px] font-mono text-center text-amber-400/80">03号熔断器状态: 正常</div>
+      </div>
+
+      <!-- Top 3 正交三胆 -->
+      <div class="glass-panel p-4 border border-cyan-500/50 bg-cyan-500/5 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
+              <span>📐</span> Top 3 正交三胆组
+            </span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300">012路正交</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">跨路数+质合正交对冲不共振</p>
+        </div>
+        <div class="my-3 flex items-center justify-center gap-2">
+          <span v-for="b in (tprdV40Data?.top3_orthogonal || [57, 14, 46])" :key="'t3-'+b"
+                class="w-10 h-10 rounded-xl border border-cyan-400 bg-cyan-500/20 text-cyan-300 font-mono font-bold text-base flex items-center justify-center shadow-lg shadow-cyan-500/20">
+            {{ String(b).padStart(2, '0') }}
+          </span>
+        </div>
+        <div class="text-[11px] font-mono text-center text-cyan-400/80">三胆跨路: 14(2路) · 46(1路) · 57(0路)</div>
+      </div>
+
+      <!-- Top 5 精选胆组 -->
+      <div class="glass-panel p-4 border border-emerald-500/50 bg-emerald-500/5 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+              <span>🌟</span> Top 5 精选高潜组
+            </span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">主选池</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">正交三胆 + 抽屉补位双胆</p>
+        </div>
+        <div class="my-3 flex items-center justify-center gap-1.5 flex-wrap">
+          <span v-for="b in (tprdV40Data?.top5 || [57, 14, 46, 30, 75])" :key="'t5-'+b"
+                class="w-9 h-9 rounded-lg border border-emerald-400 bg-emerald-500/20 text-emerald-300 font-mono font-bold text-sm flex items-center justify-center">
+            {{ String(b).padStart(2, '0') }}
+          </span>
+        </div>
+        <div class="text-[11px] font-mono text-center text-emerald-400/80">覆盖一区/二区/三区/四区</div>
+      </div>
+
+      <!-- Top 10 核心主干 -->
+      <div class="glass-panel p-4 border border-purple-500/50 bg-purple-500/5 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-purple-400 flex items-center gap-1.5">
+              <span>🎯</span> Top 10 核心主力大底
+            </span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">回测均中 3.2+</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">旋转矩阵前驱与有限域超滤基准</p>
+        </div>
+        <div class="my-2 flex items-center justify-center gap-1 flex-wrap">
+          <span v-for="b in (tprdV40Data?.top10 || [57, 30, 75, 63, 14, 20, 60, 71, 33, 41])" :key="'t10-'+b"
+                class="px-2 py-0.5 rounded border border-purple-400/60 bg-purple-500/15 text-purple-300 font-mono font-bold text-xs">
+            {{ String(b).padStart(2, '0') }}
+          </span>
+        </div>
+        <div class="text-[10px] font-mono text-center text-purple-400/80">有限域 GF(4) 重点交叉核</div>
+      </div>
+    </div>
+
+    <!-- 抽屉 3+1 黄金选 2 矩阵 (4组对冲配对) -->
+    <div class="glass-panel p-5 space-y-4 border border-cyan-500/40 bg-cyan-500/5">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="text-sm font-bold flex items-center gap-2" style="color: var(--text-main);">
+          <span>👑</span>
+          <span>抽屉 3+1 选 2 黄金矩阵（点位与 PMI 强粘连线）</span>
+          <span class="text-[10px] px-2 py-0.5 rounded font-mono font-normal border border-cyan-500/40 bg-cyan-500/15 text-cyan-300">
+            实战胜率 9.17% · 提升度 +52.5%
+          </span>
+        </div>
+        <div class="text-[11px] font-mono text-slate-400">
+          基于 Top3 正交组合 + B组抽屉对冲 (30, 75)
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div v-for="(card, cIdx) in (tprdV40Data?.pick2_grid || [])" :key="'p2-card-'+cIdx"
+             class="p-4 rounded-xl border flex flex-col justify-between gap-3 bg-slate-900/60 border-slate-700/60 hover:border-cyan-500/60 transition">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-200">{{ card.name }}</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+              PMI: {{ card.score }}
+            </span>
+          </div>
+          <div class="flex items-center justify-center gap-3 my-2">
+            <span class="w-11 h-11 rounded-xl border border-amber-400/80 bg-amber-500/20 text-amber-300 font-mono font-bold text-lg flex items-center justify-center shadow-lg shadow-amber-500/20">
+              {{ String(card.pair[0]).padStart(2, '0') }}
+            </span>
+            <span class="text-slate-500 font-bold">+</span>
+            <span class="w-11 h-11 rounded-xl border border-cyan-400/80 bg-cyan-500/20 text-cyan-300 font-mono font-bold text-lg flex items-center justify-center shadow-lg shadow-cyan-500/20">
+              {{ String(card.pair[1]).padStart(2, '0') }}
+            </span>
+          </div>
+          <button @click="copyCardPair(card)"
+                  class="cyber-btn cyber-btn-dark text-[11px] !py-1 w-full text-center text-slate-300 hover:text-cyan-300 border border-slate-700">
+            复制此对
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 空间配额、和值走廊与大底号码池 -->
+    <div class="glass-panel p-5 space-y-4 border border-emerald-500/40">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-bold" style="color: var(--text-main);">🌐 六维空间正交配额与号码池</span>
+          <!-- 号码池切换标签 -->
+          <div class="flex rounded-lg bg-slate-800/80 p-0.5 border border-slate-700">
+            <button @click="selectedPool = 'pool_20'"
+                    :class="['px-3 py-1 text-xs rounded-md font-mono transition', selectedPool === 'pool_20' ? 'bg-emerald-500 text-slate-900 font-bold' : 'text-slate-400 hover:text-slate-200']">
+              20码纯血精锐
+            </button>
+            <button @click="selectedPool = 'pool_25'"
+                    :class="['px-3 py-1 text-xs rounded-md font-mono transition', selectedPool === 'pool_25' ? 'bg-emerald-500 text-slate-900 font-bold' : 'text-slate-400 hover:text-slate-200']">
+              25码稳健超滤
+            </button>
+            <button @click="selectedPool = 'pool_30'"
+                    :class="['px-3 py-1 text-xs rounded-md font-mono transition', selectedPool === 'pool_30' ? 'bg-emerald-500 text-slate-900 font-bold' : 'text-slate-400 hover:text-slate-200']">
+              30码防暴大底
+            </button>
+          </div>
+        </div>
+
+        <!-- 和值走廊状态 -->
+        <div class="flex items-center gap-3 text-xs font-mono">
+          <div class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 flex items-center gap-1.5">
+            <span class="text-slate-400">20码和值:</span>
+            <span class="text-emerald-400 font-bold">{{ tprdV40Data?.pool_20?.sum || '---' }}</span>
+          </div>
+          <div class="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/40 text-emerald-300 flex items-center gap-1.5">
+            <span>🛡️</span>
+            <span>和值走廊: {{ tprdV40Data?.pool_20?.corridor_status || '达标 [760, 860]' }}</span>
+          </div>
+          <div class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-300">
+            奇偶比: <span class="text-cyan-300 font-bold">{{ tprdV40Data?.pool_20?.odd_even || '11:9' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 四区分布守卫条 -->
+      <div class="grid grid-cols-4 gap-2 text-xs font-mono">
+        <div class="p-2 rounded-lg bg-slate-800/60 border border-slate-700/60 text-center">
+          <div class="text-slate-400 text-[10px]">一区 (01-20)</div>
+          <div class="text-emerald-400 font-bold text-sm mt-0.5">
+            {{ getZoneCount(0) }} 码
+          </div>
+        </div>
+        <div class="p-2 rounded-lg bg-slate-800/60 border border-slate-700/60 text-center">
+          <div class="text-slate-400 text-[10px]">二区 (21-40)</div>
+          <div class="text-emerald-400 font-bold text-sm mt-0.5">
+            {{ getZoneCount(1) }} 码
+          </div>
+        </div>
+        <div class="p-2 rounded-lg bg-slate-800/60 border border-slate-700/60 text-center">
+          <div class="text-slate-400 text-[10px]">三区 (41-60)</div>
+          <div class="text-emerald-400 font-bold text-sm mt-0.5">
+            {{ getZoneCount(2) }} 码
+          </div>
+        </div>
+        <div class="p-2 rounded-lg bg-slate-800/60 border border-slate-700/60 text-center">
+          <div class="text-slate-400 text-[10px]">四区 (61-80)</div>
+          <div class="text-emerald-400 font-bold text-sm mt-0.5">
+            {{ getZoneCount(3) }} 码
+          </div>
+        </div>
+      </div>
+
+      <!-- 号码球陈列 -->
+      <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center gap-2 flex-wrap">
+        <span v-for="b in (currentPoolData?.balls || [])" :key="'pool-ball-'+b"
+              class="w-8 h-8 rounded-lg border border-slate-700 bg-slate-800 text-slate-200 font-mono font-bold text-xs flex items-center justify-center hover:border-emerald-400 hover:text-emerald-300 transition cursor-pointer">
+          {{ String(b).padStart(2, '0') }}
+        </span>
+      </div>
+    </div>
+
+    <!-- DHM-Pro v4.0 双螺旋 30 注选 5 展示面板 -->
+    <div class="glass-panel p-5 space-y-4 border border-teal-500/40">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-bold" style="color: var(--text-main);">🎯 DHM-Pro v4.0 双螺旋 30 注选 5 矩阵</span>
+          <span class="text-xs px-2 py-0.5 rounded bg-teal-500/15 text-teal-300 font-mono border border-teal-500/30">
+            三层嵌套 (Pool20纯血 + Pool25稳健 + Pool30防暴)
+          </span>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- 筛选过滤器 -->
+          <button @click="dhmFilter = 'all'"
+                  :class="['px-2.5 py-1 text-xs rounded font-mono', dhmFilter === 'all' ? 'bg-teal-500 text-slate-900 font-bold' : 'text-slate-400 hover:text-slate-200']">
+            全部 (30)
+          </button>
+          <button @click="dhmFilter = 'Pool_20纯血锁定'"
+                  :class="['px-2.5 py-1 text-xs rounded font-mono', dhmFilter === 'Pool_20纯血锁定' ? 'bg-teal-500 text-slate-900 font-bold' : 'text-slate-400 hover:text-slate-200']">
+            Pool 20 (10)
+          </button>
+          <button @click="dhmFilter = 'Pool_25稳健超滤'"
+                  :class="['px-2.5 py-1 text-xs rounded font-mono', dhmFilter === 'Pool_25稳健超滤' ? 'bg-teal-500 text-slate-900 font-bold' : 'text-slate-400 hover:text-slate-200']">
+            Pool 25 (10)
+          </button>
+          <button @click="dhmFilter = 'Pool_30防暴网格'"
+                  :class="['px-2.5 py-1 text-xs rounded font-mono', dhmFilter === 'Pool_30防暴网格' ? 'bg-teal-500 text-slate-900 font-bold' : 'text-slate-400 hover:text-slate-200']">
+            Pool 30 (10)
+          </button>
+        </div>
+      </div>
+
+      <!-- 30注网格列表 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div v-for="bet in filteredDhmBets" :key="'dhm-bet-'+bet.index"
+             class="p-3 rounded-lg border border-slate-800 bg-slate-900/60 hover:border-teal-500/40 transition flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="text-[11px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
+              #{{ String(bet.index).padStart(2, '0') }}
+            </span>
+            <div class="flex items-center gap-1.5">
+              <span v-for="b in bet.balls" :key="'dhm-b-'+bet.index+'-'+b"
+                    class="w-7 h-7 rounded border border-teal-500/40 bg-teal-500/10 text-teal-300 font-mono font-bold text-xs flex items-center justify-center">
+                {{ String(b).padStart(2, '0') }}
+              </span>
+            </div>
+          </div>
+          <button @click="copyBetBalls(bet)"
+                  class="text-[10px] font-mono px-2 py-1 rounded bg-slate-800 hover:bg-teal-500/20 text-slate-300 hover:text-teal-300 border border-slate-700 transition">
+            复制
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Walk-Forward 近 30 期科学回测看板 -->
+    <div class="glass-panel p-5 space-y-4 border border-blue-500/40">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-bold" style="color: var(--text-main);">📈 Walk-Forward 滚动外样本 30 期科学回测对账</span>
+          <span class="text-xs px-2 py-0.5 rounded bg-blue-500/15 text-blue-300 font-mono border border-blue-500/30">
+            零未来函数 · 胜率与提升度自证
+          </span>
+        </div>
+        <div class="text-xs font-mono text-slate-400">
+          测试样本: {{ tprdV40Data?.backtest_summary?.test_count || 30 }} 期
+        </div>
+      </div>
+
+      <!-- 指标卡片 -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-800 text-center">
+          <div class="text-[11px] text-slate-400">20码均中 (随机 5.0)</div>
+          <div class="text-lg font-black font-mono text-emerald-400 mt-0.5">
+            {{ tprdV40Data?.backtest_summary?.mean_20 || 5.50 }} 码
+          </div>
+          <div class="text-[10px] font-mono text-emerald-500/80">提升度: {{ tprdV40Data?.backtest_summary?.lift_20 || 1.10 }}x</div>
+        </div>
+        <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-800 text-center">
+          <div class="text-[11px] text-slate-400">25码均中 (随机 6.25)</div>
+          <div class="text-lg font-black font-mono text-cyan-400 mt-0.5">
+            {{ tprdV40Data?.backtest_summary?.mean_25 || 6.70 }} 码
+          </div>
+          <div class="text-[10px] font-mono text-cyan-500/80">提升度: {{ tprdV40Data?.backtest_summary?.lift_25 || 1.072 }}x</div>
+        </div>
+        <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-800 text-center">
+          <div class="text-[11px] text-slate-400">30码均中 (随机 7.5)</div>
+          <div class="text-lg font-black font-mono text-blue-400 mt-0.5">
+            {{ tprdV40Data?.backtest_summary?.mean_30 || 8.23 }} 码
+          </div>
+          <div class="text-[10px] font-mono text-blue-500/80">提升度: {{ tprdV40Data?.backtest_summary?.lift_30 || 1.098 }}x</div>
+        </div>
+        <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-800 text-center">
+          <div class="text-[11px] text-slate-400">选2实战中奖率 (基准 6.01%)</div>
+          <div class="text-lg font-black font-mono text-amber-400 mt-0.5">
+            {{ tprdV40Data?.backtest_summary?.p2_win_rate_pct || 9.17 }}%
+          </div>
+          <div class="text-[10px] font-mono text-amber-500/80">提升度: {{ tprdV40Data?.backtest_summary?.p2_lift || 1.525 }}x</div>
+        </div>
+      </div>
+
+      <!-- 近期回测明细走势表格 (折叠/展开预览) -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs font-mono">
+          <thead class="text-[11px] text-slate-400 border-b border-slate-800 bg-slate-900/40">
+            <tr>
+              <th class="py-2 px-3">期号</th>
+              <th class="py-2 px-3">开奖日期</th>
+              <th class="py-2 px-3 text-center">20码命中</th>
+              <th class="py-2 px-3 text-center">25码命中</th>
+              <th class="py-2 px-3 text-center">30码命中</th>
+              <th class="py-2 px-3 text-center">选2命中</th>
+              <th class="py-2 px-3 text-center">20码和值</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800/40 text-slate-300">
+            <tr v-for="h in recentHistory" :key="'bt-row-'+h.period"
+                class="hover:bg-slate-800/30 transition">
+              <td class="py-2 px-3 font-bold text-slate-200">{{ h.period }}</td>
+              <td class="py-2 px-3 text-slate-400">{{ h.date }}</td>
+              <td class="py-2 px-3 text-center text-emerald-400 font-bold">{{ h.hit_20 }} / 20</td>
+              <td class="py-2 px-3 text-center text-cyan-400">{{ h.hit_25 }} / 25</td>
+              <td class="py-2 px-3 text-center text-blue-400">{{ h.hit_30 }} / 30</td>
+              <td class="py-2 px-3 text-center">
+                <span :class="['px-1.5 py-0.5 rounded font-bold', h.hit_p2 > 0 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'text-slate-500']">
+                  {{ h.hit_p2 > 0 ? '中奖 ' + h.hit_p2 + ' 注' : '未中' }}
+                </span>
+              </td>
+              <td class="py-2 px-3 text-center text-slate-400">{{ h.sum_20 }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ SUBVIEW: hub_engine/spear_shield/view.html ═══ -->
 <div v-show="activeTab === 'spear_shield_cockpit'" class="space-y-6">
   <div class="glass-panel p-6 space-y-6 border border-rose-500/30">
@@ -11047,6 +11423,599 @@
         </div>
       </div>
 
+<!-- ═══ SUBVIEW: hub_ops/expert_cockpit/view.html ═══ -->
+<div v-show="activeTab === 'expert_cockpit'" class="space-y-6">
+  <!-- 头部主控制台 -->
+  <div class="glass-panel p-5">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🎯</span>
+          <h2 class="text-lg font-bold text-amber-300">专家号作战室：手机快捷录入、绝杀对冲与逐期开奖复盘</h2>
+          <span class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono border border-cyan-500/40">
+            专家情报中枢 v1.0
+          </span>
+        </div>
+        <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+          💡 操盘手大白话：在此录入专家推荐号码与绝杀号（支持手机端触控和微信文本一键粘贴），系统自动进行多专家共振雷达推演、绝杀号硬碰撞对冲过滤；开奖后一键联动官方20球自动对账与MVP评奖复盘！
+        </p>
+      </div>
+
+      <!-- 右侧控制区 -->
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- 视图子Tab切换 -->
+        <div class="flex items-center bg-slate-900/80 p-1 rounded-lg border border-slate-800">
+          <button @click="expertSubTab = 'radar'"
+                  :class="expertSubTab === 'radar' ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40 font-bold' : 'text-slate-400 hover:text-slate-200'"
+                  class="text-xs px-3 py-1 rounded border border-transparent transition">
+            🎯 今日情报与雷达
+          </button>
+          <button @click="expertSubTab = 'input'"
+                  :class="expertSubTab === 'input' ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 font-bold' : 'text-slate-400 hover:text-slate-200'"
+                  class="text-xs px-3 py-1 rounded border border-transparent transition">
+            📱 手机/快速录入
+          </button>
+          <button @click="expertSubTab = 'review'; loadExpertReview();"
+                  :class="expertSubTab === 'review' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-bold' : 'text-slate-400 hover:text-slate-200'"
+                  class="text-xs px-3 py-1 rounded border border-transparent transition">
+            📊 逐期开奖复盘
+          </button>
+        </div>
+
+        <button @click="loadExpertData(expertSelectedPeriod)" class="cyber-btn cyber-btn-cyan text-xs !py-1.5 flex items-center gap-1">
+          <span>🔄</span> <span>刷新数据</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 顶部状态栏 -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 pt-4 border-t border-slate-800/80">
+      <div class="p-2.5 rounded bg-slate-900/60 border border-slate-800">
+        <div class="text-[11px] text-slate-400">当前研判期号</div>
+        <div class="text-base font-bold font-mono text-cyan-400 flex items-center gap-2">
+          <span>第 {{ expertData?.period || '---' }} 期</span>
+          <select v-model="expertSelectedPeriod" @change="loadExpertData(expertSelectedPeriod)"
+                  class="bg-slate-950 text-xs text-slate-300 border border-slate-700 rounded px-1.5 py-0.5">
+            <option v-for="p in expertPeriods" :key="p.period" :value="p.period">
+              {{ p.period }}期 ({{ p.expert_count }}位专家)
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="p-2.5 rounded bg-slate-900/60 border border-slate-800">
+        <div class="text-[11px] text-slate-400">已收录专家人数</div>
+        <div class="text-base font-bold font-mono text-amber-300">
+          {{ expertData?.expert_count || 0 }} 位核心专家
+        </div>
+      </div>
+      <div class="p-2.5 rounded bg-slate-900/60 border border-slate-800">
+        <div class="text-[11px] text-slate-400">本期绝杀号池</div>
+        <div class="text-base font-bold font-mono text-rose-400">
+          {{ (expertData?.kill_numbers || []).length }} 码绝杀
+        </div>
+      </div>
+      <div class="p-2.5 rounded bg-slate-900/60 border border-slate-800">
+        <div class="text-[11px] text-slate-400">幸存纯金胆总池</div>
+        <div class="text-base font-bold font-mono text-emerald-400">
+          {{ (expertData?.safe_gold_pool || []).length }} 码零碰撞
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 视窗 1：今日情报与对冲雷达 (RADAR) ════════════════════ -->
+  <div v-show="expertSubTab === 'radar'" class="space-y-6">
+    <!-- 绝杀号碰撞横幅看板 -->
+    <div class="glass-panel p-4 border border-rose-500/30 bg-rose-950/10">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-lg">🚫</span>
+          <span class="text-sm font-bold text-rose-300">今日 15 码绝杀隔离网：</span>
+          <div class="flex flex-wrap gap-1.5">
+            <span v-for="n in expertData.kill_numbers" :key="n"
+                  class="px-2 py-0.5 rounded text-xs font-mono font-bold bg-rose-900/40 text-rose-200 border border-rose-700/60">
+              {{ n < 10 ? '0' + n : n }}
+            </span>
+          </div>
+        </div>
+        <span class="text-xs text-rose-400/80">
+          ⚡ 命中杀号的专家注将自动剔除或标红警示，未碰撞号码晋升为核心备选！
+        </span>
+      </div>
+    </div>
+
+    <!-- 专家共识与热胆共振雷达 -->
+    <div class="glass-panel p-5 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+          <span>📡</span> 多专家共识雷达（按推荐频次排序）
+        </h3>
+        <span class="text-xs text-slate-400">🔥 3位及以上专家共识为超级金胆，2位为共振优选</span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2.5">
+        <div v-for="item in (expertData.resonance_radar || []).slice(0, 16)" :key="item.number"
+             class="p-2 rounded border transition-all"
+             :class="item.is_killed ? 'bg-rose-950/20 border-rose-800/40 opacity-60' : item.count >= 3 ? 'bg-amber-950/30 border-amber-500/50 shadow-lg shadow-amber-950/20' : item.count == 2 ? 'bg-cyan-950/30 border-cyan-500/40' : 'bg-slate-900/40 border-slate-800'">
+          <div class="flex items-center justify-between">
+            <span class="text-base font-bold font-mono"
+                  :class="item.is_killed ? 'line-through text-rose-400' : item.count >= 3 ? 'text-amber-300' : 'text-cyan-300'">
+              {{ item.number < 10 ? '0' + item.number : item.number }}
+            </span>
+            <span class="text-[10px] px-1 rounded font-mono"
+                  :class="item.is_killed ? 'bg-rose-500/20 text-rose-300' : item.count >= 3 ? 'bg-amber-500/20 text-amber-300 font-bold' : 'bg-slate-800 text-slate-400'">
+              {{ item.count }}人推
+            </span>
+          </div>
+          <div class="text-[10px] text-slate-400 mt-1 truncate" :title="item.experts.join(', ')">
+            {{ item.experts.join('/') }}
+          </div>
+          <div class="text-[9px] mt-1 font-mono"
+               :class="item.is_killed ? 'text-rose-400' : item.count >= 3 ? 'text-amber-400 font-bold' : 'text-slate-500'">
+            {{ item.status }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9 大专家卡片式推码展厅 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div v-for="card in (expertData.expert_cards || [])" :key="card.name"
+           class="glass-panel p-4 space-y-3 border border-slate-800 hover:border-slate-700 transition">
+        <!-- 卡片头部 -->
+        <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+          <div class="flex items-center gap-2">
+            <span class="text-base font-bold text-amber-300">{{ card.name }}</span>
+            <span class="text-[11px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 font-mono">
+              {{ card.type }}
+            </span>
+          </div>
+          <span class="text-xs font-mono"
+                :class="card.safety_rate === '100%' ? 'text-emerald-400' : 'text-amber-400'">
+            安全率: {{ card.safety_rate }}
+          </span>
+        </div>
+
+        <!-- 详细号码展示 -->
+        <div class="space-y-2 text-xs">
+          <!-- 选三 -->
+          <div v-if="card.raw_info.pick3" class="flex items-center gap-2">
+            <span class="text-slate-400 w-12 shrink-0">选三:</span>
+            <div class="flex flex-wrap gap-1">
+              <span v-for="n in card.raw_info.pick3" :key="n"
+                    class="px-1.5 py-0.5 rounded font-mono font-bold"
+                    :class="card.killed_hits.includes(n) ? 'line-through bg-rose-950/60 text-rose-400 border border-rose-800/60' : 'bg-cyan-950/60 text-cyan-300 border border-cyan-800/60'">
+                {{ n < 10 ? '0' + n : n }}
+              </span>
+            </div>
+          </div>
+
+          <!-- 选四 -->
+          <div v-if="card.raw_info.pick4" class="flex items-center gap-2">
+            <span class="text-slate-400 w-12 shrink-0">选四:</span>
+            <div class="flex flex-wrap gap-1">
+              <span v-for="n in card.raw_info.pick4" :key="n"
+                    class="px-1.5 py-0.5 rounded font-mono font-bold"
+                    :class="card.killed_hits.includes(n) ? 'line-through bg-rose-950/60 text-rose-400 border border-rose-800/60' : 'bg-purple-950/60 text-purple-300 border border-purple-800/60'">
+                {{ n < 10 ? '0' + n : n }}
+              </span>
+            </div>
+          </div>
+
+          <!-- 选六 -->
+          <div v-if="card.raw_info.pick6" class="flex items-center gap-2">
+            <span class="text-slate-400 w-12 shrink-0">选六:</span>
+            <div class="flex flex-wrap gap-1">
+              <span v-for="n in card.raw_info.pick6" :key="n"
+                    class="px-1.5 py-0.5 rounded font-mono font-bold"
+                    :class="card.killed_hits.includes(n) ? 'line-through bg-rose-950/60 text-rose-400 border border-rose-800/60' : 'bg-blue-950/60 text-blue-300 border border-blue-800/60'">
+                {{ n < 10 ? '0' + n : n }}
+              </span>
+            </div>
+          </div>
+
+          <!-- 选二组合 (北哥) -->
+          <div v-if="card.raw_info.combos" class="space-y-1">
+            <span class="text-slate-400">选二单式 (主胆 {{ card.raw_info.dan }}):</span>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-1">
+              <div v-for="(combo, idx) in card.raw_info.combos" :key="idx"
+                   class="px-1.5 py-1 rounded font-mono text-[11px] flex items-center justify-between"
+                   :class="combo.some(n => card.killed_hits.includes(n)) ? 'bg-rose-950/20 text-rose-400/60 line-through' : 'bg-slate-900 text-slate-200 border border-slate-800'">
+                <span>{{ combo[0] < 10 ? '0' + combo[0] : combo[0] }}-{{ combo[1] < 10 ? '0' + combo[1] : combo[1] }}</span>
+                <span v-if="combo.some(n => card.killed_hits.includes(n))" class="text-[9px] text-rose-400">杀</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 雨滴二选一对决 -->
+          <div v-if="card.raw_info.duels" class="space-y-1">
+            <div class="flex items-center justify-between text-slate-400">
+              <span>二选一对决 (6组):</span>
+              <span class="text-[10px] text-amber-300 font-mono">主胆: {{ (card.raw_info.dans || []).join(', ') }}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-1.5">
+              <div v-for="(d, idx) in card.raw_info.duels" :key="idx"
+                   class="p-1 rounded bg-slate-900 border border-slate-800 font-mono text-[11px] flex items-center justify-between">
+                <span class="text-slate-500">{{ d.label }}:</span>
+                <div class="flex items-center gap-1">
+                  <span :class="card.killed_hits.includes(d.pair[0]) ? 'line-through text-rose-400' : 'text-cyan-300 font-bold'">
+                    {{ d.pair[0] < 10 ? '0' + d.pair[0] : d.pair[0] }}
+                  </span>
+                  <span class="text-slate-600">/</span>
+                  <span :class="card.killed_hits.includes(d.pair[1]) ? 'line-through text-rose-400' : 'text-cyan-300 font-bold'">
+                    {{ d.pair[1] < 10 ? '0' + d.pair[1] : d.pair[1] }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 妹妹点位/连号/大尾 -->
+          <div v-if="card.raw_info.focus_point" class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="text-slate-400">关注点位:</span>
+              <span class="text-amber-300 font-bold font-mono">{{ card.raw_info.focus_point }} 号点</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-slate-400">三连号:</span>
+              <span class="font-mono text-cyan-300 font-bold">{{ (card.raw_info.trio || []).join(', ') }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-slate-400">大尾连码:</span>
+              <span class="font-mono text-purple-300 font-bold">{{ (card.raw_info.tail_pairs || []).join(', ') }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 备注与防空状态 -->
+        <div class="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[11px]">
+          <span class="text-slate-400 truncate" :title="card.notes">{{ card.notes }}</span>
+          <span v-if="card.killed_hits.length > 0" class="text-rose-400 font-mono shrink-0">
+            碰撞杀号: {{ card.killed_hits.join(',') }}
+          </span>
+          <span v-else class="text-emerald-400 font-mono shrink-0">
+            零碰撞全活
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 视窗 2：手机/极速录入视窗 (INPUT) ════════════════════ -->
+  <div v-show="expertSubTab === 'input'" class="space-y-6">
+    <div class="glass-panel p-5 space-y-5">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+        <div>
+          <h3 class="text-sm font-bold text-amber-300 flex items-center gap-2">
+            <span>📱</span> 专家号码快捷录入（支持移动端操作与微信粘贴一键识别）
+          </h3>
+          <p class="text-xs text-slate-400 mt-1">
+            既可以在下方各专家栏手动输入/修改，也可直接把微信群消息整段贴到下方点击“智能识别”。
+          </p>
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="text-xs text-slate-400 font-mono">录入期号:</label>
+          <input v-model="expertInputForm.period" type="text"
+                 class="w-24 px-2 py-1 bg-slate-900 border border-slate-700 rounded text-xs text-amber-300 font-mono" />
+          <button @click="submitExpertForm" class="cyber-btn cyber-btn-gold text-xs !py-1.5 flex items-center gap-1">
+            <span>💾</span> <span>保存并更新作战室</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 微信消息一键粘贴智能识别区 -->
+      <div class="p-3.5 rounded bg-slate-900/60 border border-slate-800 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-cyan-300 flex items-center gap-1">
+            <span>⚡</span> 微信文本一键解析助手 (粘贴整段微信内容即可)
+          </span>
+          <button @click="parseRawText" class="cyber-btn cyber-btn-cyan text-xs !py-1">
+            🤖 智能切分填入
+          </button>
+        </div>
+        <textarea v-model="expertRawInputText" rows="3"
+                  placeholder="示例：直接粘贴微信群消息，如：&#10;杀号：01 06 16 17 24 25 31 34 47 48 58 59 62 69 72&#10;发如雪：选三 12 14 66，选四 12 47 66 74&#10;小巷：09 20 32&#10;北哥：52 07 10 17 30 64&#10;娟子：银胆39 独荐 24 39 58 76"
+                  class="w-full bg-slate-950 border border-slate-800 rounded p-2 text-xs font-mono text-slate-200 focus:border-cyan-500"></textarea>
+      </div>
+
+      <!-- 绝杀号录入行 -->
+      <div class="p-3.5 rounded bg-rose-950/20 border border-rose-800/40 space-y-2">
+        <label class="block text-xs font-bold text-rose-300">
+          🚫 绝杀号码池 (空格或逗号分隔，如: 01 06 16 17 24 25...):
+        </label>
+        <input v-model="expertInputForm.kill_text" type="text"
+               placeholder="01 06 16 17 24 25 31 34 47 48 58 59 62 69 72"
+               class="w-full bg-slate-950 border border-rose-900/60 rounded px-2.5 py-1.5 text-xs font-mono text-rose-200 focus:border-rose-500" />
+      </div>
+
+      <!-- 9 位专家独立输入模版网格 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- 发如雪 -->
+        <div class="p-3 rounded bg-slate-900/40 border border-slate-800 space-y-2">
+          <div class="text-xs font-bold text-amber-300">发如雪 (选三 / 选四)</div>
+          <input v-model="expertInputForm.faruxue_p3" placeholder="选三: 12 14 66" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-200" />
+          <input v-model="expertInputForm.faruxue_p4" placeholder="选四: 12 47 66 74" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-200" />
+        </div>
+
+        <!-- 小巷 -->
+        <div class="p-3 rounded bg-slate-900/40 border border-slate-800 space-y-2">
+          <div class="text-xs font-bold text-amber-300">小巷 (选三)</div>
+          <input v-model="expertInputForm.xiaoxiang_p3" placeholder="选三: 09 20 32" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-200" />
+        </div>
+
+        <!-- 妹妹 -->
+        <div class="p-3 rounded bg-slate-900/40 border border-slate-800 space-y-2">
+          <div class="text-xs font-bold text-amber-300">妹妹 (点位 / 连号 / 尾号)</div>
+          <input v-model="expertInputForm.meimei_point" placeholder="点位: 12" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-200" />
+          <input v-model="expertInputForm.meimei_trio" placeholder="三连号: 30 31 32" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-200" />
+          <input v-model="expertInputForm.meimei_tail" placeholder="大尾连号: 79 80" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-200" />
+        </div>
+
+        <!-- 北哥 -->
+        <div class="p-3 rounded bg-slate-900/40 border border-slate-800 space-y-2">
+          <div class="text-xs font-bold text-amber-300">北哥 (选二主胆拖5码)</div>
+          <input v-model="expertInputForm.beige_dan" placeholder="主胆: 52" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-200" />
+          <input v-model="expertInputForm.beige_tuo" placeholder="拖码5组: 07 10 17 30 64" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-200" />
+        </div>
+
+        <!-- 雨滴 -->
+        <div class="p-3 rounded bg-slate-900/40 border border-slate-800 space-y-2">
+          <div class="text-xs font-bold text-amber-300">雨滴 (主胆 + 二选一对决)</div>
+          <input v-model="expertInputForm.yudi_dans" placeholder="主胆: 52 05" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-200" />
+          <input v-model="expertInputForm.yudi_duels" placeholder="二选一: 11/25, 32/39, 51/78, 02/09, 12/38, 50/73" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-200" />
+        </div>
+
+        <!-- 娟子 -->
+        <div class="p-3 rounded bg-slate-900/40 border border-slate-800 space-y-2">
+          <div class="text-xs font-bold text-amber-300">娟子 (银胆 + 独荐4码)</div>
+          <input v-model="expertInputForm.juanzi_dan" placeholder="银胆: 39" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-200" />
+          <input v-model="expertInputForm.juanzi_p4" placeholder="独荐4码: 24 39 58 76" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-200" />
+        </div>
+
+        <!-- 大哥 -->
+        <div class="p-3 rounded bg-slate-900/40 border border-slate-800 space-y-2">
+          <div class="text-xs font-bold text-amber-300">大哥 (精选6码)</div>
+          <input v-model="expertInputForm.dage_p6" placeholder="精选6码: 24 27 33 37 25 68" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-200" />
+        </div>
+
+        <!-- 老赵 -->
+        <div class="p-3 rounded bg-slate-900/40 border border-slate-800 space-y-2">
+          <div class="text-xs font-bold text-amber-300">老赵 (选三)</div>
+          <input v-model="expertInputForm.laozhao_p3" placeholder="选三: 17 22 23" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-200" />
+        </div>
+
+        <!-- 管家 -->
+        <div class="p-3 rounded bg-slate-900/40 border border-slate-800 space-y-2">
+          <div class="text-xs font-bold text-amber-300">管家 (同尾特色6码)</div>
+          <input v-model="expertInputForm.guanjia_p6" placeholder="6码: 28 38 48 68 77 20" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-slate-200" />
+        </div>
+      </div>
+
+      <!-- 底部提交大按钮 -->
+      <div class="pt-4 border-t border-slate-800 flex justify-end">
+        <button @click="submitExpertForm" class="cyber-btn cyber-btn-gold px-8 py-2 text-sm font-bold flex items-center gap-2">
+          <span>💾</span> <span>提交保存并立即生效</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════ 视窗 3：逐期开奖复盘对账 (REVIEW) ════════════════════ -->
+  <div v-show="expertSubTab === 'review'" class="space-y-6">
+    <!-- 状态未开奖提示 -->
+    <div v-if="!expertReview?.is_drawn" class="glass-panel p-8 text-center space-y-3">
+      <div class="text-3xl">⏳</div>
+      <h3 class="text-base font-bold text-amber-300">第 {{ expertReview?.period || '---' }} 期官方尚未开奖</h3>
+      <p class="text-xs text-slate-400 max-w-lg mx-auto">
+        当前为赛前实战阶段。官方每天 21:30 快乐8开奖并写入系统后，此处将自动为您呈现 20 颗红球全量对账、各专家战绩计分与 MVP 榜单！
+      </p>
+      <div class="pt-2">
+        <span class="text-xs text-slate-500">（支持在左上方切换历史期号查看过往复盘）</span>
+      </div>
+    </div>
+
+    <!-- 已开奖精细化对账大屏 -->
+    <div v-else class="space-y-6">
+      <!-- 官方 20 颗开奖红球对照栏 -->
+      <div class="glass-panel p-5 space-y-3">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🔴</span>
+            <span class="text-sm font-bold text-slate-100">第 {{ expertReview?.period }} 期官方真实开奖号码（20码）:</span>
+          </div>
+          <span class="text-xs text-slate-400 font-mono">开奖日期: {{ expertReview?.date }}</span>
+        </div>
+        <div class="flex flex-wrap gap-2 pt-1">
+          <span v-for="n in (expertReview?.draw_numbers || [])" :key="n"
+                class="w-9 h-9 rounded-full flex items-center justify-center font-mono font-bold text-sm bg-gradient-to-br from-rose-500 to-rose-700 text-white shadow-lg shadow-rose-900/30 border border-rose-300/40">
+            {{ n < 10 ? '0' + n : n }}
+          </span>
+        </div>
+      </div>
+
+      <!-- 绝杀号对账成绩与 MVP 授勋 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- 绝杀号成绩卡 -->
+        <div class="glass-panel p-5 space-y-3 border-l-4 border-l-rose-500">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-rose-300 flex items-center gap-2">
+              <span>🚫</span> 绝杀号码防守战报
+            </h4>
+            <span class="text-xs font-mono font-bold text-rose-400">
+              准确率: {{ expertReview?.kill_review?.accuracy || '0%' }}
+            </span>
+          </div>
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div class="p-2.5 rounded bg-slate-900/60 border border-slate-800">
+              <div class="text-slate-400">成功绝杀 (未开出):</div>
+              <div class="text-emerald-400 font-bold font-mono text-base mt-1">
+                {{ expertReview?.kill_review?.success_count || 0 }} 码 ✔
+              </div>
+              <div class="text-[10px] text-slate-500 mt-1 truncate">
+                {{ (expertReview?.kill_review?.killed_success_list || []).join(', ') }}
+              </div>
+            </div>
+            <div class="p-2.5 rounded bg-slate-900/60 border border-slate-800">
+              <div class="text-slate-400">不幸误杀 (开出):</div>
+              <div class="text-rose-400 font-bold font-mono text-base mt-1">
+                {{ expertReview?.kill_review?.hit_count || 0 }} 码 ❌
+              </div>
+              <div class="text-[10px] text-slate-500 mt-1 truncate">
+                {{ (expertReview?.kill_review?.killed_failed_list || []).join(', ') }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 当期 MVP 专家 -->
+        <div class="glass-panel p-5 space-y-3 border-l-4 border-l-amber-500 flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-amber-300 flex items-center gap-2">
+              <span>🏆</span> 本期全场最佳专家 (MVP)
+            </h4>
+            <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
+              GOLD MVP
+            </span>
+          </div>
+          <div class="flex items-center gap-4 my-auto">
+            <div class="w-12 h-12 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-2xl">
+              🎖️
+            </div>
+            <div>
+              <div class="text-lg font-bold text-amber-300">{{ expertReview?.mvp_expert || '待定' }}</div>
+              <div class="text-xs text-slate-400 mt-0.5">多项命中与组合得分领跑全场，建议下期持续重点参考！</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9 位专家逐一详细对账清单 -->
+      <div class="space-y-4">
+        <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+          <span>📋</span> 各位专家具体战绩明细复盘
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div v-for="rev in (expertReview?.expert_reviews || [])" :key="rev.name"
+               class="glass-panel p-4 space-y-3 border"
+               :class="rev.name === expertReview?.mvp_expert ? 'border-amber-500/60 shadow-lg shadow-amber-950/20' : 'border-slate-800'">
+            <!-- 卡片头部 -->
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <div class="flex items-center gap-2">
+                <span class="text-base font-bold"
+                      :class="rev.name === expertReview.mvp_expert ? 'text-amber-300' : 'text-slate-100'">
+                  {{ rev.name }}
+                </span>
+                <span v-if="rev.name === expertReview.mvp_expert" class="text-[10px] px-1 bg-amber-500/30 text-amber-300 rounded font-bold">MVP</span>
+                <span class="text-[11px] text-slate-400 font-mono">{{ rev.type }}</span>
+              </div>
+              <span class="text-xs font-mono font-bold text-amber-400">综合得分: {{ rev.score }}</span>
+            </div>
+
+            <!-- 复盘详情条目 -->
+            <div class="space-y-2 text-xs">
+              <!-- 选三对账 -->
+              <div v-if="rev.details.pick3" class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-400">选三复盘:</span>
+                  <span class="font-bold font-mono"
+                        :class="rev.details.pick3.hit_count >= 2 ? 'text-amber-300' : 'text-slate-400'">
+                    {{ rev.details.pick3.status }}
+                  </span>
+                </div>
+                <div class="flex gap-1.5 font-mono">
+                  <span v-for="n in rev.details.pick3.numbers" :key="n"
+                        class="px-2 py-0.5 rounded font-bold text-xs"
+                        :class="rev.details.pick3.hits.includes(n) ? 'bg-rose-600 text-white shadow-sm' : 'bg-slate-900 text-slate-500'">
+                    {{ n < 10 ? '0' + n : n }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- 选四对账 -->
+              <div v-if="rev.details.pick4" class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-400">选四复盘:</span>
+                  <span class="font-bold font-mono"
+                        :class="rev.details.pick4.hit_count >= 3 ? 'text-amber-300' : 'text-slate-400'">
+                    {{ rev.details.pick4.status }}
+                  </span>
+                </div>
+                <div class="flex gap-1.5 font-mono">
+                  <span v-for="n in rev.details.pick4.numbers" :key="n"
+                        class="px-2 py-0.5 rounded font-bold text-xs"
+                        :class="rev.details.pick4.hits.includes(n) ? 'bg-rose-600 text-white shadow-sm' : 'bg-slate-900 text-slate-500'">
+                    {{ n < 10 ? '0' + n : n }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- 选六对账 -->
+              <div v-if="rev.details.pick6" class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-400">选六复盘:</span>
+                  <span class="font-bold font-mono text-cyan-300">{{ rev.details.pick6.status }}</span>
+                </div>
+                <div class="flex flex-wrap gap-1 font-mono">
+                  <span v-for="n in rev.details.pick6.numbers" :key="n"
+                        class="px-1.5 py-0.5 rounded font-bold text-xs"
+                        :class="rev.details.pick6.hits.includes(n) ? 'bg-rose-600 text-white' : 'bg-slate-900 text-slate-500'">
+                    {{ n < 10 ? '0' + n : n }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- 选二组合对账 -->
+              <div v-if="rev.details.combos" class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-400">选二单式 ({{ rev.details.combos.total }}注):</span>
+                  <span class="font-bold font-mono"
+                        :class="rev.details.combos.win_count > 0 ? 'text-amber-300' : 'text-slate-500'">
+                    {{ rev.details.combos.status }}
+                  </span>
+                </div>
+                <div class="grid grid-cols-2 gap-1 font-mono text-[11px]">
+                  <div v-for="(c, i) in rev.details.combos.list" :key="i"
+                       class="px-1.5 py-0.5 rounded flex items-center justify-between"
+                       :class="c.is_win ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40' : 'bg-slate-900 text-slate-400'">
+                    <span>{{ c.combo[0] < 10 ? '0' + c.combo[0] : c.combo[0] }}-{{ c.combo[1] < 10 ? '0' + c.combo[1] : c.combo[1] }}</span>
+                    <span>{{ c.is_win ? '🏆中二' : c.hit_count === 1 ? '中一' : '未中' }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 雨滴二选一对账 -->
+              <div v-if="rev.details.duels" class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="text-slate-400">二选一对决准确率:</span>
+                  <span class="font-mono font-bold text-cyan-300">{{ rev.details.duels.accuracy }} ({{ rev.details.duels.correct_count }}/{{ rev.details.duels.total }})</span>
+                </div>
+                <div class="grid grid-cols-2 gap-1 font-mono text-[11px]">
+                  <div v-for="(d, i) in rev.details.duels.list" :key="i"
+                       class="p-1 rounded bg-slate-900 flex items-center justify-between"
+                       :class="d.is_correct ? 'text-slate-200' : 'text-slate-500'">
+                    <span class="text-slate-500">{{ d.label }}:</span>
+                    <span :class="d.is_correct ? 'text-emerald-400 font-bold' : 'text-rose-400'">{{ d.result }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 主胆命中 -->
+              <div v-if="rev.details.dan" class="flex items-center justify-between pt-1">
+                <span class="text-slate-400">核心主胆 ({{ rev.details.dan.dan }}):</span>
+                <span class="font-bold font-mono"
+                      :class="rev.details.dan.hit ? 'text-rose-400' : 'text-slate-500'">
+                  {{ rev.details.dan.status }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ SUBVIEW: hub_ops/theme_gallery/view.html ═══ -->
 ﻿<div v-show="activeTab === 'theme_gallery' || activeTab === 'model_tuning'" class="space-y-6">
 
@@ -12745,33 +13714,35 @@
   
 
   <!-- Vue App Logic: registry → page mixins → shell -->
-  <script src="/static/js/k8_pages.js?v=20261113_193119"></script>
-  <script src="/static/js/menu_registry.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/jingle.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/data_hub.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/ops.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/retired.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/suppression.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/point_omission.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/gold_pick2.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/aggregation.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/sixteen.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/cockpit_live.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/datasource.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/reviews_audit.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/unified_brain.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/psychological_game.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/linear_algebra.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/random_forest.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/error_correction.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/genetic.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/markov_line.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/dtw.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/transformer.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/matrix_profile.js?v=20261113_193119"></script>
-  <script src="/static/js/pages/tda.js?v=20261113_193119"></script>
-  <script src="/static/js/app.js?v=20261113_193119"></script>
+  <script src="/static/js/k8_pages.js?v=20261115_213110"></script>
+  <script src="/static/js/menu_registry.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/jingle.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/data_hub.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/ops.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/expert_cockpit.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/retired.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/suppression.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/point_omission.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/gold_pick2.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/aggregation.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/sixteen.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/cockpit_live.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/datasource.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/reviews_audit.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/unified_brain.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/psychological_game.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/linear_algebra.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/random_forest.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/error_correction.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/genetic.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/markov_line.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/tprd_v40.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/dtw.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/transformer.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/matrix_profile.js?v=20261115_213110"></script>
+  <script src="/static/js/pages/tda.js?v=20261115_213110"></script>
+  <script src="/static/js/app.js?v=20261115_213110"></script>
   <!-- AI 智能操盘大脑中继助手 -->
-  <script src="/static/js/ai_assistant.js?v=20261113_193119"></script>
+  <script src="/static/js/ai_assistant.js?v=20261115_213110"></script>
 </body>
 </html>

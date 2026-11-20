@@ -225,7 +225,10 @@ class FullReportEngine:
             'raw_b3_right': b3_right_nums,
             'stealth_nums': b3_right_stealth,
             'quality_score': b3_right_quality,
-            'logic': "B3 Right 矩阵映射 x AI 置信度 Top12 x 隐能量场 (EF/RW/FO)"
+            'logic': "B3 Right 矩阵映射 x AI 置信度 Top12 x 隐能量场 (EF/RW/FO)",
+            'ef_res': ef_res,
+            'rw_res': rw_res,
+            'fo_res': fo_res,
         }
 
     # ── v4.0: 极速爆破模块已砍掉 (近9期Lift=0.27x灾难性) ──
@@ -493,6 +496,9 @@ class FullReportEngine:
             opt_p = (12, 24)
             champ = {'score': 1.0, 'lift_100': 1.0, 'count_100': 6, 'count_total': 120, 'reason': '保底组合'}
             pick2_result = {}
+            ef_res = b3_info.get('ef_res') if isinstance(b3_info, dict) else None
+            rw_res = b3_info.get('rw_res') if isinstance(b3_info, dict) else None
+            fo_res = b3_info.get('fo_res') if isinstance(b3_info, dict) else None
             try:
                 from core.pair_selector import PairSelector
                 pair_selector = PairSelector(self.dc.history, self.dc.points)

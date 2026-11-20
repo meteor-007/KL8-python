@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# 大型图表与生成产物（不入库）
+file/
+output/
+scratch/
+data/logs/
+data/cache/
+data/state/last_run.json
+data/state/last_prediction_*.json
+data/state/online_learner_state.json
+
+# 每期生成的分析引擎（由模板生成）
+scripts/fusion_engine_2026*.py
+!scripts/fusion_engine_template.py
+# 2026298 是历史单测 fixture，需要入库以保证测试可复现
+!scripts/fusion_engine_2026298.py
+
+# 临时/个人文件
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+.claude/
+data_summary_scratch.json
+
+data/state/preflight.json

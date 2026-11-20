@@ -44,6 +44,7 @@ ORDERED_VIEWS = [
     "hub_engine/random_forest/view.html",
     "hub_engine/error_correction/view.html",
     "hub_engine/markov_line/view.html",
+    "hub_ai_math/tprd_v40/view.html",
     "hub_engine/spear_shield/view.html",
     "hub_engine/point_road/view.html",
 
@@ -67,6 +68,7 @@ ORDERED_VIEWS = [
     "hub_data/sixteen_matrix/view.html",
 
     # 5. 系统运维与录入
+    "hub_ops/expert_cockpit/view.html",
     "hub_ops/theme_gallery/view.html",
     "hub_ops/points_input/view.html",
     "hub_ops/tri_high_input/view.html",
@@ -129,6 +131,7 @@ def build_index_html():
   <script src="/static/js/pages/jingle.js?v={v_tag}"></script>
   <script src="/static/js/pages/data_hub.js?v={v_tag}"></script>
   <script src="/static/js/pages/ops.js?v={v_tag}"></script>
+  <script src="/static/js/pages/expert_cockpit.js?v={v_tag}"></script>
   <script src="/static/js/pages/retired.js?v={v_tag}"></script>
   <script src="/static/js/pages/suppression.js?v={v_tag}"></script>
   <script src="/static/js/pages/point_omission.js?v={v_tag}"></script>
@@ -145,6 +148,7 @@ def build_index_html():
   <script src="/static/js/pages/error_correction.js?v={v_tag}"></script>
   <script src="/static/js/pages/genetic.js?v={v_tag}"></script>
   <script src="/static/js/pages/markov_line.js?v={v_tag}"></script>
+  <script src="/static/js/pages/tprd_v40.js?v={v_tag}"></script>
   <script src="/static/js/pages/dtw.js?v={v_tag}"></script>
   <script src="/static/js/pages/transformer.js?v={v_tag}"></script>
   <script src="/static/js/pages/matrix_profile.js?v={v_tag}"></script>

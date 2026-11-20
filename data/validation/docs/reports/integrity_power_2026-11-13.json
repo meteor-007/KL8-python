@@ -1,0 +1,279 @@
+{
+  "integrity": {
+    "history": {
+      "path": "C:\\D-pan\\Dpanqianyi\\Python-Project\\data\\storage\\raw\\kl8_history_final.txt",
+      "count": 2123,
+      "oldest": 2020001,
+      "latest": 2026302,
+      "invalid": 0,
+      "invalid_samples": [],
+      "continuity": {
+        "2020": {
+          "count": 65,
+          "first": 2020001,
+          "last": 2020065,
+          "missing_count": 0,
+          "missing": []
+        },
+        "2021": {
+          "count": 351,
+          "first": 2021001,
+          "last": 2021351,
+          "missing_count": 0,
+          "missing": []
+        },
+        "2022": {
+          "count": 351,
+          "first": 2022001,
+          "last": 2022351,
+          "missing_count": 0,
+          "missing": []
+        },
+        "2023": {
+          "count": 351,
+          "first": 2023001,
+          "last": 2023351,
+          "missing_count": 0,
+          "missing": []
+        },
+        "2024": {
+          "count": 352,
+          "first": 2024001,
+          "last": 2024352,
+          "missing_count": 0,
+          "missing": []
+        },
+        "2025": {
+          "count": 351,
+          "first": 2025001,
+          "last": 2025351,
+          "missing_count": 0,
+          "missing": []
+        },
+        "2026": {
+          "count": 302,
+          "first": 2026001,
+          "last": 2026302,
+          "missing_count": 0,
+          "missing": []
+        }
+      },
+      "date_backtracks": []
+    },
+    "points": {
+      "path": "C:\\D-pan\\Dpanqianyi\\点位+遗漏号分析\\data\\cache\\points_archive.txt",
+      "count": 339,
+      "oldest": 2025316,
+      "latest": 2026303,
+      "invalid": 0,
+      "invalid_samples": [],
+      "continuity": {
+        "2025": {
+          "count": 36,
+          "first": 2025316,
+          "last": 2025351,
+          "missing_count": 0,
+          "missing": []
+        },
+        "2026": {
+          "count": 303,
+          "first": 2026001,
+          "last": 2026303,
+          "missing_count": 0,
+          "missing": []
+        }
+      },
+      "missing_vs_history": [],
+      "missing_vs_history_count": 0
+    },
+    "overlap": {
+      "common_periods": 338,
+      "date_mismatch_count": 0,
+      "date_mismatch": []
+    }
+  },
+  "ledger": {
+    "registration_id": "KL8-2026-11-13-003",
+    "model": "main",
+    "planned_periods": 30,
+    "start_period": 2026303,
+    "primary_endpoint": "top5_lift",
+    "ledger_rows": 10,
+    "primary_rows": 1,
+    "duplicate_keys": [],
+    "checks": [
+      {
+        "period": 2026303,
+        "date": "2026-11-13",
+        "locked_at": "2026-11-13T21:32:39",
+        "core_count": 5,
+        "core_unique": 5,
+        "core_valid_range": true,
+        "draw_present": false,
+        "hits": null
+      }
+    ],
+    "observed_hits": 0,
+    "observed_n": 0,
+    "observed_expected": 0.0,
+    "observed_lift": null,
+    "observed_z_descriptive": 0.0,
+    "same_day_lock": [],
+    "locked_after_draw_date": []
+  },
+  "power": {
+    "var5": 0.8900316455696202,
+    "mde_lift_at_planned": 0.34262271843858916,
+    "planned": 30,
+    "observed_n": 0,
+    "observed_hits": 0,
+    "rows": [
+      {
+        "lift": 0.0,
+        "power_conditional": 0.050000000000000044,
+        "power_unconditional": 0.050000000000000044,
+        "required_periods_80pct": null,
+        "mean_final_z": 0.0
+      },
+      {
+        "lift": 0.025,
+        "power_conditional": 0.07167568160008864,
+        "power_unconditional": 0.07167568160008864,
+        "required_periods_80pct": 5634.7357051319395,
+        "mean_final_z": 0.181429508808977
+      },
+      {
+        "lift": 0.05,
+        "power_conditional": 0.09992226862599779,
+        "power_unconditional": 0.09992226862599779,
+        "required_periods_80pct": 1408.6839262829849,
+        "mean_final_z": 0.362859017617954
+      },
+      {
+        "lift": 0.075,
+        "power_conditional": 0.13554299082822685,
+        "power_unconditional": 0.13554299082822685,
+        "required_periods_80pct": 626.0817450146599,
+        "mean_final_z": 0.544288526426931
+      },
+      {
+        "lift": 0.1083,
+        "power_conditional": 0.19519757027013396,
+        "power_unconditional": 0.19519757027013396,
+        "required_periods_80pct": 300.2594291282007,
+        "mean_final_z": 0.7859526321604886
+      },
+      {
+        "lift": 0.15,
+        "power_conditional": 0.2890108994571351,
+        "power_unconditional": 0.2890108994571351,
+        "required_periods_80pct": 156.52043625366497,
+        "mean_final_z": 1.088577052853862
+      },
+      {
+        "lift": 0.2,
+        "power_conditional": 0.42331598347727545,
+        "power_unconditional": 0.42331598347727545,
+        "required_periods_80pct": 88.04274539268656,
+        "mean_final_z": 1.451436070471816
+      }
+    ]
+  },
+  "physical_bias": {
+    "periods": 2123,
+    "rows": [
+      {
+        "periods": 2123,
+        "rel_bias": 0.025,
+        "z": 0.66505012342429,
+        "zcrit_bonferroni": 3.420526701131831,
+        "power": 0.0029523187492979663
+      },
+      {
+        "periods": 2123,
+        "rel_bias": 0.05,
+        "z": 1.330100246848586,
+        "zcrit_bonferroni": 3.420526701131831,
+        "power": 0.01829076822327863
+      },
+      {
+        "periods": 2123,
+        "rel_bias": 0.1,
+        "z": 2.660200493697172,
+        "zcrit_bonferroni": 3.420526701131831,
+        "power": 0.2235298107210359
+      },
+      {
+        "periods": 2123,
+        "rel_bias": 0.2,
+        "z": 5.320400987394338,
+        "zcrit_bonferroni": 3.420526701131831,
+        "power": 0.9712751903894883
+      }
+    ],
+    "order_available": false,
+    "machine_metadata_available": false,
+    "notes": [
+      "A 的历史 loader 在 kl8/data_io.py 中返回 sorted(nums)，每期号码顺序被有意丢弃。",
+      "原始历史行虽保留一个顺序，但无法确认它是物理开奖顺序还是下载/记录顺序。",
+      "历史与台账没有机器编号、球组编号、换球/维护时间；频率偏差无法归因到球重或机器。",
+      "仅做 80 码频率审计时，小偏差（2.5%–5%）在 2123 期上功效很低；20% 级偏差才较易发现。"
+    ]
+  },
+  "frequency_audit": {
+    "periods": 2123,
+    "expected": 530.75,
+    "chi2": 58.42863871879416,
+    "df": 79,
+    "p_value": 0.9600066529264684,
+    "max_abs_z": 3.1200655813970575,
+    "bonferroni_z": 3.420526701131831,
+    "top": [
+      {
+        "ball": 27,
+        "count": 593,
+        "z": 3.1200655813970575
+      },
+      {
+        "ball": 31,
+        "count": 474,
+        "z": -2.8443971364543454
+      },
+      {
+        "ball": 12,
+        "count": 577,
+        "z": 2.3181210142909863
+      },
+      {
+        "ball": 22,
+        "count": 487,
+        "z": -2.1928171756806627
+      },
+      {
+        "ball": 38,
+        "count": 488,
+        "z": -2.1426956402365334
+      },
+      {
+        "ball": 2,
+        "count": 573,
+        "z": 2.1176348725144685
+      },
+      {
+        "ball": 53,
+        "count": 567,
+        "z": 1.816905659849692
+      },
+      {
+        "ball": 55,
+        "count": 498,
+        "z": -1.641480285795239
+      }
+    ]
+  },
+  "freeze": {
+    "exit": 0,
+    "text": "登记号      : KL8-2026-11-13-003\n状态        : active\n模型/端点   : main / top5_lift\n计划期数    : 30（起始 2026303）\n已锁定/已开奖/剩余: 1 / 0 / 30\n计划 MDE    : +34.3%\n冻结校验    : 通过\n说明        : 到期前不计算正式 p 值（final_only）",
+    "freeze_ok": true
+  }
+}

@@ -106,6 +106,7 @@ from backend.modules.legacy.models.lstm.routes import router as lstm_router
 from backend.modules.legacy.gemini_pick2.routes import router as gemini_router
 from backend.modules.legacy.follow.routes import router as follow_router
 from backend.modules.legacy.spatial_points.routes import router as spatial_points_router
+from backend.modules.expert_intelligence.routes import router as expert_router
 
 app.include_router(ops_router)
 app.include_router(quant_router)
@@ -135,6 +136,7 @@ app.include_router(lstm_router)
 app.include_router(gemini_router)
 app.include_router(follow_router)
 app.include_router(spatial_points_router)
+app.include_router(expert_router)
 
 
 # 启动后台 22:00 定时调度线程

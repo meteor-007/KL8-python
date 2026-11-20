@@ -1,0 +1,139 @@
+【每日执行指令 · 快乐8 点位+遗漏号分析 · 通用版】
+> 提示：全局统一每日标准化话术已整合至根目录：d:\project\Python-Project\data\每日指令.txt
+> 一键执行：python scripts/run_daily_complete.py (或 run_daily_complete.bat)
+
+
+════════════════════════════════════════════
+每天只需要改这一行：今日 20 个点位
+今日点位：<在此粘贴，例如 07 08 13 16 17 18 22 28 32 33 37 38 40 42 43 45 47 48 56 67>
+════════════════════════════════════════════
+
+一键执行（每日流程 + 台账自动提交推送）：
+    python scripts/daily_all.py --points "<今日点位>"
+
+也可以把点位存成文件：
+    python scripts/daily_all.py --points-file today_points.txt
+
+只跑流程、不提交（排错用）：
+    python scripts/run_daily.py --points "<今日点位>"
+
+期号、日期、图表文件名、回测截止期全部自动识别。
+除点位外，不要手改任何期号、日期、文件名。
+
+
+────────────────────────────────────────────
+执行链路（run_daily.py 已封装，以下用于排错）
+────────────────────────────────────────────
+
+1. 前置检查  scripts/daily_preflight.py
+   - 读开奖档案最新期 P，推断目标期：
+       同年 → 年内序号 + 1；跨年 → 新年份 001
+       禁止使用 period + 1
+   - 目标日期 = 最新开奖日期 + 1 天
+   - 校验点位：20 个、无重复、均在 1-80
+   - 追加到 data/cache/points_archive.txt（只追加，不覆盖）
+       同一期已存在且号码不同 → 必须显式 --force
+   - 按 sheet 内容识别图表，不看文件名：
+       含「快乐8点位图（思静分享）」            → 点位图
+       含「图表16伴侣组合」或「图表14任意两码组合」 → 高概率图表
+       含「快乐8游戏找胆图（初级版）」          → 找胆图
+       多份候选：期号匹配优先，其次取最新修改时间
+   - 找胆图按 A 列期号自动定位目标行，不使用固定行号
+   - 回测截止期 = 找胆图实际覆盖期号
+   - 输出 data/state/preflight.json
+   - 退出码：0 正常；2 有警告；1 缺关键数据（必须停止）
+
+2. 生成当期引擎  scripts/make_fusion_daily.py
+   - 从固定模板 scripts/fusion_engine_template.py 生成 scripts/fusion_engine_<目标期>.py
+   - 自动替换：目标期、基准期、日期、图表路径、回测截止、昨日发布目录
+
+3. 融合研报  python scripts/fusion_engine_<目标期>.py
+   - 逐模块输出 + 汇总
+   - 昨日复盘（自动读取上一期微信发布原文）
+   - 专家胆组胜率、杀号率、六大形态均值（全部按真实数据计算）
+   - 近 10 期步进回测
+   - 输出：全景研报 txt、Excel、微信分桶原文
+
+4. 主系统  python main.py analyze --period <目标期> --n 60
+   - 13 个模块逐项输出 + H1-H7 七维融合
+   - 合规扫描 + 降级状态 + 回测附录
+   - 输出：output/<目标日期>/daily_report.md
+
+5. 模块明细  scripts/dump_module_details.py
+   - 输出 module_details_<目标期>.txt
+   - 输出 review_<上一期>.txt
+
+
+6. 预注册锁定（自动）
+   - 若存在 prereg/active.json，run_daily.py 会在预测生成后、开奖前
+     把当期 Top5 写入 data/state/prereg_ledger.jsonl
+   - 查看进度：python scripts/prereg.py status
+   - 达到计划期数后：python scripts/prereg.py evaluate（唯一一次正式分析）
+   - 登记冻结代码/配置/数据前缀；任一变化会拒绝锁定并标为 invalidated
+
+7. 台账 git 同步（daily_all 自动执行）
+   - 只提交 data/state/prereg_ledger.jsonl / prereg/active.json / prereg/trials.jsonl
+   - 其它文件变更默认拒绝；确需提交时加 --git-all（通常会触发冻结失效）
+   - 提交前扫描疑似密钥；推送失败时本地提交会保留
+   - 单独同步：python scripts/git_sync.py --period <期号> --push
+
+8. 可选：研究引擎对比（不进入生产/预注册）
+   python scripts/research_compare.py --period <期号> --epochs 10
+   - 必须先完成第 1 步（目标期点位已在档案中）
+   - 调本地 vendored 研究引擎（research/kl8_engine：Transformer + 贝叶斯 + Borda + 30 码缩水）
+   - 输出 output/research/<期号>/research_compare.md / .json
+   - 研究依赖：pip install -r research/requirements.txt（torch/openpyxl）；生产路径不需要
+   - 只读数据：python scripts/data_sync.py --json（退出码 2 = 有差异，非执行失败）
+
+────────────────────────────────────────────
+数据缺失时怎么办
+────────────────────────────────────────────
+- 开奖不是最新一期：先执行 python main.py fetch，再重跑
+- 点位缺失：停下等人工录入；禁止用上一期号码顶替
+- 图表缺失：重新下载；仍缺则停止；禁止用旧期文件顶替
+- 找胆图覆盖不足：回测自动截止到覆盖期，研报标注
+- 任意两码组合为空：配对增益按 0 计，研报标注
+- 点位图或高概率图表缺失：前置检查退出码 1，必须停止
+
+
+────────────────────────────────────────────
+禁止事项
+────────────────────────────────────────────
+- 禁止手填期号或使用 period + 1 推期
+- 禁止用兜底号码掩盖点位缺失
+- 禁止在回测数据上调参（样本不足时任何调参都是过拟合）
+- 禁止把回测权重写回实盘在线学习状态
+- 禁止跳过合规扫描
+
+
+────────────────────────────────────────────
+产物位置
+────────────────────────────────────────────
+output/<目标日期YYYYMMDD>/
+    kl8_prediction_<期号>.xlsx          融合研报 Excel
+    kl8_prediction_summary_<期号>.txt   全景研报
+    kl8_wechat_publish_<期号>.txt       微信分桶原文
+    module_details_<期号>.txt           13 模块明细
+    review_<上一期>.txt                 昨日复盘
+    hitrate_evaluation.md               命中率评估（按需）
+    logs/                               各步骤日志
+    run_manifest.json                   运行清单与耗时
+
+output/<目标日期YYYY-MM-DD>/
+    daily_report.md                     主系统日报（合规口径）
+
+
+────────────────────────────────────────────
+可选参数
+────────────────────────────────────────────
+--dry-run        只做前置检查与图表识别，不写档案、不预测
+--n 60           主系统回测窗口（默认 60 期）
+--no-backtest    跳过主系统回测（更快，但没有命中率附录）
+--skip-main      只跑融合研报，不跑主系统
+
+单独运行某一环：
+    python scripts/daily_preflight.py --points "<点位>"
+    python scripts/make_fusion_daily.py
+    python scripts/fusion_engine_<目标期>.py
+    python main.py analyze --period <目标期> --n 60
+    python scripts/dump_module_details.py --period <目标期>

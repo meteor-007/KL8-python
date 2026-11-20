@@ -62,6 +62,7 @@
       icon: '📐',
       opened: true,
       children: [
+        { key: 'tprd_v40_cockpit', title: 'TPRD v4.0 双螺旋矩阵与智能缩水驾驶舱 (P2x)', shortTitle: 'TPRD双螺旋', icon: '🧬', badge: 'NEW' },
         { key: 'markov_line_cockpit', title: '马尔可夫特征直线校准驾驶舱', shortTitle: '马尔可夫直线', icon: '📏', badge: 'NEW' },
         { key: 'genetic_cockpit', title: '遗传算法自进化推演战区', shortTitle: '遗传算法', icon: '🧬', badge: '默认' },
         { key: 'linear_algebra_cockpit', title: '线性代数空间投影驾驶舱', shortTitle: '线性代数投影', icon: '📐' },
@@ -88,6 +89,7 @@
       icon: '🛠️',
       opened: false,
       children: [
+        { key: 'expert_cockpit', title: '🎯 专家作战室（含手机录入与逐期复盘）', shortTitle: '专家作战室', icon: '🎯', badge: 'LIVE' },
         { key: 'points_input', title: '每日点位录入管理', shortTitle: '点位录入', icon: '📝' },
         { key: 'tri_high_input', title: '三高录入与实战分析（需点位）', shortTitle: '三高录入', icon: '📝' },
         { key: 'live_terminal', title: '流水线黑客实时日志终端', shortTitle: '实时日志终端', icon: '💻', badge: 'LIVE' },
