@@ -218,6 +218,22 @@ def run_pipeline_complete():
         print("  ❌ [中止] 今日研报生成失败，停止后续对账、缩水与发布，禁止复用历史报告。")
         return 1
 
+    # 统一对账：先结算上一期，再为本次目标期建立快照（与 run_full_pipeline 保持一致）
+    try:
+        from backend.modules.unified_audit.run_daily import run_settle, run_snapshot
+        ua = run_settle()
+        if ua.get("status") == "ok":
+            print(f"  ✅ [统一对账] 已结算目标期 {ua.get('target_period')}")
+        else:
+            print(f"  ⚠️ [统一对账] settle 未结算: {ua.get('status')} {ua.get('message')}")
+        snap = run_snapshot()
+        if snap.get("status") == "ok":
+            print(f"  ✅ [统一对账] 已建立快照: 目标期 {snap.get('target_period')}")
+        else:
+            print(f"  ⚠️ [统一对账] snapshot 未建立: {snap.get('message')}")
+    except Exception as ue:
+        print(f"  ⚠️ [统一对账] 跳过: {ue}")
+
     # 只认今天生成的研报：缺当日报告即判定失败，绝不回退到昨天的报告
     today_tag = datetime.now().strftime("%Y%m%d")
     report_candidates = [

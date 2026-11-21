@@ -271,10 +271,21 @@ def run_nightly_pipeline(verbose: bool = True, with_research: bool = False):
         review_res = {}
 
     try:
-        from backend.modules.unified_audit.run_daily import run_settle
-        print("\n  ▶ 统一对账 settle")
+        from backend.modules.unified_audit.run_daily import run_settle, run_snapshot
+        print("\n  ▶ 统一对账 settle + snapshot")
         ua = run_settle()
-        print(f"  ✅ 统一对账: {ua.get('status')} {ua.get('message') or ua.get('target_period')}")
+        if ua.get("status") == "ok":
+            print(f"  ✅ 统一对账已结算: 目标期 {ua.get('target_period')}")
+        else:
+            print(f"  ⚠️ 统一对账 settle 未结算: {ua.get('status')} {ua.get('message')}")
+        try:
+            snap = run_snapshot()
+            if snap.get("status") == "ok":
+                print(f"  ✅ 统一对账快照已建立: 目标期 {snap.get('target_period')}")
+            else:
+                print(f"  ⚠️ 统一对账 snapshot 未建立: {snap.get('message')}")
+        except Exception as se:
+            print(f"  ⚠️ 统一对账 snapshot 失败: {se}")
     except Exception as e:
         print(f"  ⚠️ 统一对账 settle 跳过: {e}")
 
