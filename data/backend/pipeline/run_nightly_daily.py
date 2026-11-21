@@ -99,7 +99,68 @@ def _load_scheduler_config() -> dict:
     return {}
 
 
+class _TeeStream:
+    """把输出同时写到控制台与日志文件；无控制台（计划任务）时仅落盘。"""
+
+    def __init__(self, *streams):
+        self._streams = streams
+
+    def write(self, text):
+        for st in self._streams:
+            try:
+                st.write(text)
+            except Exception:
+                pass
+        return len(text)
+
+    def flush(self):
+        for st in self._streams:
+            try:
+                st.flush()
+            except Exception:
+                pass
+
+    def isatty(self):
+        return False
+
+    def writelines(self, lines):
+        for line in lines:
+            self.write(line)
+
+    def reconfigure(self, **kwargs):
+        for st in self._streams:
+            if hasattr(st, "reconfigure"):
+                try:
+                    st.reconfigure(**kwargs)
+                except Exception:
+                    pass
+
+    @property
+    def encoding(self):
+        return getattr(self._streams[0], "encoding", "utf-8")
+
+    @property
+    def errors(self):
+        return getattr(self._streams[0], "errors", "strict")
+
+
+def _setup_run_log():
+    """把本次运行的全部输出追加到 storage/logs/nightly_YYYYMMDD.log。"""
+    log_dir = os.path.join(_PROJ_DIR, "storage", "logs")
+    try:
+        os.makedirs(log_dir, exist_ok=True)
+        log_path = os.path.join(log_dir, f"nightly_{datetime.now():%Y%m%d}.log")
+        log_file = open(log_path, "a", encoding="utf-8", buffering=1)
+        sys.stdout = _TeeStream(sys.stdout, log_file)
+        sys.stderr = _TeeStream(sys.stderr, log_file)
+        print(f"\n===== nightly run start {datetime.now():%Y-%m-%d %H:%M:%S} =====")
+        return log_path
+    except Exception:
+        return None
+
+
 if __name__ == "__main__":
+    _setup_run_log()
     _force = "--force" in sys.argv[1:]
     _cfg = _load_scheduler_config()
     if _cfg.get("enabled", True) is False and not _force:
