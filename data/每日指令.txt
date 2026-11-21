@@ -1,4 +1,4 @@
-【快乐8 每日指令话术与自动化执行规范 (v2.0 工业级标准版)】
+【快乐8 每日指令话术与自动化执行规范 (v2.1 · 2026-11-21 校准)】
 ════════════════════════════════════════════════════════════════════════════════
 项目代号：P2 【快乐8全栈决策与科学检验一体机】
 工作路径：d:\project\Python-Project\data
@@ -15,7 +15,7 @@
 2. 自动检索 validation/file/ 目录下最新的点位图 Excel，解析提取当期 20 个点位号码及三高特征群（重号/边码左右翼/冷号高概率），如无新文件请平稳降级执行；
 3. 输出昨日推荐情况的七维立体复盘对账（选2黄金搭档、Meta-Gold金胆、Top12、深层爆发/防守、点位与三高命中实测）；
 4. 跑通全量预测模块，终端以高对比美观表格输出核心推荐，并同步生成全景 Markdown 研报、Excel 报表与【微信群分桶发布原文】；
-5. 提供 1 组最优旋转矩阵缩水实战方案（选五保四 30 注）；
+5. 提供 1 组最优旋转矩阵缩水实战方案（选五保四 6 注）；
 6. 检查全流程代码与逻辑，遇错先说明原因并自动纠正闭环，汇报近期命中率趋势与模型健康状态。
 
 
@@ -48,7 +48,7 @@
    - 🧭 16期动量与维度硬约束最优 20 码；
    - 🌟 三维一体与传统 AI 对照组精选；
    - 🚀 深层关联挖掘：爆发推荐 Top5、防守剔除 Top3；
-   - 🎲 盖尔·霍华德旋转矩阵缩水方案（生成 30 注选五保四或精选方案）；
+   - 🎲 盖尔·霍华德旋转矩阵缩水方案（W5_10_4_4_6，选五保四 6 注）；
 5. 自动完成全量产物落盘并提供点击直达链接：
    - Markdown 全景研报 (`daily_analysis_report_YYYYMMDD.md`)
    - 预测明细 Excel 报表
@@ -68,3 +68,26 @@
 
 或双击批处理脚本：
     run_daily_complete.bat
+
+
+────────────────────────────────────────────────────────────────────────────────
+【其他子系统入口】
+────────────────────────────────────────────────────────────────────────────────
+· 夜间自动（每天 22:00，未登录也运行）
+    Windows 计划任务 K8Quant_Nightly_2200
+    → scripts\ops\run_nightly_task.bat
+    → backend\pipeline\run_nightly_daily.py → run_nightly_pipeline.py
+    状态：backend\config\scheduler_config.json；运行锁：backend\utils\nightly_lock.py
+    注册/检查：scripts\ops\setup_nightly_task.bat
+
+· 验证 / 回测
+    run_validation.bat → main_validation.py → validation\main.py
+    详细指令见 validation\每日指令.txt（其相对路径以 validation 目录为基准）
+
+· TPRD v4.0 缩水矩阵
+    kl8_tprd_system\run.bat
+
+· 全量深度流水线（含末尾自动 git 提交）
+    python -m backend.pipeline.run_full_pipeline
+
+完整运维版见根目录：每日执行指令.txt

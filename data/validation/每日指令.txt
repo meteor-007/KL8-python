@@ -1,6 +1,8 @@
-【每日执行指令 · 快乐8 点位+遗漏号分析 · 通用版】
-> 提示：全局统一每日标准化话术已整合至根目录：d:\project\Python-Project\data\每日指令.txt
-> 一键执行：python scripts/run_daily_complete.py (或 run_daily_complete.bat)
+【每日执行指令 · 快乐8 点位+遗漏号分析 · 验证子系统版】
+> 工作目录：d:\project\Python-Project\data\validation（本文所有相对路径均基于此目录）
+> 生产入口（在 data 目录或双击）：run_validation.bat → main_validation.py → validation\main.py
+> 日常一键全流程不在此目录：请用根目录的 每日指令.txt / 每日执行指令.txt
+> 本子系统一键执行（在 validation 目录下）：python scripts/daily_all.py --points "<今日点位>"
 
 
 ════════════════════════════════════════════
