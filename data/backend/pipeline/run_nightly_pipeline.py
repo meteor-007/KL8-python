@@ -78,10 +78,16 @@ MANUAL_POINTS_LABELS = [
 
 
 def _safe_step(label: str, fn):
-    """单步容错：失败不中断整条流水线。"""
+    """单步容错：失败不中断整条流水线，但会如实记入 errors。
+
+    任务函数返回 False 视同失败 —— 子脚本非零退出、模块内部捕获到的异常
+    都应让本次夜间流水线被判定为 FAILED，而不是"跑完即成功"。
+    """
     try:
         print(f"\n  ▶ {label}")
-        fn()
+        result = fn()
+        if result is False:
+            raise RuntimeError("任务返回失败（False）")
         print(f"  ✅ {label} · 完成")
         return {"label": label, "status": "ok"}
     except Exception as e:
@@ -156,7 +162,8 @@ def _run_ai_math_models():
         def _runner(p=path, s=script):
             if not os.path.exists(p):
                 raise FileNotFoundError(s)
-            run_py(p)
+            if not run_py(p):
+                raise RuntimeError(f'{s} 执行失败')
 
         out.append(_safe_step(f"AI · {label}", _runner))
     return out
@@ -208,7 +215,8 @@ def run_nightly_pipeline(verbose: bool = True, with_research: bool = False):
     print("\n" + "─" * 70)
     print("  [1/4] 📥 同步最新开奖数据")
     print("─" * 70)
-    task0_env_check()
+    if not task0_env_check():
+        raise RuntimeError('环境预检失败：关键文件缺失，终止本次夜间流水线')
     task00_validate()
     task11_fetch()
     task12_hot_numbers()
@@ -290,16 +298,24 @@ def run_nightly_pipeline(verbose: bool = True, with_research: bool = False):
     elapsed = time.time() - start_t
     ok_n = sum(1 for r in auto_results if r.get("status") == "ok")
     err_n = sum(1 for r in auto_results if r.get("status") == "error")
+    errors = [r for r in auto_results if r.get("status") == "error"]
+    status = "SUCCESS" if err_n == 0 else "FAILED"
 
     print("\n" + "=" * 80)
-    print(f"  ✅ 开奖后自动流水线完成 · 耗时 {elapsed:.1f}s · 成功 {ok_n} / 失败 {err_n}")
+    print(f"  {'✅' if err_n == 0 else '❌'} 开奖后自动流水线完成 · 耗时 {elapsed:.1f}s · 成功 {ok_n} / 失败 {err_n}")
+    if errors:
+        for e in errors:
+            print(f"     ❌ {e.get('label')}: {str(e.get('error'))[:200]}")
     print(f"  ⏸  点位类待手动: {len(skipped_manual)} 项")
     print("=" * 80 + "\n")
 
     return {
-        "status": "SUCCESS",
+        "status": status,
         "finished_at": datetime.now().isoformat(),
         "elapsed_seconds": round(elapsed, 1),
+        "ok_count": ok_n,
+        "error_count": err_n,
+        "errors": errors,
         "auto_results": auto_results,
         "skipped_manual_points": skipped_manual,
         "review_summary": review_res if isinstance(review_res, dict) else {},
@@ -316,4 +332,5 @@ if __name__ == "__main__":
         help="跑 research 舱高维 AI（默认跳过）",
     )
     _args = _ap.parse_args()
-    run_nightly_pipeline(verbose=True, with_research=_args.with_research)
+    _res = run_nightly_pipeline(verbose=True, with_research=_args.with_research)
+    sys.exit(0 if str(_res.get("status", "")).upper() == "SUCCESS" else 1)

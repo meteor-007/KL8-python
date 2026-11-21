@@ -492,4 +492,6 @@ if __name__ == '__main__':
     if hasattr(sys.stdout, 'reconfigure'):
         sys.stdout.reconfigure(encoding='utf-8')
     logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(name)s: %(message)s')
-    fetch_history()
+    # 抓取失败必须以非零码退出：上层流水线只认退出码，否则会把"没拿到当天开奖"
+    # 当成成功继续用旧数据推演（夜间无人值守时表现为状态一片绿、方案已过期）。
+    sys.exit(0 if fetch_history() else 1)

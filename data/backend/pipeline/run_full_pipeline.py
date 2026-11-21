@@ -115,6 +115,19 @@ def run_py(script, *args, cwd=None):
         err(f'执行异常: {e}')
         return False
 
+
+def run_py_checked(script, *args, cwd=None, label=None):
+    """执行子脚本；脚本缺失或非零退出时抛异常。
+
+    夜间流水线依赖真实退出码判断数据是否同步成功。普通 run_py 只返回 bool，
+    调用方一旦忽略返回值，子脚本崩溃就会被静默当成成功。
+    """
+    name = label or os.path.basename(script)
+    if not os.path.exists(script):
+        raise FileNotFoundError(f'{name} 脚本不存在: {script}')
+    if not run_py(script, *args, cwd=cwd):
+        raise RuntimeError(f'{name} 执行失败（子进程非零退出）: {script}')
+
 # ══════════════════════════════════════════════════════════
 # SECTION 0: 环境预检
 # ══════════════════════════════════════════════════════════
@@ -159,7 +172,7 @@ def task00_validate():
     banner('任务0.0：数据一致性强制校验与自动修复')
     validator = _resolve_backend_script('utils', 'data_validator.py')
     if os.path.exists(validator):
-        run_py(validator, '--auto-fix')
+        run_py_checked(validator, '--auto-fix', label='数据一致性校验')
     else:
         warn('data_validator.py 未找到，跳过校验')
 
@@ -170,9 +183,9 @@ def task11_fetch():
     banner('任务1.1：双源抓取最新开奖历史')
     script = _resolve_backend_script('data_acquisition', 'fetch_kl8_history.py')
     if os.path.exists(script):
-        run_py(script)
+        run_py_checked(script, label='开奖数据抓取')
     else:
-        warn('fetch_kl8_history.py 未找到，跳过')
+        raise FileNotFoundError('fetch_kl8_history.py 未找到，无法同步开奖数据')
     
     # 读取最新期号 (活数据在 storage/raw/, 之前指向项目根目录会永远读不到)
     hist_file = data_path('kl8_history_final.txt')
@@ -196,14 +209,14 @@ def task12_hot_numbers():
     
     if os.path.exists(gen_script):
         step('1.2-A', '缺期补偿 (--fill-missing)')
-        run_py(gen_script, '--fill-missing')
+        run_py_checked(gen_script, '--fill-missing', label='热码缺期补偿')
         
         step('1.2-B', '生成最新期热码统计')
-        run_py(gen_script)
+        run_py_checked(gen_script, label='热码统计生成')
     
     if os.path.exists(proc_script):
         step('1.2-C', '批量同步热码到Excel (--sync-all-missing)')
-        run_py(proc_script, '--sync-all-missing')
+        run_py_checked(proc_script, '--sync-all-missing', label='热码同步到Excel')
     
     # 验证热码统计目录
     hot_dir = data_path('热码统计')
@@ -226,16 +239,16 @@ def task13_15_sync():
     
     if os.path.exists(sync):
         step('1.3', '历史数据同步到Excel')
-        run_py(sync)
+        run_py_checked(sync, label='历史数据同步到Excel')
     
     roads_prime_sync = _resolve_backend_script('data_acquisition', 'generate_roads_and_prime_stats.py')
     if os.path.exists(roads_prime_sync):
         step('1.4', '012路与质合汇总表同步 (kl8_012_roads_summary.csv & kl8_prime_composite_summary.csv)')
-        run_py(roads_prime_sync)
+        run_py_checked(roads_prime_sync, label='012路与质合汇总表同步')
 
     if os.path.exists(fmt):
         step('1.5', 'Excel增量格式化')
-        run_py(fmt)
+        run_py_checked(fmt, label='Excel增量格式化')
     
     ok('数据同步与格式化完成')
 
@@ -405,7 +418,10 @@ def task36_formula_jingle():
     banner('任务3.6：📜 顺口溜口诀规律与组合带出分析 (90条精英规则)', 'cyan')
     jingle_script = find_module_script('run_jingle_daily.py')
     if os.path.exists(jingle_script):
-        run_py(jingle_script, '20')
+        if not run_py(jingle_script, '20'):
+            warn('run_jingle_daily.py 执行失败')
+            return False
+        return True
     else:
         warn('run_jingle_daily.py 未找到，尝试内置引擎推演')
         try:
@@ -421,8 +437,10 @@ def task36_formula_jingle():
             res = predict_jingle(draws, rules)
             save_jingle_prediction(res)
             ok(f"顺口溜推演完成 | 目标期 {res.get('target_issue')} | 推荐 {res.get('k_count')} 码")
+            return True
         except Exception as je:
             warn(f"顺口溜推演异常: {je}")
+            return False
 
 # ══════════════════════════════════════════════════════════
 # SECTION 3.8: 未开点位高压反弹与空间关联追踪
@@ -449,15 +467,20 @@ def task39_gold_pick2():
     banner('任务3.9：💎 定金选2决策推演 (双重金胆法 + 7维特征加权 + 条件共现)', 'cyan')
     pick2_script = find_module_script('run_pick2_daily.py')
     if os.path.exists(pick2_script):
-        run_py(pick2_script, '30')
+        if not run_py(pick2_script, '30'):
+            warn('run_pick2_daily.py 执行失败')
+            return False
+        return True
     else:
         warn('run_pick2_daily.py 未找到，尝试内置算法引擎推演')
         try:
             from backend.modules.legacy.gold_pick2.run_daily import run_pick2_pipeline
             res = run_pick2_pipeline(n_review=30, verbose=False)
             ok(f"定金选2分析完成 | 目标期 {res.get('target_period')} | 核心金胆: {res.get('golden'):02d} | 热胆: {res.get('hot'):02d}")
+            return True
         except Exception as pe:
             warn(f"定金选2推演异常: {pe}")
+            return False
 
 # ══════════════════════════════════════════════════════════
 # SECTION 3.94: 16期中热号频次动态推演与组合决策
@@ -465,17 +488,22 @@ def task39_gold_pick2():
 def task394_sixteen_period():
     banner('任务3.94: 16期中热号频次动态推演与组合决策 (大盘光谱 + 出窗进窗推演 + 选2/3)', 'yellow')
     sixteen_script = find_module_script('run_sixteen_daily.py')
-    if os.path.exists(sixteen_script):
-        run_py(sixteen_script, '30')
-    else:
+    if not os.path.exists(sixteen_script):
         warn('run_sixteen_daily.py 未找到，跳过16期中热推演')
+        return False
+    if not run_py(sixteen_script, '30'):
+        warn('run_sixteen_daily.py 执行失败')
+        return False
 
     # 16 窗工作簿生成后, 合并为「全合一终极量化驾驶舱」(含跟随看板/死党榜/全历史矩阵)
     cockpit = _resolve_backend_script('modules', 'build_unified_master_excel.py')
-    if os.path.exists(cockpit):
-        run_py(cockpit)
-    else:
+    if not os.path.exists(cockpit):
         warn('build_unified_master_excel.py 未找到，跳过全合一驾驶舱合并')
+        return False
+    if not run_py(cockpit):
+        warn('build_unified_master_excel.py 执行失败')
+        return False
+    return True
 
 # ══════════════════════════════════════════════════════════
 # SECTION 3.95: 终审共识与数据汇总复盘 (多路子系统多维共振 + 8区空间平衡)
@@ -483,10 +511,13 @@ def task394_sixteen_period():
 def task395_aggregation():
     banner('任务3.95：🧬 终审共识与数据汇总复盘 (多路子系统多维共振 + 8区空间平衡 + 稳健号)', 'magenta')
     agg_script = find_module_script('run_aggregation_daily.py')
-    if os.path.exists(agg_script):
-        run_py(agg_script, '--force')
-    else:
+    if not os.path.exists(agg_script):
         warn('run_aggregation_daily.py 未找到，跳过终审汇总')
+        return False
+    if not run_py(agg_script, '--force'):
+        warn('run_aggregation_daily.py 执行失败')
+        return False
+    return True
 
 # ══════════════════════════════════════════════════════════
 # SECTION 3.955: 模块前瞻账对账与门禁刷新 (C5/C6/D4)
@@ -682,8 +713,10 @@ def task396_prime_tail():
         from backend.core.prime_composite_engine import run_prime_tail_analysis_pipeline
         res = run_prime_tail_analysis_pipeline()
         ok(f"质合与尾数协同推演完成 | 目标期 {res.get('target_period')}")
+        return True
     except Exception as e:
         warn(f"质合与尾数推演异常: {e}")
+        return False
 
 # ══════════════════════════════════════════════════════════
 # SECTION 3.97: 心理博弈论与逆向均值回归量化推演
@@ -698,8 +731,10 @@ def task397_psychological_game():
         auditor = PsychologicalGameTheoryAuditor()
         auditor.generate_full_audit_ledger_and_report()
         ok("心理博弈滚动回测对账账本已同步刷新")
+        return True
     except Exception as e:
         warn(f"心理博弈推演/回测异常: {e}")
+        return False
 
 # ══════════════════════════════════════════════════════════
 # SECTION 3.98: 三高特征 (重复高/边高/冷高) × 每日点位深度共振推演

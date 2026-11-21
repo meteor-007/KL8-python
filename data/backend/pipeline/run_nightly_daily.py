@@ -9,9 +9,8 @@ Windows 计划任务 `K8Quant_Nightly_2200` 的调用方式），sys.path[0] 会
 实测计划任务 LastTaskResult=2 (ERROR_FILE_NOT_FOUND)、调度器配置停在
 ``last_status=FAILED / last_run_date=2026-09-20``，即夜间自动化已停摆一个月。
 
-现按本仓库既有惯例（见 backend/core/tri_high_engine.py 等 shim）先自举项目根与
-backend 目录进 sys.path，再委派执行；两种调用方式（``-m`` 模块方式 与 直接文件路径）
-均可正常工作。
+现先自举项目根与 backend 目录进 sys.path，再直接调用流水线函数；
+流水线返回的 ``status`` 反映各模块真实成败，失败时本进程以非零码退出并写回 FAILED。
 
 2026-10-22 状态回写修复 (Bug#15)：计划任务直接调本脚本，**绕过了** NightlyScheduler，
 导致 ``backend/config/scheduler_config.json`` 的 last_run_date / last_status 永远停在
@@ -21,7 +20,6 @@ backend 目录进 sys.path，再委派执行；两种调用方式（``-m`` 模�
 """
 import json
 import os
-import runpy
 import sys
 from datetime import datetime
 
@@ -90,24 +88,60 @@ def _alert_on_failure(exc: Exception) -> None:
         pass
 
 
-if __name__ == "__main__":
-    _update_scheduler_state("RUNNING", "Windows 计划任务已触发，夜间全自动流水线执行中...")
-    _t0 = datetime.now()
+def _load_scheduler_config() -> dict:
     try:
-        runpy.run_module("backend.pipeline.run_nightly_pipeline", run_name="__main__")
-    except SystemExit:
-        raise
-    except Exception as _e:
-        _update_scheduler_state("FAILED", f"❌ 夜间流水线执行异常: {_e}", finished=True)
-        _alert_on_failure(_e)
-        raise
-    _secs = (datetime.now() - _t0).total_seconds()
-    _update_scheduler_state("SUCCESS", f"✅ 夜间流水线执行圆满成功 (耗时: {_secs:.0f}s)", finished=True)
-    # 成功后跑一次健康检查：若之前处于告警态，这里会发出"已恢复"闭环通知
-    try:
-        from backend.utils.nightly_watchdog import run_watchdog
-        run_watchdog(notify=True)
+        if os.path.exists(_SCHED_CFG):
+            with open(_SCHED_CFG, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return data if isinstance(data, dict) else {}
     except Exception:
         pass
+    return {}
+
+
+if __name__ == "__main__":
+    _force = "--force" in sys.argv[1:]
+    _cfg = _load_scheduler_config()
+    if _cfg.get("enabled", True) is False and not _force:
+        print("[SKIP] scheduler_config.enabled=false，本次夜间任务不执行（--force 可强制）。")
+        sys.exit(0)
+
+    from backend.utils.nightly_lock import acquire_nightly_lock, release_nightly_lock
+
+    _owner = "windows_task"
+    _locked, _lock_msg = acquire_nightly_lock(_owner)
+    if not _locked:
+        print(f"[SKIP] {_lock_msg}")
+        sys.exit(0)
+
+    try:
+        _update_scheduler_state("RUNNING", "Windows 计划任务已触发，夜间全自动流水线执行中...")
+        _t0 = datetime.now()
+        try:
+            from backend.pipeline.run_nightly_pipeline import run_nightly_pipeline
+            _res = run_nightly_pipeline(
+                verbose=True,
+                with_research="--with-research" in sys.argv[1:],
+            )
+            if str(_res.get("status", "")).upper() != "SUCCESS":
+                _errs = _res.get("errors") or []
+                _detail = "; ".join(
+                    f"{e.get('label')}: {str(e.get('error'))[:120]}" for e in _errs[:5]
+                ) or "未知模块失败"
+                raise RuntimeError(f"流水线内 {len(_errs)} 个模块执行失败（{_detail}）")
+        except Exception as _e:
+            _update_scheduler_state("FAILED", f"❌ 夜间流水线执行异常: {_e}", finished=True)
+            _alert_on_failure(_e)
+            sys.exit(1)
+        _secs = (datetime.now() - _t0).total_seconds()
+        _update_scheduler_state("SUCCESS", f"✅ 夜间流水线执行圆满成功 (耗时: {_secs:.0f}s)", finished=True)
+        # 成功后跑一次健康检查：若之前处于告警态，这里会发出"已恢复"闭环通知
+        try:
+            from backend.utils.nightly_watchdog import run_watchdog
+            run_watchdog(notify=True)
+        except Exception:
+            pass
+    finally:
+        release_nightly_lock(_owner)
 
 

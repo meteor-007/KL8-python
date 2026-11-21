@@ -54,6 +54,9 @@ class NightlyScheduler:
         self.recent_logs = []
         self._thread = None
         self._stop_event = threading.Event()
+        self._retry_count = 0
+        self._retry_day = ""
+        self._last_attempt_at = None
 
     def _load_config(self) -> Dict[str, Any]:
         default_cfg = {
@@ -151,16 +154,35 @@ class NightlyScheduler:
             return self._execute_pipeline()
 
     def _execute_pipeline(self) -> Dict[str, Any]:
-        """执行夜间流水线核心任务"""
+        """执行夜间流水线核心任务（与 Windows 计划任务共用跨进程锁）。"""
+        from backend.utils.nightly_lock import acquire_nightly_lock, release_nightly_lock
+
+        owner = "web_scheduler"
+        locked, lock_msg = acquire_nightly_lock(owner)
+        if not locked:
+            self.recent_logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] ⏭️ {lock_msg}")
+            return {"status": "SKIPPED", "message": lock_msg}
+
         self.is_running_task = True
         self.last_status = "RUNNING"
         self.last_message = "正在执行 22:00 夜间全自动闭环推演与自学习进化流水线..."
+        self.config["last_status"] = self.last_status
+        self.config["last_message"] = self.last_message
+        self.config["last_started_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.config["last_trigger"] = "web_scheduler"
+        self._save_config()
         self.recent_logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] 🚀 启动夜间全流程流水线任务")
 
         today_str = datetime.now().strftime("%Y-%m-%d")
         try:
             from backend.pipeline.run_nightly_pipeline import run_nightly_pipeline
             res = run_nightly_pipeline(verbose=True)
+            if str(res.get("status", "")).upper() != "SUCCESS":
+                errs = res.get("errors") or []
+                detail = "; ".join(
+                    f"{e.get('label')}: {str(e.get('error'))[:120]}" for e in errs[:5]
+                ) or "未知模块失败"
+                raise RuntimeError(f"流水线内 {len(errs)} 个模块执行失败（{detail}）")
             self.last_status = "SUCCESS"
             self.last_run_date = today_str
             self.last_finished_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -177,29 +199,57 @@ class NightlyScheduler:
             self.last_message = f"❌ 夜间流水线执行异常: {str(e)}"
             self.config["last_status"] = self.last_status
             self.config["last_message"] = self.last_message
+            self.config["last_finished_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             self._save_config()
             self.recent_logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] {self.last_message}")
             return {"status": "FAILED", "error": str(e)}
         finally:
             self.is_running_task = False
+            release_nightly_lock(owner)
 
     def _loop(self):
-        """后台轮询主循环"""
+        """后台轮询主循环：每轮从磁盘重读状态，避免与 Windows 计划任务重复执行。"""
         while not self._stop_event.is_set():
             try:
-                if self.config.get("enabled", True) and not self.is_running_task:
+                if not self.is_running_task:
+                    disk = self._load_config()
+                    for key in ("enabled", "target_time", "retry_minutes", "max_retries"):
+                        if key in disk:
+                            self.config[key] = disk[key]
+                    self.last_run_date = disk.get("last_run_date", self.last_run_date) or ""
+                    self.last_status = disk.get("last_status", self.last_status) or ""
+                    self.last_message = disk.get("last_message", self.last_message) or ""
+                    self.last_finished_at = disk.get("last_finished_at", self.last_finished_at) or ""
+
                     now = datetime.now()
                     today_str = now.strftime("%Y-%m-%d")
+                    if self._retry_day != today_str:
+                        self._retry_day = today_str
+                        self._retry_count = 0
+                        self._last_attempt_at = None
+
                     target_str = self.config.get("target_time", "22:00")
                     th, tm = [int(x) for x in target_str.split(":")]
-                    
-                    if now.hour == th and now.minute >= tm:
-                        if self.last_run_date != today_str:
+                    if (self.config.get("enabled", True) and now.hour == th
+                            and now.minute >= tm and self.last_run_date != today_str):
+                        # 是否已有实例在跑由跨进程锁裁决（见 _execute_pipeline）；
+                        # 这里只做"今天是否已完成"与失败重试节流。
+                        if self._retry_count >= int(self.config.get("max_retries", 6)):
+                            pass
+                        elif self._last_attempt_at is not None and now < self._last_attempt_at + timedelta(
+                                minutes=int(self.config.get("retry_minutes", 5))):
+                            pass
+                        else:
                             print(f"\n⏰ [NightlyScheduler] 准时到达 {target_str}，自动唤醒并启动夜间全流程！\n")
-                            self._execute_pipeline()
+                            self._last_attempt_at = now
+                            res = self._execute_pipeline()
+                            if res.get("status") == "SUCCESS":
+                                self._retry_count = 0
+                            elif res.get("status") != "SKIPPED":
+                                self._retry_count += 1
             except Exception as e:
                 print(f"⚠️ 调度器轮询发生异常: {e}")
-            
+
             time.sleep(15)
 
 

@@ -16,7 +16,6 @@ import os
 import sys
 import re
 import json
-import glob
 import time
 from datetime import datetime
 from pathlib import Path
@@ -91,7 +90,7 @@ def run_pipeline_complete():
         tprd_history = _DATA_DIR.parent / "kl8_tprd_system" / "data" / "kl8_history_final.txt"
         if tprd_history.parent.exists() and os.path.exists(HISTORY_FILE):
             shutil.copy2(HISTORY_FILE, tprd_history)
-        root_tprd = Path("D:/project/kl8_tprd_system/data/kl8_history_final.txt")
+        root_tprd = _DATA_DIR.parent.parent / "kl8_tprd_system" / "data" / "kl8_history_final.txt"
         if root_tprd.parent.exists() and os.path.exists(HISTORY_FILE):
             shutil.copy2(HISTORY_FILE, root_tprd)
 
@@ -130,6 +129,10 @@ def run_pipeline_complete():
         print(f"  ⚠️ [数据同步告警] DataCenter 初始化异常: {e}，尝试使用备用通道继续...")
         latest_issue = "未知"
         target_issue = "未知"
+
+    if not target_issue.isdigit():
+        print("  ❌ [中止] 无法确定目标推演期号（开奖数据同步失败），停止后续推演与发布，避免产出错期内容。")
+        return 1
 
     # --------------------------------------------------------------------------
     # 步骤 2: 自动检索与解析 Excel 点位 + 三高特征群 (带平稳降级)
@@ -212,17 +215,23 @@ def run_pipeline_complete():
         print(f"  ❌ [推演流水线异常]: {e}")
         import traceback
         traceback.print_exc()
+        print("  ❌ [中止] 今日研报生成失败，停止后续对账、缩水与发布，禁止复用历史报告。")
+        return 1
 
-    # 查找最新生成的日报
-    report_files = sorted(glob.glob(str(_DATA_DIR / "daily_analysis_report_*.md")), reverse=True)
-    if not report_files:
-        report_files = sorted(glob.glob(str(_DATA_DIR / "storage" / "reports" / "daily_analysis_report_*.md")), reverse=True)
-    
-    report_path = report_files[0] if report_files else None
+    # 只认今天生成的研报：缺当日报告即判定失败，绝不回退到昨天的报告
+    today_tag = datetime.now().strftime("%Y%m%d")
+    report_candidates = [
+        _DATA_DIR / f"daily_analysis_report_{today_tag}.md",
+        _DATA_DIR / "storage" / "reports" / f"daily_analysis_report_{today_tag}.md",
+    ]
+    report_path = next((str(p) for p in report_candidates if p.exists()), None)
+    if not report_path:
+        print(f"  ❌ [中止] 未找到今日研报 daily_analysis_report_{today_tag}.md，拒绝复用历史报告继续发布。")
+        return 2
+
     report_text = ""
-    if report_path and os.path.exists(report_path):
-        with open(report_path, "r", encoding="utf-8", errors="ignore") as rf:
-            report_text = rf.read()
+    with open(report_path, "r", encoding="utf-8", errors="ignore") as rf:
+        report_text = rf.read()
 
     # --------------------------------------------------------------------------
     # 步骤 4: 解析昨日七维实战复盘
@@ -264,33 +273,47 @@ def run_pipeline_complete():
     # --------------------------------------------------------------------------
     print("\n▶ [步骤 5/7] 提取今日核心操盘指令与推荐号码...")
     rec_lines = []
+    missing_core = []
 
-    # 今日选2
-    m_rec_p2 = re.search(r"👑 黄金搭档.*?`([0-9\s\-]+)`", report_text)
-    p2_val = m_rec_p2.group(1).strip() if m_rec_p2 else "12 - 24"
-    rec_lines.append(f"👑 【全场唯一最优选2】: 黄金搭档 [ {p2_val} ] (综合协同分: 1.00)")
+    def _grab(pattern: str, label: str):
+        m = re.search(pattern, report_text)
+        if not m:
+            missing_core.append(label)
+            return None
+        return m.group(1).strip()
 
-    # 至尊金胆
-    m_gold = re.search(r"👑 全场至尊核心金胆.*?`([0-9]+)`", report_text)
-    gold_val = m_gold.group(1).strip() if m_gold else "13"
+    # 今日选2（硬依赖：缺失即中止发布）
+    p2_val = _grab(r"👑 黄金搭档.*?`([0-9\s\-]+)`", "极简选2黄金搭档")
+    if p2_val:
+        if len(re.findall(r"\d+", p2_val)) < 2:
+            missing_core.append("极简选2号码对")
+        else:
+            rec_lines.append(f"👑 【全场唯一最优选2】: 黄金搭档 [ {p2_val} ] (综合协同分: 1.00)")
+
+    # 至尊金胆（硬依赖）
+    gold_val = _grab(r"👑 全场至尊核心金胆.*?`([0-9]+)`", "至尊金胆")
     m_gold_tier = re.search(r"Meta-Gold 五维金胆梯队.*?`([0-9\-]+)`", report_text)
-    gold_tier_val = m_gold_tier.group(1).strip() if m_gold_tier else "13-49-63"
-    rec_lines.append(f"💎 【Meta-Gold 至尊金胆】: [ {gold_val} ] ｜ 五维金胆梯队: [ {gold_tier_val} ]")
+    gold_tier_val = m_gold_tier.group(1).strip() if m_gold_tier else "—"
+    if gold_val:
+        rec_lines.append(f"💎 【Meta-Gold 至尊金胆】: [ {gold_val} ] ｜ 五维金胆梯队: [ {gold_tier_val} ]")
 
-    # 16期动量与维度硬约束最优20码
-    m_opt20 = re.search(r"动量\+维度硬约束最优 20 码.*?`([0-9\s]+)`", report_text)
-    opt20_val = m_opt20.group(1).strip() if m_opt20 else "13 49 63 35 48 79 17 72 02 69 36 23 42 34 07 26 52 28 33 68"
-    rec_lines.append(f"🧭 【16期维度硬约束20码】: {opt20_val}")
+    # 16期动量与维度硬约束最优20码（硬依赖）
+    opt20_val = _grab(r"动量\+维度硬约束最优 20 码.*?`([0-9\s]+)`", "16期维度硬约束20码")
+    if opt20_val:
+        if len([x for x in opt20_val.split() if x.isdigit()]) < 20:
+            missing_core.append("16期维度硬约束20码(不足20码)")
+        else:
+            rec_lines.append(f"🧭 【16期维度硬约束20码】: {opt20_val}")
 
-    # 三维极秘 Top5 / Top12
-    m_top5 = re.search(r"极秘 Top 5.*?`(\[[0-9,\s]+\])`", report_text)
-    top5_val = m_top5.group(1).strip() if m_top5 else "[52, 60, 62, 72, 74]"
-    m_top12 = re.search(r"极秘 Top 12.*?`(\[[0-9,\s]+\])`", report_text)
-    top12_val = m_top12.group(1).strip() if m_top12 else "[16, 46, 52, 59, 60, 61, 62, 65, 72, 74, 76, 79]"
-    rec_lines.append(f"🌟 【三维一体极秘 Top5】: {top5_val}")
-    rec_lines.append(f"🌟 【三维一体极秘 Top12】: {top12_val}")
+    # 三维极秘 Top5 / Top12（硬依赖：决定缩水单与微信原文）
+    top5_val = _grab(r"极秘 Top 5.*?`(\[[0-9,\s]+\])`", "三维一体极秘Top5")
+    top12_val = _grab(r"极秘 Top 12.*?`(\[[0-9,\s]+\])`", "三维一体极秘Top12")
+    if top5_val:
+        rec_lines.append(f"🌟 【三维一体极秘 Top5】: {top5_val}")
+    if top12_val:
+        rec_lines.append(f"🌟 【三维一体极秘 Top12】: {top12_val}")
 
-    # 传统AI Top5
+    # 传统AI Top5（可选展示）
     m_ai_top5 = re.search(r"Top 5 置信度精选.*?`(\[[0-9,\s]+\])`", report_text)
     if m_ai_top5:
         rec_lines.append(f"🤖 【传统 AI 对照 Top5】: {m_ai_top5.group(1).strip()}")
@@ -309,6 +332,11 @@ def run_pipeline_complete():
 
     print(format_box(f"{target_issue}期 今日核心推演卡片", rec_lines))
 
+    if missing_core:
+        print(f"  ❌ [中止] 研报关键字段解析失败: {', '.join(missing_core)}")
+        print("     已停止缩水单与微信发布，禁止使用占位号码对外输出。请检查研报格式是否变化。")
+        return 3
+
     # --------------------------------------------------------------------------
     # 步骤 6: 盖尔·霍华德旋转矩阵缩水方案 (Smart Luck Wheel)
     # --------------------------------------------------------------------------
@@ -322,13 +350,14 @@ def run_pipeline_complete():
             top12_nums = [int(x) for x in opt20_val.split()[:10]]
         
         banker_num = int(gold_val) if gold_val.isdigit() else top12_nums[0]
-        bankers = [banker_num] if banker_num in top12_nums else [top12_nums[0]]
+        effective_banker = banker_num if banker_num in top12_nums else top12_nums[0]
+        bankers = [effective_banker]
 
         tpl = BUILTIN_WHEELS.get("W5_10_4_4_6")
         if tpl:
             wheel_tickets = WheelEngine.generate_wheel(tpl, top12_nums, bankers=bankers)
             wheel_lines.append(f"🎲 矩阵模板: {tpl.name} | 保奖承诺: {tpl.guarantee}")
-            wheel_lines.append(f"📌 定胆核心: [ {banker_num:02d} ] | 候选池: {', '.join([f'{x:02d}' for x in top12_nums])}")
+            wheel_lines.append(f"📌 定胆核心: [ {effective_banker:02d} ] | 候选池: {', '.join([f'{x:02d}' for x in top12_nums])}")
             wheel_lines.append(f"🎫 精选缩水打票单 (共 {len(wheel_tickets)} 注):")
             for idx, t in enumerate(wheel_tickets, 1):
                 t_str = " ".join([f"{x:02d}" for x in t])
@@ -340,6 +369,10 @@ def run_pipeline_complete():
 
     print(format_box("盖尔·霍华德选五保四旋转矩阵方案", wheel_lines))
 
+    if len(wheel_tickets) < 6:
+        print(f"  ❌ [中止] 旋转矩阵仅生成 {len(wheel_tickets)} 注有效打票单（需 6 注），停止微信发布。")
+        return 4
+
     # --------------------------------------------------------------------------
     # 步骤 7: 微信社群专属发布原文渲染与落盘
     # --------------------------------------------------------------------------
@@ -350,12 +383,10 @@ def run_pipeline_complete():
 
     # 整理各分桶号码
     top20_list = [f"{int(x):02d}" for x in opt20_val.split()[:20]]
-    if len(top20_list) < 20:
-        top20_list = points_20[:20] if len(points_20) >= 20 else [f"{x:02d}" for x in range(1, 21)]
 
     # 选2号码对
     p2_pair = re.findall(r"\d+", p2_val)
-    p2_str = f"{int(p2_pair[0]):02d}  {int(p2_pair[1]):02d}" if len(p2_pair) >= 2 else f"{gold_val}  {top20_list[1]}"
+    p2_str = f"{int(p2_pair[0]):02d}  {int(p2_pair[1]):02d}"
     
     # 选3 / 选5 / 选7 / 选10 梯队
     d3_str = f"{p2_str}  {top20_list[2]}"
@@ -364,19 +395,14 @@ def run_pipeline_complete():
     d10_str = f"{d7_str}  {top20_list[7]}  {top20_list[8]}  {top20_list[9]}"
 
     top20_str = "  ".join(top20_list)
-    ticket_strs = []
-    for i in range(6):
-        if i < len(wheel_tickets):
-            ticket_strs.append(" ".join([f"{x:02d}" for x in wheel_tickets[i]]))
-        else:
-            ticket_strs.append(d5_str)
+    ticket_strs = [" ".join([f"{x:02d}" for x in t]) for t in wheel_tickets[:6]]
 
     m_avoid = re.search(r"◎\s*重点防守号码[^\n]*\n([0-9,\s]+)", report_text)
     if m_avoid:
         def_avoid_nums = [f"{int(x):02d}" for x in re.findall(r"\d+", m_avoid.group(1))]
     else:
-        def_avoid_nums = ["25", "63", "37"]
-    def_avoid_str = "  ".join(def_avoid_nums) if def_avoid_nums else "25  63  37"
+        def_avoid_nums = []
+    def_avoid_str = "  ".join(def_avoid_nums) if def_avoid_nums else "（研报未给出防守号码）"
 
     today_str = datetime.now().strftime("%Y-%m-%d")
     wechat_content = f"""🔥【快乐8 第{target_issue}期 核心研判与金胆推荐】🔥

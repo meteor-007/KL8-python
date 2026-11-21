@@ -1,30 +1,30 @@
 @echo off
 chcp 65001 > nul
-title ?? K8-QUANT ?? 22:00 ?????????
+setlocal
+title K8Quant Nightly Task Setup (daily 22:00)
 
-echo ======================================================================
-echo          ?? K8-QUANT ???????? - ?? 22:00 ??????
-echo ======================================================================
-echo.
+set "TASK_NAME=K8Quant_Nightly_2200"
+set "RUNNER=%~dp0run_nightly_task.bat"
 
-cd /d "%~dp0..\.."
-set PYTHON_EXE=C:\Users\zhiwei.chen\AppData\Local\Programs\Python\Python311\python.exe
-if not exist "%PYTHON_EXE%" (
-    set PYTHON_EXE=py
+if not exist "%RUNNER%" (
+    echo [ERROR] Runner not found: %RUNNER%
+    exit /b 1
 )
 
-set SCRIPT_PATH=%~dp0run_nightly_daily.py
+echo Registering Windows Scheduled Task...
+echo   Name  : %TASK_NAME%
+echo   Time  : 22:00 daily
+echo   Runner: %RUNNER%
+echo.
 
-echo ??????????? Windows ?????????? 22:00 ????...
-echo.
-powershell -NoProfile -Command "Start-Process schtasks -ArgumentList '/Create /SC DAILY /TN \"K8Quant_Nightly_2200\" /TR \"\"\"%PYTHON_EXE%\"\" \"\"%SCRIPT_PATH%\"\"\" /ST 22:00 /F /RL HIGHEST' -Verb RunAs -Wait"
+schtasks /Create /SC DAILY /TN "%TASK_NAME%" /TR "%RUNNER%" /ST 22:00 /F
+if errorlevel 1 (
+    echo.
+    echo [ERROR] Failed to register the task. If access was denied, run this file as Administrator.
+    exit /b 1
+)
 
 echo.
-echo ======================================================================
-echo ? ????????????
-echo    - ????: ?? 22:00
-echo    - ????: K8Quant_Nightly_2200
-echo    - ????: run_nightly_daily.py
-echo ======================================================================
-echo.
-pause
+echo [OK] Task registered.
+schtasks /Query /TN "%TASK_NAME%" /V /FO LIST
+exit /b 0
