@@ -278,6 +278,8 @@ def run_nightly_pipeline(verbose: bool = True, with_research: bool = False):
             print(f"  ✅ 统一对账已结算: 目标期 {ua.get('target_period')}")
         else:
             print(f"  ⚠️ 统一对账 settle 未结算: {ua.get('status')} {ua.get('message')}")
+        if ua.get("backfill_count"):
+            print(f"  ✅ 统一对账自动补结算历史未结期: {ua.get('backfilled')}")
         try:
             snap = run_snapshot()
             if snap.get("status") == "ok":

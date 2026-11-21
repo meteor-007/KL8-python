@@ -10,7 +10,7 @@ from typing import Any, Dict, Optional
 from backend.modules.unified_audit.collector import collect_snapshot
 from backend.modules.unified_audit.ledger import load_all, load_latest, upsert_row
 from backend.modules.unified_audit.report import write_report
-from backend.modules.unified_audit.settle import settle_period
+from backend.modules.unified_audit.settle import backfill_unsettled, settle_period
 from backend.utils.paths import get_project_root
 
 
@@ -24,10 +24,22 @@ def run_snapshot(target_period: Optional[int] = None, proj_dir: Optional[str] = 
     return {"status": "ok", "target_period": row["target_period"], "row": row, "report": path}
 
 
-def run_settle(period: Optional[int] = None, proj_dir: Optional[str] = None) -> Dict[str, Any]:
+def run_settle(period: Optional[int] = None, proj_dir: Optional[str] = None,
+               backfill: bool = True) -> Dict[str, Any]:
     root = proj_dir or get_project_root()
     res = settle_period(period=period, proj_dir=root)
-    if res.get("status") == "ok":
+
+    bf = {"settled": [], "skipped": []}
+    if backfill:
+        bf = backfill_unsettled(root)
+    res["backfill_count"] = len(bf.get("settled") or [])
+    res["backfilled"] = bf.get("settled") or []
+    res["backfill_skipped"] = bf.get("skipped") or []
+    if res["backfill_count"]:
+        note = f"自动补结算历史未结期 {res['backfill_count']} 期: {res['backfilled']}"
+        res["message"] = f"{res.get('message')}; {note}" if res.get("message") else note
+
+    if res.get("status") == "ok" or res["backfill_count"]:
         res["report"] = write_report(root)
     return res
 
@@ -42,12 +54,14 @@ def main(argv=None) -> int:
     parser.add_argument("action", choices=["snapshot", "settle", "report", "ledger"], help="动作")
     parser.add_argument("--period", type=int, default=None, help="目标期/结算期")
     parser.add_argument("--limit", type=int, default=30, help="ledger 条数")
+    parser.add_argument("--no-backfill", action="store_true",
+                        help="settle 时只结算指定/最新期，不自动补历史未结期")
     args = parser.parse_args(argv)
 
     if args.action == "snapshot":
         res = run_snapshot(target_period=args.period)
     elif args.action == "settle":
-        res = run_settle(period=args.period)
+        res = run_settle(period=args.period, backfill=not args.no_backfill)
     elif args.action == "report":
         res = run_report()
     else:

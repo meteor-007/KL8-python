@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from backend.modules.unified_audit.ledger import load_by_period, upsert_row
+from backend.modules.unified_audit.ledger import load_all, load_by_period, upsert_row
 from backend.modules.unified_audit.schema import settle_hits
 from backend.utils.history_loader import load_history
 from backend.utils.paths import get_project_root
@@ -48,3 +48,32 @@ def settle_period(
     settled = settle_hits(row, actual_numbers)
     upsert_row(settled, root)
     return {"status": "ok", "target_period": settle_target, "row": settled}
+
+
+def backfill_unsettled(proj_dir: Optional[str] = None) -> Dict[str, Any]:
+    """结算所有已开奖但尚未结算的账本行，自动补齐停机期间留下的空洞。"""
+    root = proj_dir or get_project_root()
+    history = load_history()
+    if not history:
+        return {"settled": [], "skipped": [{"reason": "无开奖历史"}]}
+
+    draw_periods = {int(h.get("issue") or h.get("period") or 0) for h in history}
+    settled_periods: List[int] = []
+    skipped: List[Dict[str, Any]] = []
+
+    for row in load_all(root):
+        if row.get("settled"):
+            continue
+        tp = int(row.get("target_period") or 0)
+        if tp <= 0:
+            continue
+        if tp not in draw_periods:
+            skipped.append({"target_period": tp, "reason": "尚未开奖"})
+            continue
+        res = settle_period(period=tp, proj_dir=root)
+        if res.get("status") == "ok":
+            settled_periods.append(tp)
+        else:
+            skipped.append({"target_period": tp, "reason": res.get("message")})
+
+    return {"settled": settled_periods, "skipped": skipped}
