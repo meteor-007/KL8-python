@@ -35,14 +35,14 @@ class CoreServiceMixin:
         ("unified_brain", "统一主脑决策", "outputs/unified_brain", "unified_decision_report_",  ".md"),
         ("sixteen",       "16期中热",     "outputs/reports",      "sixteen_analysis_report_",  ".md"),
         ("gold_pick2",    "定金选2",      "outputs/gold_pick2",   "定金选2预测_",               ".txt"),
-        ("predictions",   "LSTM研报落盘", "outputs/predictions",  "prediction_",               ".txt"),
+        ("predictions",   "顺口溜预测落盘", "outputs/predictions",  "顺口溜预测_",             ".txt"),
     ]
 
     _FRESHNESS_FILES = [
         ("master_review", "全模块复盘账", "storage/reviews/master_review_ledger.json"),
-        ("evolution",     "进化门禁账",   "storage/evolution/evolution_ledger.json"),
+        ("evolution",     "进化门禁账",   "storage/evolution/unified_evolution_ledger.json"),
         ("self_learning", "自学习状态",   "cache/self_learning_state.json"),
-        ("paper_trading", "模拟盘台账",   "cache/paper_trading.jsonl"),
+        ("paper_trading", "模拟盘台账",   "cache/paper_trading_modules.jsonl"),
         ("daily_state",   "每日运行状态", "cache/daily_run_state.json"),
     ]
 
@@ -2380,6 +2380,15 @@ class CoreServiceMixin:
             else:
                 p = data_path(rel_norm)
             exists = os.path.exists(p)
+            if key == "daily_state":
+                # daily_run_state.json 以「日期」为 key，期号口径不适用，改用最近运行日期判新鲜度
+                state, lag, pv = self._daily_state_freshness(p, exists)
+                items.append({
+                    "key": key, "label": label, "latest_period": pv, "lag": lag, "state": state,
+                    "mtime": (datetime.fromtimestamp(os.path.getmtime(p)).strftime("%Y-%m-%d %H:%M:%S")
+                              if exists else None),
+                })
+                continue
             if not exists:
                 state, lag, pv = "missing", None, None
             else:
@@ -2490,6 +2499,27 @@ class CoreServiceMixin:
             return best
 
         return _dig(data)
+
+    @staticmethod
+    def _daily_state_freshness(path: str, exists: bool):
+        """每日运行状态专用：daily_run_state.json 以日期为 key，按最近运行日期判新鲜度。
+
+        最近一次运行距今 ≤1 天为 fresh（当期已跑或刚跑过），否则 stale；
+        文件缺失/无日期 key 视为 missing，避免把“掏不到期号”误判成新鲜。
+        """
+        if not exists:
+            return "missing", None, None
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            dates = sorted(k for k in data.keys() if re.match(r"^\d{4}-\d{2}-\d{2}$", str(k)))
+        except Exception:
+            return "missing", None, None
+        if not dates:
+            return "missing", None, None
+        last = dates[-1]
+        lag = (datetime.now().date() - datetime.strptime(last, "%Y-%m-%d").date()).days
+        return ("fresh" if lag <= 1 else "stale"), lag, last
 
     @staticmethod
     def _observation_tag(module_id: str) -> Dict[str, Any]:
