@@ -17,6 +17,7 @@ from backend.utils.paths import (
     get_cache_dir, get_outputs_dir, get_reports_dir, get_reviews_dir,
     get_project_root, data_path, get_storage_dir, _ensure_project_path,
 )
+from backend.utils.cache import memoize, file_fingerprint
 
 logger = logging.getLogger("k8quant.service")
 
@@ -146,6 +147,11 @@ class DatasourceServiceMixin:
         results.sort(key=lambda x: int(x["period"]) if x["period"].isdigit() else 0, reverse=True)
         return results
 
+    @memoize(lambda self, period=None: (
+        str(period) if period is not None else "",
+        file_fingerprint(data_path('跟随+点位+开奖数据.xlsx')),
+        file_fingerprint(data_path('kl8_history_final.txt')),
+    ))
     def get_datasource_matrix_by_period(self, period: Optional[str] = None) -> Dict[str, Any]:
         """获取指定期号(或最新期)《跟随+点位+开奖数据.xlsx》数据源1与数据源2高保真原始阵列数据"""
         try:

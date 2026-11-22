@@ -172,10 +172,10 @@
       }
     };
 
-    const isCrossIntersection = (num) => {
-      if (!datasourceMatrixData.value || !datasourceMatrixData.value.cross_stats) return false;
-      return (datasourceMatrixData.value.cross_stats.intersection || []).includes(num);
-    };
+    const datasourceCrossSet = computed(() => new Set(
+      (datasourceMatrixData.value?.cross_stats?.intersection) || []
+    ));
+    const isCrossIntersection = (num) => datasourceCrossSet.value.has(num);
 
     /** 阵列当前选中期在 Walk-Forward 流水中的对账行（严格无未来） */
     const datasourceMatrixReviewRow = computed(() => {

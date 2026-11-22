@@ -152,9 +152,12 @@ const App = {
       }
     ]);
     const activeTab = ref('genetic_cockpit');
+    // 子视图懒渲染：首次访问才挂载，之后保留（避免全部 tab 常驻 DOM 拖慢渲染）
+    const visitedTabs = reactive([activeTab.value]);
     expandMenuGroupForKey(activeTab.value);
 
     watch(activeTab, (newTab) => {
+      if (!visitedTabs.includes(newTab)) visitedTabs.push(newTab);
       if (newTab === 'modules_overview') {
         fetchAllAiMathModels();
       }
@@ -3851,6 +3854,7 @@ const App = {
 
     return {
       ...__k8PageBindings,
+      visitedTabs,
       bootFailures,
       loadFirstScreen,
       isMobile,
