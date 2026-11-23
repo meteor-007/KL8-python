@@ -151,6 +151,41 @@ def _covariance(Xc: np.ndarray, T: int) -> np.ndarray:
     return (Xc.T @ Xc) / float(T - 1)
 
 
+# ── 行约束零分布：每期恰开 20 号 ────────────────────────────────
+# 观测矩阵每行固定 20 个 1；正确的零分布必须保持这个行约束。
+# 逐列置换会破坏行和，MP 上界也假设 i.i.d. 条目，二者都不适用。
+_NULL_CACHE: dict[tuple[int, int, int], list[float]] = {}
+NULL_T_BUCKET = 50
+
+
+def _row_constrained_ratio(T: int, n_cols: int, k: int,
+                           rng: np.random.Generator) -> float:
+    """生成每行恰有 k 个 1 的随机二值矩阵，返回 eig_max / MP 上界的比值。"""
+    idx = np.argpartition(rng.random((T, n_cols)), k, axis=1)[:, :k]
+    X = np.zeros((T, n_cols), dtype=float)
+    np.put_along_axis(X, idx, 1.0, axis=1)
+    Xc = X - X.mean(axis=0, keepdims=True)
+    cov = _covariance(Xc, T)
+    eig = float(np.linalg.eigvalsh(cov)[-1])
+    sigma2 = float(np.diag(cov).mean()) if cov.size else 0.0
+    gamma = float(n_cols) / float(T - 1) if T > 1 else 0.0
+    mp = sigma2 * (1.0 + math.sqrt(gamma)) ** 2 if gamma > 0 else 0.0
+    return eig / mp if mp > EPS else 0.0
+
+
+def _null_ratios(T: int, n_perm: int, seed: int) -> list[float]:
+    """按 T 分桶缓存行约束零分布（回测多个期共用同一桶，避免重复模拟）。"""
+    bucket = max(100, int(math.ceil(T / NULL_T_BUCKET) * NULL_T_BUCKET))
+    key = (bucket, n_perm, seed)
+    if key in _NULL_CACHE:
+        return _NULL_CACHE[key]
+    rng = np.random.default_rng(seed)
+    ratios = [_row_constrained_ratio(bucket, NUM_BALLS, 20, rng)
+              for _ in range(n_perm)]
+    _NULL_CACHE[key] = ratios
+    return ratios
+
+
 def _top_pairs(mat, topn: int = 5, absolute: bool = False) -> list[tuple[int, int, float]]:
     """取上三角中数值最大的 topn 对（返回 1-based 号对）。"""
     arr = np.asarray(mat, dtype=float)
@@ -283,7 +318,24 @@ def analyze(draws: list[Draw],
     gamma = float(NUM_BALLS) / float(T - 1) if T > 1 else 0.0
     mp_edge = sigma2 * (1.0 + math.sqrt(gamma)) ** 2 if gamma > 0 else 0.0
     eig_max = float(S2[0]) / float(T - 1) if (T > 1 and S2.size) else 0.0
-    structure_sig = bool(mp_edge > EPS and eig_max > mp_edge)
+
+    # 行约束零分布：每期随机开 20 号（保持行和），比较 eig_max/MP 比值。
+    # MP 上界本身只作尺度参考；p 值来自保持行和的蒙特卡洛。
+    try:
+        perm_iters = int(cfg.thresholds.get("svd_permutation_iters", 199) or 0)
+    except (TypeError, ValueError):
+        perm_iters = 199
+    structure_p = None
+    structure_sig = None
+    structure_test = "not_tested"
+    null_bucket = None
+    if perm_iters > 0 and mp_edge > EPS:
+        ratios = _null_ratios(T, perm_iters, int(getattr(cfg, "seed", 42) or 42))
+        obs_ratio = eig_max / mp_edge
+        structure_p = (1 + sum(1 for r in ratios if r >= obs_ratio)) / (1 + len(ratios))
+        structure_sig = bool(structure_p < alpha)
+        structure_test = "row_constrained_mc"
+        null_bucket = max(100, int(math.ceil(T / NULL_T_BUCKET) * NULL_T_BUCKET))
 
     # 条件概率 P(B|A) = C[A][B] / f_A（行归一，分母为 0 的行保持 0）
     CP = np.zeros((NUM_BALLS + 1, NUM_BALLS + 1))
@@ -316,6 +368,10 @@ def analyze(draws: list[Draw],
         "energy_top_k": round(energy_k, 4),
         "eig_max": round(eig_max, 4),
         "mp_upper_edge": round(mp_edge, 4),
+        "structure_p": None if structure_p is None else round(structure_p, 4),
+        "structure_test": structure_test,
+        "svd_null_bucket": null_bucket,
+        "svd_null_iters": perm_iters if structure_test == "row_constrained_mc" else 0,
         "structure_significant": structure_sig,
         "top_pmi_pairs": [(i, j, round(v, 3)) for i, j, v in top_pmi],
         "top_jaccard_pairs": [(i, j, round(v, 3)) for i, j, v in top_jac],
@@ -337,17 +393,26 @@ def analyze(draws: list[Draw],
         "pairs_skipped_degenerate": assoc["pairs_skipped_degenerate"],
         "eig_max": round(eig_max, 4),
         "mp_upper_edge": round(mp_edge, 4),
+        "structure_p": None if structure_p is None else round(structure_p, 4),
+        "structure_test": structure_test,
+        "svd_null_bucket": null_bucket,
+        "svd_null_iters": perm_iters if structure_test == "row_constrained_mc" else 0,
         "structure_significant": structure_sig,
         "alpha": alpha,
         "fdr_method": fdr_method,
     }
 
     # ── narrative（数值全部来自上面的 metrics）──
-    verdict = "显著超越随机阵" if structure_sig else "未超越随机阵上界"
+    if structure_test == "not_tested":
+        verdict = "未做显著性检验"
+    else:
+        verdict = (f"行约束蒙特卡洛 p={structure_p:.4f}"
+                   f"（{perm_iters} 次，T={null_bucket} 零分布），"
+                   f"{'显著' if structure_sig else '未显著'}")
     res.add("macro",
             f"- **结构谱**：列中心化命中矩阵的前 {k} 个奇异值解释 "
-            f"{energy_k:.0%} 方差；最大特征值 {eig_max:.4f} vs 随机阵上界 "
-            f"{mp_edge:.4f}（{verdict}）。", order=20)
+            f"{energy_k:.0%} 方差；最大特征值 {eig_max:.4f}"
+            f"（随机阵上界参考值 {mp_edge:.4f}；{verdict}）。", order=20)
     if top_follow:
         res.add("macro",
                 "- **跟随关系**（条件概率 P(B|A)，A→B）："

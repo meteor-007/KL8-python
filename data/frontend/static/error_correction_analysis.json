@@ -2,353 +2,327 @@
   "module_code": "error_correction",
   "module_name": "残差改错预测引擎 (V1.0)",
   "prediction_mode": "residual_boosting_gbdt",
-  "target_issue": "2026310",
-  "latest_issue": "2026309",
+  "target_issue": "2026313",
+  "latest_issue": "2026312",
   "latest_numbers": [
-    2,
-    5,
+    6,
+    7,
     9,
-    12,
-    13,
+    11,
+    15,
     17,
-    20,
-    21,
-    23,
-    26,
-    35,
-    39,
+    19,
+    28,
+    30,
+    31,
+    33,
+    36,
+    42,
+    43,
     44,
-    47,
-    49,
-    50,
-    53,
-    57,
-    64,
-    74
+    51,
+    59,
+    62,
+    63,
+    79
   ],
   "train_window": 100,
-  "history_used": 100,
-  "raw_draws_loaded": 100,
+  "history_used": 80,
+  "raw_draws_loaded": 80,
   "correction_lambda": 0.35,
-  "total_historical_draws": 100,
+  "total_historical_draws": 80,
   "top3_gold": [
-    75,
-    33,
-    45
+    45,
+    72,
+    61
   ],
   "top5_gold": [
-    75,
-    33,
-    45
+    45,
+    72,
+    61
   ],
   "top12_elite": [
-    75,
-    33,
-    45
+    45,
+    72,
+    61
   ],
   "gold_pairs": [
     {
-      "pair": "45+75",
+      "pair": "61+72",
       "balls": [
-        45,
-        75
+        61,
+        72
       ],
-      "co_score": 6.0,
+      "co_score": 8.0,
       "desc": "改错纠偏金胆共现最强组合"
     }
   ],
   "traps_avoided": [
     {
-      "ball": 16,
-      "ball_str": "16",
-      "base_score": 59.7,
-      "residual_penalty": -35.0,
-      "final_score": 47.4,
-      "reason": "基准分高达59.7但改错裁判扣除35.0分，谨防扎堆踩踏"
-    },
-    {
       "ball": 22,
       "ball_str": "22",
-      "base_score": 60.5,
-      "residual_penalty": -35.1,
-      "final_score": 48.2,
-      "reason": "基准分高达60.5但改错裁判扣除35.1分，谨防扎堆踩踏"
+      "base_score": 52.7,
+      "residual_penalty": -21.2,
+      "final_score": 45.3,
+      "reason": "基准分高达52.7但改错裁判扣除21.2分，谨防扎堆踩踏"
     },
     {
       "ball": 25,
       "ball_str": "25",
-      "base_score": 59.3,
-      "residual_penalty": -45.3,
-      "final_score": 43.5,
-      "reason": "基准分高达59.3但改错裁判扣除45.3分，谨防扎堆踩踏"
+      "base_score": 55.2,
+      "residual_penalty": -32.8,
+      "final_score": 43.7,
+      "reason": "基准分高达55.2但改错裁判扣除32.8分，谨防扎堆踩踏"
     },
     {
-      "ball": 29,
-      "ball_str": "29",
-      "base_score": 52.2,
-      "residual_penalty": -26.0,
-      "final_score": 43.1,
-      "reason": "基准分高达52.2但改错裁判扣除26.0分，谨防扎堆踩踏"
+      "ball": 34,
+      "ball_str": "34",
+      "base_score": 55.6,
+      "residual_penalty": -22.1,
+      "final_score": 47.8,
+      "reason": "基准分高达55.6但改错裁判扣除22.1分，谨防扎堆踩踏"
     },
     {
-      "ball": 33,
-      "ball_str": "33",
-      "base_score": 83.9,
-      "residual_penalty": -60.1,
-      "final_score": 62.9,
-      "reason": "基准分高达83.9但改错裁判扣除60.1分，谨防扎堆踩踏"
-    },
-    {
-      "ball": 42,
-      "ball_str": "42",
-      "base_score": 65.0,
-      "residual_penalty": -32.1,
-      "final_score": 53.8,
-      "reason": "基准分高达65.0但改错裁判扣除32.1分，谨防扎堆踩踏"
-    },
-    {
-      "ball": 43,
-      "ball_str": "43",
-      "base_score": 63.5,
+      "ball": 35,
+      "ball_str": "35",
+      "base_score": 56.2,
       "residual_penalty": -36.7,
-      "final_score": 50.7,
-      "reason": "基准分高达63.5但改错裁判扣除36.7分，谨防扎堆踩踏"
+      "final_score": 43.3,
+      "reason": "基准分高达56.2但改错裁判扣除36.7分，谨防扎堆踩踏"
+    },
+    {
+      "ball": 38,
+      "ball_str": "38",
+      "base_score": 66.8,
+      "residual_penalty": -42.3,
+      "final_score": 52.0,
+      "reason": "基准分高达66.8但改错裁判扣除42.3分，谨防扎堆踩踏"
     },
     {
       "ball": 45,
       "ball_str": "45",
-      "base_score": 70.2,
-      "residual_penalty": -45.7,
-      "final_score": 54.2,
-      "reason": "基准分高达70.2但改错裁判扣除45.7分，谨防扎堆踩踏"
+      "base_score": 85.0,
+      "residual_penalty": -54.4,
+      "final_score": 66.0,
+      "reason": "基准分高达85.0但改错裁判扣除54.4分，谨防扎堆踩踏"
     },
     {
       "ball": 48,
       "ball_str": "48",
-      "base_score": 53.4,
-      "residual_penalty": -34.5,
-      "final_score": 41.3,
-      "reason": "基准分高达53.4但改错裁判扣除34.5分，谨防扎堆踩踏"
+      "base_score": 64.0,
+      "residual_penalty": -37.2,
+      "final_score": 51.0,
+      "reason": "基准分高达64.0但改错裁判扣除37.2分，谨防扎堆踩踏"
     },
     {
       "ball": 58,
       "ball_str": "58",
-      "base_score": 59.3,
-      "residual_penalty": -40.3,
-      "final_score": 45.2,
-      "reason": "基准分高达59.3但改错裁判扣除40.3分，谨防扎堆踩踏"
+      "base_score": 53.1,
+      "residual_penalty": -33.0,
+      "final_score": 41.6,
+      "reason": "基准分高达53.1但改错裁判扣除33.0分，谨防扎堆踩踏"
     },
     {
       "ball": 60,
       "ball_str": "60",
-      "base_score": 66.6,
-      "residual_penalty": -43.4,
-      "final_score": 51.4,
-      "reason": "基准分高达66.6但改错裁判扣除43.4分，谨防扎堆踩踏"
+      "base_score": 60.7,
+      "residual_penalty": -34.0,
+      "final_score": 48.8,
+      "reason": "基准分高达60.7但改错裁判扣除34.0分，谨防扎堆踩踏"
     },
     {
       "ball": 61,
       "ball_str": "61",
-      "base_score": 58.7,
-      "residual_penalty": -38.9,
-      "final_score": 45.1,
-      "reason": "基准分高达58.7但改错裁判扣除38.9分，谨防扎堆踩踏"
-    },
-    {
-      "ball": 63,
-      "ball_str": "63",
-      "base_score": 53.9,
-      "residual_penalty": -30.1,
-      "final_score": 43.4,
-      "reason": "基准分高达53.9但改错裁判扣除30.1分，谨防扎堆踩踏"
-    },
-    {
-      "ball": 67,
-      "ball_str": "67",
-      "base_score": 58.6,
-      "residual_penalty": -34.6,
-      "final_score": 46.5,
-      "reason": "基准分高达58.6但改错裁判扣除34.6分，谨防扎堆踩踏"
+      "base_score": 70.0,
+      "residual_penalty": -40.5,
+      "final_score": 55.8,
+      "reason": "基准分高达70.0但改错裁判扣除40.5分，谨防扎堆踩踏"
     },
     {
       "ball": 68,
       "ball_str": "68",
-      "base_score": 53.0,
-      "residual_penalty": -24.6,
-      "final_score": 44.3,
-      "reason": "基准分高达53.0但改错裁判扣除24.6分，谨防扎堆踩踏"
+      "base_score": 67.1,
+      "residual_penalty": -41.5,
+      "final_score": 52.6,
+      "reason": "基准分高达67.1但改错裁判扣除41.5分，谨防扎堆踩踏"
     },
     {
       "ball": 69,
       "ball_str": "69",
-      "base_score": 51.2,
-      "residual_penalty": -25.0,
-      "final_score": 42.4,
-      "reason": "基准分高达51.2但改错裁判扣除25.0分，谨防扎堆踩踏"
+      "base_score": 64.0,
+      "residual_penalty": -35.2,
+      "final_score": 51.7,
+      "reason": "基准分高达64.0但改错裁判扣除35.2分，谨防扎堆踩踏"
     },
     {
       "ball": 72,
       "ball_str": "72",
-      "base_score": 60.3,
-      "residual_penalty": -33.7,
-      "final_score": 48.5,
-      "reason": "基准分高达60.3但改错裁判扣除33.7分，谨防扎堆踩踏"
+      "base_score": 73.7,
+      "residual_penalty": -44.1,
+      "final_score": 58.3,
+      "reason": "基准分高达73.7但改错裁判扣除44.1分，谨防扎堆踩踏"
+    },
+    {
+      "ball": 73,
+      "ball_str": "73",
+      "base_score": 54.4,
+      "residual_penalty": -30.3,
+      "final_score": 43.8,
+      "reason": "基准分高达54.4但改错裁判扣除30.3分，谨防扎堆踩踏"
     },
     {
       "ball": 75,
       "ball_str": "75",
-      "base_score": 85.0,
-      "residual_penalty": -33.8,
-      "final_score": 73.2,
-      "reason": "基准分高达85.0但改错裁判扣除33.8分，谨防扎堆踩踏"
+      "base_score": 51.6,
+      "residual_penalty": -34.1,
+      "final_score": 39.7,
+      "reason": "基准分高达51.6但改错裁判扣除34.1分，谨防扎堆踩踏"
     },
     {
-      "ball": 79,
-      "ball_str": "79",
-      "base_score": 54.7,
+      "ball": 76,
+      "ball_str": "76",
+      "base_score": 58.6,
       "residual_penalty": -25.7,
-      "final_score": 45.7,
-      "reason": "基准分高达54.7但改错裁判扣除25.7分，谨防扎堆踩踏"
+      "final_score": 49.5,
+      "reason": "基准分高达58.6但改错裁判扣除25.7分，谨防扎堆踩踏"
+    },
+    {
+      "ball": 78,
+      "ball_str": "78",
+      "base_score": 55.9,
+      "residual_penalty": -34.2,
+      "final_score": 43.9,
+      "reason": "基准分高达55.9但改错裁判扣除34.2分，谨防扎堆踩踏"
     }
   ],
   "rebounds_promoted": [],
   "ball_details": [
     {
-      "ball": 75,
-      "ball_str": "75",
-      "base_score": 85.0,
-      "residual_correction": -33.79,
-      "final_score": 73.17,
-      "gap": 6,
-      "tag": "虚火诱多",
-      "is_recent_open": false
-    },
-    {
-      "ball": 33,
-      "ball_str": "33",
-      "base_score": 83.94,
-      "residual_correction": -60.14,
-      "final_score": 62.89,
-      "gap": 8,
-      "tag": "虚火诱多",
-      "is_recent_open": false
-    },
-    {
       "ball": 45,
       "ball_str": "45",
-      "base_score": 70.18,
-      "residual_correction": -45.71,
-      "final_score": 54.18,
-      "gap": 4,
-      "tag": "虚火诱多",
-      "is_recent_open": false
-    },
-    {
-      "ball": 42,
-      "ball_str": "42",
-      "base_score": 65.02,
-      "residual_correction": -32.1,
-      "final_score": 53.79,
-      "gap": 5,
-      "tag": "虚火诱多",
-      "is_recent_open": false
-    },
-    {
-      "ball": 60,
-      "ball_str": "60",
-      "base_score": 66.58,
-      "residual_correction": -43.38,
-      "final_score": 51.39,
-      "gap": 8,
-      "tag": "虚火诱多",
-      "is_recent_open": false
-    },
-    {
-      "ball": 43,
-      "ball_str": "43",
-      "base_score": 63.53,
-      "residual_correction": -36.67,
-      "final_score": 50.7,
-      "gap": 4,
+      "base_score": 85.0,
+      "residual_correction": -54.43,
+      "final_score": 65.95,
+      "gap": 7,
       "tag": "虚火诱多",
       "is_recent_open": false
     },
     {
       "ball": 72,
       "ball_str": "72",
-      "base_score": 60.33,
-      "residual_correction": -33.68,
-      "final_score": 48.54,
-      "gap": 5,
-      "tag": "虚火诱多",
-      "is_recent_open": false
-    },
-    {
-      "ball": 22,
-      "ball_str": "22",
-      "base_score": 60.48,
-      "residual_correction": -35.06,
-      "final_score": 48.21,
+      "base_score": 73.75,
+      "residual_correction": -44.08,
+      "final_score": 58.32,
       "gap": 8,
-      "tag": "虚火诱多",
-      "is_recent_open": false
-    },
-    {
-      "ball": 16,
-      "ball_str": "16",
-      "base_score": 59.67,
-      "residual_correction": -35.04,
-      "final_score": 47.41,
-      "gap": 5,
-      "tag": "虚火诱多",
-      "is_recent_open": false
-    },
-    {
-      "ball": 67,
-      "ball_str": "67",
-      "base_score": 58.63,
-      "residual_correction": -34.65,
-      "final_score": 46.5,
-      "gap": 6,
-      "tag": "虚火诱多",
-      "is_recent_open": false
-    },
-    {
-      "ball": 79,
-      "ball_str": "79",
-      "base_score": 54.66,
-      "residual_correction": -25.65,
-      "final_score": 45.68,
-      "gap": 6,
-      "tag": "虚火诱多",
-      "is_recent_open": false
-    },
-    {
-      "ball": 58,
-      "ball_str": "58",
-      "base_score": 59.32,
-      "residual_correction": -40.34,
-      "final_score": 45.2,
-      "gap": 1,
       "tag": "虚火诱多",
       "is_recent_open": false
     },
     {
       "ball": 61,
       "ball_str": "61",
-      "base_score": 58.7,
-      "residual_correction": -38.93,
-      "final_score": 45.07,
-      "gap": 5,
+      "base_score": 69.99,
+      "residual_correction": -40.47,
+      "final_score": 55.83,
+      "gap": 8,
       "tag": "虚火诱多",
       "is_recent_open": false
     },
     {
       "ball": 68,
       "ball_str": "68",
-      "base_score": 52.96,
-      "residual_correction": -24.65,
-      "final_score": 44.33,
+      "base_score": 67.11,
+      "residual_correction": -41.5,
+      "final_score": 52.58,
+      "gap": 8,
+      "tag": "虚火诱多",
+      "is_recent_open": false
+    },
+    {
+      "ball": 38,
+      "ball_str": "38",
+      "base_score": 66.79,
+      "residual_correction": -42.26,
+      "final_score": 52.0,
+      "gap": 8,
+      "tag": "虚火诱多",
+      "is_recent_open": false
+    },
+    {
+      "ball": 69,
+      "ball_str": "69",
+      "base_score": 64.04,
+      "residual_correction": -35.25,
+      "final_score": 51.7,
+      "gap": 6,
+      "tag": "虚火诱多",
+      "is_recent_open": false
+    },
+    {
+      "ball": 48,
+      "ball_str": "48",
+      "base_score": 64.04,
+      "residual_correction": -37.23,
+      "final_score": 51.01,
+      "gap": 4,
+      "tag": "虚火诱多",
+      "is_recent_open": false
+    },
+    {
+      "ball": 76,
+      "ball_str": "76",
+      "base_score": 58.56,
+      "residual_correction": -25.75,
+      "final_score": 49.55,
+      "gap": 7,
+      "tag": "虚火诱多",
+      "is_recent_open": false
+    },
+    {
+      "ball": 60,
+      "ball_str": "60",
+      "base_score": 60.67,
+      "residual_correction": -34.0,
+      "final_score": 48.77,
+      "gap": 11,
+      "tag": "虚火诱多",
+      "is_recent_open": false
+    },
+    {
+      "ball": 34,
+      "ball_str": "34",
+      "base_score": 55.58,
+      "residual_correction": -22.13,
+      "final_score": 47.84,
+      "gap": 6,
+      "tag": "虚火诱多",
+      "is_recent_open": false
+    },
+    {
+      "ball": 22,
+      "ball_str": "22",
+      "base_score": 52.71,
+      "residual_correction": -21.18,
+      "final_score": 45.3,
+      "gap": 11,
+      "tag": "虚火诱多",
+      "is_recent_open": false
+    },
+    {
+      "ball": 78,
+      "ball_str": "78",
+      "base_score": 55.85,
+      "residual_correction": -34.23,
+      "final_score": 43.87,
+      "gap": 5,
+      "tag": "虚火诱多",
+      "is_recent_open": false
+    },
+    {
+      "ball": 73,
+      "ball_str": "73",
+      "base_score": 54.38,
+      "residual_correction": -30.28,
+      "final_score": 43.78,
       "gap": 5,
       "tag": "虚火诱多",
       "is_recent_open": false
@@ -356,449 +330,129 @@
     {
       "ball": 25,
       "ball_str": "25",
-      "base_score": 59.32,
-      "residual_correction": -45.31,
-      "final_score": 43.46,
+      "base_score": 55.17,
+      "residual_correction": -32.83,
+      "final_score": 43.68,
       "gap": 1,
       "tag": "虚火诱多",
-      "is_recent_open": false
-    },
-    {
-      "ball": 63,
-      "ball_str": "63",
-      "base_score": 53.93,
-      "residual_correction": -30.14,
-      "final_score": 43.39,
-      "gap": 2,
-      "tag": "虚火诱多",
-      "is_recent_open": false
-    },
-    {
-      "ball": 29,
-      "ball_str": "29",
-      "base_score": 52.19,
-      "residual_correction": -26.01,
-      "final_score": 43.09,
-      "gap": 5,
-      "tag": "虚火诱多",
-      "is_recent_open": false
-    },
-    {
-      "ball": 69,
-      "ball_str": "69",
-      "base_score": 51.19,
-      "residual_correction": -24.98,
-      "final_score": 42.45,
-      "gap": 3,
-      "tag": "虚火诱多",
-      "is_recent_open": false
-    },
-    {
-      "ball": 28,
-      "ball_str": "28",
-      "base_score": 49.82,
-      "residual_correction": -21.76,
-      "final_score": 42.21,
-      "gap": 2,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 48,
-      "ball_str": "48",
-      "base_score": 53.36,
-      "residual_correction": -34.46,
-      "final_score": 41.3,
-      "gap": 1,
-      "tag": "虚火诱多",
-      "is_recent_open": false
-    },
-    {
-      "ball": 32,
-      "ball_str": "32",
-      "base_score": 48.7,
-      "residual_correction": -21.52,
-      "final_score": 41.17,
-      "gap": 14,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 38,
-      "ball_str": "38",
-      "base_score": 45.63,
-      "residual_correction": -16.16,
-      "final_score": 39.98,
-      "gap": 5,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 52,
-      "ball_str": "52",
-      "base_score": 47.01,
-      "residual_correction": -20.42,
-      "final_score": 39.87,
-      "gap": 3,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 40,
-      "ball_str": "40",
-      "base_score": 44.49,
-      "residual_correction": -16.94,
-      "final_score": 38.56,
-      "gap": 5,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 7,
-      "ball_str": "07",
-      "base_score": 48.46,
-      "residual_correction": -30.87,
-      "final_score": 37.65,
-      "gap": 4,
-      "tag": "平稳",
       "is_recent_open": false
     },
     {
       "ball": 35,
       "ball_str": "35",
-      "base_score": 48.44,
-      "residual_correction": -31.5,
-      "final_score": 37.41,
-      "gap": 0,
-      "tag": "平稳",
-      "is_recent_open": true
+      "base_score": 56.16,
+      "residual_correction": -36.69,
+      "final_score": 43.32,
+      "gap": 1,
+      "tag": "虚火诱多",
+      "is_recent_open": false
     },
     {
-      "ball": 57,
-      "ball_str": "57",
-      "base_score": 44.59,
-      "residual_correction": -23.32,
-      "final_score": 36.43,
-      "gap": 0,
-      "tag": "平稳",
-      "is_recent_open": true
+      "ball": 58,
+      "ball_str": "58",
+      "base_score": 53.14,
+      "residual_correction": -33.05,
+      "final_score": 41.57,
+      "gap": 1,
+      "tag": "虚火诱多",
+      "is_recent_open": false
     },
     {
-      "ball": 1,
-      "ball_str": "01",
-      "base_score": 40.94,
-      "residual_correction": -12.96,
-      "final_score": 36.4,
-      "gap": 4,
+      "ball": 65,
+      "ball_str": "65",
+      "base_score": 47.75,
+      "residual_correction": -20.72,
+      "final_score": 40.5,
+      "gap": 7,
       "tag": "平稳",
       "is_recent_open": false
     },
     {
-      "ball": 76,
-      "ball_str": "76",
-      "base_score": 40.94,
-      "residual_correction": -14.2,
-      "final_score": 35.97,
-      "gap": 4,
+      "ball": 49,
+      "ball_str": "49",
+      "base_score": 47.71,
+      "residual_correction": -21.03,
+      "final_score": 40.35,
+      "gap": 2,
       "tag": "平稳",
       "is_recent_open": false
     },
     {
-      "ball": 50,
-      "ball_str": "50",
-      "base_score": 37.27,
-      "residual_correction": -4.08,
-      "final_score": 35.84,
-      "gap": 0,
-      "tag": "平稳",
-      "is_recent_open": true
-    },
-    {
-      "ball": 5,
-      "ball_str": "05",
-      "base_score": 43.41,
-      "residual_correction": -21.77,
-      "final_score": 35.79,
-      "gap": 0,
-      "tag": "平稳",
-      "is_recent_open": true
-    },
-    {
-      "ball": 34,
-      "ball_str": "34",
-      "base_score": 42.65,
-      "residual_correction": -20.01,
-      "final_score": 35.64,
-      "gap": 3,
-      "tag": "平稳",
+      "ball": 75,
+      "ball_str": "75",
+      "base_score": 51.64,
+      "residual_correction": -34.13,
+      "final_score": 39.7,
+      "gap": 2,
+      "tag": "虚火诱多",
       "is_recent_open": false
     },
     {
       "ball": 47,
       "ball_str": "47",
-      "base_score": 39.64,
-      "residual_correction": -11.44,
-      "final_score": 35.64,
-      "gap": 0,
-      "tag": "平稳",
-      "is_recent_open": true
-    },
-    {
-      "ball": 49,
-      "ball_str": "49",
-      "base_score": 41.52,
-      "residual_correction": -17.09,
-      "final_score": 35.54,
-      "gap": 0,
-      "tag": "平稳",
-      "is_recent_open": true
-    },
-    {
-      "ball": 2,
-      "ball_str": "02",
-      "base_score": 37.27,
-      "residual_correction": -5.06,
-      "final_score": 35.5,
-      "gap": 0,
-      "tag": "平稳",
-      "is_recent_open": true
-    },
-    {
-      "ball": 78,
-      "ball_str": "78",
-      "base_score": 47.16,
-      "residual_correction": -33.46,
-      "final_score": 35.45,
-      "gap": 2,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 18,
-      "ball_str": "18",
-      "base_score": 41.43,
-      "residual_correction": -17.21,
-      "final_score": 35.41,
-      "gap": 1,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 73,
-      "ball_str": "73",
-      "base_score": 37.28,
-      "residual_correction": -5.43,
-      "final_score": 35.38,
-      "gap": 2,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 51,
-      "ball_str": "51",
-      "base_score": 36.09,
-      "residual_correction": -2.53,
-      "final_score": 35.21,
-      "gap": 1,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 6,
-      "ball_str": "06",
-      "base_score": 38.25,
-      "residual_correction": -10.84,
-      "final_score": 34.45,
-      "gap": 14,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 44,
-      "ball_str": "44",
-      "base_score": 33.66,
-      "residual_correction": 0.23,
-      "final_score": 33.74,
-      "gap": 0,
-      "tag": "平稳",
-      "is_recent_open": true
-    },
-    {
-      "ball": 17,
-      "ball_str": "17",
-      "base_score": 32.88,
-      "residual_correction": 2.01,
-      "final_score": 33.58,
-      "gap": 0,
-      "tag": "平稳",
-      "is_recent_open": true
-    },
-    {
-      "ball": 24,
-      "ball_str": "24",
-      "base_score": 39.04,
-      "residual_correction": -16.3,
-      "final_score": 33.34,
-      "gap": 2,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 36,
-      "ball_str": "36",
-      "base_score": 35.45,
-      "residual_correction": -6.27,
-      "final_score": 33.26,
-      "gap": 1,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 62,
-      "ball_str": "62",
-      "base_score": 38.68,
-      "residual_correction": -15.64,
-      "final_score": 33.21,
+      "base_score": 44.22,
+      "residual_correction": -15.75,
+      "final_score": 38.71,
       "gap": 3,
       "tag": "平稳",
       "is_recent_open": false
-    },
-    {
-      "ball": 54,
-      "ball_str": "54",
-      "base_score": 37.25,
-      "residual_correction": -13.76,
-      "final_score": 32.43,
-      "gap": 3,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 77,
-      "ball_str": "77",
-      "base_score": 35.58,
-      "residual_correction": -9.77,
-      "final_score": 32.16,
-      "gap": 1,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 53,
-      "ball_str": "53",
-      "base_score": 35.57,
-      "residual_correction": -9.85,
-      "final_score": 32.12,
-      "gap": 0,
-      "tag": "平稳",
-      "is_recent_open": true
     },
     {
       "ball": 8,
       "ball_str": "08",
-      "base_score": 34.27,
-      "residual_correction": -8.83,
-      "final_score": 31.18,
-      "gap": 1,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 30,
-      "ball_str": "30",
-      "base_score": 35.47,
-      "residual_correction": -12.75,
-      "final_score": 31.01,
+      "base_score": 46.84,
+      "residual_correction": -24.86,
+      "final_score": 38.14,
       "gap": 4,
       "tag": "平稳",
       "is_recent_open": false
     },
     {
-      "ball": 12,
-      "ball_str": "12",
-      "base_score": 34.79,
-      "residual_correction": -11.38,
-      "final_score": 30.8,
-      "gap": 0,
-      "tag": "平稳",
-      "is_recent_open": true
-    },
-    {
       "ball": 23,
       "ball_str": "23",
-      "base_score": 32.37,
-      "residual_correction": -5.89,
-      "final_score": 30.31,
+      "base_score": 41.75,
+      "residual_correction": -11.62,
+      "final_score": 37.68,
+      "gap": 3,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 24,
+      "ball_str": "24",
+      "base_score": 44.15,
+      "residual_correction": -18.78,
+      "final_score": 37.57,
+      "gap": 5,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 17,
+      "ball_str": "17",
+      "base_score": 44.64,
+      "residual_correction": -20.22,
+      "final_score": 37.56,
       "gap": 0,
       "tag": "平稳",
       "is_recent_open": true
     },
     {
-      "ball": 66,
-      "ball_str": "66",
-      "base_score": 29.36,
-      "residual_correction": 1.65,
-      "final_score": 29.94,
-      "gap": 2,
+      "ball": 53,
+      "ball_str": "53",
+      "base_score": 43.34,
+      "residual_correction": -17.4,
+      "final_score": 37.25,
+      "gap": 3,
       "tag": "平稳",
       "is_recent_open": false
     },
     {
-      "ball": 3,
-      "ball_str": "03",
-      "base_score": 32.58,
-      "residual_correction": -9.46,
-      "final_score": 29.27,
-      "gap": 1,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 80,
-      "ball_str": "80",
-      "base_score": 29.03,
-      "residual_correction": -0.4,
-      "final_score": 28.89,
-      "gap": 1,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 27,
-      "ball_str": "27",
-      "base_score": 30.5,
-      "residual_correction": -4.85,
-      "final_score": 28.8,
-      "gap": 2,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 13,
-      "ball_str": "13",
-      "base_score": 31.54,
-      "residual_correction": -8.7,
-      "final_score": 28.5,
-      "gap": 0,
-      "tag": "平稳",
-      "is_recent_open": true
-    },
-    {
-      "ball": 26,
-      "ball_str": "26",
-      "base_score": 31.22,
-      "residual_correction": -8.02,
-      "final_score": 28.41,
-      "gap": 0,
-      "tag": "平稳",
-      "is_recent_open": true
-    },
-    {
-      "ball": 37,
-      "ball_str": "37",
-      "base_score": 31.71,
-      "residual_correction": -9.49,
-      "final_score": 28.39,
+      "ball": 2,
+      "ball_str": "02",
+      "base_score": 41.48,
+      "residual_correction": -12.32,
+      "final_score": 37.17,
       "gap": 3,
       "tag": "平稳",
       "is_recent_open": false
@@ -806,79 +460,39 @@
     {
       "ball": 4,
       "ball_str": "04",
-      "base_score": 30.01,
-      "residual_correction": -4.72,
-      "final_score": 28.36,
+      "base_score": 42.06,
+      "residual_correction": -14.27,
+      "final_score": 37.07,
+      "gap": 5,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 27,
+      "ball_str": "27",
+      "base_score": 43.57,
+      "residual_correction": -19.5,
+      "final_score": 36.74,
+      "gap": 5,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 77,
+      "ball_str": "77",
+      "base_score": 39.85,
+      "residual_correction": -11.09,
+      "final_score": 35.97,
       "gap": 2,
       "tag": "平稳",
       "is_recent_open": false
     },
     {
-      "ball": 71,
-      "ball_str": "71",
-      "base_score": 29.35,
-      "residual_correction": -2.92,
-      "final_score": 28.33,
-      "gap": 1,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 14,
-      "ball_str": "14",
-      "base_score": 29.57,
-      "residual_correction": -5.14,
-      "final_score": 27.77,
-      "gap": 2,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 10,
-      "ball_str": "10",
-      "base_score": 29.29,
-      "residual_correction": -7.91,
-      "final_score": 26.52,
-      "gap": 3,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 19,
-      "ball_str": "19",
-      "base_score": 27.38,
-      "residual_correction": -3.57,
-      "final_score": 26.13,
-      "gap": 2,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 21,
-      "ball_str": "21",
-      "base_score": 26.96,
-      "residual_correction": -4.79,
-      "final_score": 25.28,
-      "gap": 0,
-      "tag": "平稳",
-      "is_recent_open": true
-    },
-    {
-      "ball": 65,
-      "ball_str": "65",
-      "base_score": 24.47,
-      "residual_correction": 1.97,
-      "final_score": 25.16,
-      "gap": 4,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 64,
-      "ball_str": "64",
-      "base_score": 25.44,
-      "residual_correction": -1.67,
-      "final_score": 24.85,
+      "ball": 62,
+      "ball_str": "62",
+      "base_score": 39.38,
+      "residual_correction": -10.01,
+      "final_score": 35.88,
       "gap": 0,
       "tag": "平稳",
       "is_recent_open": true
@@ -886,59 +500,39 @@
     {
       "ball": 56,
       "ball_str": "56",
-      "base_score": 25.53,
-      "residual_correction": -2.78,
-      "final_score": 24.55,
-      "gap": 1,
+      "base_score": 39.2,
+      "residual_correction": -10.01,
+      "final_score": 35.7,
+      "gap": 4,
       "tag": "平稳",
       "is_recent_open": false
     },
     {
-      "ball": 41,
-      "ball_str": "41",
-      "base_score": 24.19,
-      "residual_correction": 0.72,
-      "final_score": 24.44,
-      "gap": 2,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 11,
-      "ball_str": "11",
-      "base_score": 25.37,
-      "residual_correction": -5.26,
-      "final_score": 23.53,
-      "gap": 2,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 59,
-      "ball_str": "59",
-      "base_score": 23.55,
-      "residual_correction": -1.44,
-      "final_score": 23.04,
-      "gap": 1,
-      "tag": "平稳",
-      "is_recent_open": false
-    },
-    {
-      "ball": 74,
-      "ball_str": "74",
-      "base_score": 22.75,
-      "residual_correction": 0.38,
-      "final_score": 22.89,
+      "ball": 44,
+      "ball_str": "44",
+      "base_score": 36.91,
+      "residual_correction": -3.73,
+      "final_score": 35.6,
       "gap": 0,
       "tag": "平稳",
       "is_recent_open": true
     },
     {
-      "ball": 31,
-      "ball_str": "31",
-      "base_score": 23.06,
-      "residual_correction": -5.14,
-      "final_score": 21.26,
+      "ball": 80,
+      "ball_str": "80",
+      "base_score": 40.99,
+      "residual_correction": -15.45,
+      "final_score": 35.58,
+      "gap": 4,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 57,
+      "ball_str": "57",
+      "base_score": 42.93,
+      "residual_correction": -21.19,
+      "final_score": 35.51,
       "gap": 1,
       "tag": "平稳",
       "is_recent_open": false
@@ -946,19 +540,89 @@
     {
       "ball": 9,
       "ball_str": "09",
-      "base_score": 22.38,
-      "residual_correction": -5.7,
-      "final_score": 20.39,
+      "base_score": 39.16,
+      "residual_correction": -10.67,
+      "final_score": 35.43,
       "gap": 0,
       "tag": "平稳",
       "is_recent_open": true
     },
     {
-      "ball": 70,
-      "ball_str": "70",
-      "base_score": 18.57,
-      "residual_correction": 5.09,
-      "final_score": 20.36,
+      "ball": 18,
+      "ball_str": "18",
+      "base_score": 45.12,
+      "residual_correction": -28.36,
+      "final_score": 35.2,
+      "gap": 2,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 7,
+      "ball_str": "07",
+      "base_score": 33.65,
+      "residual_correction": 3.66,
+      "final_score": 34.92,
+      "gap": 0,
+      "tag": "平稳",
+      "is_recent_open": true
+    },
+    {
+      "ball": 16,
+      "ball_str": "16",
+      "base_score": 38.33,
+      "residual_correction": -10.74,
+      "final_score": 34.58,
+      "gap": 1,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 50,
+      "ball_str": "50",
+      "base_score": 38.0,
+      "residual_correction": -10.69,
+      "final_score": 34.26,
+      "gap": 3,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 28,
+      "ball_str": "28",
+      "base_score": 40.7,
+      "residual_correction": -18.54,
+      "final_score": 34.22,
+      "gap": 0,
+      "tag": "平稳",
+      "is_recent_open": true
+    },
+    {
+      "ball": 33,
+      "ball_str": "33",
+      "base_score": 38.56,
+      "residual_correction": -12.98,
+      "final_score": 34.02,
+      "gap": 0,
+      "tag": "平稳",
+      "is_recent_open": true
+    },
+    {
+      "ball": 54,
+      "ball_str": "54",
+      "base_score": 33.91,
+      "residual_correction": -0.77,
+      "final_score": 33.64,
+      "gap": 1,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 5,
+      "ball_str": "05",
+      "base_score": 37.38,
+      "residual_correction": -11.92,
+      "final_score": 33.21,
       "gap": 1,
       "tag": "平稳",
       "is_recent_open": false
@@ -966,9 +630,179 @@
     {
       "ball": 46,
       "ball_str": "46",
-      "base_score": 17.23,
-      "residual_correction": 8.45,
-      "final_score": 20.19,
+      "base_score": 38.16,
+      "residual_correction": -14.53,
+      "final_score": 33.07,
+      "gap": 5,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 43,
+      "ball_str": "43",
+      "base_score": 38.07,
+      "residual_correction": -14.46,
+      "final_score": 33.01,
+      "gap": 0,
+      "tag": "平稳",
+      "is_recent_open": true
+    },
+    {
+      "ball": 63,
+      "ball_str": "63",
+      "base_score": 44.16,
+      "residual_correction": -31.89,
+      "final_score": 33.0,
+      "gap": 0,
+      "tag": "平稳",
+      "is_recent_open": true
+    },
+    {
+      "ball": 13,
+      "ball_str": "13",
+      "base_score": 38.01,
+      "residual_correction": -14.67,
+      "final_score": 32.88,
+      "gap": 3,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 52,
+      "ball_str": "52",
+      "base_score": 34.97,
+      "residual_correction": -6.72,
+      "final_score": 32.62,
+      "gap": 2,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 42,
+      "ball_str": "42",
+      "base_score": 37.26,
+      "residual_correction": -13.52,
+      "final_score": 32.53,
+      "gap": 0,
+      "tag": "平稳",
+      "is_recent_open": true
+    },
+    {
+      "ball": 36,
+      "ball_str": "36",
+      "base_score": 30.73,
+      "residual_correction": 4.21,
+      "final_score": 32.21,
+      "gap": 0,
+      "tag": "平稳",
+      "is_recent_open": true
+    },
+    {
+      "ball": 3,
+      "ball_str": "03",
+      "base_score": 35.06,
+      "residual_correction": -11.26,
+      "final_score": 31.12,
+      "gap": 4,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 1,
+      "ball_str": "01",
+      "base_score": 30.22,
+      "residual_correction": 2.32,
+      "final_score": 31.03,
+      "gap": 1,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 12,
+      "ball_str": "12",
+      "base_score": 34.41,
+      "residual_correction": -10.07,
+      "final_score": 30.88,
+      "gap": 3,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 21,
+      "ball_str": "21",
+      "base_score": 31.09,
+      "residual_correction": -3.84,
+      "final_score": 29.75,
+      "gap": 2,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 26,
+      "ball_str": "26",
+      "base_score": 32.34,
+      "residual_correction": -11.02,
+      "final_score": 28.49,
+      "gap": 3,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 64,
+      "ball_str": "64",
+      "base_score": 31.11,
+      "residual_correction": -7.87,
+      "final_score": 28.35,
+      "gap": 1,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 51,
+      "ball_str": "51",
+      "base_score": 26.41,
+      "residual_correction": 4.98,
+      "final_score": 28.15,
+      "gap": 0,
+      "tag": "平稳",
+      "is_recent_open": true
+    },
+    {
+      "ball": 74,
+      "ball_str": "74",
+      "base_score": 29.43,
+      "residual_correction": -4.07,
+      "final_score": 28.01,
+      "gap": 3,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 71,
+      "ball_str": "71",
+      "base_score": 29.27,
+      "residual_correction": -4.07,
+      "final_score": 27.84,
+      "gap": 4,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 31,
+      "ball_str": "31",
+      "base_score": 25.41,
+      "residual_correction": 6.79,
+      "final_score": 27.79,
+      "gap": 0,
+      "tag": "平稳",
+      "is_recent_open": true
+    },
+    {
+      "ball": 37,
+      "ball_str": "37",
+      "base_score": 28.64,
+      "residual_correction": -6.84,
+      "final_score": 26.25,
       "gap": 2,
       "tag": "平稳",
       "is_recent_open": false
@@ -976,9 +810,79 @@
     {
       "ball": 39,
       "ball_str": "39",
-      "base_score": 19.99,
-      "residual_correction": -0.94,
-      "final_score": 19.66,
+      "base_score": 29.2,
+      "residual_correction": -8.91,
+      "final_score": 26.08,
+      "gap": 3,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 41,
+      "ball_str": "41",
+      "base_score": 28.05,
+      "residual_correction": -6.27,
+      "final_score": 25.86,
+      "gap": 2,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 70,
+      "ball_str": "70",
+      "base_score": 28.7,
+      "residual_correction": -8.73,
+      "final_score": 25.65,
+      "gap": 4,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 66,
+      "ball_str": "66",
+      "base_score": 24.75,
+      "residual_correction": 1.55,
+      "final_score": 25.29,
+      "gap": 1,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 19,
+      "ball_str": "19",
+      "base_score": 23.5,
+      "residual_correction": 5.02,
+      "final_score": 25.26,
+      "gap": 0,
+      "tag": "平稳",
+      "is_recent_open": true
+    },
+    {
+      "ball": 59,
+      "ball_str": "59",
+      "base_score": 25.47,
+      "residual_correction": -3.06,
+      "final_score": 24.4,
+      "gap": 0,
+      "tag": "平稳",
+      "is_recent_open": true
+    },
+    {
+      "ball": 67,
+      "ball_str": "67",
+      "base_score": 24.01,
+      "residual_correction": 1.03,
+      "final_score": 24.37,
+      "gap": 1,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 11,
+      "ball_str": "11",
+      "base_score": 23.11,
+      "residual_correction": 2.51,
+      "final_score": 23.99,
       "gap": 0,
       "tag": "平稳",
       "is_recent_open": true
@@ -986,19 +890,99 @@
     {
       "ball": 15,
       "ball_str": "15",
-      "base_score": 16.02,
-      "residual_correction": 5.56,
-      "final_score": 17.97,
+      "base_score": 18.87,
+      "residual_correction": 13.96,
+      "final_score": 23.76,
+      "gap": 0,
+      "tag": "平稳",
+      "is_recent_open": true
+    },
+    {
+      "ball": 20,
+      "ball_str": "20",
+      "base_score": 24.0,
+      "residual_correction": -1.77,
+      "final_score": 23.38,
+      "gap": 3,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 30,
+      "ball_str": "30",
+      "base_score": 23.01,
+      "residual_correction": 1.02,
+      "final_score": 23.37,
+      "gap": 0,
+      "tag": "平稳",
+      "is_recent_open": true
+    },
+    {
+      "ball": 14,
+      "ball_str": "14",
+      "base_score": 26.51,
+      "residual_correction": -9.81,
+      "final_score": 23.08,
       "gap": 1,
       "tag": "平稳",
       "is_recent_open": false
     },
     {
-      "ball": 20,
-      "ball_str": "20",
-      "base_score": 15.3,
-      "residual_correction": 5.53,
-      "final_score": 17.24,
+      "ball": 29,
+      "ball_str": "29",
+      "base_score": 25.34,
+      "residual_correction": -11.0,
+      "final_score": 21.48,
+      "gap": 1,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 79,
+      "ball_str": "79",
+      "base_score": 23.74,
+      "residual_correction": -6.88,
+      "final_score": 21.33,
+      "gap": 0,
+      "tag": "平稳",
+      "is_recent_open": true
+    },
+    {
+      "ball": 40,
+      "ball_str": "40",
+      "base_score": 17.96,
+      "residual_correction": 7.16,
+      "final_score": 20.47,
+      "gap": 1,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 10,
+      "ball_str": "10",
+      "base_score": 17.37,
+      "residual_correction": 4.51,
+      "final_score": 18.95,
+      "gap": 1,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 32,
+      "ball_str": "32",
+      "base_score": 16.27,
+      "residual_correction": 2.19,
+      "final_score": 17.03,
+      "gap": 17,
+      "tag": "平稳",
+      "is_recent_open": false
+    },
+    {
+      "ball": 6,
+      "ball_str": "06",
+      "base_score": 12.94,
+      "residual_correction": 9.91,
+      "final_score": 16.41,
       "gap": 0,
       "tag": "平稳",
       "is_recent_open": true
@@ -1007,167 +991,167 @@
       "ball": 55,
       "ball_str": "55",
       "base_score": 5.0,
-      "residual_correction": 4.47,
-      "final_score": 6.56,
-      "gap": 22,
+      "residual_correction": 5.23,
+      "final_score": 6.83,
+      "gap": 25,
       "tag": "平稳",
       "is_recent_open": false
     }
   ],
   "ball_proba_top20": [
     {
-      "ball": 75,
-      "base_score": 85.0,
-      "residual_correction": -33.79,
-      "final_score": 73.17,
-      "tag": "虚火诱多"
-    },
-    {
-      "ball": 33,
-      "base_score": 83.94,
-      "residual_correction": -60.14,
-      "final_score": 62.89,
-      "tag": "虚火诱多"
-    },
-    {
       "ball": 45,
-      "base_score": 70.18,
-      "residual_correction": -45.71,
-      "final_score": 54.18,
-      "tag": "虚火诱多"
-    },
-    {
-      "ball": 42,
-      "base_score": 65.02,
-      "residual_correction": -32.1,
-      "final_score": 53.79,
-      "tag": "虚火诱多"
-    },
-    {
-      "ball": 60,
-      "base_score": 66.58,
-      "residual_correction": -43.38,
-      "final_score": 51.39,
-      "tag": "虚火诱多"
-    },
-    {
-      "ball": 43,
-      "base_score": 63.53,
-      "residual_correction": -36.67,
-      "final_score": 50.7,
+      "base_score": 85.0,
+      "residual_correction": -54.43,
+      "final_score": 65.95,
       "tag": "虚火诱多"
     },
     {
       "ball": 72,
-      "base_score": 60.33,
-      "residual_correction": -33.68,
-      "final_score": 48.54,
-      "tag": "虚火诱多"
-    },
-    {
-      "ball": 22,
-      "base_score": 60.48,
-      "residual_correction": -35.06,
-      "final_score": 48.21,
-      "tag": "虚火诱多"
-    },
-    {
-      "ball": 16,
-      "base_score": 59.67,
-      "residual_correction": -35.04,
-      "final_score": 47.41,
-      "tag": "虚火诱多"
-    },
-    {
-      "ball": 67,
-      "base_score": 58.63,
-      "residual_correction": -34.65,
-      "final_score": 46.5,
-      "tag": "虚火诱多"
-    },
-    {
-      "ball": 79,
-      "base_score": 54.66,
-      "residual_correction": -25.65,
-      "final_score": 45.68,
-      "tag": "虚火诱多"
-    },
-    {
-      "ball": 58,
-      "base_score": 59.32,
-      "residual_correction": -40.34,
-      "final_score": 45.2,
+      "base_score": 73.75,
+      "residual_correction": -44.08,
+      "final_score": 58.32,
       "tag": "虚火诱多"
     },
     {
       "ball": 61,
-      "base_score": 58.7,
-      "residual_correction": -38.93,
-      "final_score": 45.07,
+      "base_score": 69.99,
+      "residual_correction": -40.47,
+      "final_score": 55.83,
       "tag": "虚火诱多"
     },
     {
       "ball": 68,
-      "base_score": 52.96,
-      "residual_correction": -24.65,
-      "final_score": 44.33,
+      "base_score": 67.11,
+      "residual_correction": -41.5,
+      "final_score": 52.58,
       "tag": "虚火诱多"
     },
     {
-      "ball": 25,
-      "base_score": 59.32,
-      "residual_correction": -45.31,
-      "final_score": 43.46,
-      "tag": "虚火诱多"
-    },
-    {
-      "ball": 63,
-      "base_score": 53.93,
-      "residual_correction": -30.14,
-      "final_score": 43.39,
-      "tag": "虚火诱多"
-    },
-    {
-      "ball": 29,
-      "base_score": 52.19,
-      "residual_correction": -26.01,
-      "final_score": 43.09,
+      "ball": 38,
+      "base_score": 66.79,
+      "residual_correction": -42.26,
+      "final_score": 52.0,
       "tag": "虚火诱多"
     },
     {
       "ball": 69,
-      "base_score": 51.19,
-      "residual_correction": -24.98,
-      "final_score": 42.45,
+      "base_score": 64.04,
+      "residual_correction": -35.25,
+      "final_score": 51.7,
       "tag": "虚火诱多"
-    },
-    {
-      "ball": 28,
-      "base_score": 49.82,
-      "residual_correction": -21.76,
-      "final_score": 42.21,
-      "tag": "平稳"
     },
     {
       "ball": 48,
-      "base_score": 53.36,
-      "residual_correction": -34.46,
-      "final_score": 41.3,
+      "base_score": 64.04,
+      "residual_correction": -37.23,
+      "final_score": 51.01,
       "tag": "虚火诱多"
+    },
+    {
+      "ball": 76,
+      "base_score": 58.56,
+      "residual_correction": -25.75,
+      "final_score": 49.55,
+      "tag": "虚火诱多"
+    },
+    {
+      "ball": 60,
+      "base_score": 60.67,
+      "residual_correction": -34.0,
+      "final_score": 48.77,
+      "tag": "虚火诱多"
+    },
+    {
+      "ball": 34,
+      "base_score": 55.58,
+      "residual_correction": -22.13,
+      "final_score": 47.84,
+      "tag": "虚火诱多"
+    },
+    {
+      "ball": 22,
+      "base_score": 52.71,
+      "residual_correction": -21.18,
+      "final_score": 45.3,
+      "tag": "虚火诱多"
+    },
+    {
+      "ball": 78,
+      "base_score": 55.85,
+      "residual_correction": -34.23,
+      "final_score": 43.87,
+      "tag": "虚火诱多"
+    },
+    {
+      "ball": 73,
+      "base_score": 54.38,
+      "residual_correction": -30.28,
+      "final_score": 43.78,
+      "tag": "虚火诱多"
+    },
+    {
+      "ball": 25,
+      "base_score": 55.17,
+      "residual_correction": -32.83,
+      "final_score": 43.68,
+      "tag": "虚火诱多"
+    },
+    {
+      "ball": 35,
+      "base_score": 56.16,
+      "residual_correction": -36.69,
+      "final_score": 43.32,
+      "tag": "虚火诱多"
+    },
+    {
+      "ball": 58,
+      "base_score": 53.14,
+      "residual_correction": -33.05,
+      "final_score": 41.57,
+      "tag": "虚火诱多"
+    },
+    {
+      "ball": 65,
+      "base_score": 47.75,
+      "residual_correction": -20.72,
+      "final_score": 40.5,
+      "tag": "平稳"
+    },
+    {
+      "ball": 49,
+      "base_score": 47.71,
+      "residual_correction": -21.03,
+      "final_score": 40.35,
+      "tag": "平稳"
+    },
+    {
+      "ball": 75,
+      "base_score": 51.64,
+      "residual_correction": -34.13,
+      "final_score": 39.7,
+      "tag": "虚火诱多"
+    },
+    {
+      "ball": 47,
+      "base_score": 44.22,
+      "residual_correction": -15.75,
+      "final_score": 38.71,
+      "tag": "平稳"
     }
   ],
   "feature_importance": {
-    "base_score": 34.42,
-    "co_affinity": 16.89,
-    "gap_ratio": 13.44,
-    "ball_id": 10.81,
-    "freq_recent_20": 7.45,
-    "zone_density": 5.81,
-    "gap": 3.45,
-    "momentum_slope": 2.82
+    "base_score": 31.67,
+    "co_affinity": 19.91,
+    "ball_id": 14.57,
+    "gap_ratio": 10.95,
+    "freq_recent_20": 6.7,
+    "gap": 3.8,
+    "zone_density": 3.62,
+    "momentum_slope": 3.35
   },
   "engine_meta": {
-    "n_train_rows": 6960,
+    "n_train_rows": 5360,
     "n_features": 13,
     "feature_names": [
       "base_score",
@@ -1190,5 +1174,5 @@
     "max_depth": 4,
     "learning_rate": 0.03
   },
-  "generated_at": "2026-11-20 15:48:43"
+  "generated_at": "2026-11-23 14:38:41"
 }

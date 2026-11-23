@@ -46,16 +46,19 @@ def test_tda_engine():
 def test_api_endpoints():
     login_res = client.post('/login', data={'passcode': 'k8quant@2026'})
     assert login_res.status_code in [200, 302]
-    
-    endpoints = [
-        '/api/quant/linear-algebra/latest',
-        '/api/quant/dtw/latest',
-        '/api/quant/transformer/latest',
-        '/api/quant/matrix-profile/latest',
-        '/api/quant/tda/latest',
-    ]
-    for ep in endpoints:
+
+    # 这五个高维模型于 2026-10-22 全部退役：
+    # 路由由 module_gate 判决拦截，统一返回 410 Gone（而不是 200）。
+    retired = {
+        '/api/quant/linear-algebra/latest': 'linear_algebra',
+        '/api/quant/dtw/latest': 'dtw',
+        '/api/quant/transformer/latest': 'transformer',
+        '/api/quant/matrix-profile/latest': 'matrix_profile',
+        '/api/quant/tda/latest': 'tda',
+    }
+    for ep, mid in retired.items():
         res = client.get(ep)
-        assert res.status_code == 200
-        data = res.json()
-        assert data.get('code') == 200 or 'top5_gold' in data or 'top3_gold' in data
+        assert res.status_code == 410, f"{ep} 应返回 410"
+        body = res.json()
+        assert body.get('status') == 'retired'
+        assert body.get('module_id') == mid

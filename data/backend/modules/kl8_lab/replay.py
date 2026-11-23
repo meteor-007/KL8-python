@@ -140,8 +140,10 @@ def run_backtest(cfg,
     out.skipped += out.missing_points
 
     ol = cfg.online_learner
-    exp3 = Exp3State.load_or_uniform(
-        cfg.state_file, MAIN_METHODS,
+    # 回测必须从等权冷启动，不得加载实盘状态：实盘权重含回测窗口末期信息，
+    # 用它给窗口早期加权就是前视泄漏。
+    exp3 = Exp3State.uniform(
+        MAIN_METHODS,
         gamma=float(ol.gamma or 0.1),
         floor=float(ol.weight_floor or 0.01),
         warmup=int(ol.warmup_periods or DEFAULT_WARMUP))

@@ -76,8 +76,10 @@ class ReportContext:
     base_stats: dict[int, NumberStats] = field(default_factory=dict)
     expanded: set[int] = field(default_factory=set)
     backtest: object | None = None       # replay.BacktestResult
+    exp3: object | None = None           # 实盘在线学习状态（不是回测终态）
     degradation_reasons: list[str] = field(default_factory=list)
     module_notes: list[str] = field(default_factory=list)
+    gate_applied: bool = False
     reconcile_note: str = ""            # §8.5 共享档案对账告警
     generated_at: _date | None = None
 
@@ -173,6 +175,14 @@ def _sec_overview(ctx: ReportContext) -> list[str]:
         L.append(f"  - 同日期多期：{h.duplicate_dates}")
     if h.inversions:
         L.append(f"  - 日期倒挂：{_fmt_nums(h.inversions, 7)}")
+    try:
+        gaps = [(p, e.date, d.date) for p, d, e in ctx.dataset.pairable()
+                if e.date and e.date != d.date]
+    except Exception:
+        gaps = []
+    if gaps:
+        sample = "；".join(f"{p:07d}（点位 {e} / 开奖 {d}）" for p, e, d in gaps[:3])
+        L.append(f"  - 日期缺口：{len(gaps)} 期点位日期与开奖日期不一致（{sample}）")
     if ctx.staleness:
         L.append(f"- **数据新鲜度**：{ctx.staleness}")
     L.append(f"- 数据来源：点位 `{h.points_source}` / 开奖 `{h.draws_source}`")
@@ -226,15 +236,17 @@ def _sec_dashboard(ctx: ReportContext) -> list[str]:
 
     L.append("### 1.2 方法权重")
     L.append("")
-    st = getattr(ctx.backtest, "exp3", None) if ctx.backtest else None
-    L.append("| 方法 | 当前权重 | 累计奖励 | 参与期数 | 状态 |")
+    st = getattr(ctx, "exp3", None)   # 实盘状态，不能用回测终态冒充
+    uniform_w = 1.0 / len(MAIN_METHODS)
+    effective = st.effective(MAIN_METHODS) if st else {m: uniform_w for m in MAIN_METHODS}
+    L.append("| 方法 | 当前权重（生效） | 累计奖励 | 参与期数 | 状态 |")
     L.append("|---|---|---|---|---|")
     for m in MAIN_METHODS:
         res = ctx.results.get(m)
         if res is None:
             L.append(f"| {m} | — | — | — | 未启用 |")
             continue
-        w = (st.weights.get(m, 0.0) if st else 1.0 / len(MAIN_METHODS))
+        w = effective.get(m, uniform_w)
         cr = (st.cumulative_reward.get(m, 0.0) if st else 0.0)
         pulls = (st.pulls.get(m, 0) if st else 0)
         if not res.sufficient:
@@ -247,7 +259,7 @@ def _sec_dashboard(ctx: ReportContext) -> list[str]:
     if st is not None and not st.active:
         L.append("")
         L.append(f"> 在线学习处于冷启动：已完成 {st.periods}/{st.warmup} 期，"
-                 f"当前为等权。")
+                 f"生效权重为等权（{uniform_w:.4f}）；存储权重在预热结束后才开始生效。")
     L.append("")
     if ctx.fusion.skipped_dims:
         L.append(f"> 本维度未生效（输入模块全部缺失）："
@@ -387,7 +399,12 @@ def _sec_risk(ctx: ReportContext) -> list[str]:
         weak = [m for m, tr in ctx.backtest.method_tests.items()
                 if tr.lift < 1.0 or not tr.significant]
         if weak:
-            L.append(f"> 未达显著或劣于随机的方法（权重已由 Exp3 自动降低）："
+            st_live = getattr(ctx, "exp3", None)
+            if st_live is not None and st_live.active:
+                note = "权重已由 Exp3 自动降低"
+            else:
+                note = "Exp3 处于冷启动（等权），预热结束后会自动降权"
+            L.append(f"> 未达显著的方法（{note}）："
                      f"{'、'.join(weak)}")
             L.append("")
 
@@ -435,7 +452,7 @@ def _sec_tree(ctx: ReportContext) -> list[str]:
              f"{_fmt_nums(sorted(ctx.expanded))[:60]}… |")
     adv = ctx.results.get("adversarial")
     L.append(f"| 对抗与熵校 | 候选多样性熵 < 阈值 | adversarial | "
-             f"{'已执行' if adv is not None else '未启用'} |")
+             f"{'已执行' if ctx.gate_applied else '未启用'} |")
     L.append("")
     L.append("> 本节候选清单为**解释性附录**，与第二章 Top5、第六章 5+2 严格对齐，"
              "不产生第三份不一致的清单。")
@@ -479,7 +496,7 @@ def _sec_final(ctx: ReportContext) -> list[str]:
     adv = ctx.results.get("adversarial")
     for n in ctx.picks.core:
         L.append(f"| **{n:02d}** | {zone_label(n)} | {_reason_for(ctx, n)} | "
-                 f"{'已通过' if adv is not None else '未启用'} |")
+                 f"{'已通过' if ctx.gate_applied else '未启用'} |")
     L.append("")
 
     L.append("### 6.2 两码备防")
@@ -529,6 +546,10 @@ def _sec_backtest(ctx: ReportContext) -> list[str]:
         L.append(f"- 平均命中 **{st.mean_hits:.4f}**（随机期望 {st.expected:.4f}），"
                  f"**lift = {st.lift:.4f}**")
         L.append(f"- z = {st.z:+.3f}，p = {st.p_value:.4f}，判定：**{st.verdict}**")
+        lo = st.mean_hits - 1.96 * st.se
+        hi = st.mean_hits + 1.96 * st.se
+        L.append(f"- 95% CI：均值命中 [{lo:.4f}, {hi:.4f}]，"
+                 f"lift [{lo / st.expected:.4f}, {hi / st.expected:.4f}]")
     L.append("")
     if bt.baselines:
         L.append("### A.2 基线对照")
@@ -564,8 +585,8 @@ def _sec_backtest(ctx: ReportContext) -> list[str]:
     L.append("")
     L.append("在当前样本量下，系统需要至少达到以下优势才能被检验出来：")
     L.append("")
-    L.append(render_power_table((bt.T, 120, 60) if bt.T not in (277, 120, 60)
-                                else (277, 120, 60)))
+    full_T = int(getattr(ctx.health, "pairable_count", 0) or bt.T)
+    L.append(render_power_table((full_T, 120, 60)))
     L.append("")
     L.append(f"> 本窗口 T={bt.T}，最小可检测 lift 约 "
              f"+{(bt.system_test.mde_lift * 100 if bt.system_test else 0):.1f}%。"

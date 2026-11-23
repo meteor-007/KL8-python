@@ -106,22 +106,16 @@ def test_error_correction_api_routes():
     login_res = client.post("/login", data={"passcode": "k8quant@2026"})
     assert login_res.status_code in [200, 302]
 
-    # 2. GET /api/error_correction/latest
-    res_latest = client.get("/api/error_correction/latest")
-    assert res_latest.status_code == 200
-    body_latest = res_latest.json()
-    assert body_latest.get("status") == "ok"
-    assert "top3_gold" in body_latest.get("data", {}) or "top5_gold" in body_latest.get("data", {})
+    # 2. error_correction 于 2026-11-12 退役：查询路由与触发端点都应返回 410 Gone
+    for path in ("/api/error_correction/latest", "/api/error_correction/review?n=5"):
+        res = client.get(path)
+        assert res.status_code == 410, f"{path} 应返回 410"
+        body = res.json()
+        assert body.get("status") == "retired"
+        assert body.get("module_id") == "error_correction"
 
-    # 3. GET /api/error_correction/review
-    res_review = client.get("/api/error_correction/review?n=5")
-    assert res_review.status_code == 200
-    body_review = res_review.json()
-    assert body_review.get("status") == "ok"
-    assert "stats" in body_review.get("data", {})
-
-    # 4. POST /api/pipeline/run-error-correction
+    # 3. POST /api/pipeline/run-error-correction —— 触发端点同口径，不得启动任务
     res_pipe = client.post("/api/pipeline/run-error-correction")
-    assert res_pipe.status_code == 200
-    body_pipe = res_pipe.json()
-    assert body_pipe.get("status") == "QUEUED"
+    assert res_pipe.status_code == 410
+    assert res_pipe.json().get("status") == "retired"
+    assert "task_id" not in res_pipe.json(), "退役模块不得启动任务"

@@ -54,18 +54,39 @@ DIM_NAMES = {"H1": "热度", "H2": "遗漏反弹", "H3": "集群", "H4": "周期
 
 # ── 子分数解析 ────────────────────────────────────────────────
 
+# 子分数在模块里的实际字段名（历史命名不统一）
+_SUBSCORE_ALIASES: dict[str, tuple[str, ...]] = {
+    "balance": ("balance", "balance_scores"),
+    "cluster": ("cluster", "clump_scores", "cluster_scores"),
+}
+_WARNED_SUBSCORES: set[tuple[str, str]] = set()
+
+
 def _sub_scores(result: ModuleResult, key: str) -> dict[int, float] | None:
     """取模块的子分数。
 
-    约定：模块可在 metrics["sub_scores"] 里暴露额外打分向量，例如
-        metrics["sub_scores"] = {"cluster": {...}, "balance": {...}}
-    未提供时回退为该模块的主 scores（保证融合链路永不缺项）。
+    约定：模块可在 metrics["sub_scores"] 里暴露额外打分向量；历史上
+    heatmap 用 metrics["balance"]、remainder 用 metrics["balance_scores"] /
+    metrics["clump_scores"]。这里按别名统一解析，解析不到时记录一次告警并
+    回退为主分（回退不再静默）。
     """
-    subs = result.metrics.get("sub_scores") if result.metrics else None
+    metrics = result.metrics or {}
+    subs = metrics.get("sub_scores")
     if isinstance(subs, dict):
         got = subs.get(key)
         if isinstance(got, dict) and got:
             return {n: clip01(finite(got.get(n, 0.0), 0.0)) for n in NUMBERS}
+
+    for alias in _SUBSCORE_ALIASES.get(key, (key,)):
+        got = metrics.get(alias)
+        if isinstance(got, dict) and got:
+            return {n: clip01(finite(got.get(n, 0.0), 0.0)) for n in NUMBERS}
+
+    token = (result.name, key)
+    if token not in _WARNED_SUBSCORES:
+        _WARNED_SUBSCORES.add(token)
+        observability.warn(
+            f"{result.name} 未提供子分数 {key}，融合层回退为其主分")
     return None
 
 
@@ -147,7 +168,11 @@ def aggregate_dimensions(results: dict[str, ModuleResult],
             vecs = [v for v in (_resolve(t, results) for t in geo_tokens)
                     if v is not None]
             if vecs:
-                parts.append((_geo_mean_n(vecs), 1.0))
+                # 几何平均块代表这一组方法，权重取组内方法的平均权重；
+                # 旧实现固定 1.0，会让该块在 H4 中占 ~85% 权重。
+                geo_w = sum(method_weights.get(t.split(":")[0], 1.0)
+                            for t in geo_tokens) / max(1, len(geo_tokens))
+                parts.append((_geo_mean_n(vecs), geo_w))
 
         for token in spec.get("weighted", []):
             vec = _resolve(token, results)

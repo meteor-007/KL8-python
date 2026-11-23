@@ -8,7 +8,7 @@ v2.0 修正（§4.10）：**不对 0/1 伯努利序列套金融 GARCH**。v1.0 �
 
 改用与伯努利匹配的量（严格按 §4.10 步骤 1–4）：
 
-1. **二项过度离散检验**：对每个号码，用滑动窗口 W=30 统计各窗口命中数 `h_w`。
+1. **二项过度离散检验**：对每个号码，用非重叠窗口 W=30 统计各窗口命中数 `h_w`。
    - i.i.d. 零假设下 `h_w ~ Bin(30, 0.25)`，期望 7.5，方差 5.625；
    - 统计量 `D = Σ(h_w − 7.5)² / 5.625`，零假设下近似 `χ²`（自由度 = 窗口数 − 1）；
    - `D` 显著大于自由度 → 存在过度离散（波动聚集）。
@@ -101,14 +101,17 @@ def _all_series(draws: list[Draw]) -> dict[int, list[int]]:
 
 
 def _window_counts(series: list[int], w: int = W) -> list[int]:
-    """滑动窗口（步长 1）命中数。窗口按时间升序，末位为最近窗口。"""
+    """**非重叠**窗口命中数（步长 w，按时间升序）。
+
+    旧实现用步长 1 的滑动窗口，相邻窗口共享 w-1 期数据，彼此强相关；
+    把它们当独立卡方会把 i.i.d. 噪声大量误报为"过度离散"。非重叠窗口
+    相互独立，χ² 检验才成立。末尾不足一个窗口的部分丢弃。
+    """
     T = len(series)
     if T < w:
         return []
-    prefix = [0] * (T + 1)
-    for i, x in enumerate(series):
-        prefix[i + 1] = prefix[i] + x
-    return [prefix[i + w] - prefix[i] for i in range(T - w + 1)]
+    n_win = T // w
+    return [sum(series[i * w:(i + 1) * w]) for i in range(n_win)]
 
 
 def _overdispersion(counts: list[int], w: int = W):
@@ -181,14 +184,14 @@ def analyze(draws: list[Draw],
 
     if T < MIN_PERIODS:
         res.degrade(f"历史仅 {T} 期，少于 {MIN_PERIODS} 期"
-                    f"（W={W} 滑动窗口 + {MIN_SAMPLE} 个有效窗口）")
+                    f"（W={W} 非重叠窗口 + {MIN_SAMPLE} 个有效窗口）")
         res.add("risk",
                 f"- 波动率聚类：历史仅 {T} 期，不足 {MIN_PERIODS} 期，"
                 f"无法做二项过度离散检验，已跳过。", order=40)
         return res
 
     ns = list(range(1, 81))
-    nw = T - W + 1
+    nw = T // W          # 非重叠窗口数
 
     phi: dict[int, float] = {}          # 离散指数 D/df
     pdisp: dict[int, float] = {}        # 过度离散 χ² 上尾 p 值
@@ -216,7 +219,7 @@ def analyze(draws: list[Draw],
         D, df, pval = _overdispersion(counts)
         phi[n] = finite(safe_div(D, df, 1.0), 1.0)
         pdisp[n] = clip01(finite(pval, 1.0))
-        active[n] = float(counts[-1] - median(counts)) if counts else 0.0
+        active[n] = float(sum(series[-W:]) - median(counts)) if counts else 0.0
 
         gaps = _gaps(series)
         gap_n[n] = len(gaps)
@@ -311,7 +314,7 @@ def analyze(draws: list[Draw],
 
     # ── narrative（真实数值，中文解读） ──
     res.add("macro",
-            f"- **波动率聚类**（W={W} 滑动窗口，{nw} 个窗口）："
+            f"- **波动率聚类**（W={W} 非重叠窗口，{nw} 个窗口）："
             f"二项过度离散检验在 α={alpha} 下校正前显著 {n_raw_sig}/80 号、"
             f"经 {'Bonferroni' if fdr_method == 'bonferroni' else 'BH-FDR'} 校正后"
             f"显著 {n_fdr_sig}/80 号；离散指数中位数 φ={med_phi:.2f}"

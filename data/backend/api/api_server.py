@@ -108,35 +108,77 @@ from backend.modules.legacy.follow.routes import router as follow_router
 from backend.modules.legacy.spatial_points.routes import router as spatial_points_router
 from backend.modules.expert_intelligence.routes import router as expert_router
 
-app.include_router(ops_router)
-app.include_router(quant_router)
-app.include_router(pipeline_router)
-app.include_router(genetic_router)
-app.include_router(gold_pick2_router)
-app.include_router(sixteen_router)
-app.include_router(jingle_router)
-app.include_router(suppression_router)
-app.include_router(datasource_router)
-app.include_router(point_omission_router)
-app.include_router(aggregation_router)
-app.include_router(tri_high_router)
-app.include_router(unified_brain_router)
-app.include_router(master_review_router)
-app.include_router(linear_algebra_router)
-app.include_router(random_forest_router)
-app.include_router(error_correction_router)
-app.include_router(spear_shield_router)
-app.include_router(point_road_router)
-app.include_router(dtw_router)
-app.include_router(transformer_router)
-app.include_router(matrix_profile_router)
-app.include_router(tda_router)
-app.include_router(markov_line_router)
-app.include_router(lstm_router)
-app.include_router(gemini_router)
-app.include_router(follow_router)
-app.include_router(spatial_points_router)
-app.include_router(expert_router)
+# ══════════════════════════════════════════════════════════
+#  路由挂载门禁
+#  挂不挂由 module_gate.MODULE_SEED 的判决决定，**不看代码放在哪个目录**：
+#  gold_pick2 / point_omission / unified_brain 住在 legacy/ 下，但它们仍是活跃模块，
+#  按目录一刀切会把它们一起关掉（今天的选2就是 gold_pick2 出的）。
+# ══════════════════════════════════════════════════════════
+from backend.core.module_gate import is_module_active
+from backend.api.retired import retired_route_response as _retired_route_response
+
+
+def _mount_retired_stub(module_id: str, router) -> None:
+    """给退役模块的每条路由注册一个占位响应，避免调用方拿到裸 404。"""
+    for _route in router.routes:
+        _methods = sorted(getattr(_route, "methods", None) or ["GET"])
+
+        def _handler(_mid=module_id):
+            return _retired_route_response(_mid)
+
+        app.add_api_route(
+            _route.path,
+            _handler,
+            methods=_methods,
+            include_in_schema=False,
+            response_model=None,
+            name=f"retired__{module_id}__{_route.path}",
+        )
+
+
+# 系统级路由：不隶属任何可退役模块，始终挂载
+for _r in (ops_router, quant_router, pipeline_router, expert_router):
+    app.include_router(_r)
+
+# 模块路由：(注册表模块 id, router)
+_MODULE_ROUTERS = [
+    ("gold_pick2", gold_pick2_router),
+    ("sixteen_hot", sixteen_router),
+    ("formula_jingle", jingle_router),
+    ("point_suppression", suppression_router),
+    ("datasource", datasource_router),
+    ("point_omission", point_omission_router),
+    ("aggregation", aggregation_router),
+    ("tri_high", tri_high_router),
+    ("unified_brain", unified_brain_router),
+    ("master_review", master_review_router),
+    ("linear_algebra", linear_algebra_router),
+    ("random_forest", random_forest_router),
+    ("error_correction", error_correction_router),
+    ("spear_shield", spear_shield_router),
+    ("point_road_compressor", point_road_router),
+    ("dtw", dtw_router),
+    ("transformer", transformer_router),
+    ("matrix_profile", matrix_profile_router),
+    ("tda", tda_router),
+    ("markov_line", markov_line_router),
+    ("lstm", lstm_router),
+    ("gemini_pick2", gemini_router),
+    ("follow_track", follow_router),
+    ("spatial_points", spatial_points_router),
+    ("genetic", genetic_router),
+]
+
+RETIRED_ROUTERS_SKIPPED: list[str] = []
+for _mid, _router in _MODULE_ROUTERS:
+    if is_module_active(_mid):
+        app.include_router(_router)
+    else:
+        RETIRED_ROUTERS_SKIPPED.append(_mid)
+        _mount_retired_stub(_mid, _router)
+
+if RETIRED_ROUTERS_SKIPPED:
+    print(f"⏹ 退役模块路由不提供服务（已注册占位响应）: {', '.join(RETIRED_ROUTERS_SKIPPED)}")
 
 
 # 启动后台 22:00 定时调度线程
