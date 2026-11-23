@@ -215,7 +215,7 @@ const App = {
         fetchPointRoadData();
       }
       if (newTab === 'sixteen_cockpit' || newTab === 'sixteen_dist') {
-        fetchSixteenSummary(!sixteenSummary?.value?.daily_ops_brief);
+        fetchSixteenSummary(false); // 优先读缓存，后端校验有效性，避免每次进页 7.8s 重算
       }
       if (newTab === 'dtw_cockpit') {
         fetchDTWData();
@@ -405,10 +405,10 @@ const App = {
       } else if (key === 'agg_reports') {
         fetchAggHistory();
       } else if (key === 'sixteen_cockpit' || key === 'sixteen_matrix') {
-        fetchSixteenSummary(!(sixteenSummary && sixteenSummary.value && sixteenSummary.value.daily_ops_brief));
+        fetchSixteenSummary(false); // 优先读缓存（缓存无效时后端自动重算）
         fetchSixteenReview(sixteenReviewPeriods.value);
       } else if (key === 'sixteen_dist') {
-        fetchSixteenSummary(!(sixteenSummary && sixteenSummary.value && sixteenSummary.value.daily_ops_brief));
+        fetchSixteenSummary(false); // 优先读缓存（缓存无效时后端自动重算）
       } else if (key === 'sixteen_review') {
         fetchSixteenReview(sixteenReviewPeriods.value);
       } else if (key === 'sixteen_reports') {

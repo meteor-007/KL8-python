@@ -120,7 +120,8 @@ def main():
     
     try:
         import asyncio
-        from backend.api.api_server import app
+        from backend.api.api_server import app, prewarm_hot_caches
+        prewarm_hot_caches()
         config = uvicorn.Config(
             app=app,
             host=host,

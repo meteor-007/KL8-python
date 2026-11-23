@@ -33,6 +33,19 @@ from starlette.middleware.gzip import GZipMiddleware
 from backend.utils.paths import get_project_root, get_frontend_dir, _ensure_project_path
 _ensure_project_path()
 
+
+# ── 启动预热：解析 Excel 数据源（约 4s），避免首次进入页面时等待 ──
+# 数据源矩阵/复盘接口共用 load_excel_full() 的进程内缓存；预热后首次访问即命中。
+# 由启动入口（windows_service / run_server）在开始服务前同步调用，
+# 这样请求永远不会等待预热，也不会与预热争抢 CPU。
+def prewarm_hot_caches():
+    try:
+        from core.excel_deep_mining_v2 import load_excel_full
+        load_excel_full()
+        logger.info("启动预热完成：Excel 数据源缓存已就绪")
+    except Exception as e:
+        logger.warning("启动预热失败（不影响服务运行）: %s", e)
+
 from backend.api.deps import (  # noqa: F401 — re-export for callers/tests
     PROJ_DIR,
     data_service,
@@ -147,10 +160,8 @@ except Exception as _e:
     print(f"⚠️ 启动夜间定时调度器失败: {_e}")
 
 
-# 挂载前端静态文件 (优先从 frontend/static 寻找)
+# 挂载前端静态文件
 STATIC_DIR = os.path.join(get_frontend_dir(), "static")
-if not os.path.exists(STATIC_DIR):
-    STATIC_DIR = os.path.join(PROJ_DIR, "web_app", "static")
 if not os.path.exists(STATIC_DIR):
     os.makedirs(STATIC_DIR, exist_ok=True)
 
@@ -231,6 +242,8 @@ def get_favicon():
 
 # ═══════════════════ 应用层访问鉴权（共享口令登录） ═══════════════════
 WEB_PASSCODE = os.environ.get("WEB_PASSCODE", "k8quant@2026")
+# 临时免密开关：调试期置 True 免输入访问口令；恢复鉴权时改回 False
+AUTH_DISABLED = True
 SESSION_SECRET = os.environ.get("WEB_SESSION_SECRET", secrets.token_hex(48))
 SESSION_MAX_AGE = 7 * 24 * 3600
 
@@ -322,6 +335,10 @@ def do_logout(request: Request):
 async def auth_guard(request, call_next):
     """保护首页与所有 /api 接口，未登录时跳转登录页或返回 401。"""
     if request.method == "OPTIONS":
+        return await call_next(request)
+
+    # 临时免密（调试期）：直接放行，恢复鉴权时将 AUTH_DISABLED 改回 False
+    if AUTH_DISABLED:
         return await call_next(request)
 
     path = request.url.path

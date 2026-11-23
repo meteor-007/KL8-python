@@ -15,7 +15,7 @@ Excel跟随号码统计表 深层关联挖掘引擎 V2
   Row 0-3 (板块内行号)
   Col 0-3 (左右各4列)
 """
-import sys, os, re, collections, itertools, math
+import sys, os, re, math, threading, collections, itertools
 try:
     if hasattr(sys.stdout, 'reconfigure'):
         sys.stdout.reconfigure(encoding='utf-8')
@@ -29,6 +29,10 @@ _BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _BASE_DIR not in sys.path:
     sys.path.insert(0, _BASE_DIR)
 from utils.paths import data_path
+try:
+    from backend.utils.cache import file_fingerprint, memoize
+except ImportError:
+    from utils.cache import file_fingerprint, memoize
 
 EXCEL = data_path('跟随+点位+开奖数据.xlsx')
 HISTORY_FILE = data_path('kl8_history_final.txt')
@@ -42,6 +46,13 @@ BLOCK_OFFSETS = [1, 6, 11, 16]
 # ═══════════════════════════════════════════════════════════════
 #  数据加载 — 完整保留三标记+位置信息
 # ═══════════════════════════════════════════════════════════════
+
+# ── 进程内缓存 ────────────────────────────────────────────────
+# openpyxl 带样式全量解析约 4s（4.7 万条记录），而页面每次进入
+# （matrix / review 接口）都会重新解析同一份 Excel。
+# 用统一缓存工具按文件指纹失效：Excel 被替换更新时自动失效。
+# 注意：返回的 records 为只读共享对象，调用方不得修改。
+@memoize(lambda: file_fingerprint(EXCEL))
 def load_excel_full():
     """
     完整读取Excel跟随号码统计表，保留每个号码的:

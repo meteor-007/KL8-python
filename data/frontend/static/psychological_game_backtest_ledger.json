@@ -1,15 +1,15 @@
 {
   "meta": {
     "engine_name": "Psychological Game Theory & Contrarian Reversion Engine",
-    "generated_at": "2026-11-18 20:15:19",
-    "total_history_draws": 2128,
+    "generated_at": "2026-11-23 20:08:02",
+    "total_history_draws": 2133,
     "protocol": "Walk-Forward Out-of-Sample Rolling Test (Zero Future Leakage)"
   },
   "multi_window_summary": {
     "last_30": {
       "n_tests": 30,
-      "start_issue": "2026278",
-      "end_issue": "2026307",
+      "start_issue": "2026283",
+      "end_issue": "2026312",
       "avg_pool_size_top5": 3.0,
       "avg_pool_size_top12": 3.0,
       "denominator_note": "口径已改为池化命中率 = Σ命中 / Σ实际推荐码数。引擎主口径为「最优3码」，top5_assault/top12_balanced 仅为其兼容别名(长度恒 3)，故 top5/top12 两栏实测为同一组号码、同一口径，非两个独立产品。",
@@ -20,47 +20,47 @@
       "rate12_pct": 20.0,
       "lift12": 0.8,
       "top5_win2_rate_pct": 6.67,
-      "avg_cold4": 0.83,
+      "avg_cold4": 0.87,
       "avg_rep4": 0.9
     },
     "last_50": {
       "n_tests": 50,
-      "start_issue": "2026258",
-      "end_issue": "2026307",
+      "start_issue": "2026263",
+      "end_issue": "2026312",
       "avg_pool_size_top5": 3.0,
       "avg_pool_size_top12": 3.0,
       "denominator_note": "口径已改为池化命中率 = Σ命中 / Σ实际推荐码数。引擎主口径为「最优3码」，top5_assault/top12_balanced 仅为其兼容别名(长度恒 3)，故 top5/top12 两栏实测为同一组号码、同一口径，非两个独立产品。",
-      "avg_h5": 0.68,
-      "rate5_pct": 22.67,
-      "lift5": 0.907,
-      "avg_h12": 0.68,
-      "rate12_pct": 22.67,
-      "lift12": 0.907,
+      "avg_h5": 0.64,
+      "rate5_pct": 21.33,
+      "lift5": 0.853,
+      "avg_h12": 0.64,
+      "rate12_pct": 21.33,
+      "lift12": 0.853,
       "top5_win2_rate_pct": 8.0,
       "avg_cold4": 0.8,
-      "avg_rep4": 0.84
+      "avg_rep4": 0.9
     },
     "last_100": {
       "n_tests": 100,
-      "start_issue": "2026208",
-      "end_issue": "2026307",
+      "start_issue": "2026213",
+      "end_issue": "2026312",
       "avg_pool_size_top5": 3.0,
       "avg_pool_size_top12": 3.0,
       "denominator_note": "口径已改为池化命中率 = Σ命中 / Σ实际推荐码数。引擎主口径为「最优3码」，top5_assault/top12_balanced 仅为其兼容别名(长度恒 3)，故 top5/top12 两栏实测为同一组号码、同一口径，非两个独立产品。",
-      "avg_h5": 0.8,
-      "rate5_pct": 26.67,
-      "lift5": 1.067,
-      "avg_h12": 0.8,
-      "rate12_pct": 26.67,
-      "lift12": 1.067,
-      "top5_win2_rate_pct": 14.0,
-      "avg_cold4": 0.94,
-      "avg_rep4": 0.97
+      "avg_h5": 0.78,
+      "rate5_pct": 26.0,
+      "lift5": 1.04,
+      "avg_h12": 0.78,
+      "rate12_pct": 26.0,
+      "lift12": 1.04,
+      "top5_win2_rate_pct": 15.0,
+      "avg_cold4": 0.93,
+      "avg_rep4": 0.92
     },
     "last_200": {
       "n_tests": 200,
-      "start_issue": "2026108",
-      "end_issue": "2026307",
+      "start_issue": "2026113",
+      "end_issue": "2026312",
       "avg_pool_size_top5": 3.0,
       "avg_pool_size_top12": 3.0,
       "denominator_note": "口径已改为池化命中率 = Σ命中 / Σ实际推荐码数。引擎主口径为「最优3码」，top5_assault/top12_balanced 仅为其兼容别名(长度恒 3)，故 top5/top12 两栏实测为同一组号码、同一口径，非两个独立产品。",
@@ -76,352 +76,6 @@
     }
   },
   "detailed_100_records": [
-    {
-      "issue": "2026208",
-      "date": "2026-08-06",
-      "target_numbers": [
-        8,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16,
-        23,
-        25,
-        28,
-        34,
-        37,
-        38,
-        43,
-        45,
-        48,
-        58,
-        70,
-        73,
-        77
-      ],
-      "top5": [
-        23,
-        69,
-        72
-      ],
-      "top5_size": 3,
-      "top5_hits": [
-        23
-      ],
-      "top5_hit_count": 1,
-      "top12": [
-        23,
-        69,
-        72
-      ],
-      "top12_size": 3,
-      "top12_hits": [
-        23
-      ],
-      "top12_hit_count": 1,
-      "cold4": [
-        23,
-        69,
-        72,
-        30
-      ],
-      "cold4_hits": [
-        23
-      ],
-      "cold4_hit_count": 1,
-      "repeats4": [
-        2,
-        10,
-        16,
-        28
-      ],
-      "repeats4_hits": [
-        16,
-        28
-      ],
-      "repeats4_hit_count": 2,
-      "predicted_size_bias": "大小均衡对冲",
-      "actual_size_ratio": "13:7 (小:大)"
-    },
-    {
-      "issue": "2026209",
-      "date": "2026-08-07",
-      "target_numbers": [
-        2,
-        4,
-        10,
-        11,
-        14,
-        16,
-        18,
-        23,
-        32,
-        35,
-        37,
-        45,
-        47,
-        51,
-        52,
-        53,
-        59,
-        67,
-        75,
-        80
-      ],
-      "top5": [
-        69,
-        72,
-        75
-      ],
-      "top5_size": 3,
-      "top5_hits": [
-        75
-      ],
-      "top5_hit_count": 1,
-      "top12": [
-        69,
-        72,
-        75
-      ],
-      "top12_size": 3,
-      "top12_hits": [
-        75
-      ],
-      "top12_hit_count": 1,
-      "cold4": [
-        69,
-        72,
-        30,
-        75
-      ],
-      "cold4_hits": [
-        75
-      ],
-      "cold4_hit_count": 1,
-      "repeats4": [
-        8,
-        23,
-        25,
-        28
-      ],
-      "repeats4_hits": [
-        23
-      ],
-      "repeats4_hit_count": 1,
-      "predicted_size_bias": "大号回补 (关注 41-80)",
-      "actual_size_ratio": "11:9 (小:大)"
-    },
-    {
-      "issue": "2026210",
-      "date": "2026-08-08",
-      "target_numbers": [
-        3,
-        4,
-        7,
-        12,
-        14,
-        15,
-        17,
-        21,
-        22,
-        24,
-        27,
-        29,
-        45,
-        47,
-        56,
-        60,
-        72,
-        74,
-        78,
-        80
-      ],
-      "top5": [
-        69,
-        72,
-        30
-      ],
-      "top5_size": 3,
-      "top5_hits": [
-        72
-      ],
-      "top5_hit_count": 1,
-      "top12": [
-        69,
-        72,
-        30
-      ],
-      "top12_size": 3,
-      "top12_hits": [
-        72
-      ],
-      "top12_hit_count": 1,
-      "cold4": [
-        69,
-        72,
-        30,
-        61
-      ],
-      "cold4_hits": [
-        72
-      ],
-      "cold4_hit_count": 1,
-      "repeats4": [
-        2,
-        4,
-        14,
-        16
-      ],
-      "repeats4_hits": [
-        4,
-        14
-      ],
-      "repeats4_hit_count": 2,
-      "predicted_size_bias": "大小均衡对冲",
-      "actual_size_ratio": "12:8 (小:大)"
-    },
-    {
-      "issue": "2026211",
-      "date": "2026-08-09",
-      "target_numbers": [
-        4,
-        5,
-        8,
-        12,
-        14,
-        20,
-        23,
-        24,
-        25,
-        30,
-        35,
-        37,
-        46,
-        51,
-        53,
-        60,
-        74,
-        75,
-        77,
-        78
-      ],
-      "top5": [
-        69,
-        30,
-        61
-      ],
-      "top5_size": 3,
-      "top5_hits": [
-        30
-      ],
-      "top5_hit_count": 1,
-      "top12": [
-        69,
-        30,
-        61
-      ],
-      "top12_size": 3,
-      "top12_hits": [
-        30
-      ],
-      "top12_hit_count": 1,
-      "cold4": [
-        69,
-        30,
-        61,
-        26
-      ],
-      "cold4_hits": [
-        30
-      ],
-      "cold4_hit_count": 1,
-      "repeats4": [
-        7,
-        12,
-        17,
-        24
-      ],
-      "repeats4_hits": [
-        12,
-        24
-      ],
-      "repeats4_hit_count": 2,
-      "predicted_size_bias": "大号回补 (关注 41-80)",
-      "actual_size_ratio": "12:8 (小:大)"
-    },
-    {
-      "issue": "2026212",
-      "date": "2026-08-10",
-      "target_numbers": [
-        1,
-        8,
-        10,
-        12,
-        14,
-        15,
-        26,
-        31,
-        37,
-        42,
-        45,
-        48,
-        58,
-        61,
-        66,
-        71,
-        72,
-        74,
-        77,
-        79
-      ],
-      "top5": [
-        69,
-        61,
-        68
-      ],
-      "top5_size": 3,
-      "top5_hits": [
-        61
-      ],
-      "top5_hit_count": 1,
-      "top12": [
-        69,
-        61,
-        68
-      ],
-      "top12_size": 3,
-      "top12_hits": [
-        61
-      ],
-      "top12_hit_count": 1,
-      "cold4": [
-        69,
-        61,
-        26,
-        68
-      ],
-      "cold4_hits": [
-        61,
-        26
-      ],
-      "cold4_hit_count": 2,
-      "repeats4": [
-        8,
-        12,
-        14,
-        20
-      ],
-      "repeats4_hits": [
-        8,
-        12,
-        14
-      ],
-      "repeats4_hit_count": 3,
-      "predicted_size_bias": "大号回补 (关注 41-80)",
-      "actual_size_ratio": "9:11 (小:大)"
-    },
     {
       "issue": "2026213",
       "date": "2026-08-11",
@@ -6694,6 +6348,333 @@
       "repeats4_hit_count": 1,
       "predicted_size_bias": "小号强力回补 (重兵布防 1-40)",
       "actual_size_ratio": "10:10 (小:大)"
+    },
+    {
+      "issue": "2026308",
+      "date": "2026-11-18",
+      "target_numbers": [
+        3,
+        8,
+        9,
+        12,
+        15,
+        18,
+        25,
+        31,
+        35,
+        36,
+        48,
+        51,
+        56,
+        57,
+        58,
+        59,
+        70,
+        71,
+        77,
+        80
+      ],
+      "top5": [
+        21,
+        32,
+        6
+      ],
+      "top5_size": 3,
+      "top5_hits": [],
+      "top5_hit_count": 0,
+      "top12": [
+        21,
+        32,
+        6
+      ],
+      "top12_size": 3,
+      "top12_hits": [],
+      "top12_hit_count": 0,
+      "cold4": [
+        6,
+        21,
+        32,
+        20
+      ],
+      "cold4_hits": [],
+      "cold4_hit_count": 0,
+      "repeats4": [
+        11,
+        14,
+        41,
+        44
+      ],
+      "repeats4_hits": [],
+      "repeats4_hit_count": 0,
+      "predicted_size_bias": "小号强力回补 (重兵布防 1-40)",
+      "actual_size_ratio": "10:10 (小:大)"
+    },
+    {
+      "issue": "2026309",
+      "date": "2026-11-19",
+      "target_numbers": [
+        2,
+        5,
+        9,
+        12,
+        13,
+        17,
+        20,
+        21,
+        23,
+        26,
+        35,
+        39,
+        44,
+        47,
+        49,
+        50,
+        53,
+        57,
+        64,
+        74
+      ],
+      "top5": [
+        6,
+        21,
+        32
+      ],
+      "top5_size": 3,
+      "top5_hits": [
+        21
+      ],
+      "top5_hit_count": 1,
+      "top12": [
+        6,
+        21,
+        32
+      ],
+      "top12_size": 3,
+      "top12_hits": [
+        21
+      ],
+      "top12_hit_count": 1,
+      "cold4": [
+        6,
+        21,
+        32,
+        20
+      ],
+      "cold4_hits": [
+        21,
+        20
+      ],
+      "cold4_hit_count": 2,
+      "repeats4": [
+        3,
+        12,
+        15,
+        18
+      ],
+      "repeats4_hits": [
+        12
+      ],
+      "repeats4_hit_count": 1,
+      "predicted_size_bias": "大小均衡对冲",
+      "actual_size_ratio": "12:8 (小:大)"
+    },
+    {
+      "issue": "2026310",
+      "date": "2026-11-20",
+      "target_numbers": [
+        6,
+        9,
+        16,
+        17,
+        18,
+        19,
+        21,
+        25,
+        28,
+        31,
+        35,
+        37,
+        41,
+        49,
+        52,
+        54,
+        62,
+        64,
+        75,
+        77
+      ],
+      "top5": [
+        32,
+        6,
+        75
+      ],
+      "top5_size": 3,
+      "top5_hits": [
+        6,
+        75
+      ],
+      "top5_hit_count": 2,
+      "top12": [
+        32,
+        6,
+        75
+      ],
+      "top12_size": 3,
+      "top12_hits": [
+        6,
+        75
+      ],
+      "top12_hit_count": 2,
+      "cold4": [
+        6,
+        32,
+        22,
+        33
+      ],
+      "cold4_hits": [
+        6
+      ],
+      "cold4_hit_count": 1,
+      "repeats4": [
+        2,
+        5,
+        9,
+        17
+      ],
+      "repeats4_hits": [
+        9,
+        17
+      ],
+      "repeats4_hit_count": 2,
+      "predicted_size_bias": "大号回补 (关注 41-80)",
+      "actual_size_ratio": "12:8 (小:大)"
+    },
+    {
+      "issue": "2026311",
+      "date": "2026-11-21",
+      "target_numbers": [
+        1,
+        5,
+        9,
+        10,
+        14,
+        16,
+        17,
+        25,
+        29,
+        33,
+        35,
+        40,
+        54,
+        57,
+        58,
+        59,
+        62,
+        64,
+        66,
+        67
+      ],
+      "top5": [
+        32,
+        61,
+        68
+      ],
+      "top5_size": 3,
+      "top5_hits": [],
+      "top5_hit_count": 0,
+      "top12": [
+        32,
+        61,
+        68
+      ],
+      "top12_size": 3,
+      "top12_hits": [],
+      "top12_hit_count": 0,
+      "cold4": [
+        32,
+        22,
+        33,
+        60
+      ],
+      "cold4_hits": [
+        33
+      ],
+      "cold4_hit_count": 1,
+      "repeats4": [
+        6,
+        9,
+        21,
+        25
+      ],
+      "repeats4_hits": [
+        9,
+        25
+      ],
+      "repeats4_hit_count": 2,
+      "predicted_size_bias": "大号回补 (关注 41-80)",
+      "actual_size_ratio": "12:8 (小:大)"
+    },
+    {
+      "issue": "2026312",
+      "date": "2026-11-22",
+      "target_numbers": [
+        6,
+        7,
+        9,
+        11,
+        15,
+        17,
+        19,
+        28,
+        30,
+        31,
+        33,
+        36,
+        42,
+        43,
+        44,
+        51,
+        59,
+        62,
+        63,
+        79
+      ],
+      "top5": [
+        32,
+        61,
+        60
+      ],
+      "top5_size": 3,
+      "top5_hits": [],
+      "top5_hit_count": 0,
+      "top12": [
+        32,
+        61,
+        60
+      ],
+      "top12_size": 3,
+      "top12_hits": [],
+      "top12_hit_count": 0,
+      "cold4": [
+        32,
+        22,
+        60,
+        79
+      ],
+      "cold4_hits": [
+        79
+      ],
+      "cold4_hit_count": 1,
+      "repeats4": [
+        1,
+        5,
+        14,
+        25
+      ],
+      "repeats4_hits": [],
+      "repeats4_hit_count": 0,
+      "predicted_size_bias": "大号回补 (关注 41-80)",
+      "actual_size_ratio": "12:8 (小:大)"
     }
   ]
 }

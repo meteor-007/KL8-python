@@ -19,10 +19,7 @@ from backend.utils.paths import (
 
 _ensure_project_path()
 
-try:
-    from backend.api.data_service import QuantDataService
-except ImportError:
-    from web_app.data_service import QuantDataService
+from backend.api.data_service import QuantDataService
 
 PROJ_DIR = get_project_root()
 

@@ -147,10 +147,16 @@ class K8QuantWebService(win32serviceutil.ServiceFramework if win32serviceutil el
         
         # 导入 API 应用
         try:
-            from backend.api.api_server import app
+            from backend.api.api_server import app, prewarm_hot_caches
         except Exception as e:
             logging.exception(f"导入 backend.api.api_server 失败: {e}")
             raise e
+
+        # 启动前同步预热 Excel 数据源缓存（约 4s），保证首个请求即命中
+        try:
+            prewarm_hot_caches()
+        except Exception as e:
+            logging.warning(f"启动预热异常（忽略）: {e}")
 
         # 配置 Uvicorn
         config = uvicorn.Config(
@@ -188,7 +194,8 @@ def run_standalone():
     print(f"日志输出至: {_LOG_FILE}")
     import uvicorn
     os.chdir(_PROJ_DIR)
-    from backend.api.api_server import app
+    from backend.api.api_server import app, prewarm_hot_caches
+    prewarm_hot_caches()
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=False)
 
 

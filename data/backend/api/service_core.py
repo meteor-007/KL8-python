@@ -17,6 +17,7 @@ from backend.utils.paths import (
     get_cache_dir, get_outputs_dir, get_reports_dir, get_reviews_dir,
     get_project_root, data_path, get_storage_dir, _ensure_project_path,
 )
+from backend.utils.cache import file_fingerprint, glob_fingerprint, memoize
 
 logger = logging.getLogger("k8quant.service")
 
@@ -26,6 +27,8 @@ _hit_leaderboard_cache: Dict[Any, Any] = {}
 
 # 全模块预测全景大盘缓存：key = (target_period, latest_draw_period)
 _all_modules_overview_cache: Dict[Any, Any] = {}
+
+# 历史开奖 / 研报列表：统一走 backend.utils.cache 的文件指纹缓存（见下方各自方法）
 
 
 class CoreServiceMixin:
@@ -92,23 +95,26 @@ class CoreServiceMixin:
             "timestamp": datetime.now().isoformat()
         }
 
-    def load_history(self, limit: int = 100) -> List[Dict[str, Any]]:
-        """从 kl8_history_final.txt 加载历史开奖数据"""
+    def _resolve_history_file(self) -> Optional[str]:
+        """定位历史开奖文件（主路径缺失时回退 storage/raw）"""
+        if os.path.exists(self.history_file):
+            return self.history_file
+        raw_f = os.path.join(get_storage_dir(), "raw", "kl8_history_final.txt")
+        if os.path.exists(raw_f):
+            self.history_file = raw_f
+            return raw_f
+        return None
+
+    @memoize(lambda self, path: file_fingerprint(path))
+    def _parse_history_rows(self, path: str) -> List[Dict[str, Any]]:
+        """解析 kl8_history_final.txt 全量记录（按题号降序，文件更新自动失效）"""
         # 快乐8 标准质数池 (1 既非质也非合)
         _PRIMES = {
             2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
             31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79,
         }
         results = []
-        if not os.path.exists(self.history_file):
-            # 备用从 storage/raw/kl8_history_final.txt 读取
-            raw_f = os.path.join(get_storage_dir(), "raw", "kl8_history_final.txt")
-            if os.path.exists(raw_f):
-                self.history_file = raw_f
-            else:
-                return results
-
-        with open(self.history_file, "r", encoding="utf-8", errors="ignore") as f:
+        with open(path, "r", encoding="utf-8", errors="ignore") as f:
             for line in f:
                 line = line.strip()
                 if not line or not line.startswith("date:"):
@@ -147,7 +153,15 @@ class CoreServiceMixin:
 
         # 按期号降序排序
         results.sort(key=lambda x: int(x["period"]) if x["period"].isdigit() else 0, reverse=True)
-        return results[:limit] if limit > 0 else results
+        return results
+
+    def load_history(self, limit: int = 100) -> List[Dict[str, Any]]:
+        """从 kl8_history_final.txt 加载历史开奖数据（进程内缓存，文件更新自动失效）"""
+        path = self._resolve_history_file()
+        if not path:
+            return []
+        rows = self._parse_history_rows(path)
+        return rows[:limit] if limit > 0 else list(rows)
 
     def get_history_paginated(self, page: int = 1, page_size: int = 20, period_query: str = "") -> Dict[str, Any]:
         """分页与条件检索历史开奖库"""
@@ -167,9 +181,8 @@ class CoreServiceMixin:
             "items": items
         }
 
-    def get_report_list(self) -> List[Dict[str, Any]]:
-        """获取 reports 目录下所有的每日分析报告"""
-        search_dirs = [self.reports_dir, os.path.join(get_storage_dir(), "reports")]
+    def _build_report_list(self, search_dirs) -> List[Dict[str, Any]]:
+        """扫描 reports 目录构建研报列表（纯读文件，结果由 get_report_list 缓存）"""
         report_list = []
         seen_files = set()
 
@@ -216,6 +229,22 @@ class CoreServiceMixin:
         
         report_list.sort(key=lambda x: x["raw_date"], reverse=True)
         return report_list
+
+    def _report_search_dirs(self):
+        return [self.reports_dir, os.path.join(get_storage_dir(), "reports")]
+
+    @memoize(lambda self, sig: sig)
+    def _get_report_list_cached(self, sig):
+        """按文件签名缓存研报列表（增改文件自动失效）"""
+        return self._build_report_list(self._report_search_dirs())
+
+    def get_report_list(self) -> List[Dict[str, Any]]:
+        """获取 reports 目录下所有的每日分析报告（进程内缓存，文件增改自动失效）"""
+        dirs = self._report_search_dirs()
+        sig = glob_fingerprint(
+            [os.path.join(d, "daily_analysis_report_*.md") for d in dirs if os.path.exists(d)]
+        )
+        return list(self._get_report_list_cached(sig))
 
     def _compute_live_prediction(self, history: List[Dict[str, Any]], n: int = 50) -> Dict[str, Any]:
         """基于最新 n 期开奖历史，实时计算一组兜底推荐（金胆/候选/黄金搭档/熵值等）。

@@ -17,13 +17,22 @@ from backend.utils.paths import (
     get_cache_dir, get_outputs_dir, get_reports_dir, get_reviews_dir,
     get_project_root, data_path, get_storage_dir, _ensure_project_path,
 )
+from backend.utils.cache import memoize
 
 logger = logging.getLogger("k8quant.service")
 
 
 class AggregationServiceMixin:
+    def _aggregation_data_version(self):
+        """数据版本键：最新开奖期号变化即失效（无 aggregation_*.json 时每次现场重算很贵）"""
+        try:
+            return self.load_history(limit=1)[0]["period"]
+        except Exception:
+            return None
+
+    @memoize(lambda self: self._aggregation_data_version())
     def get_aggregation_cockpit(self) -> Dict[str, Any]:
-        """获取终审共识与数据汇总复盘驾驶舱数据"""
+        """获取终审共识与数据汇总复盘驾驶舱数据（进程内缓存，期号变化自动失效）"""
         out_dir = os.path.join(get_outputs_dir(), "aggregation")
         if os.path.exists(out_dir):
             agg_files = sorted(glob.glob(os.path.join(out_dir, "aggregation_*.json")), reverse=True)
