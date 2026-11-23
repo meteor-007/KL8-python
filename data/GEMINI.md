@@ -7,7 +7,7 @@
 ## 自动化工作流 (Automated Workflows)
 
 ### 1. 每日预测记录与审计 (Daily Analysis & Audit)
-- **记录规范**：在完成每日数据更新和深度分析后，必须生成一个 Markdown 格式的报告（命名格式：`daily_analysis_report_YYYYMMDD.md`），保存在 `D:\Dpanqianyi\Python-Project\data` 目录下。报告需包含：
+- **记录规范**：在完成每日数据更新和深度分析后，必须生成一个 Markdown 格式的报告（命名格式：`daily_analysis_report_YYYYMMDD.md`），保存在 `D:\Dpanqianyi\Python-Project\data\storageeports\` 目录下（流水线 `get_reports_dir()` 的唯一权威位置；data/ 根目录不再存放日报）。报告需包含：
   - 目标期号与日期。
   - AI 核心推荐号码 (Top 5/12)。
   - 多维共振号 (Golden Core)。

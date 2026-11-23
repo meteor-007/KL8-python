@@ -27,7 +27,7 @@
   <!-- Marked for Markdown -->
   <script src="/static/vendor/marked.min.js"></script>
   <!-- Custom Cyber Theme -->
-  <link rel="stylesheet" href="/static/css/cyber_theme.css?v=20261122_132418">
+  <link rel="stylesheet" href="/static/css/cyber_theme.css?v=20261123_213540">
   <style>
     [v-cloak] { display: none; }
   </style>
@@ -388,7 +388,7 @@
 
 
 <!-- ═══ SUBVIEW: hub_core/unified_brain/view.html ═══ -->
-<div v-if="visitedTabs.includes('unified_brain_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'unified_brain_cockpit'" class="space-y-6">
         <!-- G5: 静态快照降级提示 —— 降级数据不得冒充实时结果 -->
         <div v-if="unifiedBrainData?.__stale_fallback" class="glass-panel p-3 border-l-4 border-amber-400 text-xs text-amber-300">
           ⚠️ {{ unifiedBrainData.__stale_note || '接口不可用，当前展示的是静态决策快照，可能已过期' }}
@@ -539,7 +539,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_core/nightly_scheduler/view.html ═══ -->
-<div v-if="visitedTabs.includes('nightly_scheduler')" class="space-y-6">
+<div v-show="activeTab === 'nightly_scheduler'" class="space-y-6">
         <!-- G5: 静态快照降级提示 —— 降级数据不得冒充实时结果 -->
         <div v-if="evolutionHistoryStale" class="glass-panel p-3 border-l-4 border-amber-400 text-xs text-amber-300">
           ⚠️ 进化历史接口不可用，当前展示的是静态快照（可能已过期）
@@ -946,7 +946,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_core/meta_gold/view.html ═══ -->
-<div v-if="visitedTabs.includes('meta_gold_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'meta_gold_cockpit'" class="space-y-6">
         <!-- 头部 Header -->
         <div class="glass-panel p-6 border-l-4 border-amber-400 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-[0_0_25px_rgba(245,158,11,0.15)]">
           <div class="space-y-1">
@@ -1169,7 +1169,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_core/funnel/view.html ═══ -->
-<div v-if="visitedTabs.includes('funnel_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'funnel_cockpit'" class="space-y-6">
         <!-- 头部 Header -->
         <div class="glass-panel p-6 border-l-4 border-cyan-400 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-[0_0_25px_rgba(6,182,212,0.15)]">
           <div class="space-y-1">
@@ -1395,7 +1395,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_core/live/view.html ═══ -->
-<div v-if="visitedTabs.includes('live_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'live_cockpit'" class="space-y-6">
         <div class="glass-panel p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div class="flex items-center gap-2">
             <span class="text-xl">🎛️</span>
@@ -1567,7 +1567,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_core/agg/view.html ═══ -->
-<div v-if="visitedTabs.includes('agg_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'agg_cockpit'" class="space-y-6">
         <!-- 头部标题与快捷执行栏 -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
           <div class="space-y-1">
@@ -1734,7 +1734,7 @@
 
       <!-- ═════════════════ 策略汇总复盘：每日战报总库 ═════════════════ -->
 
-      <div v-if="visitedTabs.includes('agg_reports')" class="space-y-6">
+      <div v-show="activeTab === 'agg_reports'" class="space-y-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
           <div class="space-y-1">
             <div class="flex items-center gap-3">
@@ -1795,7 +1795,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_core/gold_pairs/view.html ═══ -->
-<div v-if="visitedTabs.includes('gold_pairs')" class="space-y-6">
+<div v-show="activeTab === 'gold_pairs'" class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="glass-panel gold-core-panel p-6">
             <h2 class="text-base font-bold text-amber-300 mb-4 flex items-center gap-2">
@@ -1855,7 +1855,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_core/hidden_energy/view.html ═══ -->
-<div v-if="visitedTabs.includes('hidden_energy')" class="space-y-6">
+<div v-show="activeTab === 'hidden_energy'" class="space-y-6">
         <div class="glass-panel p-6">
           <div class="flex items-center justify-between mb-4">
             <div>
@@ -1887,7 +1887,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_engine/classic_overview/view.html ═══ -->
-<div v-if="visitedTabs.includes('classic_overview')" class="space-y-6">
+<div v-show="activeTab === 'classic_overview'" class="space-y-6">
   <!-- ═════════════════ 1. 顶栏总览卡 ═════════════════ -->
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
     <div class="space-y-1">
@@ -2213,7 +2213,7 @@
 </div>
 
 <!-- ═══ SUBVIEW: hub_engine/datasource/view.html ═══ -->
-<div v-if="visitedTabs.includes('datasource_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'datasource_cockpit'" class="space-y-6">
         <!-- B 类整改: 做多侧模块已退役, 页面必须说真话 -->
         <div class="glass-panel p-4 border-l-4 border-rose-500 text-xs space-y-1">
           <div class="flex items-center gap-2">
@@ -2405,7 +2405,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_engine/gold_pick2/view.html ═══ -->
-<div v-if="visitedTabs.includes('gold_pick2_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'gold_pick2_cockpit'" class="space-y-6">
         <!-- 头部概览条 -->
         <div class="glass-panel p-5">
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -2606,7 +2606,7 @@
 
       <!-- ═══════════ 页内：选2样本外滚动复盘 ═══════════ -->
 
-      <div v-if="visitedTabs.includes('gold_pick2_cockpit')" id="module-review-gold_pick2" class="space-y-6">
+      <div v-show="activeTab === 'gold_pick2_cockpit'" id="module-review-gold_pick2" class="space-y-6">
         <!-- 头部对账指标 -->
         <div class="glass-panel p-5">
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -2758,7 +2758,7 @@
 
       <!-- ═══════════ TAB: 定金选2研报中心 ═══════════ -->
 
-      <div v-if="visitedTabs.includes('gold_pick2_logs')" class="space-y-6">
+      <div v-show="activeTab === 'gold_pick2_logs'" class="space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <!-- 左侧：历史预测列表 -->
           <div class="lg:col-span-4 space-y-4">
@@ -2807,7 +2807,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_engine/jingle/view.html ═══ -->
-<div v-if="visitedTabs.includes('jingle_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'jingle_cockpit'" class="space-y-6">
         <!-- 头部概览 -->
         <div class="glass-panel p-5">
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -3015,7 +3015,7 @@
 
       <!-- ═══════════ TAB 10: 90 条精英口诀规则总库 ═══════════ -->
 
-      <div v-if="visitedTabs.includes('jingle_rules_lib')" class="space-y-6">
+      <div v-show="activeTab === 'jingle_rules_lib'" class="space-y-6">
         <!-- 头部与检索过滤 -->
         <div class="glass-panel p-5">
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -3077,7 +3077,7 @@
 
       <!-- ═══════════ TAB: 每日点位数据录入与联动管理 ═══════════ -->
 
-      <div v-if="visitedTabs.includes('jingle_cockpit')" id="module-review-jingle" class="space-y-6">
+      <div v-show="activeTab === 'jingle_cockpit'" id="module-review-jingle" class="space-y-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
           <div class="space-y-1">
             <div class="flex items-center gap-3">
@@ -3129,7 +3129,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_engine/sixteen/view.html ═══ -->
-<div v-if="visitedTabs.includes('sixteen_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'sixteen_cockpit'" class="space-y-6">
         <!-- 头部标题与操作栏 -->
         <div class="glass-panel p-6">
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -3881,7 +3881,7 @@
 
       <!-- ═════════════════ 16期中热频次动态推演：1~8+频次分桶大盘光谱 ═════════════════ -->
 
-      <div v-if="visitedTabs.includes('sixteen_dist')" class="space-y-6">
+      <div v-show="activeTab === 'sixteen_dist'" class="space-y-6">
         <!-- 头部说明与柱状图 -->
         <div class="glass-panel p-6 space-y-4">
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -3955,7 +3955,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_engine/suppression/view.html ═══ -->
-<div v-if="visitedTabs.includes('suppression_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'suppression_cockpit'" class="space-y-6">
         <!-- 头部概览 -->
         <div class="glass-panel p-5">
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -4185,7 +4185,7 @@
 
       <!-- ═══════════ TAB: 影子替身与能量外溢 ═══════════ -->
 
-      <div v-if="visitedTabs.includes('suppression_patterns')" class="space-y-6">
+      <div v-show="activeTab === 'suppression_patterns'" class="space-y-6">
         <!-- 头部概览 -->
         <div class="glass-panel p-5">
           <div class="flex items-center justify-between">
@@ -4294,7 +4294,7 @@
 
       <!-- ═══════════ 页内：未开点位反弹样本外复盘 ═══════════ -->
 
-      <div v-if="visitedTabs.includes('suppression_cockpit')" id="module-review-suppression" class="space-y-6">
+      <div v-show="activeTab === 'suppression_cockpit'" id="module-review-suppression" class="space-y-6">
         <!-- 头部概览 -->
         <div class="glass-panel p-5">
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -4441,7 +4441,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_engine/psychological_game/view.html ═══ -->
-<div v-if="visitedTabs.includes('psychological_game')" class="space-y-6">
+<div v-show="activeTab === 'psychological_game'" class="space-y-6">
   <!-- G5: 静态快照降级提示 —— 降级数据不得冒充实时结果 -->
   <div v-if="psychologicalGameData?.__stale_fallback || psychologicalGameBacktest?.__stale_fallback"
        class="glass-panel p-3 border-l-4 border-amber-400 text-xs text-amber-300">
@@ -4764,7 +4764,7 @@
 <!-- 08. 点位+遗漏号深度研判驾驶舱 (Point & Omission Quantitative Cockpit)        -->
 <!-- 深度分析四重奏 · 13大统计矩阵 · H1-H7七维加权 · 5+2双轨 · T=277滚动外样本回测 -->
 <!-- ══════════════════════════════════════════════════════════════════════════ -->
-<div v-if="visitedTabs.includes('point_omission_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'point_omission_cockpit'" class="space-y-6">
 
   <!-- 1. 顶部控制栏与核心指标概览 -->
   <div class="glass-panel p-5">
@@ -5431,7 +5431,7 @@
 </div>
 
 <!-- ═══ SUBVIEW: hub_engine/genetic/view.html ═══ -->
-<div v-if="visitedTabs.includes('genetic_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'genetic_cockpit'" class="space-y-6">
   <!-- ══════════ 09. 遗传算法自进化推演大屏 ══════════ -->
   <div class="glass-panel p-6 space-y-6 border border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
     <!-- 模块标题栏 -->
@@ -5857,7 +5857,7 @@
 </div>
 
 <!-- ═══ SUBVIEW: hub_engine/linear_algebra/view.html ═══ -->
-<div v-if="visitedTabs.includes('linear_algebra_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'linear_algebra_cockpit'" class="space-y-6">
   <!-- ══════════ 线性代数空间投影量化推演看板 ══════════ -->
   <div class="glass-panel p-6 space-y-6 border border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
     <!-- 模块标题栏 -->
@@ -6308,7 +6308,7 @@
 </div>
 
 <!-- ═══ SUBVIEW: hub_engine/random_forest/view.html ═══ -->
-<div v-if="visitedTabs.includes('random_forest_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'random_forest_cockpit'" class="space-y-6">
   <div class="glass-panel p-6 space-y-6 border border-emerald-500/30">
     <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
       <div class="flex items-center gap-3">
@@ -6448,7 +6448,7 @@
 </div>
 
 <!-- ═══ SUBVIEW: hub_engine/error_correction/view.html ═══ -->
-<div v-if="visitedTabs.includes('error_correction_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'error_correction_cockpit'" class="space-y-6">
   <div class="glass-panel p-6 space-y-6 border border-violet-500/30">
     <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
       <div class="flex items-center gap-3">
@@ -6647,7 +6647,7 @@
 </div>
 
 <!-- ═══ SUBVIEW: hub_engine/markov_line/view.html ═══ -->
-<div v-if="visitedTabs.includes('markov_line_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'markov_line_cockpit'" class="space-y-6">
   <div class="glass-panel p-6 space-y-6 border border-cyan-500/30">
     <!-- 顶部状态栏与执行按钮 -->
     <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
@@ -6813,7 +6813,7 @@
 </div>
 
 <!-- ═══ SUBVIEW: hub_ai_math/tprd_v40/view.html ═══ -->
-<div v-if="visitedTabs.includes('tprd_v40_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'tprd_v40_cockpit'" class="space-y-6">
   <!-- ══════════ TPRD v4.0 双螺旋矩阵与智能缩水系统驾驶舱 ══════════ -->
   <div class="glass-panel p-6 space-y-6 border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.15)]">
     <!-- 模块标题栏与控制区 -->
@@ -7189,7 +7189,7 @@
 </div>
 
 <!-- ═══ SUBVIEW: hub_engine/spear_shield/view.html ═══ -->
-<div v-if="visitedTabs.includes('spear_shield_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'spear_shield_cockpit'" class="space-y-6">
   <div class="glass-panel p-6 space-y-6 border border-rose-500/30">
     <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
       <div class="flex items-center gap-3">
@@ -7374,7 +7374,7 @@
 </div>
 
 <!-- ═══ SUBVIEW: hub_engine/point_road/view.html ═══ -->
-<div v-if="visitedTabs.includes('point_road_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'point_road_cockpit'" class="space-y-6">
   <div class="glass-panel p-6 space-y-6 border border-cyan-500/30">
     <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
       <div class="flex items-center gap-3">
@@ -7513,7 +7513,7 @@
 </div>
 
 <!-- ═══ SUBVIEW: hub_review/master_review/view.html ═══ -->
-<div v-if="visitedTabs.includes('master_review_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'master_review_cockpit'" class="space-y-6">
         <div class="glass-panel p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div class="flex items-center gap-3">
             <span class="text-3xl">🏆</span>
@@ -7704,7 +7704,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_review/hit_leaderboard/view.html ═══ -->
-<div v-if="visitedTabs.includes('hit_leaderboard')" class="space-y-6">
+<div v-show="activeTab === 'hit_leaderboard'" class="space-y-6">
         <!-- 头部 + 工具栏 -->
         <div class="glass-panel p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div class="flex items-center gap-2">
@@ -7848,7 +7848,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_review/fdr/view.html ═══ -->
-<div v-if="visitedTabs.includes('fdr_audit')" class="space-y-6">
+<div v-show="activeTab === 'fdr_audit'" class="space-y-6">
         <!-- 头部 Header -->
         <div class="glass-panel p-6 border-l-4 border-purple-400 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-[0_0_25px_rgba(168,85,247,0.15)]">
           <div class="space-y-1">
@@ -7989,7 +7989,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_review/daily_ledger/view.html ═══ -->
-<div v-if="visitedTabs.includes('daily_reviews_ledger')" class="space-y-6">
+<div v-show="activeTab === 'daily_reviews_ledger'" class="space-y-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
           <div class="space-y-1">
             <div class="flex items-center gap-3">
@@ -8136,7 +8136,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_review/paper_trading/view.html ═══ -->
-<div v-if="visitedTabs.includes('paper_trading')" class="space-y-6">
+<div v-show="activeTab === 'paper_trading'" class="space-y-6">
         <!-- 头部 Header -->
         <div class="glass-panel p-6 border-l-4 border-cyan-400 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-[0_0_25px_rgba(6,182,212,0.15)]">
           <div class="space-y-1">
@@ -8389,7 +8389,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_review/env_regime/view.html ═══ -->
-<div v-if="visitedTabs.includes('env_regime')" class="space-y-6">
+<div v-show="activeTab === 'env_regime'" class="space-y-6">
         <!-- 头部 Header -->
         <div class="glass-panel p-6 border-l-4 border-indigo-400 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-[0_0_25px_rgba(99,102,241,0.15)]">
           <div class="space-y-1">
@@ -8475,7 +8475,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_review/reports_browser/view.html ═══ -->
-<div v-if="visitedTabs.includes('reports_browser')" class="space-y-4">
+<div v-show="activeTab === 'reports_browser'" class="space-y-4">
         <div class="glass-panel p-5">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800">
             <h2 class="text-sm font-bold text-slate-100 flex items-center gap-2">
@@ -8540,7 +8540,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_review/datasource_review/view.html ═══ -->
-<div v-if="visitedTabs.includes('datasource_cockpit')" id="module-review-datasource" class="space-y-4">
+<div v-show="activeTab === 'datasource_cockpit'" id="module-review-datasource" class="space-y-4">
   <div class="glass-panel p-5 border border-emerald-500/30">
     <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
       <div>
@@ -8563,7 +8563,7 @@
 </div>
 
 <!-- ═══ SUBVIEW: hub_review/sixteen_review/view.html ═══ -->
-<div v-if="visitedTabs.includes('sixteen_cockpit')" id="module-review-sixteen" class="space-y-4">
+<div v-show="activeTab === 'sixteen_cockpit'" id="module-review-sixteen" class="space-y-4">
   <div class="glass-panel p-4 border border-emerald-500/20">
     <div class="flex flex-wrap items-center justify-between gap-3">
       <p class="text-[11px] text-slate-400">
@@ -8578,7 +8578,7 @@
 </div>
 
 <!-- ═══ SUBVIEW: hub_data/draw_trend/view.html ═══ -->
-<div v-if="visitedTabs.includes('draw_trend_chart')" class="space-y-6">
+<div v-show="activeTab === 'draw_trend_chart'" class="space-y-6">
 
         <!-- 顶部控制面板 -->
         <div class="glass-panel p-5">
@@ -9024,7 +9024,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_data/datasource_matrix/view.html ═══ -->
-<div v-if="visitedTabs.includes('datasource_matrix')" class="space-y-6">
+<div v-show="activeTab === 'datasource_matrix'" class="space-y-6">
   <!-- 头部操作与全局控制栏 -->
   <div class="glass-panel p-5">
     <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
@@ -9637,7 +9637,7 @@
 </div>
 
 <!-- ═══ SUBVIEW: hub_data/matrix_80/view.html ═══ -->
-<div v-if="visitedTabs.includes('matrix_80')" class="space-y-6">
+<div v-show="activeTab === 'matrix_80'" class="space-y-6">
         <!-- 探盘合页：截面矩阵 ↔ 012路账本 -->
         <div class="probe-studio-tabs">
           <button type="button" class="probe-studio-tab is-active" @click="openTab('matrix_80')">
@@ -9787,7 +9787,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_data/tail_entropy/view.html ═══ -->
-﻿<div v-if="visitedTabs.includes('tail_entropy')" class="space-y-6">
+﻿<div v-show="activeTab === 'tail_entropy'" class="space-y-6">
         <!-- 探盘合页：截面矩阵 ↔ 012路账本 -->
         <div class="probe-studio-tabs">
           <button type="button" class="probe-studio-tab" @click="openTab('matrix_80')">
@@ -10657,7 +10657,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_data/history_table/view.html ═══ -->
-﻿<div v-if="visitedTabs.includes('history_table')" class="space-y-4">
+﻿<div v-show="activeTab === 'history_table'" class="space-y-4">
         <div class="glass-panel p-5">
           <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
             <div class="flex items-center gap-3">
@@ -10751,7 +10751,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_data/sixteen_matrix/view.html ═══ -->
-<div v-if="visitedTabs.includes('sixteen_cockpit')" class="space-y-6 pt-2 border-t border-slate-800/80">
+<div v-show="activeTab === 'sixteen_cockpit'" class="space-y-6 pt-2 border-t border-slate-800/80">
         
         <!-- 并入块：原「16期频次全景」探盘区（已去掉与驾驶舱重复的精选桶） -->
         <div class="glass-panel p-5 space-y-4">
@@ -11424,7 +11424,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_ops/expert_cockpit/view.html ═══ -->
-<div v-if="visitedTabs.includes('expert_cockpit')" class="space-y-6">
+<div v-show="activeTab === 'expert_cockpit'" class="space-y-6">
   <!-- 头部主控制台 -->
   <div class="glass-panel p-5">
     <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -12049,7 +12049,7 @@
 
       <!-- ═══════════ TAB: EF/RW/FO 动能雷达 ═══════════ -->
 
-      <div v-if="visitedTabs.includes('radar_view')" class="space-y-6">
+      <div v-show="activeTab === 'radar_view'" class="space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <!-- 左侧大雷达图 -->
           <div class="lg:col-span-5 glass-panel p-6">
@@ -12135,7 +12135,7 @@
 
       <!-- ═══════════ TAB: 纯净池与LR定胆分析 ═══════════ -->
 
-      <div v-if="visitedTabs.includes('hit_rate_trends')" class="space-y-6">
+      <div v-show="activeTab === 'hit_rate_trends'" class="space-y-6">
         <!-- 顶部回测 KPI 卡片 -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="glass-panel p-4 flex items-center justify-between">
@@ -12233,7 +12233,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_ops/points_input/view.html ═══ -->
-﻿<div v-if="visitedTabs.includes('points_input')" class="space-y-6">
+﻿<div v-show="activeTab === 'points_input'" class="space-y-6">
         <!-- 头部操作与指标状态卡 -->
         <div class="glass-panel p-5">
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -12628,7 +12628,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: hub_ops/tri_high_input/view.html ═══ -->
-<div v-if="visitedTabs.includes('tri_high_input')" class="space-y-6">
+<div v-show="activeTab === 'tri_high_input'" class="space-y-6">
   <!-- 头部总控与子选项卡切换 -->
   <div class="glass-panel p-5">
     <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
@@ -13136,7 +13136,7 @@
 </div>
 
 <!-- ═══ SUBVIEW: hub_ops/live_terminal/view.html ═══ -->
-<div v-if="visitedTabs.includes('live_terminal')" class="space-y-4">
+<div v-show="activeTab === 'live_terminal'" class="space-y-4">
         <div class="glass-panel p-5">
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
@@ -13171,7 +13171,7 @@
       </div>
 
 <!-- ═══ SUBVIEW: legacy/aux_lstm/view.html ═══ -->
-﻿<div v-if="visitedTabs.includes('lstm_cockpit')" class="space-y-6">
+﻿<div v-show="activeTab === 'lstm_cockpit'" class="space-y-6">
         <!-- B1: LSTM 已退役 —— 保留历史查询, 但页面必须说真话 -->
         <div class="glass-panel p-4 border-l-4 border-rose-500 text-xs space-y-1">
           <div class="flex items-center gap-2">
@@ -13327,7 +13327,7 @@
 
       <!-- ═════════════════ 双层LSTM：样本外滚动复盘审计 ═════════════════ -->
 
-      <div v-if="visitedTabs.includes('lstm_review')" class="space-y-6">
+      <div v-show="activeTab === 'lstm_review'" class="space-y-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
           <div class="space-y-1">
             <div class="flex items-center gap-3">
@@ -13409,7 +13409,7 @@
 
       <!-- ═════════════════ 双层LSTM：深度时序研报库 ═════════════════ -->
 
-      <div v-if="visitedTabs.includes('lstm_reports')" class="space-y-6">
+      <div v-show="activeTab === 'lstm_reports'" class="space-y-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-6">
           <div class="space-y-1">
             <div class="flex items-center gap-3">
@@ -13714,35 +13714,35 @@
   
 
   <!-- Vue App Logic: registry → page mixins → shell -->
-  <script src="/static/js/k8_pages.js?v=20261122_132418"></script>
-  <script src="/static/js/menu_registry.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/jingle.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/data_hub.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/ops.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/expert_cockpit.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/retired.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/suppression.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/point_omission.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/gold_pick2.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/aggregation.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/sixteen.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/cockpit_live.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/datasource.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/reviews_audit.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/unified_brain.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/psychological_game.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/linear_algebra.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/random_forest.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/error_correction.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/genetic.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/markov_line.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/tprd_v40.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/dtw.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/transformer.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/matrix_profile.js?v=20261122_132418"></script>
-  <script src="/static/js/pages/tda.js?v=20261122_132418"></script>
-  <script src="/static/js/app.js?v=20261122_183446"></script>
+  <script src="/static/js/k8_pages.js?v=20261123_213540"></script>
+  <script src="/static/js/menu_registry.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/jingle.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/data_hub.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/ops.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/expert_cockpit.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/retired.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/suppression.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/point_omission.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/gold_pick2.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/aggregation.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/sixteen.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/cockpit_live.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/datasource.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/reviews_audit.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/unified_brain.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/psychological_game.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/linear_algebra.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/random_forest.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/error_correction.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/genetic.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/markov_line.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/tprd_v40.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/dtw.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/transformer.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/matrix_profile.js?v=20261123_213540"></script>
+  <script src="/static/js/pages/tda.js?v=20261123_213540"></script>
+  <script src="/static/js/app.js?v=20261123_213540"></script>
   <!-- AI 智能操盘大脑中继助手 -->
-  <script src="/static/js/ai_assistant.js?v=20261122_132418"></script>
+  <script src="/static/js/ai_assistant.js?v=20261123_213540"></script>
 </body>
 </html>

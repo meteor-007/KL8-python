@@ -1,0 +1,33 @@
+{
+  "target": 2026310,
+  "based_on": 2026309,
+  "generated": "2026-11-20 15:47",
+  "confidence": "🔴 观望 (Level 3)",
+  "gold": 58,
+  "silver": 75,
+  "bronze": 5,
+  "core4": [
+    58,
+    75,
+    5,
+    23
+  ],
+  "def5": [
+    58,
+    75,
+    5,
+    23,
+    69
+  ],
+  "kill": [],
+  "anomalies": [
+    [
+      "尾数湮灭",
+      "8尾 0个 (全灭补偿)"
+    ]
+  ],
+  "walk_forward": {
+    "n": 5,
+    "gold_lift": 0.0
+  }
+}

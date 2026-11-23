@@ -480,4 +480,20 @@ def run_pipeline_complete():
 
 
 if __name__ == "__main__":
-    sys.exit(run_pipeline_complete())
+    # 2026-11-23 废弃：本脚本的推演 / 复盘 / 微信分桶 / 研报能力已全部由
+    # backend.pipeline.run_full_pipeline 覆盖；而且它曾把日报写到 data/ 根目录，
+    # 违反 GEMINI.md「根目录不再存放日报」的约定（本次已把 5 份残留日报归位）。
+    #
+    # 它唯一的独有能力是「盖尔·霍华德旋转矩阵缩水方案」，已下沉为独立子系统：
+    #     python -m backend.modules.wheel_matrix.cli
+    #
+    # 保留本文件只为不让旧脚本/书签突然报错，实际执行一律转交主流水线。
+    print("=" * 72)
+    print("⏹  本脚本已废弃，正在转交主流水线执行")
+    print("    唯一入口        : python -m backend.pipeline.run_full_pipeline")
+    print("    旋转矩阵缩水方案 : python -m backend.modules.wheel_matrix.cli")
+    print("=" * 72)
+    print()
+    import runpy
+    runpy.run_module("backend.pipeline.run_full_pipeline", run_name="__main__")
+    sys.exit(0)

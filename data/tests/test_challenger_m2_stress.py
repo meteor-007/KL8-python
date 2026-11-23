@@ -168,40 +168,27 @@ class TestChallenger2ApiServerStress:
         assert resp_missing.status_code == 404
 
     def test_07_jingle_endpoints(self):
-        resp_sum = self.client.get("/api/jingle/summary")
-        assert resp_sum.status_code == 200
-        assert "target_issue" in resp_sum.json()
-
-        resp_rev = self.client.get("/api/jingle/review?n=10")
-        assert resp_rev.status_code == 200
-
-        resp_rules = self.client.get("/api/jingle/rules")
-        assert resp_rules.status_code == 200
-        assert "rules" in resp_rules.json()
+        # formula_jingle（顺口溜）已于 2026-11-12 退役 → 410
+        for path in ("/api/jingle/summary", "/api/jingle/review?n=10", "/api/jingle/rules"):
+            res = self.client.get(path)
+            assert res.status_code == 410, f"{path} 应返回 410"
+            assert res.json().get("status") == "retired"
 
     def test_08_spatial_points_endpoints(self):
-        resp_sum = self.client.get("/api/spatial-points/summary")
-        assert resp_sum.status_code == 200
-
-        resp_mat = self.client.get("/api/spatial-points/matrix")
-        assert resp_mat.status_code == 200
-
-        resp_rev = self.client.get("/api/spatial-points/review?n=10")
-        assert resp_rev.status_code == 200
+        # spatial_points 已于 2026-09 退役：路由由 module_gate 判决拦截，统一返回 410
+        for path in ("/api/spatial-points/summary", "/api/spatial-points/matrix",
+                     "/api/spatial-points/review?n=10"):
+            assert self.client.get(path).status_code == 410
 
     def test_09_lstm_endpoints(self):
-        resp_sum = self.client.get("/api/lstm/summary")
-        assert resp_sum.status_code == 200
-
-        resp_rev = self.client.get("/api/lstm/review?n=5")
-        assert resp_rev.status_code == 200
+        # lstm 已退役 → 410
+        assert self.client.get("/api/lstm/summary").status_code == 410
+        assert self.client.get("/api/lstm/review?n=5").status_code == 410
 
     def test_10_follow_and_suppression_endpoints(self):
-        resp_f = self.client.get("/api/follow/summary")
-        assert resp_f.status_code == 200
-
-        resp_fc = self.client.get("/api/follow/conditions")
-        assert resp_fc.status_code == 200
+        # follow_track 已退役 → 410；point_suppression 仍活跃 → 200
+        assert self.client.get("/api/follow/summary").status_code == 410
+        assert self.client.get("/api/follow/conditions").status_code == 410
 
         resp_s = self.client.get("/api/suppression/summary")
         assert resp_s.status_code == 200
@@ -215,10 +202,10 @@ class TestChallenger2ApiServerStress:
         assert resp_k.status_code in (404, 401, 405)
 
         resp_g = self.client.get("/api/gemini/summary")
-        assert resp_g.status_code in (200, 401)
+        assert resp_g.status_code == 410          # gemini_pick2 已退役
 
         resp_gp = self.client.get("/api/gold-pick2/summary")
-        assert resp_gp.status_code in (200, 401)
+        assert resp_gp.status_code in (200, 401)  # gold_pick2 仍活跃
 
     def test_12_aggregation_cockpit_and_history(self):
         """Test newly merged aggregation routes in backend/api/api_server.py."""

@@ -53,20 +53,35 @@ from pipeline.run_full_pipeline import (
 
 
 # ─── 模块分层：自动(仅开奖) vs 手动(需点位/手工) ───
-AUTO_DRAW_ONLY_LABELS = [
-    "16期中热 (主推)",
-    "顺口溜",
-    "定胆选2 / 极简选2",
-    "心理博弈",
-    "尾数/质合/熵",
-    "遗传算法",
-    "线性代数",
-    "DTW",
-    "Transformer",
-    "矩阵轮廓",
-    "TDA",
-    "子系统汇总陈列 (主推=16期)",
+# 只列**当前仍活跃**的模块。退役与否问 module_gate，不在这里写死 ——
+# 原先这份清单把顺口溜/遗传/线性代数/DTW/Transformer/矩阵轮廓/TDA 都列成"将执行"，
+# 但它们早已退役，清单与实际执行长期对不上。
+_AUTO_DRAW_ONLY = [
+    ("16期中热 (主推)", "sixteen_hot"),
+    ("顺口溜", "formula_jingle"),
+    ("定胆选2 / 极简选2", "gold_pick2"),
+    ("心理博弈", "psychological_game"),
+    ("尾数/质合/熵", "prime_composite"),
+    ("遗传算法", "genetic"),
+    ("线性代数", "linear_algebra"),
+    ("DTW", "dtw"),
+    ("Transformer", "transformer"),
+    ("矩阵轮廓", "matrix_profile"),
+    ("TDA", "tda"),
+    ("子系统汇总陈列 (主推=16期)", "aggregation"),
 ]
+
+
+def _module_active(module_id: str) -> bool:
+    """模块是否仍在册。判决源唯一：core.module_gate.MODULE_SEED。"""
+    try:
+        from core.module_gate import is_module_active
+        return is_module_active(module_id)
+    except Exception:
+        return True
+
+
+AUTO_DRAW_ONLY_LABELS = [lab for lab, mid in _AUTO_DRAW_ONLY if _module_active(mid)]
 
 MANUAL_POINTS_LABELS = [
     "数据源1×2 深层关联",
@@ -231,7 +246,8 @@ def run_nightly_pipeline(verbose: bool = True, with_research: bool = False):
         print(f"    · {lab}")
 
     auto_results.append(_safe_step("16期中热 (主推)", task394_sixteen_period))
-    auto_results.append(_safe_step("顺口溜", task36_formula_jingle))
+    if _module_active("formula_jingle"):
+        auto_results.append(_safe_step("顺口溜", task36_formula_jingle))
     auto_results.append(_safe_step("定胆选2", task39_gold_pick2))
     auto_results.append(_safe_step("心理博弈", task397_psychological_game))
     auto_results.append(_safe_step("尾数/质合/熵", task396_prime_tail))

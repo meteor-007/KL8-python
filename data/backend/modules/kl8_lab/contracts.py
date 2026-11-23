@@ -59,9 +59,17 @@ class ModuleResult:
         return {n: (v if n in allow else 0.0) for n, v in self.scores.items()}
 
     def top(self, k: int = 5, restrict_to=None) -> list[int]:
-        """降序取前 k 个号码。restrict_to 不为空时先做遮罩。"""
-        src = self.masked_scores(restrict_to) if restrict_to else self.scores
-        return sorted(src, key=lambda n: (-src[n], n))[:k]
+        """降序取前 k 个号码。
+
+        restrict_to 不为空时**只在池内选**。旧实现先把池外压成 0 再排序，
+        当池内正分不足 k 个时，0 分的池外号会按号序被补进来——这会让
+        "拓展集合内 Top5" 实际包含集合外号码。现在池外号不参与排序。
+        """
+        if restrict_to:
+            allow = set(restrict_to)
+            keys = [n for n in self.scores if n in allow]
+            return sorted(keys, key=lambda n: (-self.scores[n], n))[:k]
+        return sorted(self.scores, key=lambda n: (-self.scores[n], n))[:k]
 
     def add(self, section: str, text: str, order: int = 0) -> None:
         self.narrative.append(NarrativeBlock(section, text, order))

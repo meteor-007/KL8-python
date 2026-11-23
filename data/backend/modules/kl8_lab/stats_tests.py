@@ -26,6 +26,7 @@ class TestResult:
     significant: bool = False
     verdict: str = ""
     mde_lift: float = 0.0
+    n_pick: int = 5
 
     def render(self) -> str:
         return (f"{self.label}: T={self.T} 均值={self.mean_hits:.4f} "
@@ -34,28 +35,35 @@ class TestResult:
 
 
 def _verdict(lift: float, q: float, alpha: float) -> str:
-    """§9.7 的三档判定。禁止把"未达显著"包装成"接近有效"。"""
-    if q < alpha and lift >= 1.0:
-        return "统计显著"
-    if lift >= 1.0:
-        return "未达显著"
-    return "劣于随机"
+    """显著性判定。
+
+    只有校正后显著时才区分方向；未达显著一律写"未达显著"，不得把
+    不显著的负 lift（如 lift=0.95、p=0.86）写成"劣于随机"——那是噪声，
+    不是伤害。
+    """
+    if q < alpha:
+        return "统计显著优于随机" if lift >= 1.0 else "统计显著劣于随机"
+    return "未达显著"
 
 
 def evaluate(series: list[float], label: str = "", alpha: float = 0.05,
-             expected: float = E_HITS) -> TestResult:
+             expected: float = E_HITS, n_pick: int = 5) -> TestResult:
     """对逐期命中数序列做单样本 z 检验（H0: 均值 = expected）。
 
-    用超几何方差而非二项方差（§9.6）。
+    方差必须与**实际选号数** n_pick 匹配：20 点位序列用 Hypergeom(80,20,20)
+    的方差，5 码序列用 Hypergeom(80,20,5)。用错会把 |z| 放大 1.79 倍。
     """
     T = len(series)
     if T == 0:
         return TestResult(label=label, T=0, mean_hits=0.0, expected=expected,
                           lift=0.0, se=0.0, z=0.0, p_value=1.0,
-                          verdict="无样本", mde_lift=float("inf"))
+                          verdict="无样本", mde_lift=float("inf"),
+                          n_pick=n_pick)
 
+    n_pick = max(1, int(n_pick))
+    sd = math.sqrt(hypergeom_var(n_pick))
     mean_hits = sum(series) / T
-    se = SD_HITS / math.sqrt(T)
+    se = sd / math.sqrt(T)
     z = safe_div(mean_hits - expected, se, 0.0)
 
     try:
@@ -66,8 +74,7 @@ def evaluate(series: list[float], label: str = "", alpha: float = 0.05,
 
     lift = safe_div(mean_hits, expected, 0.0)
 
-    # 逐期命中数是离散的，n=5 时正态近似在单期不可靠；T 期均值靠 CLT，
-    # 这里额外要求 T 足够，否则不宣称显著。
+    # 逐期命中数是离散的；T 期均值靠 CLT，T 不足时不宣称显著。
     if T < 30:
         p = max(p, 0.5)
 
@@ -75,7 +82,8 @@ def evaluate(series: list[float], label: str = "", alpha: float = 0.05,
     return TestResult(
         label=label, T=T, mean_hits=mean_hits, expected=expected, lift=lift,
         se=se, z=z, p_value=p, q_value=p, significant=(p < alpha),
-        mde_lift=min_detectable_lift(T), verdict=_verdict(lift, p, alpha),
+        mde_lift=min_detectable_lift(T, n_draw=n_pick),
+        verdict=_verdict(lift, p, alpha), n_pick=n_pick,
     )
 
 
@@ -148,7 +156,7 @@ def evaluate_variable(hits: list[float], sizes: list[int],
         label=label, T=T, mean_hits=mean_hits, expected=mean_expected,
         lift=lift, se=math.sqrt(var_total) / T, z=z, p_value=p, q_value=p,
         significant=(p < alpha), mde_lift=mde,
-        verdict=_verdict(lift, p, alpha),
+        verdict=_verdict(lift, p, alpha), n_pick=max(1, round(mean_n)),
     )
 
 
@@ -169,13 +177,15 @@ def power_table(windows: tuple[int, ...] = (277, 120, 60)) -> list[dict]:
     return rows
 
 
-def render_power_table(windows: tuple[int, ...] = (277, 120, 60)) -> str:
+def render_power_table(windows: tuple[int, ...] = (277, 120, 60),
+                       full_label: str = "全档案") -> str:
     rows = power_table(windows)
     lines = ["| 回测窗口 | T | SE | 最小可检测 mean_hits | 最小可检测 lift |",
              "|---|---|---|---|---|"]
-    labels = {277: "全档案", 120: "近 120 期", 60: "近 60 期"}
-    for r in rows:
-        lines.append(f"| {labels.get(r['T'], '')} | {r['T']} | {r['se']:.4f} | "
+    labels = {120: "近 120 期", 60: "近 60 期"}
+    for i, r in enumerate(rows):
+        label = labels.get(r["T"], full_label if i == 0 else "")
+        lines.append(f"| {label} | {r['T']} | {r['se']:.4f} | "
                      f"{r['mde_hits']:.3f} | **+{r['mde_lift_pct']:.1f}%** |")
     return "\n".join(lines)
 
@@ -187,13 +197,14 @@ def min_detectable_lift_of(T: int) -> float:
 # ── lift 置信区间 ─────────────────────────────────────────────
 
 def lift_ci(series: list[float], expected: float = E_HITS,
-            z: float = 1.96) -> tuple[float, float]:
-    """lift 的近似 95% 置信区间。"""
+            z: float = 1.96, n_pick: int = 5) -> tuple[float, float]:
+    """lift 的近似 95% 置信区间（方差按实际选号数 n_pick）。"""
     T = len(series)
     if T == 0 or expected <= EPS:
         return (0.0, float("inf"))
+    sd = math.sqrt(hypergeom_var(max(1, int(n_pick))))
     mean_hits = sum(series) / T
-    se = SD_HITS / math.sqrt(T)
+    se = sd / math.sqrt(T)
     lo = safe_div(mean_hits - z * se, expected, 0.0)
     hi = safe_div(mean_hits + z * se, expected, 0.0)
     return (lo, hi)

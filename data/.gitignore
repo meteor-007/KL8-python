@@ -57,3 +57,5 @@ nul
 *.json_lock
 .agents/
 .codegraph/
+# wheel_matrix 运行期数据库（不是数据源）
+lottery_history.db

@@ -6,6 +6,7 @@ import os
 import json
 import time
 import uuid
+import functools
 import logging
 import threading
 from datetime import datetime
@@ -28,6 +29,24 @@ from backend.api.deps import (
 
 logger = logging.getLogger("k8quant.api")
 router = APIRouter(prefix="/api/pipeline", tags=['pipeline'])
+
+# ── 退役模块的触发门禁 ──
+# 与 api_server 共用同一份 410 契约（backend/api/retired.py）：
+# 不能出现「查询路由返回 410、触发端点却还能启动任务」这种自相矛盾。
+from backend.api.retired import retired_route_response  # noqa: E402
+from backend.core.module_gate import is_module_active as _is_active  # noqa: E402
+
+
+def _retired_guard(module_id: str):
+    """退役模块的触发端点：不启动任何任务，直接返回 410。"""
+    def _decorator(func):
+        @functools.wraps(func)
+        def _wrapper(*args, **kwargs):
+            if not _is_active(module_id):
+                return retired_route_response(module_id)
+            return func(*args, **kwargs)
+        return _wrapper
+    return _decorator
 
 @router.post("/run")
 def trigger_pipeline(background_tasks: BackgroundTasks):
@@ -68,6 +87,7 @@ def trigger_sync_data():
     return {"task_id": task_id, "status": "QUEUED", "message": "开奖数据同步任务已在后台启动！"}
 
 @router.post("/run-jingle")
+@_retired_guard("formula_jingle")
 def trigger_jingle_pipeline():
     """异步触发顺口溜每日全流程口诀分析脚本"""
     task_id = str(uuid.uuid4())[:8]
@@ -83,6 +103,7 @@ def trigger_jingle_pipeline():
     return {"task_id": task_id, "status": "QUEUED", "message": "顺口溜分析任务已在后台启动！"}
 
 @router.post("/run-spatial-points")
+@_retired_guard("spatial_points")
 def trigger_spatial_points_pipeline():
     """异步触发空间重点点位每日全流程分析推演"""
     task_id = str(uuid.uuid4())[:8]
@@ -98,6 +119,7 @@ def trigger_spatial_points_pipeline():
     return {"task_id": task_id, "status": "QUEUED", "message": "重点点位分析任务已在后台启动！"}
 
 @router.post("/run-lstm")
+@_retired_guard("lstm")
 def trigger_lstm_pipeline():
     """异步触发双层LSTM每日量化深度学习推演任务"""
     task_id = str(uuid.uuid4())[:8]
@@ -158,6 +180,7 @@ def trigger_prime_composite_pipeline():
     return {"task_id": task_id, "status": "QUEUED", "message": "质合数推演任务已在后台启动！"}
 
 @router.post("/run-follow")
+@_retired_guard("follow_track")
 def trigger_follow_pipeline():
     """异步触发跟随分析每日全流程推演任务"""
     task_id = str(uuid.uuid4())[:8]
@@ -205,6 +228,7 @@ def trigger_point_omission_pipeline():
 
 
 @router.post("/run-gemini")
+@_retired_guard("gemini_pick2")
 def trigger_gemini_pipeline():
     """异步触发 Gemini 选2每日全流程推演分析"""
     task_id = str(uuid.uuid4())[:8]
@@ -353,6 +377,7 @@ def trigger_unified_brain(background_tasks: BackgroundTasks):
     return {"task_id": task_id, "status": "QUEUED", "message": "全栈统一决策主脑推演已在后台启动！"}
 
 @router.post("/run-linear-algebra")
+@_retired_guard("linear_algebra")
 def trigger_linear_algebra_pipeline():
     """异步触发第10战区 线性代数空间投影推演"""
     task_id = str(uuid.uuid4())[:8]
@@ -367,6 +392,7 @@ def trigger_linear_algebra_pipeline():
     return {"task_id": task_id, "status": "QUEUED", "message": "线性代数推演已在后台启动！"}
 
 @router.post("/run-random-forest")
+@_retired_guard("random_forest")
 def trigger_random_forest_pipeline():
     """异步触发随机森林号码预测推演"""
     task_id = str(uuid.uuid4())[:8]
@@ -381,6 +407,7 @@ def trigger_random_forest_pipeline():
     return {"task_id": task_id, "status": "QUEUED", "message": "随机森林号码预测已在后台启动！"}
 
 @router.post("/run-dtw")
+@_retired_guard("dtw")
 def trigger_dtw_pipeline():
     """异步触发第11战区 动态时间规整DTW推演"""
     task_id = str(uuid.uuid4())[:8]
@@ -395,6 +422,7 @@ def trigger_dtw_pipeline():
     return {"task_id": task_id, "status": "QUEUED", "message": "DTW推演已在后台启动！"}
 
 @router.post("/run-transformer")
+@_retired_guard("transformer")
 def trigger_transformer_pipeline():
     """异步触发第12战区 Transformer全局注意力推演"""
     task_id = str(uuid.uuid4())[:8]
@@ -409,6 +437,7 @@ def trigger_transformer_pipeline():
     return {"task_id": task_id, "status": "QUEUED", "message": "Transformer推演已在后台启动！"}
 
 @router.post("/run-matrix-profile")
+@_retired_guard("matrix_profile")
 def trigger_matrix_profile_pipeline():
     """异步触发第13战区 矩阵轮廓极速查重推演"""
     task_id = str(uuid.uuid4())[:8]
@@ -423,6 +452,7 @@ def trigger_matrix_profile_pipeline():
     return {"task_id": task_id, "status": "QUEUED", "message": "矩阵轮廓查重推演已在后台启动！"}
 
 @router.post("/run-tda")
+@_retired_guard("tda")
 def trigger_tda_pipeline():
     """异步触发第14战区 拓扑数据分析TDA推演"""
     task_id = str(uuid.uuid4())[:8]
@@ -437,6 +467,7 @@ def trigger_tda_pipeline():
     return {"task_id": task_id, "status": "QUEUED", "message": "TDA拓扑推演已在后台启动！"}
 
 @router.post("/run-error-correction")
+@_retired_guard("error_correction")
 def trigger_error_correction_pipeline():
     """异步触发残差改错预测推演 (LightGBM 错题本纠偏)"""
     task_id = str(uuid.uuid4())[:8]

@@ -62,3 +62,8 @@ data/storage/points/*
 !data/storage/raw/daily_points.txt
 !data/storage/raw/kl8_history_final.txt
 !data/storage/points/tri_high_points.json
+
+# ================================
+# 工具生成的本机工作目录（非项目产物）
+# ================================
+.workbuddy/

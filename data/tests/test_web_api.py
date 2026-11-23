@@ -161,36 +161,20 @@ class TestK8QuantWebSystem(unittest.TestCase):
         print(f"[PASS] 09_lottery_trends: 100 periods loaded in ascending order ({summary_range}), 80-ball stats validated")
 
     def test_10_follow_endpoints(self):
-        """测试跟随分析 (重复号追踪与多窗条件跟随) 相关 API 接口"""
-        # 1. /api/follow/summary
-        res_sum = self.client.get("/api/follow/summary")
-        self.assertEqual(res_sum.status_code, 200)
-        data_sum = res_sum.json()
-        self.assertEqual(data_sum["status"], "ok")
-        self.assertIn("target_period", data_sum)
-        self.assertIn("rep_lift", data_sum)
-        self.assertIn("picks", data_sum)
-        self.assertEqual(len(data_sum["picks"]["repeat"]["top5"]), 5)
-        self.assertEqual(len(data_sum["picks"]["inference"]["top6"]), 6)
-        self.assertEqual(len(data_sum["picks"]["conditional"]["top8"]), 8)
+        """跟随分析（follow_track）已退役：接口应返回 410 Gone，而不是 200。
 
-        # 2. /api/follow/review
-        res_rev = self.client.get("/api/follow/review?n=20")
-        self.assertEqual(res_rev.status_code, 200)
-        data_rev = res_rev.json()
-        self.assertEqual(data_rev["status"], "ok")
-        self.assertEqual(len(data_rev["rows"]), 20)
-        self.assertIn("rep_lift", data_rev)
-        self.assertIn("confidence", data_rev)
-
-        # 3. /api/follow/conditions
-        res_cond = self.client.get("/api/follow/conditions")
-        self.assertEqual(res_cond.status_code, 200)
-        data_cond = res_cond.json()
-        self.assertEqual(data_cond["status"], "ok")
-        self.assertIn("cond_info", data_cond)
-        self.assertEqual(len(data_cond["cond_info"]), 5)
-        print("[PASS] 10_follow_endpoints: summary, review, and conditions APIs validated")
+        2026-11-23 起，退役模块的路由由 module_gate 判决统一拦截，
+        返回 410 + status=retired。本用例守护的是这条新契约 ——
+        若哪天有人把门禁拆了，这里会立刻红。
+        """
+        for path in ("/api/follow/summary", "/api/follow/review?n=20",
+                     "/api/follow/conditions"):
+            res = self.client.get(path)
+            self.assertEqual(res.status_code, 410, f"{path} 应返回 410 Gone")
+            body = res.json()
+            self.assertEqual(body.get("status"), "retired")
+            self.assertEqual(body.get("module_id"), "follow_track")
+        print("[PASS] 10_follow_endpoints: 已退役模块统一返回 410 Gone")
 
     def test_11_sixteen_endpoints(self):
         """测试 16 期中热号频次动态推演与组合决策相关 API 接口"""
@@ -234,13 +218,16 @@ class TestK8QuantWebSystem(unittest.TestCase):
         print("[PASS] 11_sixteen_endpoints: summary, review, history, and detail APIs validated")
 
     def test_12_pipeline_run_follow(self):
-        """测试 follow pipeline 运行接口"""
+        """follow_track 已退役：触发端点必须拒绝启动任务，返回 410。
+
+        与 test_10 同一条契约 —— 查询路由返回 410，触发端点也必须一致，
+        否则会出现「查不到但还能跑」的自相矛盾。
+        """
         res_run = self.client.post("/api/pipeline/run-follow")
-        self.assertEqual(res_run.status_code, 200)
-        data_run = res_run.json()
-        self.assertIn("task_id", data_run)
-        self.assertEqual(data_run["status"], "QUEUED")
-        print(f"[PASS] 12_pipeline_run_follow: task created {data_run['task_id']}")
+        self.assertEqual(res_run.status_code, 410)
+        self.assertEqual(res_run.json().get("status"), "retired")
+        self.assertNotIn("task_id", res_run.json(), "退役模块不得启动任务")
+        print("[PASS] 12_pipeline_run_follow: 退役模块拒绝启动任务")
 
     def test_13_pipeline_run_sixteen(self):
         """测试 sixteen pipeline 运行接口"""

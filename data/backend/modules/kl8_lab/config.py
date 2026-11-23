@@ -6,6 +6,7 @@
 """
 from __future__ import annotations
 
+import json
 import os
 import re
 from pathlib import Path
@@ -149,6 +150,10 @@ class Config:
         self.online_learner = Section(raw["online_learner"])
         self.reproducibility = Section(raw["reproducibility"])
         self._file_overrides: dict[str, Path] = {}
+
+    def as_dict(self) -> dict[str, Any]:
+        """返回配置的深拷贝（预注册冻结快照用）。"""
+        return json.loads(json.dumps(self._raw, ensure_ascii=False, default=str))
 
     def override_files(self, points: str | None = None,
                        history: str | None = None) -> None:

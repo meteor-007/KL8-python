@@ -1,0 +1,28 @@
+{
+  "target": 2026313,
+  "based_on": 2026312,
+  "generated": "2026-11-23 14:37",
+  "confidence": "🔴 观望 (Level 3)",
+  "gold": 58,
+  "silver": 28,
+  "bronze": 7,
+  "core4": [
+    58,
+    28,
+    7,
+    17
+  ],
+  "def5": [
+    58,
+    28,
+    7,
+    17,
+    43
+  ],
+  "kill": [],
+  "anomalies": [],
+  "walk_forward": {
+    "n": 5,
+    "gold_lift": 0.8
+  }
+}

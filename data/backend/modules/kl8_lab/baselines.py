@@ -103,7 +103,7 @@ def build_baselines(top5_hits: list[float],
     rep.expanded_lift = evaluate_variable(
         expanded_hits, expanded_sizes, label="点位拓展集合", alpha=alpha)
     rep.points_lift = evaluate(points_hits, label="原始 20 点位", alpha=alpha,
-                               expected=20 * E_EXPANDED_PER_NUMBER)
+                               expected=20 * E_EXPANDED_PER_NUMBER, n_pick=20)
 
     if (rep.expanded_lift and abs(rep.expanded_lift.lift - 1.0) < 0.02
             and not rep.expanded_lift.significant):
