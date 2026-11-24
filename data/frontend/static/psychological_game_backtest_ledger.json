@@ -1,15 +1,15 @@
 {
   "meta": {
     "engine_name": "Psychological Game Theory & Contrarian Reversion Engine",
-    "generated_at": "2026-11-23 20:08:02",
-    "total_history_draws": 2133,
+    "generated_at": "2026-11-24 20:50:23",
+    "total_history_draws": 2134,
     "protocol": "Walk-Forward Out-of-Sample Rolling Test (Zero Future Leakage)"
   },
   "multi_window_summary": {
     "last_30": {
       "n_tests": 30,
-      "start_issue": "2026283",
-      "end_issue": "2026312",
+      "start_issue": "2026284",
+      "end_issue": "2026313",
       "avg_pool_size_top5": 3.0,
       "avg_pool_size_top12": 3.0,
       "denominator_note": "口径已改为池化命中率 = Σ命中 / Σ实际推荐码数。引擎主口径为「最优3码」，top5_assault/top12_balanced 仅为其兼容别名(长度恒 3)，故 top5/top12 两栏实测为同一组号码、同一口径，非两个独立产品。",
@@ -21,29 +21,29 @@
       "lift12": 0.8,
       "top5_win2_rate_pct": 6.67,
       "avg_cold4": 0.87,
-      "avg_rep4": 0.9
+      "avg_rep4": 0.87
     },
     "last_50": {
       "n_tests": 50,
-      "start_issue": "2026263",
-      "end_issue": "2026312",
+      "start_issue": "2026264",
+      "end_issue": "2026313",
       "avg_pool_size_top5": 3.0,
       "avg_pool_size_top12": 3.0,
       "denominator_note": "口径已改为池化命中率 = Σ命中 / Σ实际推荐码数。引擎主口径为「最优3码」，top5_assault/top12_balanced 仅为其兼容别名(长度恒 3)，故 top5/top12 两栏实测为同一组号码、同一口径，非两个独立产品。",
-      "avg_h5": 0.64,
-      "rate5_pct": 21.33,
-      "lift5": 0.853,
-      "avg_h12": 0.64,
-      "rate12_pct": 21.33,
-      "lift12": 0.853,
+      "avg_h5": 0.62,
+      "rate5_pct": 20.67,
+      "lift5": 0.827,
+      "avg_h12": 0.62,
+      "rate12_pct": 20.67,
+      "lift12": 0.827,
       "top5_win2_rate_pct": 8.0,
       "avg_cold4": 0.8,
-      "avg_rep4": 0.9
+      "avg_rep4": 0.88
     },
     "last_100": {
       "n_tests": 100,
-      "start_issue": "2026213",
-      "end_issue": "2026312",
+      "start_issue": "2026214",
+      "end_issue": "2026313",
       "avg_pool_size_top5": 3.0,
       "avg_pool_size_top12": 3.0,
       "denominator_note": "口径已改为池化命中率 = Σ命中 / Σ实际推荐码数。引擎主口径为「最优3码」，top5_assault/top12_balanced 仅为其兼容别名(长度恒 3)，故 top5/top12 两栏实测为同一组号码、同一口径，非两个独立产品。",
@@ -54,91 +54,28 @@
       "rate12_pct": 26.0,
       "lift12": 1.04,
       "top5_win2_rate_pct": 15.0,
-      "avg_cold4": 0.93,
-      "avg_rep4": 0.92
+      "avg_cold4": 0.94,
+      "avg_rep4": 0.9
     },
     "last_200": {
       "n_tests": 200,
-      "start_issue": "2026113",
-      "end_issue": "2026312",
+      "start_issue": "2026114",
+      "end_issue": "2026313",
       "avg_pool_size_top5": 3.0,
       "avg_pool_size_top12": 3.0,
       "denominator_note": "口径已改为池化命中率 = Σ命中 / Σ实际推荐码数。引擎主口径为「最优3码」，top5_assault/top12_balanced 仅为其兼容别名(长度恒 3)，故 top5/top12 两栏实测为同一组号码、同一口径，非两个独立产品。",
-      "avg_h5": 0.81,
-      "rate5_pct": 26.83,
-      "lift5": 1.073,
-      "avg_h12": 0.81,
-      "rate12_pct": 26.83,
-      "lift12": 1.073,
+      "avg_h5": 0.8,
+      "rate5_pct": 26.67,
+      "lift5": 1.067,
+      "avg_h12": 0.8,
+      "rate12_pct": 26.67,
+      "lift12": 1.067,
       "top5_win2_rate_pct": 16.5,
       "avg_cold4": 1.02,
       "avg_rep4": 0.92
     }
   },
   "detailed_100_records": [
-    {
-      "issue": "2026213",
-      "date": "2026-08-11",
-      "target_numbers": [
-        6,
-        7,
-        8,
-        11,
-        12,
-        13,
-        18,
-        21,
-        33,
-        36,
-        37,
-        42,
-        44,
-        56,
-        57,
-        58,
-        60,
-        66,
-        71,
-        80
-      ],
-      "top5": [
-        69,
-        68,
-        54
-      ],
-      "top5_size": 3,
-      "top5_hits": [],
-      "top5_hit_count": 0,
-      "top12": [
-        69,
-        68,
-        54
-      ],
-      "top12_size": 3,
-      "top12_hits": [],
-      "top12_hit_count": 0,
-      "cold4": [
-        69,
-        68,
-        40,
-        54
-      ],
-      "cold4_hits": [],
-      "cold4_hit_count": 0,
-      "repeats4": [
-        1,
-        8,
-        10,
-        12
-      ],
-      "repeats4_hits": [
-        8,
-        12
-      ],
-      "repeats4_hit_count": 2,
-      "predicted_size_bias": "大号回补 (关注 41-80)",
-      "actual_size_ratio": "11:9 (小:大)"
-    },
     {
       "issue": "2026214",
       "date": "2026-08-12",
@@ -6675,6 +6612,68 @@
       "repeats4_hit_count": 0,
       "predicted_size_bias": "大号回补 (关注 41-80)",
       "actual_size_ratio": "12:8 (小:大)"
+    },
+    {
+      "issue": "2026313",
+      "date": "2026-11-23",
+      "target_numbers": [
+        3,
+        19,
+        20,
+        22,
+        25,
+        27,
+        28,
+        35,
+        36,
+        40,
+        50,
+        52,
+        53,
+        56,
+        57,
+        64,
+        67,
+        69,
+        75,
+        77
+      ],
+      "top5": [
+        32,
+        60,
+        61
+      ],
+      "top5_size": 3,
+      "top5_hits": [],
+      "top5_hit_count": 0,
+      "top12": [
+        32,
+        60,
+        61
+      ],
+      "top12_size": 3,
+      "top12_hits": [],
+      "top12_hit_count": 0,
+      "cold4": [
+        32,
+        22,
+        60,
+        38
+      ],
+      "cold4_hits": [
+        22
+      ],
+      "cold4_hit_count": 1,
+      "repeats4": [
+        9,
+        11,
+        15,
+        17
+      ],
+      "repeats4_hits": [],
+      "repeats4_hit_count": 0,
+      "predicted_size_bias": "大号回补 (关注 41-80)",
+      "actual_size_ratio": "10:10 (小:大)"
     }
   ]
 }

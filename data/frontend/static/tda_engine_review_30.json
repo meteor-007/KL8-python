@@ -1,25 +1,100 @@
 {
   "status": "success",
   "module_name": "tda_engine",
-  "latest_period": 2026312,
+  "latest_period": 2026313,
   "n_periods": 30,
   "history_buffer": 35,
   "cache_tag": null,
   "stats": {
-    "avg_top3_hit": 0.63,
-    "avg_top5_hit": 0.63,
-    "avg_top12_hit": 0.63,
-    "gold_hit_rate": 26.7,
-    "pair_double_rate": 3.3,
-    "pair1_double_rate": 3.3,
-    "pair2_double_rate": 10.0,
-    "any_pair_double_rate": 10.0,
-    "both_pairs_double_rate": 3.3,
-    "pair1_single_rate": 50.0,
-    "pair2_single_rate": 26.7,
+    "avg_top3_hit": 0.97,
+    "avg_top5_hit": 0.97,
+    "avg_top12_hit": 0.97,
+    "gold_hit_rate": 30.0,
+    "pair_double_rate": 13.3,
+    "pair1_double_rate": 13.3,
+    "pair2_double_rate": 13.3,
+    "any_pair_double_rate": 20.0,
+    "both_pairs_double_rate": 6.7,
+    "pair1_single_rate": 43.3,
+    "pair2_single_rate": 56.7,
     "total_periods": 30
   },
   "records": [
+    {
+      "period": 2026313,
+      "draw_date": "2026-11-23",
+      "actual_draw": [
+        3,
+        19,
+        20,
+        22,
+        25,
+        27,
+        28,
+        35,
+        36,
+        40,
+        50,
+        52,
+        53,
+        56,
+        57,
+        64,
+        67,
+        69,
+        75,
+        77
+      ],
+      "top3": [
+        62,
+        17,
+        50
+      ],
+      "top3_hits": 1,
+      "top3_hit_nums": [
+        50
+      ],
+      "top5": [
+        62,
+        17,
+        50
+      ],
+      "top5_hits": 1,
+      "top5_hit_nums": [
+        50
+      ],
+      "top12": [
+        62,
+        17,
+        50
+      ],
+      "top12_hits": 1,
+      "top12_hit_nums": [
+        50
+      ],
+      "gold_core": 62,
+      "gold_hit": false,
+      "gold_pair": [
+        17,
+        62
+      ],
+      "gold_pair_hits": 0,
+      "gold_pair_hit_nums": [],
+      "pair1": [
+        17,
+        62
+      ],
+      "pair1_hits": 0,
+      "pair1_double": false,
+      "pair2": [
+        50,
+        62
+      ],
+      "pair2_hits": 1,
+      "pair2_double": false,
+      "any_pair_double": false,
+      "both_pairs_double": false
+    },
     {
       "period": 2026312,
       "draw_date": "2026-11-22",
@@ -123,53 +198,53 @@
         67
       ],
       "top3": [
-        73,
         62,
-        50
+        52,
+        2
       ],
       "top3_hits": 1,
       "top3_hit_nums": [
         62
       ],
       "top5": [
-        73,
         62,
-        50
+        52,
+        2
       ],
       "top5_hits": 1,
       "top5_hit_nums": [
         62
       ],
       "top12": [
-        73,
         62,
-        50
+        52,
+        2
       ],
       "top12_hits": 1,
       "top12_hit_nums": [
         62
       ],
-      "gold_core": 73,
-      "gold_hit": false,
+      "gold_core": 62,
+      "gold_hit": true,
       "gold_pair": [
-        62,
-        73
+        52,
+        62
       ],
       "gold_pair_hits": 1,
       "gold_pair_hit_nums": [
         62
       ],
       "pair1": [
-        62,
-        73
+        52,
+        62
       ],
       "pair1_hits": 1,
       "pair1_double": false,
       "pair2": [
-        50,
-        73
+        2,
+        62
       ],
-      "pair2_hits": 0,
+      "pair2_hits": 1,
       "pair2_double": false,
       "any_pair_double": false,
       "both_pairs_double": false
@@ -200,45 +275,53 @@
         77
       ],
       "top3": [
-        73,
+        62,
         50,
-        66
+        2
       ],
-      "top3_hits": 0,
-      "top3_hit_nums": [],
+      "top3_hits": 1,
+      "top3_hit_nums": [
+        62
+      ],
       "top5": [
-        73,
+        62,
         50,
-        66
+        2
       ],
-      "top5_hits": 0,
-      "top5_hit_nums": [],
+      "top5_hits": 1,
+      "top5_hit_nums": [
+        62
+      ],
       "top12": [
-        73,
+        62,
         50,
-        66
+        2
       ],
-      "top12_hits": 0,
-      "top12_hit_nums": [],
-      "gold_core": 73,
-      "gold_hit": false,
+      "top12_hits": 1,
+      "top12_hit_nums": [
+        62
+      ],
+      "gold_core": 62,
+      "gold_hit": true,
       "gold_pair": [
         50,
-        73
+        62
       ],
-      "gold_pair_hits": 0,
-      "gold_pair_hit_nums": [],
+      "gold_pair_hits": 1,
+      "gold_pair_hit_nums": [
+        62
+      ],
       "pair1": [
         50,
-        73
+        62
       ],
-      "pair1_hits": 0,
+      "pair1_hits": 1,
       "pair1_double": false,
       "pair2": [
-        66,
-        73
+        2,
+        62
       ],
-      "pair2_hits": 0,
+      "pair2_hits": 1,
       "pair2_double": false,
       "any_pair_double": false,
       "both_pairs_double": false
@@ -269,55 +352,59 @@
         74
       ],
       "top3": [
-        73,
         50,
-        45
+        2,
+        62
       ],
-      "top3_hits": 1,
+      "top3_hits": 2,
       "top3_hit_nums": [
+        2,
         50
       ],
       "top5": [
-        73,
         50,
-        45
+        2,
+        62
       ],
-      "top5_hits": 1,
+      "top5_hits": 2,
       "top5_hit_nums": [
+        2,
         50
       ],
       "top12": [
-        73,
         50,
-        45
+        2,
+        62
       ],
-      "top12_hits": 1,
+      "top12_hits": 2,
       "top12_hit_nums": [
+        2,
         50
       ],
-      "gold_core": 73,
-      "gold_hit": false,
+      "gold_core": 50,
+      "gold_hit": true,
       "gold_pair": [
-        50,
-        73
+        2,
+        50
       ],
-      "gold_pair_hits": 1,
+      "gold_pair_hits": 2,
       "gold_pair_hit_nums": [
+        2,
         50
       ],
       "pair1": [
-        50,
-        73
+        2,
+        50
       ],
-      "pair1_hits": 1,
-      "pair1_double": false,
+      "pair1_hits": 2,
+      "pair1_double": true,
       "pair2": [
-        45,
-        73
+        50,
+        62
       ],
-      "pair2_hits": 0,
+      "pair2_hits": 1,
       "pair2_double": false,
-      "any_pair_double": false,
+      "any_pair_double": true,
       "both_pairs_double": false
     },
     {
@@ -346,55 +433,58 @@
         80
       ],
       "top3": [
-        62,
-        8,
-        73
+        51,
+        52,
+        31
       ],
-      "top3_hits": 1,
+      "top3_hits": 2,
       "top3_hit_nums": [
-        8
+        31,
+        51
       ],
       "top5": [
-        62,
-        8,
-        73
+        51,
+        52,
+        31
       ],
-      "top5_hits": 1,
+      "top5_hits": 2,
       "top5_hit_nums": [
-        8
+        31,
+        51
       ],
       "top12": [
-        62,
-        8,
-        73
+        51,
+        52,
+        31
       ],
-      "top12_hits": 1,
+      "top12_hits": 2,
       "top12_hit_nums": [
-        8
+        31,
+        51
       ],
-      "gold_core": 62,
-      "gold_hit": false,
+      "gold_core": 51,
+      "gold_hit": true,
       "gold_pair": [
-        8,
-        62
+        51,
+        52
       ],
       "gold_pair_hits": 1,
       "gold_pair_hit_nums": [
-        8
+        51
       ],
       "pair1": [
-        8,
-        62
+        51,
+        52
       ],
       "pair1_hits": 1,
       "pair1_double": false,
       "pair2": [
-        62,
-        73
+        31,
+        51
       ],
-      "pair2_hits": 0,
-      "pair2_double": false,
-      "any_pair_double": false,
+      "pair2_hits": 2,
+      "pair2_double": true,
+      "any_pair_double": true,
       "both_pairs_double": false
     },
     {
@@ -424,41 +514,49 @@
       ],
       "top3": [
         62,
-        51,
-        2
+        73,
+        50
       ],
-      "top3_hits": 0,
-      "top3_hit_nums": [],
+      "top3_hits": 1,
+      "top3_hit_nums": [
+        73
+      ],
       "top5": [
         62,
-        51,
-        2
+        73,
+        50
       ],
-      "top5_hits": 0,
-      "top5_hit_nums": [],
+      "top5_hits": 1,
+      "top5_hit_nums": [
+        73
+      ],
       "top12": [
         62,
-        51,
-        2
+        73,
+        50
       ],
-      "top12_hits": 0,
-      "top12_hit_nums": [],
+      "top12_hits": 1,
+      "top12_hit_nums": [
+        73
+      ],
       "gold_core": 62,
       "gold_hit": false,
       "gold_pair": [
-        51,
-        62
+        62,
+        73
       ],
-      "gold_pair_hits": 0,
-      "gold_pair_hit_nums": [],
+      "gold_pair_hits": 1,
+      "gold_pair_hit_nums": [
+        73
+      ],
       "pair1": [
-        51,
-        62
+        62,
+        73
       ],
-      "pair1_hits": 0,
+      "pair1_hits": 1,
       "pair1_double": false,
       "pair2": [
-        2,
+        50,
         62
       ],
       "pair2_hits": 0,
@@ -492,45 +590,51 @@
         78
       ],
       "top3": [
-        73,
         50,
-        2
+        2,
+        62
       ],
-      "top3_hits": 0,
-      "top3_hit_nums": [],
+      "top3_hits": 1,
+      "top3_hit_nums": [
+        62
+      ],
       "top5": [
-        73,
         50,
-        2
+        2,
+        62
       ],
-      "top5_hits": 0,
-      "top5_hit_nums": [],
+      "top5_hits": 1,
+      "top5_hit_nums": [
+        62
+      ],
       "top12": [
-        73,
         50,
-        2
+        2,
+        62
       ],
-      "top12_hits": 0,
-      "top12_hit_nums": [],
-      "gold_core": 73,
+      "top12_hits": 1,
+      "top12_hit_nums": [
+        62
+      ],
+      "gold_core": 50,
       "gold_hit": false,
       "gold_pair": [
-        50,
-        73
+        2,
+        50
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": [],
       "pair1": [
-        50,
-        73
+        2,
+        50
       ],
       "pair1_hits": 0,
       "pair1_double": false,
       "pair2": [
-        2,
-        73
+        50,
+        62
       ],
-      "pair2_hits": 0,
+      "pair2_hits": 1,
       "pair2_double": false,
       "any_pair_double": false,
       "both_pairs_double": false
@@ -563,28 +667,31 @@
       "top3": [
         50,
         45,
-        73
+        43
       ],
-      "top3_hits": 1,
+      "top3_hits": 2,
       "top3_hit_nums": [
+        43,
         45
       ],
       "top5": [
         50,
         45,
-        73
+        43
       ],
-      "top5_hits": 1,
+      "top5_hits": 2,
       "top5_hit_nums": [
+        43,
         45
       ],
       "top12": [
         50,
         45,
-        73
+        43
       ],
-      "top12_hits": 1,
+      "top12_hits": 2,
       "top12_hit_nums": [
+        43,
         45
       ],
       "gold_core": 50,
@@ -604,10 +711,10 @@
       "pair1_hits": 1,
       "pair1_double": false,
       "pair2": [
-        50,
-        73
+        43,
+        50
       ],
-      "pair2_hits": 0,
+      "pair2_hits": 1,
       "pair2_double": false,
       "any_pair_double": false,
       "both_pairs_double": false
@@ -707,9 +814,9 @@
         80
       ],
       "top3": [
-        73,
+        2,
         50,
-        2
+        73
       ],
       "top3_hits": 3,
       "top3_hit_nums": [
@@ -718,9 +825,9 @@
         73
       ],
       "top5": [
-        73,
+        2,
         50,
-        2
+        73
       ],
       "top5_hits": 3,
       "top5_hit_nums": [
@@ -729,9 +836,9 @@
         73
       ],
       "top12": [
-        73,
+        2,
         50,
-        2
+        73
       ],
       "top12_hits": 3,
       "top12_hit_nums": [
@@ -739,20 +846,20 @@
         50,
         73
       ],
-      "gold_core": 73,
+      "gold_core": 2,
       "gold_hit": true,
       "gold_pair": [
-        50,
-        73
+        2,
+        50
       ],
       "gold_pair_hits": 2,
       "gold_pair_hit_nums": [
-        50,
-        73
+        2,
+        50
       ],
       "pair1": [
-        50,
-        73
+        2,
+        50
       ],
       "pair1_hits": 2,
       "pair1_double": true,
@@ -791,43 +898,43 @@
         75
       ],
       "top3": [
-        73,
         50,
+        45,
         2
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
       "top5": [
-        73,
         50,
+        45,
         2
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
       "top12": [
-        73,
         50,
+        45,
         2
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
-      "gold_core": 73,
+      "gold_core": 50,
       "gold_hit": false,
       "gold_pair": [
-        50,
-        73
+        45,
+        50
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": [],
       "pair1": [
-        50,
-        73
+        45,
+        50
       ],
       "pair1_hits": 0,
       "pair1_double": false,
       "pair2": [
         2,
-        73
+        50
       ],
       "pair2_hits": 0,
       "pair2_double": false,
@@ -930,52 +1037,50 @@
       ],
       "top3": [
         73,
-        51,
-        50
+        50,
+        45
       ],
       "top3_hits": 1,
       "top3_hit_nums": [
-        51
+        45
       ],
       "top5": [
         73,
-        51,
-        50
+        50,
+        45
       ],
       "top5_hits": 1,
       "top5_hit_nums": [
-        51
+        45
       ],
       "top12": [
         73,
-        51,
-        50
+        50,
+        45
       ],
       "top12_hits": 1,
       "top12_hit_nums": [
-        51
+        45
       ],
       "gold_core": 73,
       "gold_hit": false,
       "gold_pair": [
-        51,
-        73
-      ],
-      "gold_pair_hits": 1,
-      "gold_pair_hit_nums": [
-        51
-      ],
-      "pair1": [
-        51,
-        73
-      ],
-      "pair1_hits": 1,
-      "pair1_double": false,
-      "pair2": [
         50,
         73
       ],
-      "pair2_hits": 0,
+      "gold_pair_hits": 0,
+      "gold_pair_hit_nums": [],
+      "pair1": [
+        50,
+        73
+      ],
+      "pair1_hits": 0,
+      "pair1_double": false,
+      "pair2": [
+        45,
+        73
+      ],
+      "pair2_hits": 1,
       "pair2_double": false,
       "any_pair_double": false,
       "both_pairs_double": false
@@ -1006,50 +1111,48 @@
         79
       ],
       "top3": [
-        72,
-        51,
-        60
+        50,
+        43,
+        72
       ],
       "top3_hits": 1,
       "top3_hit_nums": [
         72
       ],
       "top5": [
-        72,
-        51,
-        60
+        50,
+        43,
+        72
       ],
       "top5_hits": 1,
       "top5_hit_nums": [
         72
       ],
       "top12": [
-        72,
-        51,
-        60
+        50,
+        43,
+        72
       ],
       "top12_hits": 1,
       "top12_hit_nums": [
         72
       ],
-      "gold_core": 72,
-      "gold_hit": true,
+      "gold_core": 50,
+      "gold_hit": false,
       "gold_pair": [
-        51,
-        72
+        43,
+        50
       ],
-      "gold_pair_hits": 1,
-      "gold_pair_hit_nums": [
-        72
-      ],
+      "gold_pair_hits": 0,
+      "gold_pair_hit_nums": [],
       "pair1": [
-        51,
-        72
+        43,
+        50
       ],
-      "pair1_hits": 1,
+      "pair1_hits": 0,
       "pair1_double": false,
       "pair2": [
-        60,
+        50,
         72
       ],
       "pair2_hits": 1,
@@ -1084,42 +1187,50 @@
       ],
       "top3": [
         50,
-        52,
-        68
+        2,
+        45
       ],
-      "top3_hits": 0,
-      "top3_hit_nums": [],
+      "top3_hits": 1,
+      "top3_hit_nums": [
+        2
+      ],
       "top5": [
         50,
-        52,
-        68
+        2,
+        45
       ],
-      "top5_hits": 0,
-      "top5_hit_nums": [],
+      "top5_hits": 1,
+      "top5_hit_nums": [
+        2
+      ],
       "top12": [
         50,
-        52,
-        68
+        2,
+        45
       ],
-      "top12_hits": 0,
-      "top12_hit_nums": [],
+      "top12_hits": 1,
+      "top12_hit_nums": [
+        2
+      ],
       "gold_core": 50,
       "gold_hit": false,
       "gold_pair": [
-        50,
-        52
+        2,
+        50
       ],
-      "gold_pair_hits": 0,
-      "gold_pair_hit_nums": [],
+      "gold_pair_hits": 1,
+      "gold_pair_hit_nums": [
+        2
+      ],
       "pair1": [
-        50,
-        52
+        2,
+        50
       ],
-      "pair1_hits": 0,
+      "pair1_hits": 1,
       "pair1_double": false,
       "pair2": [
-        50,
-        68
+        45,
+        50
       ],
       "pair2_hits": 0,
       "pair2_double": false,
@@ -1153,8 +1264,8 @@
       ],
       "top3": [
         50,
-        35,
-        45
+        45,
+        73
       ],
       "top3_hits": 2,
       "top3_hit_nums": [
@@ -1163,8 +1274,8 @@
       ],
       "top5": [
         50,
-        35,
-        45
+        45,
+        73
       ],
       "top5_hits": 2,
       "top5_hit_nums": [
@@ -1173,8 +1284,8 @@
       ],
       "top12": [
         50,
-        35,
-        45
+        45,
+        73
       ],
       "top12_hits": 2,
       "top12_hit_nums": [
@@ -1184,25 +1295,26 @@
       "gold_core": 50,
       "gold_hit": true,
       "gold_pair": [
-        35,
-        50
-      ],
-      "gold_pair_hits": 1,
-      "gold_pair_hit_nums": [
-        50
-      ],
-      "pair1": [
-        35,
-        50
-      ],
-      "pair1_hits": 1,
-      "pair1_double": false,
-      "pair2": [
         45,
         50
       ],
-      "pair2_hits": 2,
-      "pair2_double": true,
+      "gold_pair_hits": 2,
+      "gold_pair_hit_nums": [
+        45,
+        50
+      ],
+      "pair1": [
+        45,
+        50
+      ],
+      "pair1_hits": 2,
+      "pair1_double": true,
+      "pair2": [
+        50,
+        73
+      ],
+      "pair2_hits": 1,
+      "pair2_double": false,
       "any_pair_double": true,
       "both_pairs_double": false
     },
@@ -1232,56 +1344,63 @@
         74
       ],
       "top3": [
-        68,
+        73,
         50,
-        62
+        2
       ],
-      "top3_hits": 1,
+      "top3_hits": 3,
       "top3_hit_nums": [
-        50
+        2,
+        50,
+        73
       ],
       "top5": [
-        68,
+        73,
         50,
-        62
+        2
       ],
-      "top5_hits": 1,
+      "top5_hits": 3,
       "top5_hit_nums": [
-        50
+        2,
+        50,
+        73
       ],
       "top12": [
-        68,
+        73,
         50,
-        62
+        2
       ],
-      "top12_hits": 1,
+      "top12_hits": 3,
       "top12_hit_nums": [
-        50
+        2,
+        50,
+        73
       ],
-      "gold_core": 68,
-      "gold_hit": false,
+      "gold_core": 73,
+      "gold_hit": true,
       "gold_pair": [
         50,
-        68
+        73
       ],
-      "gold_pair_hits": 1,
+      "gold_pair_hits": 2,
       "gold_pair_hit_nums": [
-        50
+        50,
+        73
       ],
       "pair1": [
         50,
-        68
+        73
       ],
-      "pair1_hits": 1,
-      "pair1_double": false,
+      "pair1_hits": 2,
+      "pair1_double": true,
       "pair2": [
-        62,
-        68
+        2,
+        73
       ],
-      "pair2_hits": 0,
-      "pair2_double": false,
-      "any_pair_double": false,
-      "both_pairs_double": false
+      "pair2_hits": 2,
+      "pair2_double": true,
+      "any_pair_double": true,
+      "both_pairs_double": true
     },
     {
       "period": 2026295,
@@ -1309,43 +1428,43 @@
         77
       ],
       "top3": [
+        50,
         68,
-        43,
-        45
+        52
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
       "top5": [
+        50,
         68,
-        43,
-        45
+        52
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
       "top12": [
+        50,
         68,
-        43,
-        45
+        52
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
-      "gold_core": 68,
+      "gold_core": 50,
       "gold_hit": false,
       "gold_pair": [
-        43,
+        50,
         68
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": [],
       "pair1": [
-        43,
+        50,
         68
       ],
       "pair1_hits": 0,
       "pair1_double": false,
       "pair2": [
-        45,
-        68
+        50,
+        52
       ],
       "pair2_hits": 0,
       "pair2_double": false,
@@ -1380,21 +1499,21 @@
       "top3": [
         73,
         50,
-        44
+        62
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
       "top5": [
         73,
         50,
-        44
+        62
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
       "top12": [
         73,
         50,
-        44
+        62
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
@@ -1413,7 +1532,7 @@
       "pair1_hits": 0,
       "pair1_double": false,
       "pair2": [
-        44,
+        62,
         73
       ],
       "pair2_hits": 0,
@@ -1447,47 +1566,58 @@
         78
       ],
       "top3": [
+        73,
         50,
-        52,
-        2
+        62
       ],
-      "top3_hits": 0,
-      "top3_hit_nums": [],
+      "top3_hits": 2,
+      "top3_hit_nums": [
+        62,
+        73
+      ],
       "top5": [
+        73,
         50,
-        52,
-        2
+        62
       ],
-      "top5_hits": 0,
-      "top5_hit_nums": [],
+      "top5_hits": 2,
+      "top5_hit_nums": [
+        62,
+        73
+      ],
       "top12": [
+        73,
         50,
-        52,
-        2
+        62
       ],
-      "top12_hits": 0,
-      "top12_hit_nums": [],
-      "gold_core": 50,
-      "gold_hit": false,
+      "top12_hits": 2,
+      "top12_hit_nums": [
+        62,
+        73
+      ],
+      "gold_core": 73,
+      "gold_hit": true,
       "gold_pair": [
         50,
-        52
+        73
       ],
-      "gold_pair_hits": 0,
-      "gold_pair_hit_nums": [],
+      "gold_pair_hits": 1,
+      "gold_pair_hit_nums": [
+        73
+      ],
       "pair1": [
         50,
-        52
+        73
       ],
-      "pair1_hits": 0,
+      "pair1_hits": 1,
       "pair1_double": false,
       "pair2": [
-        2,
-        50
+        62,
+        73
       ],
-      "pair2_hits": 0,
-      "pair2_double": false,
-      "any_pair_double": false,
+      "pair2_hits": 2,
+      "pair2_double": true,
+      "any_pair_double": true,
       "both_pairs_double": false
     },
     {
@@ -1516,45 +1646,56 @@
         75
       ],
       "top3": [
-        16,
-        60,
-        73
+        66,
+        50,
+        26
       ],
-      "top3_hits": 0,
-      "top3_hit_nums": [],
+      "top3_hits": 2,
+      "top3_hit_nums": [
+        26,
+        50
+      ],
       "top5": [
-        16,
-        60,
-        73
+        66,
+        50,
+        26
       ],
-      "top5_hits": 0,
-      "top5_hit_nums": [],
+      "top5_hits": 2,
+      "top5_hit_nums": [
+        26,
+        50
+      ],
       "top12": [
-        16,
-        60,
-        73
+        66,
+        50,
+        26
       ],
-      "top12_hits": 0,
-      "top12_hit_nums": [],
-      "gold_core": 16,
+      "top12_hits": 2,
+      "top12_hit_nums": [
+        26,
+        50
+      ],
+      "gold_core": 66,
       "gold_hit": false,
       "gold_pair": [
-        16,
-        60
+        50,
+        66
       ],
-      "gold_pair_hits": 0,
-      "gold_pair_hit_nums": [],
+      "gold_pair_hits": 1,
+      "gold_pair_hit_nums": [
+        50
+      ],
       "pair1": [
-        16,
-        60
+        50,
+        66
       ],
-      "pair1_hits": 0,
+      "pair1_hits": 1,
       "pair1_double": false,
       "pair2": [
-        16,
-        73
+        26,
+        66
       ],
-      "pair2_hits": 0,
+      "pair2_hits": 1,
       "pair2_double": false,
       "any_pair_double": false,
       "both_pairs_double": false
@@ -1585,43 +1726,43 @@
         78
       ],
       "top3": [
-        73,
+        1,
         72,
-        2
+        11
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
       "top5": [
-        73,
+        1,
         72,
-        2
+        11
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
       "top12": [
-        73,
+        1,
         72,
-        2
+        11
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
-      "gold_core": 73,
+      "gold_core": 1,
       "gold_hit": false,
       "gold_pair": [
-        72,
-        73
+        1,
+        72
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": [],
       "pair1": [
-        72,
-        73
+        1,
+        72
       ],
       "pair1_hits": 0,
       "pair1_double": false,
       "pair2": [
-        2,
-        73
+        1,
+        11
       ],
       "pair2_hits": 0,
       "pair2_double": false,
@@ -1655,41 +1796,41 @@
       ],
       "top3": [
         73,
-        2,
-        11
+        1,
+        15
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
       "top5": [
         73,
-        2,
-        11
+        1,
+        15
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
       "top12": [
         73,
-        2,
-        11
+        1,
+        15
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
       "gold_core": 73,
       "gold_hit": false,
       "gold_pair": [
-        2,
+        1,
         73
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": [],
       "pair1": [
-        2,
+        1,
         73
       ],
       "pair1_hits": 0,
       "pair1_double": false,
       "pair2": [
-        11,
+        15,
         73
       ],
       "pair2_hits": 0,
@@ -1723,43 +1864,43 @@
         78
       ],
       "top3": [
-        41,
-        50,
-        9
+        72,
+        60,
+        1
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
       "top5": [
-        41,
-        50,
-        9
+        72,
+        60,
+        1
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
       "top12": [
-        41,
-        50,
-        9
+        72,
+        60,
+        1
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
-      "gold_core": 41,
+      "gold_core": 72,
       "gold_hit": false,
       "gold_pair": [
-        41,
-        50
+        60,
+        72
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": [],
       "pair1": [
-        41,
-        50
+        60,
+        72
       ],
       "pair1_hits": 0,
       "pair1_double": false,
       "pair2": [
-        9,
-        41
+        1,
+        72
       ],
       "pair2_hits": 0,
       "pair2_double": false,
@@ -1792,58 +1933,53 @@
         79
       ],
       "top3": [
-        73,
-        7,
-        50
+        60,
+        72,
+        73
       ],
-      "top3_hits": 2,
+      "top3_hits": 1,
       "top3_hit_nums": [
-        50,
         73
       ],
       "top5": [
-        73,
-        7,
-        50
+        60,
+        72,
+        73
       ],
-      "top5_hits": 2,
+      "top5_hits": 1,
       "top5_hit_nums": [
-        50,
         73
       ],
       "top12": [
-        73,
-        7,
-        50
+        60,
+        72,
+        73
       ],
-      "top12_hits": 2,
+      "top12_hits": 1,
       "top12_hit_nums": [
-        50,
         73
       ],
-      "gold_core": 73,
-      "gold_hit": true,
+      "gold_core": 60,
+      "gold_hit": false,
       "gold_pair": [
-        7,
-        73
+        60,
+        72
       ],
-      "gold_pair_hits": 1,
-      "gold_pair_hit_nums": [
-        73
-      ],
+      "gold_pair_hits": 0,
+      "gold_pair_hit_nums": [],
       "pair1": [
-        7,
-        73
+        60,
+        72
       ],
-      "pair1_hits": 1,
+      "pair1_hits": 0,
       "pair1_double": false,
       "pair2": [
-        50,
+        60,
         73
       ],
-      "pair2_hits": 2,
-      "pair2_double": true,
-      "any_pair_double": true,
+      "pair2_hits": 1,
+      "pair2_double": false,
+      "any_pair_double": false,
       "both_pairs_double": false
     },
     {
@@ -1872,47 +2008,45 @@
         79
       ],
       "top3": [
-        9,
+        72,
         60,
-        72
+        9
       ],
       "top3_hits": 1,
       "top3_hit_nums": [
         9
       ],
       "top5": [
-        9,
+        72,
         60,
-        72
+        9
       ],
       "top5_hits": 1,
       "top5_hit_nums": [
         9
       ],
       "top12": [
-        9,
+        72,
         60,
-        72
+        9
       ],
       "top12_hits": 1,
       "top12_hit_nums": [
         9
       ],
-      "gold_core": 9,
-      "gold_hit": true,
+      "gold_core": 72,
+      "gold_hit": false,
       "gold_pair": [
-        9,
-        60
+        60,
+        72
       ],
-      "gold_pair_hits": 1,
-      "gold_pair_hit_nums": [
-        9
-      ],
+      "gold_pair_hits": 0,
+      "gold_pair_hit_nums": [],
       "pair1": [
-        9,
-        60
+        60,
+        72
       ],
-      "pair1_hits": 1,
+      "pair1_hits": 0,
       "pair1_double": false,
       "pair2": [
         9,
@@ -1949,53 +2083,45 @@
         80
       ],
       "top3": [
-        9,
-        31,
-        44
+        54,
+        44,
+        60
       ],
-      "top3_hits": 1,
-      "top3_hit_nums": [
-        9
-      ],
+      "top3_hits": 0,
+      "top3_hit_nums": [],
       "top5": [
-        9,
-        31,
-        44
+        54,
+        44,
+        60
       ],
-      "top5_hits": 1,
-      "top5_hit_nums": [
-        9
-      ],
+      "top5_hits": 0,
+      "top5_hit_nums": [],
       "top12": [
-        9,
-        31,
-        44
+        54,
+        44,
+        60
       ],
-      "top12_hits": 1,
-      "top12_hit_nums": [
-        9
-      ],
-      "gold_core": 9,
-      "gold_hit": true,
+      "top12_hits": 0,
+      "top12_hit_nums": [],
+      "gold_core": 54,
+      "gold_hit": false,
       "gold_pair": [
-        9,
-        31
+        44,
+        54
       ],
-      "gold_pair_hits": 1,
-      "gold_pair_hit_nums": [
-        9
-      ],
+      "gold_pair_hits": 0,
+      "gold_pair_hit_nums": [],
       "pair1": [
-        9,
-        31
+        44,
+        54
       ],
-      "pair1_hits": 1,
+      "pair1_hits": 0,
       "pair1_double": false,
       "pair2": [
-        9,
-        44
+        54,
+        60
       ],
-      "pair2_hits": 1,
+      "pair2_hits": 0,
       "pair2_double": false,
       "any_pair_double": false,
       "both_pairs_double": false
@@ -2026,53 +2152,45 @@
         78
       ],
       "top3": [
-        44,
         60,
-        15
+        72,
+        1
       ],
-      "top3_hits": 1,
-      "top3_hit_nums": [
-        44
-      ],
+      "top3_hits": 0,
+      "top3_hit_nums": [],
       "top5": [
-        44,
         60,
-        15
+        72,
+        1
       ],
-      "top5_hits": 1,
-      "top5_hit_nums": [
-        44
-      ],
+      "top5_hits": 0,
+      "top5_hit_nums": [],
       "top12": [
-        44,
         60,
-        15
+        72,
+        1
       ],
-      "top12_hits": 1,
-      "top12_hit_nums": [
-        44
-      ],
-      "gold_core": 44,
-      "gold_hit": true,
+      "top12_hits": 0,
+      "top12_hit_nums": [],
+      "gold_core": 60,
+      "gold_hit": false,
       "gold_pair": [
-        44,
-        60
+        60,
+        72
       ],
-      "gold_pair_hits": 1,
-      "gold_pair_hit_nums": [
-        44
-      ],
+      "gold_pair_hits": 0,
+      "gold_pair_hit_nums": [],
       "pair1": [
-        44,
-        60
+        60,
+        72
       ],
-      "pair1_hits": 1,
+      "pair1_hits": 0,
       "pair1_double": false,
       "pair2": [
-        15,
-        44
+        1,
+        60
       ],
-      "pair2_hits": 1,
+      "pair2_hits": 0,
       "pair2_double": false,
       "any_pair_double": false,
       "both_pairs_double": false
@@ -2103,120 +2221,43 @@
         78
       ],
       "top3": [
-        44,
         60,
+        1,
         15
       ],
       "top3_hits": 0,
       "top3_hit_nums": [],
       "top5": [
-        44,
         60,
+        1,
         15
       ],
       "top5_hits": 0,
       "top5_hit_nums": [],
       "top12": [
-        44,
         60,
+        1,
         15
       ],
       "top12_hits": 0,
       "top12_hit_nums": [],
-      "gold_core": 44,
+      "gold_core": 60,
       "gold_hit": false,
       "gold_pair": [
-        44,
+        1,
         60
       ],
       "gold_pair_hits": 0,
       "gold_pair_hit_nums": [],
       "pair1": [
-        44,
+        1,
         60
       ],
       "pair1_hits": 0,
       "pair1_double": false,
       "pair2": [
         15,
-        44
-      ],
-      "pair2_hits": 0,
-      "pair2_double": false,
-      "any_pair_double": false,
-      "both_pairs_double": false
-    },
-    {
-      "period": 2026283,
-      "draw_date": "2026-10-24",
-      "actual_draw": [
-        1,
-        3,
-        7,
-        15,
-        16,
-        25,
-        28,
-        34,
-        41,
-        43,
-        44,
-        60,
-        61,
-        67,
-        70,
-        71,
-        72,
-        74,
-        75,
-        80
-      ],
-      "top3": [
-        35,
-        44,
-        73
-      ],
-      "top3_hits": 1,
-      "top3_hit_nums": [
-        44
-      ],
-      "top5": [
-        35,
-        44,
-        73
-      ],
-      "top5_hits": 1,
-      "top5_hit_nums": [
-        44
-      ],
-      "top12": [
-        35,
-        44,
-        73
-      ],
-      "top12_hits": 1,
-      "top12_hit_nums": [
-        44
-      ],
-      "gold_core": 35,
-      "gold_hit": false,
-      "gold_pair": [
-        35,
-        44
-      ],
-      "gold_pair_hits": 1,
-      "gold_pair_hit_nums": [
-        44
-      ],
-      "pair1": [
-        35,
-        44
-      ],
-      "pair1_hits": 1,
-      "pair1_double": false,
-      "pair2": [
-        35,
-        73
+        60
       ],
       "pair2_hits": 0,
       "pair2_double": false,
@@ -2224,5 +2265,5 @@
       "both_pairs_double": false
     }
   ],
-  "updated_at": "2026-11-23 20:02:40"
+  "updated_at": "2026-11-24 20:35:44"
 }

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23T20:14:47.430994",
+  "generated_at": "2026-11-24T20:55:40.183695",
   "basis": "master_review_ledger.json(100期) + BH-FDR + 前瞻账 + last30 Lift",
   "rules": {
     "new_module_gate": "新模块须预注册+前瞻记账≥200期+BH-FDR(q<0.05)且CI下界>1.0方可投票",
@@ -14,15 +14,15 @@
       "lane": "daily",
       "kind": "pick",
       "status": "votable",
-      "vote_weight": 0.0538,
+      "vote_weight": 0.0692,
       "evidence": {
         "n_periods": 100,
-        "lift": 1.07,
-        "lift_shrunk": 1.0538,
-        "lift_ci_lo": 0.8792,
-        "p_value": 0.252493,
+        "lift": 1.09,
+        "lift_shrunk": 1.0692,
+        "lift_ci_lo": 0.904,
+        "p_value": 0.175324,
         "insufficient": false,
-        "bh_q": 0.429894,
+        "bh_q": 0.328933,
         "bh_significant": false,
         "significant": false
       },
@@ -35,12 +35,12 @@
       "preregistered": null,
       "aliases": [],
       "auto_note": null,
-      "lift_30": 1.0222,
+      "lift_30": 1.1111,
       "n_30": 30,
       "lift_30_source": "module_ledger_last30",
       "gate_reason": null,
       "watermark": null,
-      "prospective_periods": 51
+      "prospective_periods": 52
     },
     "trinity_top12": {
       "id": "trinity_top12",
@@ -49,15 +49,15 @@
       "lane": "daily",
       "kind": "pick",
       "status": "votable",
-      "vote_weight": 0.065,
+      "vote_weight": 0.0661,
       "evidence": {
-        "n_periods": 30,
+        "n_periods": 31,
         "lift": 1.13,
-        "lift_shrunk": 1.065,
-        "lift_ci_lo": 0.957,
-        "p_value": 0.072064,
+        "lift_shrunk": 1.0661,
+        "lift_ci_lo": 0.9557,
+        "p_value": 0.075381,
         "insufficient": true,
-        "bh_q": 0.372321,
+        "bh_q": 0.328933,
         "bh_significant": false,
         "significant": false
       },
@@ -70,12 +70,12 @@
       "preregistered": null,
       "aliases": [],
       "auto_note": null,
-      "lift_30": 1.1333,
+      "lift_30": 1.1444,
       "n_30": 30,
       "lift_30_source": "module_ledger_last30",
       "gate_reason": null,
       "watermark": "样本不足100期",
-      "prospective_periods": 46
+      "prospective_periods": 47
     },
     "aggregation_stable10": {
       "id": "aggregation_stable10",
@@ -84,15 +84,15 @@
       "lane": "daily",
       "kind": "pick",
       "status": "votable",
-      "vote_weight": 0.0281,
+      "vote_weight": 0.0353,
       "evidence": {
-        "n_periods": 71,
-        "lift": 1.04,
-        "lift_shrunk": 1.0281,
-        "lift_ci_lo": 0.9131,
-        "p_value": 0.286596,
+        "n_periods": 72,
+        "lift": 1.05,
+        "lift_shrunk": 1.0353,
+        "lift_ci_lo": 0.9267,
+        "p_value": 0.219289,
         "insufficient": true,
-        "bh_q": 0.429894,
+        "bh_q": 0.328933,
         "bh_significant": false,
         "significant": false
       },
@@ -105,12 +105,12 @@
       "preregistered": null,
       "aliases": [],
       "auto_note": null,
-      "lift_30": 0.96,
+      "lift_30": 1.0133,
       "n_30": 30,
       "lift_30_source": "module_ledger_last30",
       "gate_reason": null,
       "watermark": "样本不足100期",
-      "prospective_periods": 46
+      "prospective_periods": 47
     },
     "trinity_top5": {
       "id": "trinity_top5",
@@ -121,10 +121,10 @@
       "status": "votable",
       "vote_weight": 0.0,
       "evidence": {
-        "n_periods": 30,
-        "lift": 0.99,
-        "lift_shrunk": 0.995,
-        "lift_ci_lo": 0.7383,
+        "n_periods": 31,
+        "lift": 0.98,
+        "lift_shrunk": 0.9898,
+        "lift_ci_lo": 0.7366,
         "p_value": 1.0,
         "insufficient": true,
         "bh_q": 1.0,
@@ -145,7 +145,7 @@
       "lift_30_source": "module_ledger_last30",
       "gate_reason": null,
       "watermark": "样本不足100期",
-      "prospective_periods": 46
+      "prospective_periods": 47
     },
     "point_suppression": {
       "id": "point_suppression",
@@ -162,7 +162,7 @@
         "lift_ci_lo": 0.8758,
         "p_value": 0.124107,
         "insufficient": false,
-        "bh_q": 0.372321,
+        "bh_q": 0.328933,
         "bh_significant": false,
         "significant": false
       },
@@ -182,7 +182,7 @@
       "lift_30_source": "module_ledger_last30",
       "gate_reason": null,
       "watermark": null,
-      "prospective_periods": 57
+      "prospective_periods": 58
     },
     "gold_pick2": {
       "id": "gold_pick2",
@@ -217,7 +217,7 @@
       "lift_30_source": "module_ledger_last30",
       "gate_reason": "live 降级: 收缩后 Lift 0.608<1.0 (n=100), 自动转观察仓",
       "watermark": null,
-      "prospective_periods": 38
+      "prospective_periods": 39
     },
     "formula_jingle": {
       "id": "formula_jingle",
@@ -237,12 +237,12 @@
       "preregistered": null,
       "aliases": [],
       "auto_note": null,
-      "lift_30": 0.82,
+      "lift_30": 0.7959,
       "n_30": 30,
       "lift_30_source": "module_ledger_last30",
       "gate_reason": "2026-11-12 退役: 全量前瞻账 403票/90中 Lift=0.89x(单侧p=0.118), 30期 Lift=0.83x; 单模块占全部台账票数 6.1%, 是最大稀释源。引擎与产物保留, 撤销判决即可复启",
       "watermark": "⚠️ 注册表未经100期榜刷新, 权重为审计种子值",
-      "prospective_periods": 57
+      "prospective_periods": 58
     },
     "datasource": {
       "id": "datasource",
@@ -264,12 +264,12 @@
         "datasource_1x2"
       ],
       "auto_note": null,
-      "lift_30": 0.8,
+      "lift_30": 0.8444,
       "n_30": 30,
       "lift_30_source": "module_ledger_last30",
       "gate_reason": "日常编排舱：出号侧最优3码存档；杀号产品已退役",
       "watermark": "⚠️ 注册表未经100期榜刷新, 权重为审计种子值",
-      "prospective_periods": 32
+      "prospective_periods": 33
     },
     "tri_high": {
       "id": "tri_high",
@@ -289,12 +289,12 @@
       "preregistered": null,
       "aliases": [],
       "auto_note": null,
-      "lift_30": 0.9333,
+      "lift_30": 0.9778,
       "n_30": 30,
       "lift_30_source": "module_ledger_last30",
       "gate_reason": "日常舱：依赖手工三高录入，记前瞻账",
       "watermark": "⚠️ 注册表未经100期榜刷新, 权重为审计种子值",
-      "prospective_periods": 45
+      "prospective_periods": 46
     },
     "point_omission": {
       "id": "point_omission",
@@ -314,12 +314,12 @@
       "preregistered": null,
       "aliases": [],
       "auto_note": null,
-      "lift_30": null,
-      "n_30": 0,
-      "lift_30_source": null,
+      "lift_30": 0.88,
+      "n_30": 20,
+      "lift_30_source": "module_ledger_last30",
       "gate_reason": "日常舱：依赖点位录入",
       "watermark": "⚠️ 注册表未经100期榜刷新, 权重为审计种子值",
-      "prospective_periods": 19
+      "prospective_periods": 20
     },
     "multi_resonance": {
       "id": "multi_resonance",
@@ -340,13 +340,13 @@
       },
       "preregistered": null,
       "aliases": [],
-      "auto_note": "C6 门禁: 前瞻账 38/200 期且未达显著",
-      "lift_30": 1.12,
+      "auto_note": "C6 门禁: 前瞻账 39/200 期且未达显著",
+      "lift_30": 1.0667,
       "n_30": 30,
       "lift_30_source": "module_ledger_last30",
-      "gate_reason": "C6 门禁: 前瞻账 38/200 期且未达显著",
+      "gate_reason": "C6 门禁: 前瞻账 39/200 期且未达显著",
       "watermark": "⚠️ 注册表未经100期榜刷新, 权重为审计种子值",
-      "prospective_periods": 38
+      "prospective_periods": 39
     },
     "aggregation": {
       "id": "aggregation",
@@ -368,12 +368,12 @@
         "aggregation_stable10"
       ],
       "auto_note": null,
-      "lift_30": 1.0667,
+      "lift_30": 1.1556,
       "n_30": 30,
       "lift_30_source": "module_ledger_last30",
       "gate_reason": null,
       "watermark": "⚠️ 注册表未经100期榜刷新, 权重为审计种子值",
-      "prospective_periods": 46
+      "prospective_periods": 47
     },
     "lstm": {
       "id": "lstm",
@@ -578,13 +578,13 @@
         "since": "2026-09-10"
       },
       "aliases": [],
-      "auto_note": "C6 门禁: 前瞻账 45/200 期且未达显著",
+      "auto_note": "C6 门禁: 前瞻账 46/200 期且未达显著",
       "lift_30": 1.4222,
       "n_30": 30,
       "lift_30_source": "module_ledger_last30",
-      "gate_reason": "C6 门禁: 前瞻账 45/200 期且未达显著",
+      "gate_reason": "C6 门禁: 前瞻账 46/200 期且未达显著",
       "watermark": "⚠️ 注册表未经100期榜刷新, 权重为审计种子值",
-      "prospective_periods": 45
+      "prospective_periods": 46
     },
     "psychological_game": {
       "id": "psychological_game",
@@ -608,12 +608,12 @@
       },
       "aliases": [],
       "auto_note": null,
-      "lift_30": 0.8444,
+      "lift_30": 0.8,
       "n_30": 30,
       "lift_30_source": "module_ledger_last30",
       "gate_reason": "B3: 2026-09-07 上线, 零样本外验证; 信号源(大小比/分区钟摆)已被证伪; 转观察仓, 自今日起记前瞻账",
       "watermark": "⚠️ 注册表未经100期榜刷新, 权重为审计种子值",
-      "prospective_periods": 38
+      "prospective_periods": 39
     },
     "genetic": {
       "id": "genetic",
@@ -885,12 +885,12 @@
       "preregistered": null,
       "aliases": [],
       "auto_note": null,
-      "lift_30": 0.9429,
-      "n_30": 28,
+      "lift_30": 0.9379,
+      "n_30": 29,
       "lift_30_source": "module_ledger_last30",
       "gate_reason": "research 舱：不改主推来源",
       "watermark": "⚠️ 注册表未经100期榜刷新, 权重为审计种子值",
-      "prospective_periods": 28
+      "prospective_periods": 29
     }
   }
 }
