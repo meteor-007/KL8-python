@@ -3304,6 +3304,8 @@ const App = {
         fetchTransformerData,
         fetchMatrixProfileData,
         fetchTDAData,
+        retiredModules,
+        isModuleRetired,
         isLinearAlgebraRunning,
         isRandomForestRunning,
         isErrorCorrectionRunning,
