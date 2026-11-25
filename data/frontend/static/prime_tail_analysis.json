@@ -1,41 +1,41 @@
 {
-  "target_period": "2026314",
-  "based_on_period": "2026313",
-  "total_draws": 2134,
-  "date": "2026-11-23",
+  "target_period": "2026315",
+  "based_on_period": "2026314",
+  "total_draws": 2135,
+  "date": "2026-11-24",
   "top3_gold": [
-    61,
     73,
-    47
+    47,
+    2
   ],
   "tail_entropy_analysis": {
-    "period": "2026313",
-    "date": "2026-11-23",
-    "shannon_entropy": 3.3176,
+    "period": "2026314",
+    "date": "2026-11-24",
+    "shannon_entropy": 3.3166,
     "max_entropy": 3.3219,
-    "entropy_ratio_pct": 99.9,
+    "entropy_ratio_pct": 99.8,
     "entropy_state": "极度发散 (大白话：大盘均衡分布，各尾数雨露均沾)",
-    "prime_tail_count": 8,
-    "composite_tail_count": 7,
-    "mixed_tail_count": 5,
+    "prime_tail_count": 9,
+    "composite_tail_count": 5,
+    "mixed_tail_count": 6,
     "tail_details": [
       {
         "tail": 0,
-        "current_count": 3,
-        "period_n_freq": 85,
+        "current_count": 1,
+        "period_n_freq": 83,
         "omission": 0,
         "attribute": "合数专属尾 (0/4/6/8)",
         "badge": "COMPOSITE",
-        "status": "温热活跃"
+        "status": "偏冷待命"
       },
       {
         "tail": 1,
-        "current_count": 0,
-        "period_n_freq": 97,
-        "omission": 1,
+        "current_count": 2,
+        "period_n_freq": 98,
+        "omission": 0,
         "attribute": "质数专属尾 (1/3/7/9)",
         "badge": "PRIME",
-        "status": "当期全灭 (防强反弹)"
+        "status": "温热活跃"
       },
       {
         "tail": 2,
@@ -48,30 +48,30 @@
       },
       {
         "tail": 3,
-        "current_count": 2,
-        "period_n_freq": 108,
+        "current_count": 1,
+        "period_n_freq": 107,
         "omission": 0,
         "attribute": "质数专属尾 (1/3/7/9)",
         "badge": "PRIME",
-        "status": "温热活跃"
-      },
-      {
-        "tail": 4,
-        "current_count": 1,
-        "period_n_freq": 93,
-        "omission": 0,
-        "attribute": "合数专属尾 (0/4/6/8)",
-        "badge": "COMPOSITE",
         "status": "偏冷待命"
       },
       {
+        "tail": 4,
+        "current_count": 2,
+        "period_n_freq": 91,
+        "omission": 0,
+        "attribute": "合数专属尾 (0/4/6/8)",
+        "badge": "COMPOSITE",
+        "status": "温热活跃"
+      },
+      {
         "tail": 5,
-        "current_count": 3,
-        "period_n_freq": 108,
+        "current_count": 4,
+        "period_n_freq": 110,
         "omission": 0,
         "attribute": "双属性尾 (含质数05)",
         "badge": "MIXED_05",
-        "status": "温热活跃"
+        "status": "当期过热 (防高位回调)"
       },
       {
         "tail": 6,
@@ -84,44 +84,44 @@
       },
       {
         "tail": 7,
-        "current_count": 4,
-        "period_n_freq": 108,
-        "omission": 0,
-        "attribute": "质数专属尾 (1/3/7/9)",
-        "badge": "PRIME",
-        "status": "当期过热 (防高位回调)"
-      },
-      {
-        "tail": 8,
-        "current_count": 1,
-        "period_n_freq": 107,
-        "omission": 0,
-        "attribute": "合数专属尾 (0/4/6/8)",
-        "badge": "COMPOSITE",
-        "status": "偏冷待命"
-      },
-      {
-        "tail": 9,
         "current_count": 2,
-        "period_n_freq": 104,
+        "period_n_freq": 107,
         "omission": 0,
         "attribute": "质数专属尾 (1/3/7/9)",
         "badge": "PRIME",
         "status": "温热活跃"
+      },
+      {
+        "tail": 8,
+        "current_count": 0,
+        "period_n_freq": 107,
+        "omission": 1,
+        "attribute": "合数专属尾 (0/4/6/8)",
+        "badge": "COMPOSITE",
+        "status": "当期全灭 (防强反弹)"
+      },
+      {
+        "tail": 9,
+        "current_count": 4,
+        "period_n_freq": 107,
+        "omission": 0,
+        "attribute": "质数专属尾 (1/3/7/9)",
+        "badge": "PRIME",
+        "status": "当期过热 (防高位回调)"
       }
     ]
   },
   "prime_attendance_analysis": {
     "total_evaluated": 22,
     "top5_prime_recommend": [
-      61,
       73,
-      47
+      47,
+      2
     ],
     "top3_prime_core": [
-      61,
       73,
-      47
+      47,
+      2
     ],
     "model_workers": [
       "02",
@@ -139,324 +139,320 @@
     ],
     "prime_cards": [
       {
-        "number": 61,
-        "display": "61",
-        "tail": 1,
-        "global_count": 540,
-        "global_rate_pct": 25.3,
-        "recent_count": 8,
-        "current_omission": 9,
-        "avg_interval": 3.9,
-        "max_omission": 24,
-        "tags": [
-          "紧绷弹簧(抓回补)"
-        ],
-        "momentum_score": 50.22
-      },
-      {
         "number": 73,
         "display": "73",
         "tail": 3,
         "global_count": 557,
-        "global_rate_pct": 26.1,
+        "global_rate_pct": 26.09,
         "recent_count": 8,
-        "current_omission": 6,
+        "current_omission": 7,
         "avg_interval": 3.8,
         "max_omission": 21,
         "tags": [
           "全勤劳模"
         ],
-        "momentum_score": 41.71
+        "momentum_score": 44.87
       },
       {
         "number": 47,
         "display": "47",
         "tail": 7,
         "global_count": 521,
-        "global_rate_pct": 24.41,
+        "global_rate_pct": 24.4,
         "recent_count": 10,
-        "current_omission": 4,
+        "current_omission": 5,
         "avg_interval": 4.1,
         "max_omission": 20,
         "tags": [],
-        "momentum_score": 37.7
-      },
-      {
-        "number": 5,
-        "display": "05",
-        "tail": 5,
-        "global_count": 543,
-        "global_rate_pct": 25.45,
-        "recent_count": 12,
-        "current_omission": 2,
-        "avg_interval": 3.9,
-        "max_omission": 21,
-        "tags": [],
-        "momentum_score": 36.19
+        "momentum_score": 40.62
       },
       {
         "number": 2,
         "display": "02",
         "tail": 2,
         "global_count": 575,
-        "global_rate_pct": 26.94,
+        "global_rate_pct": 26.93,
         "recent_count": 8,
-        "current_omission": 4,
+        "current_omission": 5,
         "avg_interval": 3.7,
         "max_omission": 19,
         "tags": [
           "全勤劳模"
         ],
-        "momentum_score": 35.99
+        "momentum_score": 39.23
+      },
+      {
+        "number": 5,
+        "display": "05",
+        "tail": 5,
+        "global_count": 543,
+        "global_rate_pct": 25.43,
+        "recent_count": 11,
+        "current_omission": 3,
+        "avg_interval": 3.9,
+        "max_omission": 21,
+        "tags": [],
+        "momentum_score": 37.39
       },
       {
         "number": 23,
         "display": "23",
         "tail": 3,
         "global_count": 528,
-        "global_rate_pct": 24.74,
+        "global_rate_pct": 24.73,
         "recent_count": 8,
-        "current_omission": 4,
+        "current_omission": 5,
         "avg_interval": 4.0,
         "max_omission": 25,
         "tags": [],
-        "momentum_score": 34.36
-      },
-      {
-        "number": 71,
-        "display": "71",
-        "tail": 1,
-        "global_count": 559,
-        "global_rate_pct": 26.19,
-        "recent_count": 5,
-        "current_omission": 5,
-        "avg_interval": 3.8,
-        "max_omission": 22,
-        "tags": [
-          "全勤劳模"
-        ],
-        "momentum_score": 32.98
+        "momentum_score": 37.35
       },
       {
         "number": 13,
         "display": "13",
         "tail": 3,
         "global_count": 536,
-        "global_rate_pct": 25.12,
+        "global_rate_pct": 25.11,
         "recent_count": 6,
-        "current_omission": 4,
+        "current_omission": 5,
         "avg_interval": 4.0,
         "max_omission": 20,
         "tags": [],
-        "momentum_score": 30.74
-      },
-      {
-        "number": 17,
-        "display": "17",
-        "tail": 7,
-        "global_count": 515,
-        "global_rate_pct": 24.13,
-        "recent_count": 11,
-        "current_omission": 1,
-        "avg_interval": 4.1,
-        "max_omission": 25,
-        "tags": [
-          "炽热连开"
-        ],
-        "momentum_score": 30.7
-      },
-      {
-        "number": 29,
-        "display": "29",
-        "tail": 9,
-        "global_count": 508,
-        "global_rate_pct": 23.81,
-        "recent_count": 8,
-        "current_omission": 2,
-        "avg_interval": 4.2,
-        "max_omission": 25,
-        "tags": [],
-        "momentum_score": 27.79
+        "momentum_score": 33.73
       },
       {
         "number": 43,
         "display": "43",
         "tail": 3,
         "global_count": 532,
-        "global_rate_pct": 24.93,
+        "global_rate_pct": 24.92,
         "recent_count": 9,
-        "current_omission": 1,
+        "current_omission": 2,
         "avg_interval": 4.0,
         "max_omission": 41,
+        "tags": [],
+        "momentum_score": 30.28
+      },
+      {
+        "number": 17,
+        "display": "17",
+        "tail": 7,
+        "global_count": 516,
+        "global_rate_pct": 24.17,
+        "recent_count": 12,
+        "current_omission": 0,
+        "avg_interval": 4.1,
+        "max_omission": 25,
         "tags": [
           "炽热连开"
         ],
-        "momentum_score": 27.28
+        "momentum_score": 29.65
+      },
+      {
+        "number": 29,
+        "display": "29",
+        "tail": 9,
+        "global_count": 508,
+        "global_rate_pct": 23.79,
+        "recent_count": 7,
+        "current_omission": 3,
+        "avg_interval": 4.2,
+        "max_omission": 25,
+        "tags": [],
+        "momentum_score": 28.78
       },
       {
         "number": 41,
         "display": "41",
         "tail": 1,
         "global_count": 543,
-        "global_rate_pct": 25.45,
-        "recent_count": 5,
-        "current_omission": 3,
+        "global_rate_pct": 25.43,
+        "recent_count": 4,
+        "current_omission": 4,
         "avg_interval": 3.9,
         "max_omission": 29,
         "tags": [],
-        "momentum_score": 26.2
-      },
-      {
-        "number": 7,
-        "display": "07",
-        "tail": 7,
-        "global_count": 554,
-        "global_rate_pct": 25.96,
-        "recent_count": 8,
-        "current_omission": 1,
-        "avg_interval": 3.8,
-        "max_omission": 17,
-        "tags": [
-          "全勤劳模",
-          "炽热连开"
-        ],
-        "momentum_score": 25.88
-      },
-      {
-        "number": 37,
-        "display": "37",
-        "tail": 7,
-        "global_count": 529,
-        "global_rate_pct": 24.79,
-        "recent_count": 5,
-        "current_omission": 3,
-        "avg_interval": 4.0,
-        "max_omission": 28,
-        "tags": [],
-        "momentum_score": 25.77
-      },
-      {
-        "number": 53,
-        "display": "53",
-        "tail": 3,
-        "global_count": 572,
-        "global_rate_pct": 26.8,
-        "recent_count": 9,
-        "current_omission": 0,
-        "avg_interval": 3.7,
-        "max_omission": 25,
-        "tags": [
-          "全勤劳模",
-          "炽热连开"
-        ],
-        "momentum_score": 24.84
-      },
-      {
-        "number": 31,
-        "display": "31",
-        "tail": 1,
-        "global_count": 478,
-        "global_rate_pct": 22.4,
-        "recent_count": 8,
-        "current_omission": 1,
-        "avg_interval": 4.5,
-        "max_omission": 21,
-        "tags": [
-          "出勤偏低",
-          "炽热连开"
-        ],
-        "momentum_score": 24.32
+        "momentum_score": 27.4
       },
       {
         "number": 19,
         "display": "19",
         "tail": 9,
         "global_count": 528,
-        "global_rate_pct": 24.74,
+        "global_rate_pct": 24.73,
         "recent_count": 9,
-        "current_omission": 0,
+        "current_omission": 1,
         "avg_interval": 4.0,
         "max_omission": 20,
         "tags": [
           "炽热连开"
         ],
-        "momentum_score": 24.22
+        "momentum_score": 27.22
       },
       {
-        "number": 11,
-        "display": "11",
-        "tail": 1,
-        "global_count": 552,
-        "global_rate_pct": 25.87,
+        "number": 7,
+        "display": "07",
+        "tail": 7,
+        "global_count": 554,
+        "global_rate_pct": 25.95,
         "recent_count": 7,
-        "current_omission": 1,
-        "avg_interval": 3.9,
-        "max_omission": 24,
+        "current_omission": 2,
+        "avg_interval": 3.8,
+        "max_omission": 17,
         "tags": [
-          "全勤劳模",
-          "炽热连开"
+          "全勤劳模"
         ],
-        "momentum_score": 23.9
+        "momentum_score": 27.17
+      },
+      {
+        "number": 31,
+        "display": "31",
+        "tail": 1,
+        "global_count": 478,
+        "global_rate_pct": 22.39,
+        "recent_count": 8,
+        "current_omission": 2,
+        "avg_interval": 4.5,
+        "max_omission": 21,
+        "tags": [
+          "出勤偏低"
+        ],
+        "momentum_score": 26.98
       },
       {
         "number": 59,
         "display": "59",
         "tail": 9,
         "global_count": 544,
-        "global_rate_pct": 25.49,
+        "global_rate_pct": 25.48,
         "recent_count": 7,
-        "current_omission": 1,
+        "current_omission": 2,
         "avg_interval": 3.9,
         "max_omission": 21,
-        "tags": [
-          "炽热连开"
-        ],
-        "momentum_score": 23.79
+        "tags": [],
+        "momentum_score": 26.86
       },
       {
-        "number": 79,
-        "display": "79",
-        "tail": 9,
-        "global_count": 516,
-        "global_rate_pct": 24.18,
-        "recent_count": 7,
+        "number": 53,
+        "display": "53",
+        "tail": 3,
+        "global_count": 572,
+        "global_rate_pct": 26.79,
+        "recent_count": 8,
         "current_omission": 1,
-        "avg_interval": 4.1,
-        "max_omission": 27,
+        "avg_interval": 3.7,
+        "max_omission": 25,
         "tags": [
+          "全勤劳模",
           "炽热连开"
         ],
-        "momentum_score": 23.25
+        "momentum_score": 26.21
       },
       {
         "number": 3,
         "display": "03",
         "tail": 3,
         "global_count": 537,
-        "global_rate_pct": 25.16,
+        "global_rate_pct": 25.15,
         "recent_count": 8,
-        "current_omission": 0,
+        "current_omission": 1,
         "avg_interval": 4.0,
         "max_omission": 29,
         "tags": [
           "炽热连开"
         ],
-        "momentum_score": 22.48
+        "momentum_score": 25.48
+      },
+      {
+        "number": 11,
+        "display": "11",
+        "tail": 1,
+        "global_count": 552,
+        "global_rate_pct": 25.85,
+        "recent_count": 6,
+        "current_omission": 2,
+        "avg_interval": 3.9,
+        "max_omission": 24,
+        "tags": [
+          "全勤劳模"
+        ],
+        "momentum_score": 25.11
+      },
+      {
+        "number": 61,
+        "display": "61",
+        "tail": 1,
+        "global_count": 541,
+        "global_rate_pct": 25.34,
+        "recent_count": 9,
+        "current_omission": 0,
+        "avg_interval": 3.9,
+        "max_omission": 24,
+        "tags": [
+          "炽热连开"
+        ],
+        "momentum_score": 24.4
       },
       {
         "number": 67,
         "display": "67",
         "tail": 7,
         "global_count": 517,
-        "global_rate_pct": 24.23,
+        "global_rate_pct": 24.22,
         "recent_count": 7,
-        "current_omission": 0,
+        "current_omission": 1,
         "avg_interval": 4.1,
         "max_omission": 25,
         "tags": [
           "炽热连开"
         ],
-        "momentum_score": 20.34
+        "momentum_score": 23.26
+      },
+      {
+        "number": 79,
+        "display": "79",
+        "tail": 9,
+        "global_count": 517,
+        "global_rate_pct": 24.22,
+        "recent_count": 8,
+        "current_omission": 0,
+        "avg_interval": 4.1,
+        "max_omission": 27,
+        "tags": [
+          "炽热连开"
+        ],
+        "momentum_score": 22.2
+      },
+      {
+        "number": 71,
+        "display": "71",
+        "tail": 1,
+        "global_count": 560,
+        "global_rate_pct": 26.23,
+        "recent_count": 6,
+        "current_omission": 0,
+        "avg_interval": 3.8,
+        "max_omission": 22,
+        "tags": [
+          "全勤劳模",
+          "炽热连开"
+        ],
+        "momentum_score": 19.07
+      },
+      {
+        "number": 37,
+        "display": "37",
+        "tail": 7,
+        "global_count": 530,
+        "global_rate_pct": 24.82,
+        "recent_count": 6,
+        "current_omission": 0,
+        "avg_interval": 4.0,
+        "max_omission": 28,
+        "tags": [
+          "炽热连开"
+        ],
+        "momentum_score": 18.65
       }
     ]
   },
@@ -466,22 +462,22 @@
     "recommended_twins": [
       {
         "pair": [
-          71,
-          73
+          3,
+          5
         ],
-        "pair_label": "71-73",
-        "cooc_count": 156,
-        "cooc_rate_pct": 7.31,
-        "current_omission": 17,
-        "avg_interval": 13.5,
-        "max_omission": 57,
-        "tension_index": 1.26,
-        "status": "达到平均周期 (进入回补观察区)",
-        "urgency": "MEDIUM",
-        "tactical_action": "常态观察",
+        "pair_label": "03-05",
+        "cooc_count": 120,
+        "cooc_rate_pct": 5.62,
+        "current_omission": 28,
+        "avg_interval": 17.6,
+        "max_omission": 93,
+        "tension_index": 1.59,
+        "status": "临界紧绷 (形态无阻碍，弹簧憋到极限，防双飞回补)",
+        "urgency": "HIGH",
+        "tactical_action": "形态健康，重点防双飞回补",
         "is_healthy": true,
         "has_adjacency_truncation": false,
-        "pair_score": 99.49
+        "pair_score": 123.69
       },
       {
         "pair": [
@@ -491,37 +487,37 @@
         "pair_label": "05-07",
         "cooc_count": 143,
         "cooc_rate_pct": 6.7,
-        "current_omission": 18,
+        "current_omission": 19,
         "avg_interval": 14.8,
         "max_omission": 103,
-        "tension_index": 1.22,
+        "tension_index": 1.28,
         "status": "达到平均周期 (进入回补观察区)",
         "urgency": "MEDIUM",
         "tactical_action": "常态观察",
         "is_healthy": true,
         "has_adjacency_truncation": false,
-        "pair_score": 94.44
+        "pair_score": 97.44
       }
     ],
     "all_twin_stats": [
       {
         "pair": [
-          71,
-          73
+          3,
+          5
         ],
-        "pair_label": "71-73",
-        "cooc_count": 156,
-        "cooc_rate_pct": 7.31,
-        "current_omission": 17,
-        "avg_interval": 13.5,
-        "max_omission": 57,
-        "tension_index": 1.26,
-        "status": "达到平均周期 (进入回补观察区)",
-        "urgency": "MEDIUM",
-        "tactical_action": "常态观察",
+        "pair_label": "03-05",
+        "cooc_count": 120,
+        "cooc_rate_pct": 5.62,
+        "current_omission": 28,
+        "avg_interval": 17.6,
+        "max_omission": 93,
+        "tension_index": 1.59,
+        "status": "临界紧绷 (形态无阻碍，弹簧憋到极限，防双飞回补)",
+        "urgency": "HIGH",
+        "tactical_action": "形态健康，重点防双飞回补",
         "is_healthy": true,
         "has_adjacency_truncation": false,
-        "pair_score": 99.49
+        "pair_score": 123.69
       },
       {
         "pair": [
@@ -531,16 +527,16 @@
         "pair_label": "05-07",
         "cooc_count": 143,
         "cooc_rate_pct": 6.7,
-        "current_omission": 18,
+        "current_omission": 19,
         "avg_interval": 14.8,
         "max_omission": 103,
-        "tension_index": 1.22,
+        "tension_index": 1.28,
         "status": "达到平均周期 (进入回补观察区)",
         "urgency": "MEDIUM",
         "tactical_action": "常态观察",
         "is_healthy": true,
         "has_adjacency_truncation": false,
-        "pair_score": 94.44
+        "pair_score": 97.44
       },
       {
         "pair": [
@@ -550,16 +546,16 @@
         "pair_label": "11-13",
         "cooc_count": 145,
         "cooc_rate_pct": 6.79,
-        "current_omission": 16,
+        "current_omission": 17,
         "avg_interval": 14.7,
         "max_omission": 60,
-        "tension_index": 1.09,
+        "tension_index": 1.16,
         "status": "达到平均周期 (进入回补观察区)",
         "urgency": "MEDIUM",
         "tactical_action": "常态观察",
         "is_healthy": true,
         "has_adjacency_truncation": false,
-        "pair_score": 88.39
+        "pair_score": 91.89
       },
       {
         "pair": [
@@ -569,54 +565,16 @@
         "pair_label": "41-43",
         "cooc_count": 128,
         "cooc_rate_pct": 6.0,
-        "current_omission": 16,
+        "current_omission": 17,
         "avg_interval": 16.6,
         "max_omission": 111,
-        "tension_index": 0.96,
-        "status": "常态蓄力",
-        "urgency": "NORMAL",
-        "tactical_action": "蓄力观察",
-        "is_healthy": true,
-        "has_adjacency_truncation": false,
-        "pair_score": 77.95
-      },
-      {
-        "pair": [
-          59,
-          61
-        ],
-        "pair_label": "59-61",
-        "cooc_count": 148,
-        "cooc_rate_pct": 6.94,
-        "current_omission": 10,
-        "avg_interval": 14.3,
-        "max_omission": 64,
-        "tension_index": 0.7,
-        "status": "常态蓄力",
-        "urgency": "NORMAL",
-        "tactical_action": "蓄力观察",
-        "is_healthy": true,
-        "has_adjacency_truncation": false,
-        "pair_score": 69.64
-      },
-      {
-        "pair": [
-          3,
-          5
-        ],
-        "pair_label": "03-05",
-        "cooc_count": 120,
-        "cooc_rate_pct": 5.62,
-        "current_omission": 27,
-        "avg_interval": 17.6,
-        "max_omission": 93,
-        "tension_index": 1.53,
-        "status": "单码消化中 (上期已出03，防回调，重点看好05反弹)",
+        "tension_index": 1.02,
+        "status": "达到平均周期 (进入回补观察区)",
         "urgency": "MEDIUM",
-        "tactical_action": "主防 05 单飞，谨慎合体",
+        "tactical_action": "常态观察",
         "is_healthy": true,
         "has_adjacency_truncation": false,
-        "pair_score": 67.96
+        "pair_score": 80.95
       },
       {
         "pair": [
@@ -626,16 +584,54 @@
         "pair_label": "29-31",
         "cooc_count": 114,
         "cooc_rate_pct": 5.34,
-        "current_omission": 15,
+        "current_omission": 16,
         "avg_interval": 18.7,
         "max_omission": 105,
-        "tension_index": 0.8,
+        "tension_index": 0.86,
         "status": "常态蓄力",
         "urgency": "NORMAL",
         "tactical_action": "蓄力观察",
         "is_healthy": true,
         "has_adjacency_truncation": false,
-        "pair_score": 66.66
+        "pair_score": 69.66
+      },
+      {
+        "pair": [
+          59,
+          61
+        ],
+        "pair_label": "59-61",
+        "cooc_count": 148,
+        "cooc_rate_pct": 6.93,
+        "current_omission": 11,
+        "avg_interval": 14.3,
+        "max_omission": 64,
+        "tension_index": 0.77,
+        "status": "单码消化中 (上期已出61，防回调，重点看好59反弹)",
+        "urgency": "MEDIUM",
+        "tactical_action": "主防 59 单飞，谨慎合体",
+        "is_healthy": true,
+        "has_adjacency_truncation": false,
+        "pair_score": 47.51
+      },
+      {
+        "pair": [
+          71,
+          73
+        ],
+        "pair_label": "71-73",
+        "cooc_count": 156,
+        "cooc_rate_pct": 7.31,
+        "current_omission": 18,
+        "avg_interval": 13.5,
+        "max_omission": 57,
+        "tension_index": 1.33,
+        "status": "形态阻断 (上期开出71伴随连号截断，连庄阻力极大，严禁盲目追双飞！建议拆分单防73)",
+        "urgency": "BLOCKED",
+        "tactical_action": "严禁买选2组合！建议拆分单抓 73 补位",
+        "is_healthy": false,
+        "has_adjacency_truncation": true,
+        "pair_score": 15.45
       },
       {
         "pair": [
@@ -645,52 +641,52 @@
         "pair_label": "17-19",
         "cooc_count": 126,
         "cooc_rate_pct": 5.9,
-        "current_omission": 1,
+        "current_omission": 2,
         "avg_interval": 16.9,
         "max_omission": 83,
-        "tension_index": 0.06,
-        "status": "形态阻断 (上期开出19伴随连号截断，连庄阻力极大，严禁盲目追双飞！建议拆分单防17)",
+        "tension_index": 0.12,
+        "status": "形态阻断 (上期开出17伴随连号截断，连庄阻力极大，严禁盲目追双飞！建议拆分单防19)",
         "urgency": "BLOCKED",
-        "tactical_action": "严禁买选2组合！建议拆分单抓 17 补位",
+        "tactical_action": "严禁买选2组合！建议拆分单抓 19 补位",
         "is_healthy": false,
         "has_adjacency_truncation": true,
-        "pair_score": 4.87
+        "pair_score": 5.32
       }
     ]
   },
   "road_012_analysis": {
-    "current_ratio": "6:8:6",
-    "count_r0": 6,
-    "count_r1": 8,
+    "current_ratio": "7:7:6",
+    "count_r0": 7,
+    "count_r1": 7,
     "count_r2": 6,
     "numbers_r0": [
-      3,
-      27,
-      36,
-      57,
+      9,
+      12,
+      15,
+      30,
+      63,
       69,
-      75
+      72
     ],
     "numbers_r1": [
-      19,
-      22,
+      16,
       25,
-      28,
-      40,
-      52,
-      64,
-      67
+      37,
+      49,
+      55,
+      61,
+      79
     ],
     "numbers_r2": [
-      20,
-      35,
-      50,
-      53,
+      14,
+      17,
       56,
-      77
+      65,
+      71,
+      74
     ],
     "regime": "balanced",
-    "regime_alert": "012路常态波动（上期 6:8:6）",
+    "regime_alert": "012路常态波动（上期 7:7:6）",
     "tactical_bias": "三路均衡轮动，勿押单一路别",
     "tactical_boost_allowed": false,
     "display_stance_note": "均衡勿单押：012 未达极端（≤4 或 ≥10），勿单押一路",
@@ -711,21 +707,40 @@
     },
     "good_numbers_r0": [
       {
+        "number": 36,
+        "display": "36",
+        "tail": 6,
+        "road": 0,
+        "omission": 1,
+        "freq30": 9,
+        "freq16": 4,
+        "score": 45.5,
+        "is_prime": false,
+        "is_neighbor": true,
+        "is_repeat": false,
+        "tags": [
+          "合数",
+          "HiddenEnergy金牌",
+          "隔期跳开",
+          "斜连邻号"
+        ]
+      },
+      {
         "number": 33,
         "display": "33",
         "tail": 3,
         "road": 0,
-        "omission": 1,
+        "omission": 2,
         "freq30": 8,
         "freq16": 4,
-        "score": 57.0,
+        "score": 39.5,
         "is_prime": false,
         "is_neighbor": false,
         "is_repeat": false,
         "tags": [
           "合数",
           "HiddenEnergy金牌",
-          "隔期跳开"
+          "黄金温态"
         ]
       },
       {
@@ -733,46 +748,26 @@
         "display": "63",
         "tail": 3,
         "road": 0,
-        "omission": 1,
-        "freq30": 10,
-        "freq16": 7,
-        "score": 46.5,
+        "omission": 0,
+        "freq30": 11,
+        "freq16": 8,
+        "score": 39.5,
         "is_prime": false,
-        "is_neighbor": true,
-        "is_repeat": false,
+        "is_neighbor": false,
+        "is_repeat": true,
         "tags": [
           "合数",
           "AI三维金胆",
-          "隔期跳开",
-          "斜连邻号"
+          "强势重号"
         ]
       },
       {
-        "number": 36,
-        "display": "36",
-        "tail": 6,
+        "number": 15,
+        "display": "15",
+        "tail": 5,
         "road": 0,
         "omission": 0,
-        "freq30": 10,
-        "freq16": 5,
-        "score": 45.5,
-        "is_prime": false,
-        "is_neighbor": true,
-        "is_repeat": true,
-        "tags": [
-          "合数",
-          "HiddenEnergy金牌",
-          "强势重号",
-          "斜连邻号"
-        ]
-      },
-      {
-        "number": 27,
-        "display": "27",
-        "tail": 7,
-        "road": 0,
-        "omission": 0,
-        "freq30": 8,
+        "freq30": 5,
         "freq16": 4,
         "score": 22.5,
         "is_prime": false,
@@ -781,24 +776,6 @@
         "tags": [
           "合数",
           "强势重号",
-          "斜连邻号"
-        ]
-      },
-      {
-        "number": 51,
-        "display": "51",
-        "tail": 1,
-        "road": 0,
-        "omission": 1,
-        "freq30": 7,
-        "freq16": 4,
-        "score": 22.5,
-        "is_prime": false,
-        "is_neighbor": true,
-        "is_repeat": false,
-        "tags": [
-          "合数",
-          "隔期跳开",
           "斜连邻号"
         ]
       },
@@ -807,37 +784,93 @@
         "display": "57",
         "tail": 7,
         "road": 0,
-        "omission": 0,
+        "omission": 1,
         "freq30": 10,
-        "freq16": 7,
+        "freq16": 6,
         "score": 22.5,
         "is_prime": false,
         "is_neighbor": true,
-        "is_repeat": true,
+        "is_repeat": false,
         "tags": [
           "合数",
-          "强势重号",
+          "隔期跳开",
+          "斜连邻号"
+        ]
+      },
+      {
+        "number": 75,
+        "display": "75",
+        "tail": 5,
+        "road": 0,
+        "omission": 1,
+        "freq30": 13,
+        "freq16": 6,
+        "score": 22.5,
+        "is_prime": false,
+        "is_neighbor": true,
+        "is_repeat": false,
+        "tags": [
+          "合数",
+          "隔期跳开",
           "斜连邻号"
         ]
       }
     ],
     "good_numbers_r1": [
       {
+        "number": 55,
+        "display": "55",
+        "tail": 5,
+        "road": 1,
+        "omission": 0,
+        "freq30": 3,
+        "freq16": 1,
+        "score": 53.5,
+        "is_prime": false,
+        "is_neighbor": true,
+        "is_repeat": true,
+        "tags": [
+          "合数",
+          "HiddenEnergy金牌",
+          "强势重号",
+          "斜连邻号"
+        ]
+      },
+      {
         "number": 67,
         "display": "67",
         "tail": 7,
         "road": 1,
-        "omission": 0,
+        "omission": 1,
         "freq30": 7,
         "freq16": 4,
         "score": 53.0,
         "is_prime": true,
         "is_neighbor": false,
-        "is_repeat": true,
+        "is_repeat": false,
         "tags": [
           "质数",
           "HiddenEnergy金牌",
-          "强势重号"
+          "隔期跳开"
+        ]
+      },
+      {
+        "number": 16,
+        "display": "16",
+        "tail": 6,
+        "road": 1,
+        "omission": 0,
+        "freq30": 11,
+        "freq16": 5,
+        "score": 42.5,
+        "is_prime": false,
+        "is_neighbor": true,
+        "is_repeat": true,
+        "tags": [
+          "合数",
+          "共识精选",
+          "强势重号",
+          "斜连邻号"
         ]
       },
       {
@@ -845,93 +878,37 @@
         "display": "58",
         "tail": 8,
         "road": 1,
-        "omission": 2,
-        "freq30": 15,
-        "freq16": 8,
-        "score": 38.5,
+        "omission": 3,
+        "freq30": 14,
+        "freq16": 7,
+        "score": 36.5,
         "is_prime": false,
-        "is_neighbor": true,
+        "is_neighbor": false,
         "is_repeat": false,
         "tags": [
           "合数",
           "AI三维金胆",
-          "黄金温态",
-          "斜连邻号"
-        ]
-      },
-      {
-        "number": 52,
-        "display": "52",
-        "tail": 2,
-        "road": 1,
-        "omission": 0,
-        "freq30": 11,
-        "freq16": 6,
-        "score": 34.5,
-        "is_prime": false,
-        "is_neighbor": true,
-        "is_repeat": true,
-        "tags": [
-          "合数",
-          "强势重号",
-          "斜连邻号"
-        ]
-      },
-      {
-        "number": 40,
-        "display": "40",
-        "tail": 0,
-        "road": 1,
-        "omission": 0,
-        "freq30": 6,
-        "freq16": 3,
-        "score": 33.5,
-        "is_prime": false,
-        "is_neighbor": false,
-        "is_repeat": true,
-        "tags": [
-          "合数",
-          "共识精选",
-          "强势重号"
+          "黄金温态"
         ]
       }
     ],
     "good_numbers_r2": [
       {
-        "number": 53,
-        "display": "53",
-        "tail": 3,
-        "road": 2,
-        "omission": 0,
-        "freq30": 9,
-        "freq16": 6,
-        "score": 34.5,
-        "is_prime": true,
-        "is_neighbor": true,
-        "is_repeat": true,
-        "tags": [
-          "质数",
-          "强势重号",
-          "斜连邻号"
-        ]
-      },
-      {
         "number": 65,
         "display": "65",
         "tail": 5,
         "road": 2,
-        "omission": 8,
-        "freq30": 1,
-        "freq16": 1,
-        "score": 33.5,
+        "omission": 0,
+        "freq30": 2,
+        "freq16": 2,
+        "score": 49.0,
         "is_prime": false,
-        "is_neighbor": true,
-        "is_repeat": false,
+        "is_neighbor": false,
+        "is_repeat": true,
         "tags": [
           "合数",
           "HiddenEnergy金牌",
-          "斜连邻号",
-          "深冷风险"
+          "强势重号"
         ]
       },
       {
@@ -939,10 +916,10 @@
         "display": "29",
         "tail": 9,
         "road": 2,
-        "omission": 2,
-        "freq30": 8,
-        "freq16": 4,
-        "score": 29.0,
+        "omission": 3,
+        "freq30": 7,
+        "freq16": 3,
+        "score": 24.5,
         "is_prime": true,
         "is_neighbor": true,
         "is_repeat": false,
@@ -957,63 +934,191 @@
         "display": "35",
         "tail": 5,
         "road": 2,
-        "omission": 0,
+        "omission": 1,
         "freq30": 11,
-        "freq16": 10,
-        "score": 28.0,
+        "freq16": 9,
+        "score": 23.5,
+        "is_prime": false,
+        "is_neighbor": false,
+        "is_repeat": false,
+        "tags": [
+          "合数",
+          "共识精选",
+          "隔期跳开"
+        ]
+      },
+      {
+        "number": 14,
+        "display": "14",
+        "tail": 4,
+        "road": 2,
+        "omission": 0,
+        "freq30": 8,
+        "freq16": 6,
+        "score": 22.5,
         "is_prime": false,
         "is_neighbor": true,
         "is_repeat": true,
         "tags": [
           "合数",
-          "共识精选",
           "强势重号",
           "斜连邻号"
         ]
       },
       {
-        "number": 5,
-        "display": "05",
-        "tail": 5,
+        "number": 56,
+        "display": "56",
+        "tail": 6,
         "road": 2,
-        "omission": 2,
-        "freq30": 12,
-        "freq16": 5,
-        "score": 20.5,
-        "is_prime": true,
-        "is_neighbor": false,
-        "is_repeat": false,
+        "omission": 0,
+        "freq30": 10,
+        "freq16": 4,
+        "score": 22.5,
+        "is_prime": false,
+        "is_neighbor": true,
+        "is_repeat": true,
         "tags": [
-          "质数",
-          "共识精选",
-          "黄金温态"
+          "合数",
+          "强势重号",
+          "斜连邻号"
         ]
       }
     ],
     "cross_road_pairs": [
       {
         "pair": [
-          33,
-          53
+          36,
+          65
         ],
-        "pair_label": "33 (0路) + 53 (2路)",
+        "pair_label": "36 (0路) + 65 (2路)",
         "strategy": "跨路温热双子星 (0路金胆 + 2路金胆)",
-        "reason": "0路最高分好码 33 搭配 2路最高分好码 53，均为低遗漏高频温热形态，避开同路挤压"
+        "reason": "0路最高分好码 36 搭配 2路最高分好码 65，均为低遗漏高频温热形态，避开同路挤压"
       },
       {
         "pair": [
-          33,
-          67
+          36,
+          55
         ],
-        "pair_label": "33 (0路) + 67 (1路)",
+        "pair_label": "36 (0路) + 55 (1路)",
         "strategy": "动能攻守搭档 (0路反弹头牌 + 1路严选头牌)",
-        "reason": "号码 33 与 67 形成跨路温热共振反弹"
+        "reason": "号码 36 与 55 形成跨路温热共振反弹"
       }
     ]
   },
   "road_012_review_ledger": {
     "n_periods": 10,
     "records": [
+      {
+        "period": "2026314",
+        "actual_numbers": [
+          9,
+          12,
+          14,
+          15,
+          16,
+          17,
+          25,
+          30,
+          37,
+          49,
+          55,
+          56,
+          61,
+          63,
+          65,
+          69,
+          71,
+          72,
+          74,
+          79
+        ],
+        "r0": {
+          "picks": [
+            63,
+            36,
+            33,
+            27,
+            51,
+            57
+          ],
+          "hit_balls": [
+            63
+          ],
+          "hits": 1,
+          "total": 6,
+          "lift": 0.67
+        },
+        "r1": {
+          "picks": [
+            67,
+            58,
+            40,
+            16
+          ],
+          "hit_balls": [
+            16
+          ],
+          "hits": 1,
+          "total": 4,
+          "lift": 1.0
+        },
+        "r2": {
+          "picks": [
+            65,
+            29,
+            35,
+            53,
+            41
+          ],
+          "hit_balls": [
+            65
+          ],
+          "hits": 1,
+          "total": 5,
+          "lift": 0.8
+        },
+        "total_15": {
+          "picks": [
+            63,
+            36,
+            33,
+            27,
+            51,
+            57,
+            67,
+            58,
+            40,
+            16,
+            65,
+            29,
+            35,
+            53,
+            41
+          ],
+          "hit_balls": [
+            63,
+            16,
+            65
+          ],
+          "hits": 3,
+          "total": 15,
+          "lift": 0.8
+        },
+        "cross_pair": {
+          "pair": [
+            63,
+            65
+          ],
+          "pair_label": "63 (0路) + 65 (2路)",
+          "hit_balls": [
+            63,
+            65
+          ],
+          "hits": 2,
+          "is_both": true,
+          "data_missing": false
+        }
+      },
       {
         "period": "2026313",
         "actual_numbers": [
@@ -2006,169 +2111,56 @@
           "is_both": false,
           "data_missing": false
         }
-      },
-      {
-        "period": "2026304",
-        "actual_numbers": [
-          4,
-          14,
-          16,
-          23,
-          29,
-          35,
-          38,
-          40,
-          42,
-          45,
-          48,
-          53,
-          58,
-          61,
-          63,
-          68,
-          70,
-          72,
-          74,
-          78
-        ],
-        "r0": {
-          "picks": [
-            60,
-            72,
-            69,
-            75,
-            3,
-            27
-          ],
-          "hit_balls": [
-            72
-          ],
-          "hits": 1,
-          "total": 6,
-          "lift": 0.67
-        },
-        "r1": {
-          "picks": [
-            52,
-            79,
-            16,
-            61
-          ],
-          "hit_balls": [
-            16,
-            61
-          ],
-          "hits": 2,
-          "total": 4,
-          "lift": 2.0
-        },
-        "r2": {
-          "picks": [
-            68,
-            53,
-            74,
-            59,
-            17
-          ],
-          "hit_balls": [
-            68,
-            53,
-            74
-          ],
-          "hits": 3,
-          "total": 5,
-          "lift": 2.4
-        },
-        "total_15": {
-          "picks": [
-            60,
-            72,
-            69,
-            75,
-            3,
-            27,
-            52,
-            79,
-            16,
-            61,
-            68,
-            53,
-            74,
-            59,
-            17
-          ],
-          "hit_balls": [
-            72,
-            16,
-            61,
-            68,
-            53,
-            74
-          ],
-          "hits": 6,
-          "total": 15,
-          "lift": 1.6
-        },
-        "cross_pair": {
-          "pair": [
-            60,
-            68
-          ],
-          "pair_label": "60 (0路) + 68 (2路)",
-          "hit_balls": [
-            68
-          ],
-          "hits": 1,
-          "is_both": false,
-          "data_missing": false
-        }
       }
     ],
     "metrics": {
       "avg_hits_r0": 1.8,
-      "avg_hits_r1": 1.2,
-      "avg_hits_r2": 1.2,
-      "avg_total_15": 4.2,
-      "avg_lift_15": 1.12,
-      "pair_both_count": 1,
-      "pair_one_count": 4,
-      "both_win_rate": 10.0,
+      "avg_hits_r1": 1.1,
+      "avg_hits_r2": 1.0,
+      "avg_total_15": 3.9,
+      "avg_lift_15": 1.04,
+      "pair_both_count": 2,
+      "pair_one_count": 3,
+      "both_win_rate": 20.0,
       "pair_eval_periods": 10,
       "pair_missing_periods": 0
     }
   },
   "last_period_audit": {
-    "audited_period": "2026313",
-    "based_on_period": "2026312",
-    "twin_pair_recommended": "03-05",
+    "audited_period": "2026314",
+    "based_on_period": "2026313",
+    "twin_pair_recommended": "71-73",
     "twin_pair_hits": [
-      3
+      71
     ],
     "twin_double_hit": false,
-    "twin_verdict": "单中 03",
+    "twin_verdict": "单中 71",
     "prime_top5_recommended": [
       61,
       73,
       47
     ],
-    "prime_top5_hits": [],
-    "prime_top5_hit_count": 0,
-    "prime_verdict": "命中 0 / 5 码",
-    "tail5_burst_count": 3,
+    "prime_top5_hits": [
+      61
+    ],
+    "prime_top5_hit_count": 1,
+    "prime_verdict": "命中 1 / 5 码",
+    "tail5_burst_count": 4,
     "tail5_burst_numbers": [
+      15,
       25,
-      35,
-      75
+      55,
+      65
     ],
     "zone4_numbers": [
-      50
+      49
     ],
-    "root_cause_analysis": "第 2026313 期实战对账：方案三质数金胆命中 0/5 码 (0中)；方案四孪生搭档【03-05】实开命中 1/2 码。"
+    "root_cause_analysis": "第 2026314 期实战对账：方案三质数金胆命中 1/5 码 (61)；方案四孪生搭档【71-73】实开命中 1/2 码。"
   },
   "multi_resonance_consensus": {
-    "target_period": "2026314",
-    "based_on_period": "2026313",
-    "date": "2026-11-23",
+    "target_period": "2026315",
+    "based_on_period": "2026314",
+    "date": "2026-11-24",
     "experts_meta_weights": {
       "ef": 0.25,
       "road": 0.22,
@@ -2178,65 +2170,63 @@
     },
     "summary_takeaways": {
       "golden_core_5": [
-        37,
-        2,
-        41,
-        23,
-        3
+        13,
+        8,
+        29,
+        10,
+        5
       ],
-      "golden_core_5_str": "02-03-23-37-41",
+      "golden_core_5_str": "05-08-10-13-29",
       "resonance_12": [
+        13,
+        8,
+        29,
+        10,
+        5,
         37,
-        2,
-        41,
-        23,
-        3,
-        34,
+        73,
         78,
-        36,
+        71,
         18,
-        26,
-        4,
-        39
+        66,
+        36
       ],
-      "resonance_12_str": "02-03-04-18-23-26-34-36-37-39-41-78",
-      "best_resonance_pair": "78 (0路合数) + 02 (2路质数)"
+      "resonance_12_str": "05-08-10-13-18-29-36-37-66-71-73-78",
+      "best_resonance_pair": "78 (0路合数) + 29 (2路质数)"
     },
     "golden_core_details": [
       {
-        "number": 37,
-        "display": "37",
-        "score": 55.88,
-        "vote_count": 4,
+        "number": 13,
+        "display": "13",
+        "score": 59.93,
+        "vote_count": 3,
         "endorsing_experts": [
           "012路潮汐反弹",
           "高压反弹影子",
-          "孪生质数跟随",
-          "空间平衡防守"
+          "孪生质数跟随"
         ],
         "road": 1,
         "is_prime": true,
-        "tail": 7
+        "tail": 3
       },
       {
-        "number": 2,
-        "display": "02",
-        "score": 53.73,
-        "vote_count": 4,
+        "number": 8,
+        "display": "08",
+        "score": 57.54,
+        "vote_count": 3,
         "endorsing_experts": [
           "012路潮汐反弹",
           "高压反弹影子",
-          "孪生质数跟随",
           "空间平衡防守"
         ],
         "road": 2,
-        "is_prime": true,
-        "tail": 2
+        "is_prime": false,
+        "tail": 8
       },
       {
-        "number": 41,
-        "display": "41",
-        "score": 55.02,
+        "number": 29,
+        "display": "29",
+        "score": 55.61,
         "vote_count": 3,
         "endorsing_experts": [
           "012路潮汐反弹",
@@ -2245,46 +2235,115 @@
         ],
         "road": 2,
         "is_prime": true,
-        "tail": 1
+        "tail": 9
       },
       {
-        "number": 23,
-        "display": "23",
-        "score": 52.7,
+        "number": 10,
+        "display": "10",
+        "score": 54.74,
         "vote_count": 3,
         "endorsing_experts": [
           "012路潮汐反弹",
           "高压反弹影子",
-          "孪生质数跟随"
+          "空间平衡防守"
         ],
-        "road": 2,
-        "is_prime": true,
-        "tail": 3
+        "road": 1,
+        "is_prime": false,
+        "tail": 0
       },
       {
-        "number": 3,
-        "display": "03",
-        "score": 48.98,
+        "number": 5,
+        "display": "05",
+        "score": 53.14,
         "vote_count": 3,
         "endorsing_experts": [
-          "隐能量场EF",
+          "高压反弹影子",
           "孪生质数跟随",
           "空间平衡防守"
         ],
-        "road": 0,
+        "road": 2,
         "is_prime": true,
-        "tail": 3
+        "tail": 5
       }
     ],
     "resonance_12_details": [
       {
-        "number": 37,
-        "display": "37",
-        "score": 55.88,
-        "vote_count": 4,
+        "number": 13,
+        "display": "13",
+        "score": 59.93,
+        "vote_count": 3,
         "endorsing_experts": [
           "012路潮汐反弹",
           "高压反弹影子",
+          "孪生质数跟随"
+        ],
+        "road": 1,
+        "is_prime": true,
+        "tail": 3
+      },
+      {
+        "number": 8,
+        "display": "08",
+        "score": 57.54,
+        "vote_count": 3,
+        "endorsing_experts": [
+          "012路潮汐反弹",
+          "高压反弹影子",
+          "空间平衡防守"
+        ],
+        "road": 2,
+        "is_prime": false,
+        "tail": 8
+      },
+      {
+        "number": 29,
+        "display": "29",
+        "score": 55.61,
+        "vote_count": 3,
+        "endorsing_experts": [
+          "012路潮汐反弹",
+          "高压反弹影子",
+          "孪生质数跟随"
+        ],
+        "road": 2,
+        "is_prime": true,
+        "tail": 9
+      },
+      {
+        "number": 10,
+        "display": "10",
+        "score": 54.74,
+        "vote_count": 3,
+        "endorsing_experts": [
+          "012路潮汐反弹",
+          "高压反弹影子",
+          "空间平衡防守"
+        ],
+        "road": 1,
+        "is_prime": false,
+        "tail": 0
+      },
+      {
+        "number": 5,
+        "display": "05",
+        "score": 53.14,
+        "vote_count": 3,
+        "endorsing_experts": [
+          "高压反弹影子",
+          "孪生质数跟随",
+          "空间平衡防守"
+        ],
+        "road": 2,
+        "is_prime": true,
+        "tail": 5
+      },
+      {
+        "number": 37,
+        "display": "37",
+        "score": 44.31,
+        "vote_count": 3,
+        "endorsing_experts": [
+          "隐能量场EF",
           "孪生质数跟随",
           "空间平衡防守"
         ],
@@ -2293,28 +2352,38 @@
         "tail": 7
       },
       {
-        "number": 2,
-        "display": "02",
-        "score": 53.73,
-        "vote_count": 4,
+        "number": 73,
+        "display": "73",
+        "score": 66.3,
+        "vote_count": 2,
         "endorsing_experts": [
           "012路潮汐反弹",
-          "高压反弹影子",
-          "孪生质数跟随",
-          "空间平衡防守"
+          "孪生质数跟随"
         ],
-        "road": 2,
+        "road": 1,
         "is_prime": true,
-        "tail": 2
+        "tail": 3
       },
       {
-        "number": 41,
-        "display": "41",
-        "score": 55.02,
-        "vote_count": 3,
+        "number": 78,
+        "display": "78",
+        "score": 59.34,
+        "vote_count": 2,
         "endorsing_experts": [
           "012路潮汐反弹",
-          "高压反弹影子",
+          "高压反弹影子"
+        ],
+        "road": 0,
+        "is_prime": false,
+        "tail": 8
+      },
+      {
+        "number": 71,
+        "display": "71",
+        "score": 56.41,
+        "vote_count": 2,
+        "endorsing_experts": [
+          "隐能量场EF",
           "孪生质数跟随"
         ],
         "road": 2,
@@ -2322,50 +2391,9 @@
         "tail": 1
       },
       {
-        "number": 23,
-        "display": "23",
-        "score": 52.7,
-        "vote_count": 3,
-        "endorsing_experts": [
-          "012路潮汐反弹",
-          "高压反弹影子",
-          "孪生质数跟随"
-        ],
-        "road": 2,
-        "is_prime": true,
-        "tail": 3
-      },
-      {
-        "number": 3,
-        "display": "03",
-        "score": 48.98,
-        "vote_count": 3,
-        "endorsing_experts": [
-          "隐能量场EF",
-          "孪生质数跟随",
-          "空间平衡防守"
-        ],
-        "road": 0,
-        "is_prime": true,
-        "tail": 3
-      },
-      {
-        "number": 34,
-        "display": "34",
-        "score": 59.49,
-        "vote_count": 2,
-        "endorsing_experts": [
-          "012路潮汐反弹",
-          "空间平衡防守"
-        ],
-        "road": 1,
-        "is_prime": false,
-        "tail": 4
-      },
-      {
-        "number": 78,
-        "display": "78",
-        "score": 58.11,
+        "number": 18,
+        "display": "18",
+        "score": 56.12,
         "vote_count": 2,
         "endorsing_experts": [
           "012路潮汐反弹",
@@ -2374,11 +2402,24 @@
         "road": 0,
         "is_prime": false,
         "tail": 8
+      },
+      {
+        "number": 66,
+        "display": "66",
+        "score": 54.92,
+        "vote_count": 2,
+        "endorsing_experts": [
+          "012路潮汐反弹",
+          "高压反弹影子"
+        ],
+        "road": 0,
+        "is_prime": false,
+        "tail": 6
       },
       {
         "number": 36,
         "display": "36",
-        "score": 57.99,
+        "score": 54.9,
         "vote_count": 2,
         "endorsing_experts": [
           "隐能量场EF",
@@ -2387,192 +2428,145 @@
         "road": 0,
         "is_prime": false,
         "tail": 6
-      },
-      {
-        "number": 18,
-        "display": "18",
-        "score": 55.94,
-        "vote_count": 2,
-        "endorsing_experts": [
-          "012路潮汐反弹",
-          "高压反弹影子"
-        ],
-        "road": 0,
-        "is_prime": false,
-        "tail": 8
-      },
-      {
-        "number": 26,
-        "display": "26",
-        "score": 55.29,
-        "vote_count": 2,
-        "endorsing_experts": [
-          "012路潮汐反弹",
-          "高压反弹影子"
-        ],
-        "road": 2,
-        "is_prime": false,
-        "tail": 6
-      },
-      {
-        "number": 4,
-        "display": "04",
-        "score": 55.19,
-        "vote_count": 2,
-        "endorsing_experts": [
-          "012路潮汐反弹",
-          "空间平衡防守"
-        ],
-        "road": 1,
-        "is_prime": false,
-        "tail": 4
-      },
-      {
-        "number": 39,
-        "display": "39",
-        "score": 53.78,
-        "vote_count": 2,
-        "endorsing_experts": [
-          "012路潮汐反弹",
-          "高压反弹影子"
-        ],
-        "road": 0,
-        "is_prime": false,
-        "tail": 9
       }
     ],
     "best_resonance_pairs": [
       {
         "pair": [
           78,
-          2
+          29
         ],
-        "pair_label": "78 (0路合数) + 02 (2路质数)",
+        "pair_label": "78 (0路合数) + 29 (2路质数)",
         "strategy": "跨路攻守对冲搭档 (0路反弹合数 + 2路核心质数)",
         "reason": "多维会诊共识打分首推，避开同路与同质合挤压"
       },
       {
         "pair": [
-          37,
-          2
+          13,
+          8
         ],
-        "pair_label": "37 + 02",
+        "pair_label": "13 + 08",
         "strategy": "共振双子金胆星 (全专家举手表决最高票)",
         "reason": "同时获得 LSTM、能量场与 012路潮汐三重认可"
       }
     ],
     "all_80_scores": {
-      "1": 39.04,
-      "2": 53.73,
-      "3": 48.98,
-      "4": 55.19,
-      "5": 52.16,
-      "6": 42.65,
-      "7": 47.97,
-      "8": 48.51,
-      "9": 42.02,
-      "10": 41.47,
-      "11": 42.88,
-      "12": 42.45,
-      "13": 45.49,
-      "14": 38.95,
-      "15": 39.27,
-      "16": 43.17,
-      "17": 41.67,
-      "18": 55.94,
-      "19": 48.49,
-      "20": 49.07,
-      "21": 53.05,
-      "22": 37.95,
-      "23": 52.7,
-      "24": 53.18,
-      "25": 40.55,
-      "26": 55.29,
-      "27": 48.9,
-      "28": 50.47,
-      "29": 52.09,
-      "30": 40.36,
-      "31": 50.22,
-      "32": 25.29,
-      "33": 46.17,
-      "34": 59.49,
-      "35": 47.35,
-      "36": 57.99,
-      "37": 55.88,
-      "38": 34.49,
-      "39": 53.78,
-      "40": 43.83,
-      "41": 55.02,
-      "42": 39.09,
-      "43": 44.37,
-      "44": 39.87,
-      "45": 37.88,
-      "46": 39.62,
-      "47": 41.07,
-      "48": 42.48,
-      "49": 51.28,
-      "50": 40.34,
-      "51": 50.57,
-      "52": 51.41,
-      "53": 51.13,
-      "54": 49.55,
-      "55": 29.09,
-      "56": 47.23,
-      "57": 46.76,
-      "58": 53.34,
-      "59": 46.34,
-      "60": 24.52,
-      "61": 37.71,
-      "62": 44.35,
-      "63": 55.9,
-      "64": 37.24,
-      "65": 51.31,
-      "66": 49.3,
-      "67": 46.16,
-      "68": 45.01,
-      "69": 42.07,
-      "70": 53.4,
-      "71": 48.77,
-      "72": 32.22,
-      "73": 50.28,
-      "74": 51.96,
-      "75": 44.48,
-      "76": 50.86,
-      "77": 45.21,
-      "78": 58.11,
-      "79": 41.75,
-      "80": 43.54
+      "1": 42.17,
+      "2": 43.57,
+      "3": 48.41,
+      "4": 44.63,
+      "5": 53.14,
+      "6": 38.87,
+      "7": 46.09,
+      "8": 57.54,
+      "9": 38.08,
+      "10": 54.74,
+      "11": 51.18,
+      "12": 40.06,
+      "13": 59.93,
+      "14": 51.61,
+      "15": 53.95,
+      "16": 46.37,
+      "17": 44.51,
+      "18": 56.12,
+      "19": 41.01,
+      "20": 38.73,
+      "21": 41.72,
+      "22": 36.31,
+      "23": 44.32,
+      "24": 54.19,
+      "25": 36.79,
+      "26": 54.83,
+      "27": 40.23,
+      "28": 44.05,
+      "29": 55.61,
+      "30": 42.44,
+      "31": 54.72,
+      "32": 23.42,
+      "33": 41.68,
+      "34": 41.66,
+      "35": 46.2,
+      "36": 54.9,
+      "37": 44.31,
+      "38": 42.2,
+      "39": 44.9,
+      "40": 41.55,
+      "41": 45.24,
+      "42": 34.68,
+      "43": 40.45,
+      "44": 36.55,
+      "45": 30.06,
+      "46": 40.14,
+      "47": 42.42,
+      "48": 54.1,
+      "49": 41.12,
+      "50": 46.9,
+      "51": 39.7,
+      "52": 43.38,
+      "53": 44.2,
+      "54": 53.56,
+      "55": 46.22,
+      "56": 54.39,
+      "57": 53.85,
+      "58": 37.34,
+      "59": 42.94,
+      "60": 32.05,
+      "61": 44.96,
+      "62": 51.35,
+      "63": 50.73,
+      "64": 51.74,
+      "65": 42.35,
+      "66": 54.92,
+      "67": 45.37,
+      "68": 44.59,
+      "69": 49.9,
+      "70": 58.78,
+      "71": 56.41,
+      "72": 48.73,
+      "73": 66.3,
+      "74": 42.11,
+      "75": 52.56,
+      "76": 34.48,
+      "77": 45.23,
+      "78": 59.34,
+      "79": 45.04,
+      "80": 54.8
     }
   },
   "summary_takeaways": {
     "top3_gold": [
-      61,
       73,
-      47
+      47,
+      2
     ],
     "top5_prime_gold": [
-      61,
       73,
-      47
+      47,
+      2
     ],
     "recommended_twin_pair": [
-      71,
-      73
+      3,
+      5
     ],
-    "recommended_twin_label": "71-73",
-    "recommended_twin_tactics": "常态观察",
-    "recommended_twin_status": "达到平均周期 (进入回补观察区)",
+    "recommended_twin_label": "03-05",
+    "recommended_twin_tactics": "形态健康，重点防双飞回补",
+    "recommended_twin_status": "临界紧绷 (形态无阻碍，弹簧憋到极限，防双飞回补)",
     "blocked_twins_alert": [
       {
+        "pair_label": "71-73",
+        "status": "形态阻断 (上期开出71伴随连号截断，连庄阻力极大，严禁盲目追双飞！建议拆分单防73)",
+        "tactical_action": "严禁买选2组合！建议拆分单抓 73 补位"
+      },
+      {
         "pair_label": "17-19",
-        "status": "形态阻断 (上期开出19伴随连号截断，连庄阻力极大，严禁盲目追双飞！建议拆分单防17)",
-        "tactical_action": "严禁买选2组合！建议拆分单抓 17 补位"
+        "status": "形态阻断 (上期开出17伴随连号截断，连庄阻力极大，严禁盲目追双飞！建议拆分单防19)",
+        "tactical_action": "严禁买选2组合！建议拆分单抓 19 补位"
       }
     ],
     "entropy_status_desc": "极度发散 (大白话：大盘均衡分布，各尾数雨露均沾)",
-    "shannon_entropy": 3.3176,
-    "road_012_ratio": "6:8:6",
+    "shannon_entropy": 3.3166,
+    "road_012_ratio": "7:7:6",
     "road_tactical_bias": "三路均衡轮动，勿押单一路别",
-    "best_cross_pair": "33 (0路) + 53 (2路)"
+    "best_cross_pair": "36 (0路) + 65 (2路)"
   }
 }

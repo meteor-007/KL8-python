@@ -1,7 +1,7 @@
 {
   "status": "success",
   "module_name": "dtw_matching",
-  "latest_period": 2026313,
+  "latest_period": 2026314,
   "n_periods": 30,
   "history_buffer": 35,
   "cache_tag": null,
@@ -9,17 +9,92 @@
     "avg_top3_hit": 0.63,
     "avg_top5_hit": 0.63,
     "avg_top12_hit": 0.63,
-    "gold_hit_rate": 30.0,
-    "pair_double_rate": 10.0,
-    "pair1_double_rate": 10.0,
+    "gold_hit_rate": 26.7,
+    "pair_double_rate": 6.7,
+    "pair1_double_rate": 6.7,
     "pair2_double_rate": 3.3,
-    "any_pair_double_rate": 13.3,
+    "any_pair_double_rate": 10.0,
     "both_pairs_double_rate": 0.0,
-    "pair1_single_rate": 43.3,
-    "pair2_single_rate": 36.7,
+    "pair1_single_rate": 46.7,
+    "pair2_single_rate": 33.3,
     "total_periods": 30
   },
   "records": [
+    {
+      "period": 2026314,
+      "draw_date": "2026-11-24",
+      "actual_draw": [
+        9,
+        12,
+        14,
+        15,
+        16,
+        17,
+        25,
+        30,
+        37,
+        49,
+        55,
+        56,
+        61,
+        63,
+        65,
+        69,
+        71,
+        72,
+        74,
+        79
+      ],
+      "top3": [
+        50,
+        66,
+        61
+      ],
+      "top3_hits": 1,
+      "top3_hit_nums": [
+        61
+      ],
+      "top5": [
+        50,
+        66,
+        61
+      ],
+      "top5_hits": 1,
+      "top5_hit_nums": [
+        61
+      ],
+      "top12": [
+        50,
+        66,
+        61
+      ],
+      "top12_hits": 1,
+      "top12_hit_nums": [
+        61
+      ],
+      "gold_core": 50,
+      "gold_hit": false,
+      "gold_pair": [
+        50,
+        66
+      ],
+      "gold_pair_hits": 0,
+      "gold_pair_hit_nums": [],
+      "pair1": [
+        50,
+        66
+      ],
+      "pair1_hits": 0,
+      "pair1_double": false,
+      "pair2": [
+        50,
+        61
+      ],
+      "pair2_hits": 1,
+      "pair2_double": false,
+      "any_pair_double": false,
+      "both_pairs_double": false
+    },
     {
       "period": 2026313,
       "draw_date": "2026-11-23",
@@ -185,8 +260,8 @@
       ],
       "top3": [
         11,
-        7,
-        1
+        1,
+        2
       ],
       "top3_hits": 1,
       "top3_hit_nums": [
@@ -194,8 +269,8 @@
       ],
       "top5": [
         11,
-        7,
-        1
+        1,
+        2
       ],
       "top5_hits": 1,
       "top5_hit_nums": [
@@ -203,8 +278,8 @@
       ],
       "top12": [
         11,
-        7,
-        1
+        1,
+        2
       ],
       "top12_hits": 1,
       "top12_hit_nums": [
@@ -213,22 +288,24 @@
       "gold_core": 11,
       "gold_hit": false,
       "gold_pair": [
-        7,
-        11
-      ],
-      "gold_pair_hits": 0,
-      "gold_pair_hit_nums": [],
-      "pair1": [
-        7,
-        11
-      ],
-      "pair1_hits": 0,
-      "pair1_double": false,
-      "pair2": [
         1,
         11
       ],
-      "pair2_hits": 1,
+      "gold_pair_hits": 1,
+      "gold_pair_hit_nums": [
+        1
+      ],
+      "pair1": [
+        1,
+        11
+      ],
+      "pair1_hits": 1,
+      "pair1_double": false,
+      "pair2": [
+        2,
+        11
+      ],
+      "pair2_hits": 0,
       "pair2_double": false,
       "any_pair_double": false,
       "both_pairs_double": false
@@ -474,53 +551,45 @@
         78
       ],
       "top3": [
-        66,
-        3,
-        58
+        16,
+        26,
+        54
       ],
-      "top3_hits": 1,
-      "top3_hit_nums": [
-        66
-      ],
+      "top3_hits": 0,
+      "top3_hit_nums": [],
       "top5": [
-        66,
-        3,
-        58
+        16,
+        26,
+        54
       ],
-      "top5_hits": 1,
-      "top5_hit_nums": [
-        66
-      ],
+      "top5_hits": 0,
+      "top5_hit_nums": [],
       "top12": [
-        66,
-        3,
-        58
+        16,
+        26,
+        54
       ],
-      "top12_hits": 1,
-      "top12_hit_nums": [
-        66
-      ],
-      "gold_core": 66,
-      "gold_hit": true,
+      "top12_hits": 0,
+      "top12_hit_nums": [],
+      "gold_core": 16,
+      "gold_hit": false,
       "gold_pair": [
-        3,
-        66
+        16,
+        26
       ],
-      "gold_pair_hits": 1,
-      "gold_pair_hit_nums": [
-        66
-      ],
+      "gold_pair_hits": 0,
+      "gold_pair_hit_nums": [],
       "pair1": [
-        3,
-        66
+        16,
+        26
       ],
-      "pair1_hits": 1,
+      "pair1_hits": 0,
       "pair1_double": false,
       "pair2": [
-        58,
-        66
+        16,
+        54
       ],
-      "pair2_hits": 1,
+      "pair2_hits": 0,
       "pair2_double": false,
       "any_pair_double": false,
       "both_pairs_double": false
@@ -1956,45 +2025,53 @@
         79
       ],
       "top3": [
+        58,
         52,
-        31,
-        44
+        63
       ],
-      "top3_hits": 0,
-      "top3_hit_nums": [],
+      "top3_hits": 1,
+      "top3_hit_nums": [
+        58
+      ],
       "top5": [
+        58,
         52,
-        31,
-        44
+        63
       ],
-      "top5_hits": 0,
-      "top5_hit_nums": [],
+      "top5_hits": 1,
+      "top5_hit_nums": [
+        58
+      ],
       "top12": [
+        58,
         52,
-        31,
-        44
+        63
       ],
-      "top12_hits": 0,
-      "top12_hit_nums": [],
-      "gold_core": 52,
-      "gold_hit": false,
+      "top12_hits": 1,
+      "top12_hit_nums": [
+        58
+      ],
+      "gold_core": 58,
+      "gold_hit": true,
       "gold_pair": [
-        31,
-        52
+        52,
+        58
       ],
-      "gold_pair_hits": 0,
-      "gold_pair_hit_nums": [],
+      "gold_pair_hits": 1,
+      "gold_pair_hit_nums": [
+        58
+      ],
       "pair1": [
-        31,
-        52
+        52,
+        58
       ],
-      "pair1_hits": 0,
+      "pair1_hits": 1,
       "pair1_double": false,
       "pair2": [
-        44,
-        52
+        58,
+        63
       ],
-      "pair2_hits": 0,
+      "pair2_hits": 1,
       "pair2_double": false,
       "any_pair_double": false,
       "both_pairs_double": false
@@ -2026,42 +2103,50 @@
       ],
       "top3": [
         39,
-        2,
-        73
+        68,
+        7
       ],
-      "top3_hits": 0,
-      "top3_hit_nums": [],
+      "top3_hits": 1,
+      "top3_hit_nums": [
+        68
+      ],
       "top5": [
         39,
-        2,
-        73
+        68,
+        7
       ],
-      "top5_hits": 0,
-      "top5_hit_nums": [],
+      "top5_hits": 1,
+      "top5_hit_nums": [
+        68
+      ],
       "top12": [
         39,
-        2,
-        73
+        68,
+        7
       ],
-      "top12_hits": 0,
-      "top12_hit_nums": [],
+      "top12_hits": 1,
+      "top12_hit_nums": [
+        68
+      ],
       "gold_core": 39,
       "gold_hit": false,
       "gold_pair": [
-        2,
-        39
+        39,
+        68
       ],
-      "gold_pair_hits": 0,
-      "gold_pair_hit_nums": [],
+      "gold_pair_hits": 1,
+      "gold_pair_hit_nums": [
+        68
+      ],
       "pair1": [
-        2,
-        39
+        39,
+        68
       ],
-      "pair1_hits": 0,
+      "pair1_hits": 1,
       "pair1_double": false,
       "pair2": [
-        39,
-        73
+        7,
+        39
       ],
       "pair2_hits": 0,
       "pair2_double": false,
@@ -2136,88 +2221,7 @@
       "pair2_double": false,
       "any_pair_double": false,
       "both_pairs_double": false
-    },
-    {
-      "period": 2026284,
-      "draw_date": "2026-10-25",
-      "actual_draw": [
-        5,
-        6,
-        7,
-        9,
-        11,
-        16,
-        18,
-        22,
-        29,
-        34,
-        36,
-        39,
-        41,
-        50,
-        52,
-        53,
-        58,
-        62,
-        69,
-        78
-      ],
-      "top3": [
-        22,
-        11,
-        67
-      ],
-      "top3_hits": 2,
-      "top3_hit_nums": [
-        11,
-        22
-      ],
-      "top5": [
-        22,
-        11,
-        67
-      ],
-      "top5_hits": 2,
-      "top5_hit_nums": [
-        11,
-        22
-      ],
-      "top12": [
-        22,
-        11,
-        67
-      ],
-      "top12_hits": 2,
-      "top12_hit_nums": [
-        11,
-        22
-      ],
-      "gold_core": 22,
-      "gold_hit": true,
-      "gold_pair": [
-        11,
-        22
-      ],
-      "gold_pair_hits": 2,
-      "gold_pair_hit_nums": [
-        11,
-        22
-      ],
-      "pair1": [
-        11,
-        22
-      ],
-      "pair1_hits": 2,
-      "pair1_double": true,
-      "pair2": [
-        22,
-        67
-      ],
-      "pair2_hits": 1,
-      "pair2_double": false,
-      "any_pair_double": true,
-      "both_pairs_double": false
     }
   ],
-  "updated_at": "2026-11-24 20:35:43"
+  "updated_at": "2026-11-25 19:53:52"
 }

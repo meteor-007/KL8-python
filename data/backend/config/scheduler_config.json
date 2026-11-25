@@ -5,8 +5,8 @@
   "max_retries": 6,
   "last_run_date": "2026-11-24",
   "last_status": "SUCCESS",
-  "last_message": "✅ 夜间流水线执行圆满成功 (耗时: 794s)",
-  "last_finished_at": "2026-11-24 20:38:55",
+  "last_message": "✅ 夜间流水线执行圆满成功 (耗时: 622s)",
+  "last_finished_at": "2026-11-24 22:10:23",
   "last_trigger": "windows_scheduled_task",
-  "last_started_at": "2026-11-24 20:25:41"
+  "last_started_at": "2026-11-24 22:00:01"
 }
