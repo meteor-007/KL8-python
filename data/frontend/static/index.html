@@ -27,7 +27,7 @@
   <!-- Marked for Markdown -->
   <script src="/static/vendor/marked.min.js"></script>
   <!-- Custom Cyber Theme -->
-  <link rel="stylesheet" href="/static/css/cyber_theme.css?v=20261125_204720">
+  <link rel="stylesheet" href="/static/css/cyber_theme.css?v=20261125_205000">
   <style>
     [v-cloak] { display: none; }
   </style>
@@ -319,6 +319,19 @@
 
     <!-- 主视口内容区（仅模块内容滚动，工作流不随页切换重绘感） -->
     <main class="cyber-content-viewport">
+
+      <!-- ═══ 模块退役横幅：退役模块的接口按契约返回 410，前端不再发请求，界面直说退役原因 ═══ -->
+      <div v-if="retiredTabNotice" class="mb-3 sm:mb-4">
+        <div class="glass-panel px-3 py-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs"
+             style="border-left: 4px solid #f43f5e;">
+          <span class="text-base">⏹</span>
+          <span class="font-bold text-rose-300">该模块已退役</span>
+          <span class="text-slate-200 font-semibold">{{ retiredTabNotice.name || retiredTabNotice.module_id }}</span>
+          <span v-if="retiredTabNotice.retired_since" class="text-slate-500 font-mono">自 {{ retiredTabNotice.retired_since }}</span>
+          <span class="text-slate-400 flex-1 min-w-[220px]">{{ retiredTabNotice.decree?.reason || '判决层已标记 retired' }}</span>
+          <span class="text-[10px] text-slate-500">不产出当期票、不进 BH-FDR 校正族；复启需修改 module_gate.MODULE_SEED 判决</span>
+        </div>
+      </div>
 
       <!-- ═══ E5: 数据新鲜度横幅 —— 停更数据在界面上现形, 不再装新鲜 ═══ -->
       <div v-if="freshness" class="mb-3 sm:mb-4">
@@ -13714,35 +13727,35 @@
   
 
   <!-- Vue App Logic: registry → page mixins → shell -->
-  <script src="/static/js/k8_pages.js?v=20261125_204720"></script>
-  <script src="/static/js/menu_registry.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/jingle.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/data_hub.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/ops.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/expert_cockpit.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/retired.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/suppression.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/point_omission.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/gold_pick2.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/aggregation.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/sixteen.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/cockpit_live.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/datasource.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/reviews_audit.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/unified_brain.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/psychological_game.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/linear_algebra.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/random_forest.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/error_correction.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/genetic.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/markov_line.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/tprd_v40.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/dtw.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/transformer.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/matrix_profile.js?v=20261125_204720"></script>
-  <script src="/static/js/pages/tda.js?v=20261125_204720"></script>
-  <script src="/static/js/app.js?v=20261125_204720"></script>
+  <script src="/static/js/k8_pages.js?v=20261125_205000"></script>
+  <script src="/static/js/menu_registry.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/jingle.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/data_hub.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/ops.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/expert_cockpit.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/retired.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/suppression.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/point_omission.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/gold_pick2.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/aggregation.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/sixteen.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/cockpit_live.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/datasource.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/reviews_audit.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/unified_brain.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/psychological_game.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/linear_algebra.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/random_forest.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/error_correction.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/genetic.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/markov_line.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/tprd_v40.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/dtw.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/transformer.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/matrix_profile.js?v=20261125_205000"></script>
+  <script src="/static/js/pages/tda.js?v=20261125_205000"></script>
+  <script src="/static/js/app.js?v=20261125_205000"></script>
   <!-- AI 智能操盘大脑中继助手 -->
-  <script src="/static/js/ai_assistant.js?v=20261125_204720"></script>
+  <script src="/static/js/ai_assistant.js?v=20261125_205000"></script>
 </body>
 </html>

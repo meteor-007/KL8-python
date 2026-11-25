@@ -320,6 +320,19 @@
     <!-- 主视口内容区（仅模块内容滚动，工作流不随页切换重绘感） -->
     <main class="cyber-content-viewport">
 
+      <!-- ═══ 模块退役横幅：退役模块的接口按契约返回 410，前端不再发请求，界面直说退役原因 ═══ -->
+      <div v-if="retiredTabNotice" class="mb-3 sm:mb-4">
+        <div class="glass-panel px-3 py-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs"
+             style="border-left: 4px solid #f43f5e;">
+          <span class="text-base">⏹</span>
+          <span class="font-bold text-rose-300">该模块已退役</span>
+          <span class="text-slate-200 font-semibold">{{ retiredTabNotice.name || retiredTabNotice.module_id }}</span>
+          <span v-if="retiredTabNotice.retired_since" class="text-slate-500 font-mono">自 {{ retiredTabNotice.retired_since }}</span>
+          <span class="text-slate-400 flex-1 min-w-[220px]">{{ retiredTabNotice.decree?.reason || '判决层已标记 retired' }}</span>
+          <span class="text-[10px] text-slate-500">不产出当期票、不进 BH-FDR 校正族；复启需修改 module_gate.MODULE_SEED 判决</span>
+        </div>
+      </div>
+
       <!-- ═══ E5: 数据新鲜度横幅 —— 停更数据在界面上现形, 不再装新鲜 ═══ -->
       <div v-if="freshness" class="mb-3 sm:mb-4">
         <div class="glass-panel px-3 py-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs cursor-pointer select-none"
