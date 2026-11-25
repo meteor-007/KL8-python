@@ -780,6 +780,46 @@ const App = {
     const aiMathLoading = ref(false);
     const aiMathConsensusReviewData = ref(null);
 
+    // ═════════════════ 模块判决门禁 (唯一真相源: /api/modules/registry) ═════════════════
+    // 退役模块的后端接口按契约返回 410 Gone。前端在发请求前先读判决表:
+    // 退役模块不再发起任何请求 (否则每次进页/一键重推都在控制台刷一排红色 410),
+    // 由主视口横幅说明退役原因; 判决撤销后本门禁自动恢复请求。
+    const TAB_MODULE_ID = {
+      genetic_cockpit: 'genetic',
+      linear_algebra_cockpit: 'linear_algebra',
+      random_forest_cockpit: 'random_forest',
+      error_correction_cockpit: 'error_correction',
+      dtw_cockpit: 'dtw',
+      transformer_cockpit: 'transformer',
+      matrix_profile_cockpit: 'matrix_profile',
+      tda_cockpit: 'tda'
+    };
+    const retiredModules = ref({});
+    let _moduleGatePromise = null;
+    const ensureModuleGate = () => {
+      if (!_moduleGatePromise) {
+        _moduleGatePromise = fetch('/api/modules/registry')
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d) => {
+            const out = {};
+            const mods = (d && d.registry && d.registry.modules) || {};
+            Object.keys(mods).forEach((mid) => {
+              if (mods[mid] && mods[mid].status === 'retired') out[mid] = mods[mid];
+            });
+            retiredModules.value = out;
+            return out;
+          })
+          .catch(() => ({}));
+      }
+      return _moduleGatePromise;
+    };
+    const isModuleRetired = async (mid) => !!(await ensureModuleGate())[mid];
+    const retiredTabNotice = computed(() => {
+      const mid = TAB_MODULE_ID[activeTab.value];
+      if (!mid) return null;
+      const m = retiredModules.value[mid];
+      return m ? Object.assign({ module_id: mid }, m) : null;
+    });
 
     const activeAiModelCount = computed(() => {
       let count = 0;
@@ -925,19 +965,28 @@ const App = {
       return failures;
     };
 
-    // 批量加载 / 刷新六大高维数学与AI模型
+    // 批量加载 / 刷新高维数学与AI模型（退役模型不发请求，只报跳过）
     const fetchAllAiMathModels = async (forceRefresh = false) => {
       aiMathLoading.value = true;
       try {
+        const retired = await ensureModuleGate();
+        const modelLoaders = [
+          { id: 'genetic', label: '遗传算法', run: () => fetchGeneticData(forceRefresh) },
+          { id: 'linear_algebra', label: '线性代数', run: () => fetchLinearAlgebraData(forceRefresh) },
+          { id: 'dtw', label: 'DTW', run: () => fetchDTWData(forceRefresh) },
+          { id: 'transformer', label: 'Transformer', run: () => fetchTransformerData(forceRefresh) },
+          { id: 'matrix_profile', label: '矩阵轮廓', run: () => fetchMatrixProfileData(forceRefresh) },
+          { id: 'tda', label: 'TDA', run: () => fetchTDAData(forceRefresh) }
+        ];
+        const activeLoaders = modelLoaders.filter((l) => !retired[l.id]);
+        const skipped = modelLoaders.filter((l) => retired[l.id]).map((l) => l.label);
         const failures = await runLoaders([
-          { label: '遗传算法', run: () => fetchGeneticData(forceRefresh) },
-          { label: '线性代数', run: () => fetchLinearAlgebraData(forceRefresh) },
-          { label: 'DTW', run: () => fetchDTWData(forceRefresh) },
-          { label: 'Transformer', run: () => fetchTransformerData(forceRefresh) },
-          { label: '矩阵轮廓', run: () => fetchMatrixProfileData(forceRefresh) },
-          { label: 'TDA', run: () => fetchTDAData(forceRefresh) },
+          ...activeLoaders,
           { label: '数学共识复盘', run: () => fetchAiMathConsensusReview(30, forceRefresh) }
         ]);
+        if (skipped.length) {
+          addLog(`⏹ 已跳过 ${skipped.length} 个退役模型（${skipped.join('、')}）：不产出当期票、不参与 BH-FDR 校正`, 'info');
+        }
         if (failures.length) {
           addLog(`⚠️ 六大高维数学与AI模型中 ${failures.length} 项未能加载：${failures.map((f) => f.label).join('、')}`, 'warn');
           console.warn('[AI 数学模型] 加载失败:', failures);
@@ -1269,6 +1318,7 @@ const App = {
     };
 
     const fetchGeneticData = async (force = false) => {
+      if (await isModuleRetired('genetic')) { geneticData.value = null; return; }
       try {
         const res = await fetch(`/api/genetic/summary${force ? '?force_refresh=true' : ''}`);
         if (res.ok) {
@@ -1284,6 +1334,7 @@ const App = {
     };
 
     const fetchGeneticReview = async (n = 30) => {
+      if (await isModuleRetired('genetic')) { geneticReviewData.value = null; return; }
       try {
         const res = await fetch(`/api/genetic/review?n=${n}`);
         if (res.ok) {
@@ -1329,6 +1380,7 @@ const App = {
 
     // 10. 线性代数空间投影量化推演数据获取
     const fetchLinearAlgebraReview = async (n = 30) => {
+      if (await isModuleRetired('linear_algebra')) { linearAlgebraReviewData.value = null; return; }
       try {
         const res = await fetch(`/api/quant/linear-algebra/review?n=${n}`);
         if (res.ok) {
@@ -1352,6 +1404,7 @@ const App = {
     };
 
     const fetchLinearAlgebraData = async (forceRefresh = false) => {
+      if (await isModuleRetired('linear_algebra')) { linearAlgebraData.value = null; return; }
       linearAlgebraLoading.value = true;
       try {
         const url = forceRefresh ? '/api/quant/linear-algebra/run' : '/api/quant/linear-algebra/latest';
@@ -1389,6 +1442,7 @@ const App = {
     };
 
     const fetchRandomForestReview = async (n = 30, forceRefresh = false) => {
+      if (await isModuleRetired('random_forest')) { randomForestReviewData.value = null; return; }
       try {
         const q = forceRefresh ? '&force_refresh=true' : '';
         const res = await fetch(`/api/quant/random-forest/review?n=${n}${q}`);
@@ -1411,6 +1465,7 @@ const App = {
     };
 
     const fetchRandomForestData = async (forceRefresh = false) => {
+      if (await isModuleRetired('random_forest')) { randomForestData.value = null; return; }
       randomForestLoading.value = true;
       try {
         const url = forceRefresh ? '/api/quant/random-forest/run' : '/api/quant/random-forest/latest';
@@ -1440,6 +1495,7 @@ const App = {
     };
 
     const fetchErrorCorrectionReview = async (n = 30, forceRefresh = false) => {
+      if (await isModuleRetired('error_correction')) { errorCorrectionReviewData.value = null; return; }
       try {
         const q = forceRefresh ? '&force_refresh=true' : '';
         const res = await fetch(`/api/error_correction/review?n=${n}${q}`);
@@ -1462,6 +1518,7 @@ const App = {
     };
 
     const fetchErrorCorrectionData = async (forceRefresh = false) => {
+      if (await isModuleRetired('error_correction')) { errorCorrectionData.value = null; return; }
       errorCorrectionLoading.value = true;
       try {
         const url = forceRefresh ? '/api/error_correction/run' : '/api/error_correction/latest';
@@ -1555,6 +1612,7 @@ const App = {
 
     // 11. 动态时间规整 DTW 数据获取
     const fetchDTWReview = async (n = 30) => {
+      if (await isModuleRetired('dtw')) { dtwReviewData.value = null; return; }
       try {
         const res = await fetch(`/api/quant/dtw/review?n=${n}`);
         if (res.ok) {
@@ -1578,6 +1636,7 @@ const App = {
     };
 
     const fetchDTWData = async (forceRefresh = false) => {
+      if (await isModuleRetired('dtw')) { dtwData.value = null; return; }
       dtwLoading.value = true;
       try {
         const url = forceRefresh ? '/api/quant/dtw/run' : '/api/quant/dtw/latest';
@@ -1609,6 +1668,7 @@ const App = {
 
     // 12. Transformer 全局自注意力数据获取
     const fetchTransformerReview = async (n = 30) => {
+      if (await isModuleRetired('transformer')) { transformerReviewData.value = null; return; }
       try {
         const res = await fetch(`/api/quant/transformer/review?n=${n}`);
         if (res.ok) {
@@ -1632,6 +1692,7 @@ const App = {
     };
 
     const fetchTransformerData = async (forceRefresh = false) => {
+      if (await isModuleRetired('transformer')) { transformerData.value = null; return; }
       transformerLoading.value = true;
       try {
         const url = forceRefresh ? '/api/quant/transformer/run' : '/api/quant/transformer/latest';
@@ -1663,6 +1724,7 @@ const App = {
 
     // 13. 矩阵轮廓 Matrix Profile 数据获取
     const fetchMatrixProfileReview = async (n = 30) => {
+      if (await isModuleRetired('matrix_profile')) { matrixProfileReviewData.value = null; return; }
       try {
         const res = await fetch(`/api/quant/matrix-profile/review?n=${n}`);
         if (res.ok) {
@@ -1686,6 +1748,7 @@ const App = {
     };
 
     const fetchMatrixProfileData = async (forceRefresh = false) => {
+      if (await isModuleRetired('matrix_profile')) { matrixProfileData.value = null; return; }
       matrixProfileLoading.value = true;
       try {
         const url = forceRefresh ? '/api/quant/matrix-profile/run' : '/api/quant/matrix-profile/latest';
@@ -1717,6 +1780,7 @@ const App = {
 
     // 14. 拓扑数据分析 TDA 数据获取
     const fetchTDAReview = async (n = 30) => {
+      if (await isModuleRetired('tda')) { tdaReviewData.value = null; return; }
       try {
         const res = await fetch(`/api/quant/tda/review?n=${n}`);
         if (res.ok) {
@@ -1740,6 +1804,7 @@ const App = {
     };
 
     const fetchTDAData = async (forceRefresh = false) => {
+      if (await isModuleRetired('tda')) { tdaData.value = null; return; }
       tdaLoading.value = true;
       try {
         const url = forceRefresh ? '/api/quant/tda/run' : '/api/quant/tda/latest';
