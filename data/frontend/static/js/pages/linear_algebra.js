@@ -11,10 +11,14 @@
   window.K8Pages.register(function (vueApi, ctx) {
     const {
       isRunning, isLinearAlgebraRunning, openTab, addLog, startLogPolling, terminalLogs,
-      fetchLinearAlgebraData
+      fetchLinearAlgebraData, isModuleRetired
     } = ctx;
 
     const triggerLinearAlgebraRun = async () => {
+      if (await isModuleRetired('linear_algebra')) {
+        addLog('⏹ 线性代数模块已退役，不发起推演请求；复启需修改 module_gate.MODULE_SEED 判决', 'warn');
+        return;
+      }
       if (isRunning.value || (isLinearAlgebraRunning && isLinearAlgebraRunning.value)) return;
       try {
         if (isLinearAlgebraRunning) isLinearAlgebraRunning.value = true;

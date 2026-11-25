@@ -10,10 +10,14 @@
   window.K8Pages.register(function (vueApi, ctx) {
     const {
       isRunning, isErrorCorrectionRunning, openTab, addLog, startLogPolling, terminalLogs,
-      fetchErrorCorrectionData
+      fetchErrorCorrectionData, isModuleRetired
     } = ctx;
 
     const triggerErrorCorrectionRun = async () => {
+      if (await isModuleRetired('error_correction')) {
+        addLog('⏹ 残差改错模块已退役，不发起推演请求；复启需修改 module_gate.MODULE_SEED 判决', 'warn');
+        return;
+      }
       if (isRunning.value || (isErrorCorrectionRunning && isErrorCorrectionRunning.value)) return;
       try {
         if (isErrorCorrectionRunning) isErrorCorrectionRunning.value = true;

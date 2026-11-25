@@ -6,9 +6,10 @@
   if (!window.K8Pages || typeof window.K8Pages.register !== 'function') return;
 
   window.K8Pages.register(function (vueApi, ctx) {
-    const { isRunning, openTab, addLog, startLogPolling, terminalLogs, fetchDTWData } = ctx;
+    const { isRunning, openTab, addLog, startLogPolling, terminalLogs, fetchDTWData, isModuleRetired } = ctx;
 
     const triggerDTWRun = async () => {
+      if (await isModuleRetired('dtw')) { addLog('⏹ DTW 模块已退役，不发起推演请求；复启需修改 module_gate.MODULE_SEED 判决', 'warn'); return; }
       if (isRunning.value) return;
       try {
         isRunning.value = true;

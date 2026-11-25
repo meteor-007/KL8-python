@@ -6,9 +6,10 @@
   if (!window.K8Pages || typeof window.K8Pages.register !== 'function') return;
 
   window.K8Pages.register(function (vueApi, ctx) {
-    const { isRunning, openTab, addLog, startLogPolling, terminalLogs, fetchTDAData } = ctx;
+    const { isRunning, openTab, addLog, startLogPolling, terminalLogs, fetchTDAData, isModuleRetired } = ctx;
 
     const triggerTDARun = async () => {
+      if (await isModuleRetired('tda')) { addLog('⏹ TDA 模块已退役，不发起推演请求；复启需修改 module_gate.MODULE_SEED 判决', 'warn'); return; }
       if (isRunning.value) return;
       try {
         isRunning.value = true;

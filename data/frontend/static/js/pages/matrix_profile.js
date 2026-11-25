@@ -6,9 +6,10 @@
   if (!window.K8Pages || typeof window.K8Pages.register !== 'function') return;
 
   window.K8Pages.register(function (vueApi, ctx) {
-    const { isRunning, openTab, addLog, startLogPolling, terminalLogs, fetchMatrixProfileData } = ctx;
+    const { isRunning, openTab, addLog, startLogPolling, terminalLogs, fetchMatrixProfileData, isModuleRetired } = ctx;
 
     const triggerMatrixProfileRun = async () => {
+      if (await isModuleRetired('matrix_profile')) { addLog('⏹ 矩阵轮廓模块已退役，不发起推演请求；复启需修改 module_gate.MODULE_SEED 判决', 'warn'); return; }
       if (isRunning.value) return;
       try {
         isRunning.value = true;

@@ -10,10 +10,14 @@
   window.K8Pages.register(function (vueApi, ctx) {
     const {
       isRunning, isRandomForestRunning, openTab, addLog, startLogPolling, terminalLogs,
-      fetchRandomForestData
+      fetchRandomForestData, isModuleRetired
     } = ctx;
 
     const triggerRandomForestRun = async () => {
+      if (await isModuleRetired('random_forest')) {
+        addLog('⏹ 随机森林模块已退役，不发起推演请求；复启需修改 module_gate.MODULE_SEED 判决', 'warn');
+        return;
+      }
       if (isRunning.value || (isRandomForestRunning && isRandomForestRunning.value)) return;
       try {
         if (isRandomForestRunning) isRandomForestRunning.value = true;
