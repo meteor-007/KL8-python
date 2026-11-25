@@ -405,6 +405,11 @@ class CoreServiceMixin:
 
             pred = default_pred.copy()
             pred["date"] = reports[0]["date"]
+            _today = datetime.now().strftime("%Y-%m-%d")
+            _label = "当日研判报告" if reports[0]["date"] == _today else "最近研判报告"
+            pred["data_provenance"] = (
+                f"{_label}: {reports[0]['filename']}（未解析字段由实时历史兜底）"
+            )
 
             def parse_list(pattern):
                 m = re.search(pattern, norm)
