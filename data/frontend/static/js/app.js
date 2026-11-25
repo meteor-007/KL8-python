@@ -133,25 +133,18 @@ const App = {
       }
     };
 
-    // 动态 Tab：默认进入遗传算法（高维区仅保留 GA + 线性代数）
+    // 动态 Tab：默认进入 16 期中热推演（现役主推；退役模块不再预置为默认页）
     const _menuMeta = (key) => (window.K8MenuRegistry && window.K8MenuRegistry.MENU_BY_KEY[key]) || {};
     const tabs = ref([
-      {
-        key: 'genetic_cockpit',
-        title: _menuMeta('genetic_cockpit').title || '遗传算法自进化推演战区',
-        shortTitle: _menuMeta('genetic_cockpit').shortTitle || '遗传算法',
-        icon: _menuMeta('genetic_cockpit').icon || '🧬',
-        closable: false
-      },
       {
         key: 'sixteen_cockpit',
         title: _menuMeta('sixteen_cockpit').title || '16期中热频次推演（含频次全景）',
         shortTitle: _menuMeta('sixteen_cockpit').shortTitle || '16期中热推演',
         icon: _menuMeta('sixteen_cockpit').icon || '🔥',
-        closable: true
+        closable: false
       }
     ]);
-    const activeTab = ref('genetic_cockpit');
+    const activeTab = ref('sixteen_cockpit');
     // 子视图懒渲染：首次访问才挂载，之后保留（避免全部 tab 常驻 DOM 拖慢渲染）
     const visitedTabs = reactive([activeTab.value]);
     expandMenuGroupForKey(activeTab.value);
@@ -555,14 +548,14 @@ const App = {
         if (tabs.value.length > 0) {
           activeTab.value = tabs.value[Math.max(0, idx - 1)].key;
         } else {
-          // 兜底：若所有标签均被移除，则恢复默认主全景
+          // 兜底：若所有标签均被移除，则恢复默认主全景（16期中热）
           tabs.value.push({
-            key: 'genetic_cockpit',
-            title: _menuMeta('genetic_cockpit').title || '遗传算法',
-            icon: _menuMeta('genetic_cockpit').icon || '🧬',
+            key: 'sixteen_cockpit',
+            title: _menuMeta('sixteen_cockpit').title || '16期中热推演',
+            icon: _menuMeta('sixteen_cockpit').icon || '🔥',
             closable: false
           });
-          activeTab.value = 'genetic_cockpit';
+          activeTab.value = 'sixteen_cockpit';
         }
       }
       nextTick(() => { handleResize(); });
@@ -615,9 +608,9 @@ const App = {
       tabs.value = tabs.value.filter(t => !t.closable);
       if (tabs.value.length === 0) {
         tabs.value.push({
-          key: 'genetic_cockpit',
-          title: _menuMeta('genetic_cockpit').title || '遗传算法',
-          icon: _menuMeta('genetic_cockpit').icon || '🧬',
+          key: 'sixteen_cockpit',
+          title: _menuMeta('sixteen_cockpit').title || '16期中热推演',
+          icon: _menuMeta('sixteen_cockpit').icon || '🔥',
           closable: false
         });
       }
@@ -3899,6 +3892,8 @@ const App = {
       // 2. 【首屏极速性能飞跃】：仅并发加载主驾驶舱首屏核心数据，杜绝串行等待！
       //    逐项兜底，失败项由顶部告警横幅现形，不再静默。
       await loadFirstScreen();
+      // 默认页（16期中热）数据：首次进入不会触发 watch，需显式按当前 tab 加载
+      openTab(activeTab.value);
 
       // 全局点击与滚动自动收起 Tab 右键快捷菜单
       window.addEventListener('click', closeTabContextMenu);
