@@ -1354,6 +1354,10 @@ const App = {
     };
 
     const triggerGeneticEvolution = async () => {
+      if (await isModuleRetired('genetic')) {
+        addLog('⏹ 遗传算法模块已退役，不发起进化请求；复启需修改 module_gate.MODULE_SEED 判决', 'warn');
+        return;
+      }
       isGeneticRunning.value = true;
       try {
         const res = await fetch('/api/genetic/run', {
@@ -4488,6 +4492,10 @@ const App = {
       sortedAiResonanceList,
       activeAiModelCount,
       aiMathLoading,
+      retiredTabNotice,
+      retiredModules,
+      ensureModuleGate,
+      isModuleRetired,
       fetchAllAiMathModels,
       // 经典量化七大子模块汇总
       classicLoading,
