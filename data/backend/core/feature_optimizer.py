@@ -413,7 +413,9 @@ def plan5_multi_source_points(history, points_by_issue):
     s1 = points_by_issue.get(target_issue, set())
     src_period = target_issue
     if not s1:
-        for i in range(1, 6):
+        # 从最近一期开始往前找 (2026-11-26: 原来从 latest-1 起步, 会跳过最新一期、
+        # 白丢一期更近的点位; 现在 latest 本身也参与兜底)
+        for i in range(0, 6):
             alt = str(latest_issue - i)
             s1 = points_by_issue.get(alt, set())
             if s1:
