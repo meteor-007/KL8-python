@@ -411,18 +411,29 @@ def plan5_multi_source_points(history, points_by_issue):
     latest_issue = int(history[0]['issue']) if history else 0
     target_issue = str(latest_issue + 1)
     s1 = points_by_issue.get(target_issue, set())
+    src_period = target_issue
     if not s1:
         for i in range(1, 6):
-            s1 = points_by_issue.get(str(latest_issue - i), set())
-            if s1: break
-    print(f"  源1(目标期{target_issue}点位): {len(s1)}个 -> {sorted(s1)}")
+            alt = str(latest_issue - i)
+            s1 = points_by_issue.get(alt, set())
+            if s1:
+                src_period = alt
+                break
+    # 2026-11-26 整改: 原来这里无论取到哪期点位，都打印"源1(目标期XXX点位)"，
+    # 把上一期甚至上两期的旧点位伪装成当日点位信号。现在把真实取数期号打出来，降级必须自曝。
+    if s1 and src_period != target_issue:
+        print(f"  ⚠️ 源1降级: 目标期{target_issue}点位未录入 -> 改用第{src_period}期旧点位 "
+              f"(落后 {int(target_issue) - int(src_period)} 期)；这批票不是当日点位信号，按旧信号降权看")
+    print(f"  源1(点位期{src_period}): {len(s1)}个 -> {sorted(s1)}")
     f5 = collections.Counter(n for h in history[:5] for n in h['numbers'])
     s2 = set(n for n, _ in f5.most_common(20))
     votes = collections.Counter()
     for n in s1: votes[n] += 3
     for n in s2: votes[n] += 1
     high = sorted(n for n, v in votes.items() if v >= 3)
-    return {'high': high, 'mid': [], 'sources': {'点位': sorted(s1), '频次5': sorted(s2)}}
+    return {'high': high, 'mid': [],
+            'sources': {'点位': sorted(s1), '频次5': sorted(s2)},
+            'point_period': src_period, 'point_period_is_target': src_period == target_issue}
 
 
 def plan6_phase_transition(history):

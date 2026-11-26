@@ -4,9 +4,9 @@
   "retry_minutes": 5,
   "max_retries": 6,
   "last_run_date": "2026-11-26",
-  "last_status": "SUCCESS",
-  "last_message": "✅ 夜间流水线执行圆满成功 (耗时: 82171s)",
+  "last_status": "RUNNING",
+  "last_message": "Windows 计划任务已触发，夜间全自动流水线执行中...",
   "last_finished_at": "2026-11-26 20:49:32",
   "last_trigger": "windows_scheduled_task",
-  "last_started_at": "2026-11-25 22:00:02"
+  "last_started_at": "2026-11-26 22:00:01"
 }

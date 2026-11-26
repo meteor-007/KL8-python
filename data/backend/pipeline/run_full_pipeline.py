@@ -199,6 +199,40 @@ def task11_fetch():
         pass
 
 # ══════════════════════════════════════════════════════════
+# SECTION 1.15: 点位与三高 Excel 导入 (每日唯一手动输入)
+# ══════════════════════════════════════════════════════════
+def task115_points_import():
+    """把 validation/file 下最新点位图 Excel 导入 daily_points.txt / tri_high_points.json。
+
+    2026-11-26 新增: 原来导入只在 scripts\\auto_import_daily_excel.bat 里，跑"唯一入口"
+    run_full_pipeline 根本不会执行它 —— 结果点位/三高台账永远停在上一期，研报显示
+    "点位未录入 0 码"，而点位类模块又偷偷拿更早的点位补位。现在把它挂进主流水线。
+
+    退出码约定 (见 scripts/import_daily_excel.ps1):
+      0 = 已导入 / 目录里没有 Excel (无需导入)
+      2 = Excel 点位块还是旧的 (不晚于最新开奖期)，不写入
+      1/3 = 解析失败 / 期号超前，需人工处理
+    """
+    banner('任务1.15：💎 点位与三高 Excel 导入 (daily_points / tri_high_points)', 'cyan')
+    try:
+        from scripts.import_daily_excel import run_excel_import
+        rc = run_excel_import()
+    except Exception as e:
+        warn(f'点位/三高导入步骤异常: {e}')
+        return 2
+
+    if rc == 0:
+        ok('点位与三高台账已按最新 Excel 对齐 (或目录无新文件，无需导入)')
+    elif rc == 2:
+        warn('Excel 点位块未更新到目标期 (旧文件)，本次沿用台账现状；'
+             '研报会在"五、缺口清单"里显式标注输入缺口')
+    else:
+        warn(f'点位/三高导入失败 (exit={rc})，本次不写入台账；'
+             f'研报会显式标注输入缺口，点位类模块的降级情况见引擎日志')
+    return rc
+
+
+# ══════════════════════════════════════════════════════════
 # SECTION 1.2: 热码统计生成
 # ══════════════════════════════════════════════════════════
 def task12_hot_numbers():
@@ -1098,6 +1132,7 @@ if __name__ == '__main__':
         task0_env_check()
         task00_validate()
         task11_fetch()
+        task115_points_import()
         task12_hot_numbers()
         task13_15_sync()
         task2_review()

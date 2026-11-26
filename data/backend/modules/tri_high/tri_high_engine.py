@@ -357,9 +357,20 @@ class TriHighResonanceEngine:
         latest_draw_period = history_draws[0]["issue"] if history_draws else "2026240"
         target_period = str(int(latest_draw_period) + 1) if latest_draw_period.isdigit() else "2026241"
 
-        # 寻找最新可用的三高数据基准
+        # 寻找最新可用的三高数据基准 (2026-11-26 整改: 优先精确匹配目标期)
+        # 大白话: 三高手账是按"它服务的那一期"存期号的。目标期有记录就必须用目标期那一条；
+        # 没有才退回最新一条，而且必须在终端把"用的是哪一期、落后几期"喊出来，不许装成当日三高。
         latest_record = history_list[0] if history_list else {}
+        exact_record = next((r for r in history_list
+                             if str(r.get("period", "")).strip() == str(target_period)), None)
+        if exact_record is not None:
+            latest_record = exact_record
         base_period = latest_record.get("period", latest_draw_period)
+        if str(base_period).strip() != str(target_period):
+            _bp = str(base_period).strip()
+            lag = (int(target_period) - int(_bp)) if _bp.isdigit() else "?"
+            print(f"  ⚠️ 三高录入缺失: 目标期 {target_period} 没有三高手账，退回使用第 {_bp} 期旧三高"
+                  f"(落后 {lag} 期)；这批共振号的输入已经过期，只能当参考")
 
         cur_repeat = [item["num"] for item in latest_record.get("repeat_high", [])]
         cur_edge_l = [item["num"] for item in latest_record.get("edge_high_left", [])]

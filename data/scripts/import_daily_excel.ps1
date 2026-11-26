@@ -133,9 +133,9 @@ try {
     }
     
     if (-not $sh) {
-        Write-Info "⚠️ 候选文件中未发现名称包含 [快乐8点位图] 的 Sheet 页。" "Yellow"
-        Write-Info "💡 触发平稳降级：继续采用已有数据/历史模型推进全流程预测，不阻断任务。" "Green"
-        exit 0
+        Write-Info "❌ 候选文件中未发现名称包含 [快乐8点位图] 的 Sheet 页，本次不写入。" "Red"
+        Write-Info "   请确认下载的是点位图工作簿 (如 2026316(2).xls)，而不是找胆图/统计图那两份。" "Yellow"
+        exit 1
     }
     
     Write-Info "🎯 成功锁定目标文件: $($matchedFile.Name) -> 工作表: [$($sh.Name)]" "Green"
@@ -143,7 +143,10 @@ try {
     $maxRow = $sh.UsedRange.Rows.Count
     if ($maxRow -lt 100) { $maxRow = 9500 }
     
-    # 从下往上扫描定位最新期号 (7位数字，如 2026305)
+    # 从下往上扫描定位最新点位块 (7位数字，如 2026305)
+    # 2026-11-26 修正: 点位块是"两行期号 + 点/位 + 20码"的结构，块首行才是这 20 码的目标期；
+    # 紧挨着它下面那行是站点自己写的下一期占位标签。原来直接取从下往上第一个期号，
+    # 抓到的正是占位行，导致期号整体错位一期 (例: 2026317)，只能靠后面"智能校准"硬掰回来。
     $periodRow = 0
     $foundPeriod = ""
     for ($r = $maxRow; $r -ge 1; $r--) {
@@ -156,13 +159,20 @@ try {
     }
     
     if ($periodRow -eq 0) {
-        Write-Info "⚠️ 未能在 A 列检索到有效的 7 位快乐8期号。" "Yellow"
-        Write-Info "💡 触发平稳降级：跳过解析，继续推进全流程预测。" "Green"
-        exit 0
+        Write-Info "❌ 未能在 A 列检索到有效的 7 位快乐8期号，本次不写入。" "Red"
+        exit 1
+    }
+    
+    if ($periodRow -gt 1) {
+        $prevVal = $sh.Cells.Item($periodRow - 1, 1).Text.Trim()
+        if ($prevVal -match "^(20\d{5})$" -and [int]$prevVal -lt [int]$foundPeriod) {
+            Write-Info "🔧 期号锚定: 块首行 [$prevVal] 为本块目标期 (下一行 [$foundPeriod] 是站点占位标签)" "Gray"
+            $foundPeriod = $prevVal
+        }
     }
     
     $Extracted.Period = $foundPeriod
-    Write-Info "📌 捕获最新目标期号: [$foundPeriod] (位于第 $periodRow 行)" "Green"
+    Write-Info "📌 捕获最新目标期号: [$foundPeriod] (点位块首行位于第 $periodRow 行)" "Green"
     
     # 提取 K 列 (第 11 列) 对应的 20 个点位号码 (A列编号 1-20)
     $pts = @()
@@ -178,9 +188,8 @@ try {
     }
     
     if ($pts.Count -ne 20) {
-        Write-Info "⚠️ K 列点位号码数量不足 20 码 (当前检测到 $($pts.Count) 码)。" "Yellow"
-        Write-Info "💡 触发平稳降级：放弃脏数据写入，继续沿用历史点位执行全流程。" "Yellow"
-        exit 0
+        Write-Info "❌ K 列点位号码数量不足 20 码 (当前检测到 $($pts.Count) 码)，放弃写入。" "Red"
+        exit 1
     }
     
     $Extracted.Points = $pts
@@ -220,8 +229,8 @@ try {
     
 } catch {
     Write-Info "❌ Excel 读取或 COM 执行异常: $($_.Exception.Message)" "Red"
-    Write-Info "💡 触发平稳降级：跳过解析，继续推进全流程预测。" "Yellow"
-    exit 0
+    Write-Info "   本次不写入台账。修好 WPS/文件后重跑本脚本，不要带着旧点位往下跑。" "Yellow"
+    exit 1
 } finally {
     if ($wb) { $wb.Close($false) }
     if ($wps) { 
@@ -230,29 +239,29 @@ try {
     }
 }
 
-# 3. 推断期号对应日期与自动校准（防 Excel 拖拽自动自增错期）
+# 3. 期号校验与日期推断 (2026-11-26 整改: 删掉"超前就掰回"的智能校准)
+#    大白话: 原来只要 Excel 期号比开奖库超前 1 期以上，就强行改成 lastPeriod+1 再写库。
+#    这个"猜"法会把站点占位标签当真实期号，一旦同步顺序变了就写错期。
+#    现在改成"只认唯一合法目标期 = 最新开奖期 + 1"，其余情况一律不写、返回明确退出码。
 $targetDate = (Get-Date).ToString("yyyy-MM-dd")
 if (Test-Path $HistoryFile) {
     $firstLine = Get-Content -Path $HistoryFile -First 1
     if ($firstLine -match "date:([0-9\-]+),period:(\d+)") {
         $lastDate = [datetime]::ParseExact($Matches[1], "yyyy-MM-dd", $null)
         $lastPeriod = [int]$Matches[2]
+        $diff = [int]$Extracted.Period - $lastPeriod
         
-        # 核心防跳期容错：若 Excel 中因拖拽自增导致期号大于历史最新期+1，且前置期号实际未开奖，则自动校准
-        if ($Extracted.Period -match "^\d+$" -and ([int]$Extracted.Period - $lastPeriod -gt 1)) {
-            $correctedPeriod = ($lastPeriod + 1).ToString()
-            Write-Info "⚠️ 检测到 Excel 标注期号 [$($Extracted.Period)] 超前于开奖库历史最新期 [$lastPeriod] (跳跃 $([int]$Extracted.Period - $lastPeriod) 期)。" "Yellow"
-            Write-Info "🔧 触发智能校准：将本次解析数据归属至实际目标推演期号 [$correctedPeriod]！" "Green"
-            $Extracted.Period = $correctedPeriod
-            $targetDate = (Get-Date).ToString("yyyy-MM-dd")
-        } else {
-            $diff = [int]$Extracted.Period - $lastPeriod
-            if ($diff -gt 0) {
-                $targetDate = $lastDate.AddDays($diff).ToString("yyyy-MM-dd")
-            } elseif ($diff -eq 0) {
-                $targetDate = $lastDate.ToString("yyyy-MM-dd")
-            }
+        if ($diff -lt 1) {
+            Write-Info "⏭️ Excel 最新点位块 [$($Extracted.Period)] 不晚于开奖库最新期 [$lastPeriod]，判定为旧文件。" "Yellow"
+            Write-Info "   本次不写入台账 (exit 2)。等站点更新出下一期点位块后再导入。" "Yellow"
+            exit 2
         }
+        if ($diff -gt 1) {
+            Write-Info "❌ Excel 期号 [$($Extracted.Period)] 比开奖库最新期 [$lastPeriod] 超前 $diff 期，拒绝写入 (exit 3)。" "Red"
+            Write-Info "   多半是开奖历史没同步到位，或点位文件期号标注错误。先同步开奖再导入。" "Yellow"
+            exit 3
+        }
+        $targetDate = $lastDate.AddDays($diff).ToString("yyyy-MM-dd")
     }
 }
 $Extracted.Date = $targetDate

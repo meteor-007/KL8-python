@@ -102,6 +102,35 @@ def load_tri_high_entry(target_period: str) -> Dict[str, Any]:
     return {}
 
 
+def _latest_daily_points_period() -> str:
+    """台账里现存的点位最新期号 (用于在报告里说清"台账停在几期")。"""
+    best = ""
+    try:
+        with open(data_path("daily_points.txt"), "r", encoding="utf-8", errors="ignore") as f:
+            for line in f:
+                m = re.search(r"period:(\d+)", line)
+                if m and m.group(1).isdigit() and m.group(1) > best:
+                    best = m.group(1)
+    except Exception:
+        pass
+    return best or "无"
+
+
+def _latest_tri_high_period() -> str:
+    """台账里现存的三高最新期号。"""
+    best = ""
+    try:
+        path = os.path.join(_PROJ_DIR, "storage", "points", "tri_high_points.json")
+        with open(path, "r", encoding="utf-8") as f:
+            for r in json.load(f).get("records", []):
+                p = str(r.get("period", "")).strip()
+                if p.isdigit() and p > best:
+                    best = p
+    except Exception:
+        pass
+    return best or "无"
+
+
 def format_num(n: Any) -> str:
     """安全格式化两位号码字符串"""
     try:
@@ -617,6 +646,19 @@ class StandardDailyReportEngine:
         #    folk_16_window_*.txt 是民间另一套配额口径，不得覆盖 ops 微信桶（否则会串期/串口径）。
         wechat_text = ""
         gap = EvidenceGap()
+
+        # 2026-11-26 新增: 输入项缺失也必须进缺口清单。
+        # 大白话: 以前点位/三高没录入，报告末尾照样写"无缺口"，实际整条点位链都在拿旧数据跑，
+        # 看报告的人根本发现不了。现在只要目标期输入没到位，就在缺口清单里点名，并写出台账停在几期。
+        pts_ledger_latest = _latest_daily_points_period()
+        tri_ledger_latest = _latest_tri_high_period()
+        if not pts:
+            gap.add("每日输入点位 (daily_points)",
+                    f"第 {target} 期点位未录入；台账最新只到 {pts_ledger_latest} 期。"
+                    f"点位类模块会降级取旧点位，别把它们的号当当日点位信号")
+        if not tri_raw:
+            gap.add("三高特征 (tri_high_points)",
+                    f"第 {target} 期三高未录入；台账最新只到 {tri_ledger_latest} 期")
 
         # 1a. latest_summary.json → daily_ops_brief.wechat_bucket_lines
         summary_path = os.path.join(self.proj_dir, "storage", "cache", "sixteen_period", "latest_summary.json")
@@ -1281,14 +1323,14 @@ class StandardDailyReportEngine:
 - **官方实际开出 20 码**：
   `{l_nums_str}`
 - **💎 每日输入点位（{len(pts)}码）**：
-  `{_covers(pts, "第 " + str(target) + " 期点位未录入")}`
+  `{_covers(pts, "第 " + str(target) + " 期点位未录入；台账最新 " + pts_ledger_latest + " 期")}`
 - **🔁 快8上期开奖号码·重复高概率（{len(rep_high)}码）**：
-  `{_covers(_num_list(rep_high), "第 " + str(target) + " 期三高未录入")}`
+  `{_covers(_num_list(rep_high), "第 " + str(target) + " 期三高未录入；台账最新 " + tri_ledger_latest + " 期")}`
 - **📐 快8上期开奖号码·边码高概率（{len(edge_l) + len(edge_r)}码，左右双翼）**：
-  - **左翼（上期号 - 1）**：`{_covers(_num_list(edge_l), "第 " + str(target) + " 期三高未录入")}`
-  - **右翼（上期号 + 1）**：`{_covers(_num_list(edge_r), "第 " + str(target) + " 期三高未录入")}`
+  - **左翼（上期号 - 1）**：`{_covers(_num_list(edge_l), "第 " + str(target) + " 期三高未录入；台账最新 " + tri_ledger_latest + " 期")}`
+  - **右翼（上期号 + 1）**：`{_covers(_num_list(edge_r), "第 " + str(target) + " 期三高未录入；台账最新 " + tri_ledger_latest + " 期")}`
 - **❄️ 快8下期重点关注指标·冷号高概率（{len(cold_h)}码）**：
-  `{_covers(_num_list(cold_h), "第 " + str(target) + " 期三高未录入")}`
+  `{_covers(_num_list(cold_h), "第 " + str(target) + " 期三高未录入；台账最新 " + tri_ledger_latest + " 期")}`
 
 ---
 
@@ -1492,7 +1534,7 @@ class StandardDailyReportEngine:
 
 ## 五、🧾 当期产物缺口清单（数据诚信自证）
 
-> 以下模块**本次没有产出当期可用产物**，报告中对应位置一律显示「无数据」，不会用历史或模板号码顶替。补齐后可重跑本报告。
+> 以下**模块或输入项**本次没有当期可用产物（点位、三高这类手工输入也在内），报告中对应位置一律显示「无数据」，不会用历史或模板号码顶替。补齐后可重跑本报告。
 
 {gap_block}
 
