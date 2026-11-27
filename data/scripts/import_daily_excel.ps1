@@ -187,13 +187,17 @@ try {
         }
     }
     
-    if ($pts.Count -ne 20) {
-        Write-Info "❌ K 列点位号码数量不足 20 码 (当前检测到 $($pts.Count) 码)，放弃写入。" "Red"
+    if ($pts.Count -lt 19) {
+        Write-Info "❌ K 列点位号码不足 19 码 (当前检测到 $($pts.Count) 码)，放弃写入。" "Red"
         exit 1
+    }
+    if ($pts.Count -lt 20) {
+        Write-Info "⚠️ 源表 K 列只给了 $($pts.Count) 码点位 (缺 $(20 - $pts.Count) 码，最后一格是空的)。" "Yellow"
+        Write-Info "   按实际 $($pts.Count) 码入库；研报会在缺口清单标注「点位不足 20 码」，点位类模块按实际数量算。" "Yellow"
     }
     
     $Extracted.Points = $pts
-    Write-Info "💎 成功提取 20 码点位: $($pts -join ' ')" "Cyan"
+    Write-Info "💎 成功提取 $($pts.Count) 码点位: $($pts -join ' ')" "Cyan"
     
     # 提取图2数据源（三高高概率特征池）
     for ($r = $periodRow + 22; $r -le $periodRow + 32; $r++) {

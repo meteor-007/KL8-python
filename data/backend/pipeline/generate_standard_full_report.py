@@ -656,6 +656,10 @@ class StandardDailyReportEngine:
             gap.add("每日输入点位 (daily_points)",
                     f"第 {target} 期点位未录入；台账最新只到 {pts_ledger_latest} 期。"
                     f"点位类模块会降级取旧点位，别把它们的号当当日点位信号")
+        elif len(pts) < 20:
+            gap.add("每日输入点位 (daily_points)",
+                    f"第 {target} 期源表只给了 {len(pts)} 码点位（缺 {20 - len(pts)} 码），"
+                    f"点位类模块按实际 {len(pts)} 码计算，覆盖面比标准 20 码窄")
         if not tri_raw:
             gap.add("三高特征 (tri_high_points)",
                     f"第 {target} 期三高未录入；台账最新只到 {tri_ledger_latest} 期")
