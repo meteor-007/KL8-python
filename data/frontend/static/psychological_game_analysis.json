@@ -1,125 +1,125 @@
 {
-  "target_period": "2026317",
-  "based_on_period": "2026316",
-  "total_draws": 2137,
-  "date": "2026-11-26",
+  "target_period": "2026318",
+  "based_on_period": "2026317",
+  "total_draws": 2138,
+  "date": "2026-11-27",
   "top3_gold": [
-    38,
     24,
-    23
-  ],
-  "top5_assault": [
-    38,
-    24,
-    23
-  ],
-  "top12_balanced": [
-    38,
-    24,
-    23
-  ],
-  "top_cold_spring": [
-    38,
-    4,
-    24,
+    39,
     73
   ],
+  "top5_assault": [
+    24,
+    39,
+    73
+  ],
+  "top12_balanced": [
+    24,
+    39,
+    73
+  ],
+  "top_cold_spring": [
+    4,
+    24,
+    73,
+    48
+  ],
   "top_healthy_repeats": [
-    8,
-    21,
-    25,
-    49
+    5,
+    7,
+    9,
+    23
   ],
   "macro_pendulum": {
-    "last_size_ratio": "9:11 (小:大)",
-    "avg_big_count": 10.2,
-    "big_small_bias": 0.07,
+    "last_size_ratio": "11:9 (小:大)",
+    "avg_big_count": 10.4,
+    "big_small_bias": 0.13,
     "size_trend_desc": "大小比处于常态中枢震荡区间，预计维持 10:10 均衡格局",
     "target_size_bias": "大小均衡对冲",
-    "last_odd_even_ratio": "10:10 (奇:偶)",
+    "last_odd_even_ratio": "11:9 (奇:偶)",
     "odd_trend_desc": "奇偶比常态均衡，预计下期维持约 10:10 均势",
     "zone_shares": [
-      28.3,
-      16.7,
-      21.7,
-      33.3
+      30.0,
+      18.3,
+      26.7,
+      25.0
     ],
     "zone_weights": [
-      0.74,
-      1.66,
-      1.26,
-      0.34
+      0.6,
+      1.54,
+      0.86,
+      1.0
     ],
     "zone_diagnoses": [
-      "1区 (01-20): 处于常态温水区 (28.3%)",
-      "2区 (21-40): 严重偏冷 (16.7%)，资金报复性补仓",
-      "3区 (41-60): 处于常态温水区 (21.7%)",
-      "4区 (61-80): 拥挤度超标 (33.3%)，高位滞涨降温"
+      "1区 (01-20): 处于常态温水区 (30.0%)",
+      "2区 (21-40): 处于常态温水区 (18.3%)",
+      "3区 (41-60): 处于常态温水区 (26.7%)",
+      "4区 (61-80): 处于常态温水区 (25.0%)"
     ]
   },
   "contrarian_cold_spring": {
     "spring_cold_candidates": [
       {
-        "number": 38,
-        "display": "38",
-        "omission": 12,
-        "recent_freq10": 0,
-        "spring_tension": 1.72,
-        "status": "弹性中冷 (遗漏12期，绝望点强反弹)"
-      },
-      {
         "number": 4,
         "display": "04",
-        "omission": 9,
-        "recent_freq10": 1,
-        "spring_tension": 1.36,
-        "status": "弹性中冷 (遗漏9期，绝望点强反弹)"
+        "omission": 10,
+        "recent_freq10": 0,
+        "spring_tension": 1.48,
+        "status": "弹性中冷 (遗漏10期，绝望点强反弹)"
       },
       {
         "number": 24,
         "display": "24",
-        "omission": 9,
-        "recent_freq10": 1,
-        "spring_tension": 1.36,
-        "status": "弹性中冷 (遗漏9期，绝望点强反弹)"
+        "omission": 10,
+        "recent_freq10": 0,
+        "spring_tension": 1.48,
+        "status": "弹性中冷 (遗漏10期，绝望点强反弹)"
       },
       {
         "number": 73,
         "display": "73",
+        "omission": 10,
+        "recent_freq10": 0,
+        "spring_tension": 1.48,
+        "status": "弹性中冷 (遗漏10期，绝望点强反弹)"
+      },
+      {
+        "number": 48,
+        "display": "48",
         "omission": 9,
         "recent_freq10": 1,
         "spring_tension": 1.36,
         "status": "弹性中冷 (遗漏9期，绝望点强反弹)"
       },
       {
-        "number": 48,
-        "display": "48",
+        "number": 2,
+        "display": "02",
         "omission": 8,
         "recent_freq10": 1,
         "spring_tension": 1.24,
         "status": "弹性中冷 (遗漏8期，绝望点强反弹)"
       },
       {
-        "number": 2,
-        "display": "02",
-        "omission": 7,
-        "recent_freq10": 1,
-        "spring_tension": 1.12,
-        "status": "弹性中冷 (遗漏7期，绝望点强反弹)"
-      },
-      {
-        "number": 23,
-        "display": "23",
-        "omission": 7,
-        "recent_freq10": 1,
-        "spring_tension": 1.12,
-        "status": "弹性中冷 (遗漏7期，绝望点强反弹)"
-      },
-      {
         "number": 39,
         "display": "39",
-        "omission": 7,
+        "omission": 8,
         "recent_freq10": 1,
+        "spring_tension": 1.24,
+        "status": "弹性中冷 (遗漏8期，绝望点强反弹)"
+      },
+      {
+        "number": 47,
+        "display": "47",
+        "omission": 8,
+        "recent_freq10": 1,
+        "spring_tension": 1.24,
+        "status": "弹性中冷 (遗漏8期，绝望点强反弹)"
+      },
+      {
+        "number": 18,
+        "display": "18",
+        "omission": 7,
+        "recent_freq10": 2,
         "spring_tension": 1.12,
         "status": "弹性中冷 (遗漏7期，绝望点强反弹)"
       }
@@ -127,148 +127,148 @@
     "deep_dead_cold": [],
     "crowd_hot_penalties": [
       {
-        "number": 17,
-        "display": "17",
-        "recent_freq10": 6,
-        "status": "极热追涨区 (散户跟风严重，防冲顶滞涨)"
-      },
-      {
-        "number": 25,
-        "display": "25",
+        "number": 9,
+        "display": "09",
         "recent_freq10": 7,
         "status": "极热追涨区 (散户跟风严重，防冲顶滞涨)"
       },
       {
-        "number": 35,
-        "display": "35",
-        "recent_freq10": 6,
+        "number": 49,
+        "display": "49",
+        "recent_freq10": 5,
+        "status": "极热追涨区 (散户跟风严重，防冲顶滞涨)"
+      },
+      {
+        "number": 56,
+        "display": "56",
+        "recent_freq10": 5,
         "status": "极热追涨区 (散户跟风严重，防冲顶滞涨)"
       }
     ],
     "omissions": {
-      "1": 5,
-      "2": 7,
-      "3": 3,
-      "4": 9,
-      "5": 5,
-      "6": 1,
-      "7": 1,
-      "8": 0,
-      "9": 2,
-      "10": 1,
-      "11": 4,
-      "12": 2,
-      "13": 1,
+      "1": 6,
+      "2": 8,
+      "3": 4,
+      "4": 10,
+      "5": 0,
+      "6": 2,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 2,
+      "11": 0,
+      "12": 0,
+      "13": 0,
       "14": 0,
-      "15": 0,
-      "16": 0,
-      "17": 0,
-      "18": 6,
-      "19": 3,
-      "20": 1,
-      "21": 0,
-      "22": 3,
-      "23": 7,
-      "24": 9,
-      "25": 0,
-      "26": 1,
-      "27": 3,
-      "28": 3,
-      "29": 5,
-      "30": 2,
-      "31": 4,
-      "32": 1,
-      "33": 4,
-      "34": 1,
-      "35": 0,
-      "36": 0,
-      "37": 2,
-      "38": 12,
-      "39": 7,
-      "40": 3,
-      "41": 6,
-      "42": 4,
-      "43": 4,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "18": 7,
+      "19": 4,
+      "20": 2,
+      "21": 1,
+      "22": 4,
+      "23": 0,
+      "24": 10,
+      "25": 1,
+      "26": 2,
+      "27": 4,
+      "28": 4,
+      "29": 6,
+      "30": 3,
+      "31": 0,
+      "32": 2,
+      "33": 5,
+      "34": 0,
+      "35": 1,
+      "36": 1,
+      "37": 3,
+      "38": 0,
+      "39": 8,
+      "40": 4,
+      "41": 7,
+      "42": 5,
+      "43": 5,
       "44": 0,
-      "45": 0,
+      "45": 1,
       "46": 0,
-      "47": 7,
-      "48": 8,
+      "47": 8,
+      "48": 9,
       "49": 0,
-      "50": 1,
-      "51": 4,
-      "52": 3,
-      "53": 0,
-      "54": 5,
-      "55": 2,
-      "56": 1,
-      "57": 3,
-      "58": 1,
-      "59": 4,
-      "60": 1,
-      "61": 0,
-      "62": 4,
-      "63": 1,
-      "64": 3,
-      "65": 2,
-      "66": 0,
-      "67": 3,
-      "68": 1,
-      "69": 2,
-      "70": 0,
-      "71": 0,
-      "72": 2,
-      "73": 9,
-      "74": 2,
-      "75": 3,
-      "76": 0,
-      "77": 1,
-      "78": 1,
-      "79": 2,
-      "80": 0
+      "50": 0,
+      "51": 5,
+      "52": 4,
+      "53": 1,
+      "54": 6,
+      "55": 0,
+      "56": 0,
+      "57": 4,
+      "58": 2,
+      "59": 5,
+      "60": 2,
+      "61": 1,
+      "62": 5,
+      "63": 2,
+      "64": 4,
+      "65": 0,
+      "66": 1,
+      "67": 4,
+      "68": 0,
+      "69": 0,
+      "70": 1,
+      "71": 1,
+      "72": 3,
+      "73": 10,
+      "74": 3,
+      "75": 4,
+      "76": 1,
+      "77": 2,
+      "78": 2,
+      "79": 3,
+      "80": 1
     },
     "freq_10": {
       "1": 1,
       "2": 1,
       "3": 2,
-      "4": 1,
+      "4": 0,
       "5": 3,
       "6": 3,
-      "7": 2,
+      "7": 3,
       "8": 3,
-      "9": 6,
+      "9": 7,
       "10": 2,
       "11": 2,
-      "12": 3,
-      "13": 2,
+      "12": 4,
+      "13": 3,
       "14": 4,
       "15": 4,
       "16": 4,
       "17": 6,
-      "18": 3,
-      "19": 4,
+      "18": 2,
+      "19": 3,
       "20": 3,
       "21": 3,
       "22": 1,
-      "23": 1,
-      "24": 1,
-      "25": 7,
+      "23": 2,
+      "24": 0,
+      "25": 6,
       "26": 2,
-      "27": 2,
-      "28": 4,
+      "27": 1,
+      "28": 3,
       "29": 1,
       "30": 2,
-      "31": 3,
+      "31": 4,
       "32": 1,
       "33": 2,
-      "34": 1,
+      "34": 2,
       "35": 6,
       "36": 4,
       "37": 2,
-      "38": 0,
+      "38": 1,
       "39": 1,
       "40": 2,
-      "41": 2,
+      "41": 1,
       "42": 1,
       "43": 1,
       "44": 4,
@@ -276,36 +276,36 @@
       "46": 3,
       "47": 1,
       "48": 1,
-      "49": 4,
-      "50": 3,
+      "49": 5,
+      "50": 4,
       "51": 2,
       "52": 2,
-      "53": 4,
+      "53": 3,
       "54": 2,
-      "55": 1,
-      "56": 4,
-      "57": 5,
+      "55": 2,
+      "56": 5,
+      "57": 4,
       "58": 3,
       "59": 3,
       "60": 1,
       "61": 2,
       "62": 3,
-      "63": 4,
+      "63": 3,
       "64": 4,
-      "65": 1,
-      "66": 4,
+      "65": 2,
+      "66": 3,
       "67": 2,
-      "68": 1,
-      "69": 2,
+      "68": 2,
+      "69": 3,
       "70": 2,
       "71": 4,
       "72": 1,
-      "73": 1,
+      "73": 0,
       "74": 2,
       "75": 2,
       "76": 1,
-      "77": 5,
-      "78": 2,
+      "77": 4,
+      "78": 1,
       "79": 2,
       "80": 2
     }
@@ -313,715 +313,521 @@
   "healthy_repeats_and_clusters": {
     "healthy_repeats": [
       {
-        "number": 8,
-        "display": "08",
+        "number": 5,
+        "display": "05",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
       {
-        "number": 21,
-        "display": "21",
+        "number": 7,
+        "display": "07",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
       {
-        "number": 25,
-        "display": "25",
+        "number": 9,
+        "display": "09",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
       {
-        "number": 49,
-        "display": "49",
+        "number": 23,
+        "display": "23",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
       {
-        "number": 53,
-        "display": "53",
+        "number": 31,
+        "display": "31",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
       {
-        "number": 61,
-        "display": "61",
+        "number": 34,
+        "display": "34",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
       {
-        "number": 66,
-        "display": "66",
+        "number": 38,
+        "display": "38",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
       {
-        "number": 76,
-        "display": "76",
+        "number": 44,
+        "display": "44",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       },
       {
-        "number": 80,
-        "display": "80",
+        "number": 46,
+        "display": "46",
+        "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
+        "recommend": true
+      },
+      {
+        "number": 65,
+        "display": "65",
         "status": "单点健康重号 (无连号截断阻碍，连庄阻力小)",
         "recommend": true
       }
     ],
     "truncated_repeats": [
       {
+        "number": 11,
+        "display": "11",
+        "adjacent_pairs": [
+          "11-12"
+        ],
+        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
+        "recommend": false
+      },
+      {
+        "number": 12,
+        "display": "12",
+        "adjacent_pairs": [
+          "11-12",
+          "12-13"
+        ],
+        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
+        "recommend": false
+      },
+      {
+        "number": 13,
+        "display": "13",
+        "adjacent_pairs": [
+          "12-13",
+          "13-14"
+        ],
+        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
+        "recommend": false
+      },
+      {
         "number": 14,
         "display": "14",
         "adjacent_pairs": [
-          "14-15"
+          "13-14"
         ],
         "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
         "recommend": false
       },
       {
-        "number": 15,
-        "display": "15",
+        "number": 49,
+        "display": "49",
         "adjacent_pairs": [
-          "14-15",
-          "15-16"
+          "49-50"
         ],
         "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
         "recommend": false
       },
       {
-        "number": 16,
-        "display": "16",
+        "number": 50,
+        "display": "50",
         "adjacent_pairs": [
-          "15-16",
-          "16-17"
+          "49-50"
         ],
         "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
         "recommend": false
       },
       {
-        "number": 17,
-        "display": "17",
+        "number": 55,
+        "display": "55",
         "adjacent_pairs": [
-          "16-17"
+          "55-56"
         ],
         "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
         "recommend": false
       },
       {
-        "number": 35,
-        "display": "35",
+        "number": 56,
+        "display": "56",
         "adjacent_pairs": [
-          "35-36"
+          "55-56"
         ],
         "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
         "recommend": false
       },
       {
-        "number": 36,
-        "display": "36",
+        "number": 68,
+        "display": "68",
         "adjacent_pairs": [
-          "35-36"
+          "68-69"
         ],
         "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
         "recommend": false
       },
       {
-        "number": 44,
-        "display": "44",
+        "number": 69,
+        "display": "69",
         "adjacent_pairs": [
-          "44-45"
-        ],
-        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
-        "recommend": false
-      },
-      {
-        "number": 45,
-        "display": "45",
-        "adjacent_pairs": [
-          "44-45",
-          "45-46"
-        ],
-        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
-        "recommend": false
-      },
-      {
-        "number": 46,
-        "display": "46",
-        "adjacent_pairs": [
-          "45-46"
-        ],
-        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
-        "recommend": false
-      },
-      {
-        "number": 70,
-        "display": "70",
-        "adjacent_pairs": [
-          "70-71"
-        ],
-        "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
-        "recommend": false
-      },
-      {
-        "number": 71,
-        "display": "71",
-        "adjacent_pairs": [
-          "70-71"
+          "68-69"
         ],
         "status": "连号截断重号 (伴随紧挨连号，连庄阻力极大)",
         "recommend": false
       }
     ],
     "last_consecutive_pairs": [
-      "14-15",
-      "15-16",
-      "16-17",
-      "35-36",
-      "44-45",
-      "45-46",
-      "70-71"
+      "11-12",
+      "12-13",
+      "13-14",
+      "49-50",
+      "55-56",
+      "68-69"
     ],
     "cluster_bias_desc": "连号活性向 1 区转移，重点伏击【 05-10 】前区连号集群回补"
   },
   "ball_scores": [
     {
-      "number": 38,
-      "display": "38",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 12,
-      "freq10": 0,
-      "final_score": 0.695
-    },
-    {
       "number": 24,
       "display": "24",
       "zone_idx": 2,
       "is_small": true,
-      "omission": 9,
-      "freq10": 1,
-      "final_score": 0.569
-    },
-    {
-      "number": 23,
-      "display": "23",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 7,
-      "freq10": 1,
-      "final_score": 0.485
+      "omission": 10,
+      "freq10": 0,
+      "final_score": 0.598
     },
     {
       "number": 39,
       "display": "39",
       "zone_idx": 2,
       "is_small": true,
-      "omission": 7,
-      "freq10": 1,
-      "final_score": 0.485
-    },
-    {
-      "number": 18,
-      "display": "18",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 6,
-      "freq10": 3,
-      "final_score": 0.481
-    },
-    {
-      "number": 48,
-      "display": "48",
-      "zone_idx": 3,
-      "is_small": false,
       "omission": 8,
       "freq10": 1,
-      "final_score": 0.465
-    },
-    {
-      "number": 4,
-      "display": "04",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 9,
-      "freq10": 1,
-      "final_score": 0.445
-    },
-    {
-      "number": 47,
-      "display": "47",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 7,
-      "freq10": 1,
-      "final_score": 0.423
+      "final_score": 0.514
     },
     {
       "number": 73,
       "display": "73",
       "zone_idx": 4,
       "is_small": false,
+      "omission": 10,
+      "freq10": 0,
+      "final_score": 0.511
+    },
+    {
+      "number": 4,
+      "display": "04",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 10,
+      "freq10": 0,
+      "final_score": 0.471
+    },
+    {
+      "number": 48,
+      "display": "48",
+      "zone_idx": 3,
+      "is_small": false,
       "omission": 9,
       "freq10": 1,
-      "final_score": 0.383
-    },
-    {
-      "number": 41,
-      "display": "41",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 6,
-      "freq10": 2,
-      "final_score": 0.381
-    },
-    {
-      "number": 2,
-      "display": "02",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 7,
-      "freq10": 1,
-      "final_score": 0.361
-    },
-    {
-      "number": 28,
-      "display": "28",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 3,
-      "freq10": 4,
-      "final_score": 0.255
-    },
-    {
-      "number": 31,
-      "display": "31",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 4,
-      "freq10": 3,
-      "final_score": 0.255
-    },
-    {
-      "number": 21,
-      "display": "21",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 0,
-      "freq10": 3,
-      "final_score": 0.213
-    },
-    {
-      "number": 50,
-      "display": "50",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 1,
-      "freq10": 3,
-      "final_score": 0.194
-    },
-    {
-      "number": 56,
-      "display": "56",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 1,
-      "freq10": 4,
-      "final_score": 0.194
-    },
-    {
-      "number": 57,
-      "display": "57",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 3,
-      "freq10": 5,
-      "final_score": 0.194
-    },
-    {
-      "number": 58,
-      "display": "58",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 1,
-      "freq10": 3,
-      "final_score": 0.194
-    },
-    {
-      "number": 59,
-      "display": "59",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 4,
-      "freq10": 3,
-      "final_score": 0.194
-    },
-    {
-      "number": 49,
-      "display": "49",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 4,
-      "final_score": 0.151
-    },
-    {
-      "number": 53,
-      "display": "53",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 4,
-      "final_score": 0.151
-    },
-    {
-      "number": 5,
-      "display": "05",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 5,
-      "freq10": 3,
-      "final_score": 0.131
-    },
-    {
-      "number": 6,
-      "display": "06",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 1,
-      "freq10": 3,
-      "final_score": 0.131
-    },
-    {
-      "number": 9,
-      "display": "09",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 2,
-      "freq10": 6,
-      "final_score": 0.131
-    },
-    {
-      "number": 12,
-      "display": "12",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 2,
-      "freq10": 3,
-      "final_score": 0.131
-    },
-    {
-      "number": 19,
-      "display": "19",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 3,
-      "freq10": 4,
-      "final_score": 0.131
-    },
-    {
-      "number": 20,
-      "display": "20",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 1,
-      "freq10": 3,
-      "final_score": 0.131
-    },
-    {
-      "number": 22,
-      "display": "22",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 3,
-      "freq10": 1,
-      "final_score": 0.093
-    },
-    {
-      "number": 26,
-      "display": "26",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 1,
-      "freq10": 2,
-      "final_score": 0.093
-    },
-    {
-      "number": 27,
-      "display": "27",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 3,
-      "freq10": 2,
-      "final_score": 0.093
+      "final_score": 0.45
     },
     {
       "number": 29,
       "display": "29",
       "zone_idx": 2,
       "is_small": true,
-      "omission": 5,
+      "omission": 6,
       "freq10": 1,
-      "final_score": 0.093
+      "final_score": 0.43
     },
     {
-      "number": 30,
-      "display": "30",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 2,
-      "freq10": 2,
-      "final_score": 0.093
-    },
-    {
-      "number": 32,
-      "display": "32",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 1,
+      "number": 47,
+      "display": "47",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 8,
       "freq10": 1,
-      "final_score": 0.093
+      "final_score": 0.408
     },
     {
-      "number": 33,
-      "display": "33",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 4,
-      "freq10": 2,
-      "final_score": 0.093
-    },
-    {
-      "number": 34,
-      "display": "34",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 1,
-      "freq10": 1,
-      "final_score": 0.093
-    },
-    {
-      "number": 37,
-      "display": "37",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 2,
-      "freq10": 2,
-      "final_score": 0.093
-    },
-    {
-      "number": 40,
-      "display": "40",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 3,
-      "freq10": 2,
-      "final_score": 0.093
-    },
-    {
-      "number": 8,
-      "display": "08",
+      "number": 2,
+      "display": "02",
       "zone_idx": 1,
       "is_small": true,
-      "omission": 0,
-      "freq10": 3,
-      "final_score": 0.089
-    },
-    {
-      "number": 62,
-      "display": "62",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 4,
-      "freq10": 3,
-      "final_score": 0.07
-    },
-    {
-      "number": 63,
-      "display": "63",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 1,
-      "freq10": 4,
-      "final_score": 0.07
-    },
-    {
-      "number": 64,
-      "display": "64",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 3,
-      "freq10": 4,
-      "final_score": 0.07
-    },
-    {
-      "number": 77,
-      "display": "77",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 1,
-      "freq10": 5,
-      "final_score": 0.07
-    },
-    {
-      "number": 42,
-      "display": "42",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 4,
+      "omission": 8,
       "freq10": 1,
-      "final_score": 0.031
+      "final_score": 0.387
     },
     {
-      "number": 43,
-      "display": "43",
+      "number": 41,
+      "display": "41",
       "zone_idx": 3,
       "is_small": false,
-      "omission": 4,
+      "omission": 7,
       "freq10": 1,
-      "final_score": 0.031
+      "final_score": 0.366
     },
     {
-      "number": 51,
-      "display": "51",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 4,
+      "number": 18,
+      "display": "18",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 7,
       "freq10": 2,
-      "final_score": 0.031
-    },
-    {
-      "number": 52,
-      "display": "52",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 3,
-      "freq10": 2,
-      "final_score": 0.031
+      "final_score": 0.345
     },
     {
       "number": 54,
       "display": "54",
       "zone_idx": 3,
       "is_small": false,
-      "omission": 5,
+      "omission": 6,
       "freq10": 2,
-      "final_score": 0.031
-    },
-    {
-      "number": 55,
-      "display": "55",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 2,
-      "freq10": 1,
-      "final_score": 0.031
-    },
-    {
-      "number": 60,
-      "display": "60",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 1,
-      "freq10": 1,
-      "final_score": 0.031
-    },
-    {
-      "number": 61,
-      "display": "61",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 2,
-      "final_score": 0.027
-    },
-    {
-      "number": 66,
-      "display": "66",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 4,
-      "final_score": 0.027
-    },
-    {
-      "number": 76,
-      "display": "76",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 1,
-      "final_score": 0.027
-    },
-    {
-      "number": 80,
-      "display": "80",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 2,
-      "final_score": 0.027
-    },
-    {
-      "number": 36,
-      "display": "36",
-      "zone_idx": 2,
-      "is_small": true,
-      "omission": 0,
-      "freq10": 4,
-      "final_score": 0.023
+      "final_score": 0.324
     },
     {
       "number": 1,
       "display": "01",
       "zone_idx": 1,
       "is_small": true,
-      "omission": 5,
+      "omission": 6,
       "freq10": 1,
-      "final_score": -0.031
+      "final_score": 0.303
     },
     {
-      "number": 3,
-      "display": "03",
+      "number": 21,
+      "display": "21",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 3,
+      "final_score": 0.242
+    },
+    {
+      "number": 25,
+      "display": "25",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 6,
+      "final_score": 0.242
+    },
+    {
+      "number": 28,
+      "display": "28",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 4,
+      "freq10": 3,
+      "final_score": 0.242
+    },
+    {
+      "number": 35,
+      "display": "35",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 6,
+      "final_score": 0.242
+    },
+    {
+      "number": 36,
+      "display": "36",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 4,
+      "final_score": 0.242
+    },
+    {
+      "number": 23,
+      "display": "23",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 2,
+      "final_score": 0.2
+    },
+    {
+      "number": 31,
+      "display": "31",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 4,
+      "final_score": 0.2
+    },
+    {
+      "number": 34,
+      "display": "34",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 2,
+      "final_score": 0.2
+    },
+    {
+      "number": 38,
+      "display": "38",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 1,
+      "final_score": 0.2
+    },
+    {
+      "number": 62,
+      "display": "62",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 5,
+      "freq10": 3,
+      "final_score": 0.156
+    },
+    {
+      "number": 63,
+      "display": "63",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 2,
+      "freq10": 3,
+      "final_score": 0.156
+    },
+    {
+      "number": 64,
+      "display": "64",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 4,
+      "freq10": 4,
+      "final_score": 0.156
+    },
+    {
+      "number": 66,
+      "display": "66",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 3,
+      "final_score": 0.156
+    },
+    {
+      "number": 71,
+      "display": "71",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 4,
+      "final_score": 0.156
+    },
+    {
+      "number": 77,
+      "display": "77",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 2,
+      "freq10": 4,
+      "final_score": 0.156
+    },
+    {
+      "number": 53,
+      "display": "53",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 3,
+      "final_score": 0.137
+    },
+    {
+      "number": 57,
+      "display": "57",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 4,
+      "freq10": 4,
+      "final_score": 0.137
+    },
+    {
+      "number": 58,
+      "display": "58",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 2,
+      "freq10": 3,
+      "final_score": 0.137
+    },
+    {
+      "number": 59,
+      "display": "59",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 5,
+      "freq10": 3,
+      "final_score": 0.137
+    },
+    {
+      "number": 6,
+      "display": "06",
       "zone_idx": 1,
       "is_small": true,
-      "omission": 3,
-      "freq10": 2,
-      "final_score": -0.031
+      "omission": 2,
+      "freq10": 3,
+      "final_score": 0.115
     },
     {
-      "number": 7,
-      "display": "07",
+      "number": 8,
+      "display": "08",
       "zone_idx": 1,
       "is_small": true,
       "omission": 1,
-      "freq10": 2,
-      "final_score": -0.031
+      "freq10": 3,
+      "final_score": 0.115
     },
     {
-      "number": 10,
-      "display": "10",
+      "number": 15,
+      "display": "15",
       "zone_idx": 1,
       "is_small": true,
       "omission": 1,
-      "freq10": 2,
-      "final_score": -0.031
+      "freq10": 4,
+      "final_score": 0.115
     },
     {
-      "number": 11,
-      "display": "11",
+      "number": 16,
+      "display": "16",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 4,
+      "final_score": 0.115
+    },
+    {
+      "number": 17,
+      "display": "17",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 1,
+      "freq10": 6,
+      "final_score": 0.115
+    },
+    {
+      "number": 19,
+      "display": "19",
       "zone_idx": 1,
       "is_small": true,
       "omission": 4,
-      "freq10": 2,
-      "final_score": -0.031
+      "freq10": 3,
+      "final_score": 0.115
     },
     {
-      "number": 13,
-      "display": "13",
+      "number": 20,
+      "display": "20",
       "zone_idx": 1,
       "is_small": true,
-      "omission": 1,
+      "omission": 2,
+      "freq10": 3,
+      "final_score": 0.115
+    },
+    {
+      "number": 65,
+      "display": "65",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 0,
       "freq10": 2,
-      "final_score": -0.031
+      "final_score": 0.113
     },
     {
       "number": 44,
@@ -1030,16 +836,7 @@
       "is_small": false,
       "omission": 0,
       "freq10": 4,
-      "final_score": -0.039
-    },
-    {
-      "number": 45,
-      "display": "45",
-      "zone_idx": 3,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 1,
-      "final_score": -0.039
+      "final_score": 0.094
     },
     {
       "number": 46,
@@ -1048,88 +845,322 @@
       "is_small": false,
       "omission": 0,
       "freq10": 3,
-      "final_score": -0.039
+      "final_score": 0.094
     },
     {
-      "number": 65,
-      "display": "65",
-      "zone_idx": 4,
-      "is_small": false,
+      "number": 22,
+      "display": "22",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 4,
+      "freq10": 1,
+      "final_score": 0.08
+    },
+    {
+      "number": 26,
+      "display": "26",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 2,
+      "freq10": 2,
+      "final_score": 0.08
+    },
+    {
+      "number": 27,
+      "display": "27",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 4,
+      "freq10": 1,
+      "final_score": 0.08
+    },
+    {
+      "number": 30,
+      "display": "30",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 3,
+      "freq10": 2,
+      "final_score": 0.08
+    },
+    {
+      "number": 32,
+      "display": "32",
+      "zone_idx": 2,
+      "is_small": true,
       "omission": 2,
       "freq10": 1,
-      "final_score": -0.093
+      "final_score": 0.08
+    },
+    {
+      "number": 33,
+      "display": "33",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 5,
+      "freq10": 2,
+      "final_score": 0.08
+    },
+    {
+      "number": 37,
+      "display": "37",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 3,
+      "freq10": 2,
+      "final_score": 0.08
+    },
+    {
+      "number": 40,
+      "display": "40",
+      "zone_idx": 2,
+      "is_small": true,
+      "omission": 4,
+      "freq10": 2,
+      "final_score": 0.08
+    },
+    {
+      "number": 5,
+      "display": "05",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 3,
+      "final_score": 0.073
+    },
+    {
+      "number": 7,
+      "display": "07",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 3,
+      "final_score": 0.073
+    },
+    {
+      "number": 61,
+      "display": "61",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 2,
+      "final_score": -0.007
     },
     {
       "number": 67,
       "display": "67",
       "zone_idx": 4,
       "is_small": false,
-      "omission": 3,
+      "omission": 4,
       "freq10": 2,
-      "final_score": -0.093
+      "final_score": -0.007
     },
     {
-      "number": 68,
-      "display": "68",
+      "number": 70,
+      "display": "70",
       "zone_idx": 4,
       "is_small": false,
       "omission": 1,
-      "freq10": 1,
-      "final_score": -0.093
-    },
-    {
-      "number": 69,
-      "display": "69",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 2,
       "freq10": 2,
-      "final_score": -0.093
+      "final_score": -0.007
     },
     {
       "number": 72,
       "display": "72",
       "zone_idx": 4,
       "is_small": false,
-      "omission": 2,
+      "omission": 3,
       "freq10": 1,
-      "final_score": -0.093
+      "final_score": -0.007
     },
     {
       "number": 74,
       "display": "74",
       "zone_idx": 4,
       "is_small": false,
-      "omission": 2,
+      "omission": 3,
       "freq10": 2,
-      "final_score": -0.093
+      "final_score": -0.007
     },
     {
       "number": 75,
       "display": "75",
       "zone_idx": 4,
       "is_small": false,
-      "omission": 3,
+      "omission": 4,
       "freq10": 2,
-      "final_score": -0.093
+      "final_score": -0.007
+    },
+    {
+      "number": 76,
+      "display": "76",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 1,
+      "final_score": -0.007
     },
     {
       "number": 78,
       "display": "78",
       "zone_idx": 4,
       "is_small": false,
-      "omission": 1,
-      "freq10": 2,
-      "final_score": -0.093
+      "omission": 2,
+      "freq10": 1,
+      "final_score": -0.007
     },
     {
       "number": 79,
       "display": "79",
       "zone_idx": 4,
       "is_small": false,
+      "omission": 3,
+      "freq10": 2,
+      "final_score": -0.007
+    },
+    {
+      "number": 80,
+      "display": "80",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 2,
+      "final_score": -0.007
+    },
+    {
+      "number": 42,
+      "display": "42",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 5,
+      "freq10": 1,
+      "final_score": -0.026
+    },
+    {
+      "number": 43,
+      "display": "43",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 5,
+      "freq10": 1,
+      "final_score": -0.026
+    },
+    {
+      "number": 45,
+      "display": "45",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 1,
+      "freq10": 1,
+      "final_score": -0.026
+    },
+    {
+      "number": 51,
+      "display": "51",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 5,
+      "freq10": 2,
+      "final_score": -0.026
+    },
+    {
+      "number": 52,
+      "display": "52",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 4,
+      "freq10": 2,
+      "final_score": -0.026
+    },
+    {
+      "number": 60,
+      "display": "60",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 2,
+      "freq10": 1,
+      "final_score": -0.026
+    },
+    {
+      "number": 3,
+      "display": "03",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 4,
+      "freq10": 2,
+      "final_score": -0.047
+    },
+    {
+      "number": 10,
+      "display": "10",
+      "zone_idx": 1,
+      "is_small": true,
       "omission": 2,
       "freq10": 2,
-      "final_score": -0.093
+      "final_score": -0.047
+    },
+    {
+      "number": 68,
+      "display": "68",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 2,
+      "final_score": -0.077
+    },
+    {
+      "number": 69,
+      "display": "69",
+      "zone_idx": 4,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 3,
+      "final_score": -0.077
+    },
+    {
+      "number": 50,
+      "display": "50",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 4,
+      "final_score": -0.096
+    },
+    {
+      "number": 55,
+      "display": "55",
+      "zone_idx": 3,
+      "is_small": false,
+      "omission": 0,
+      "freq10": 2,
+      "final_score": -0.096
+    },
+    {
+      "number": 11,
+      "display": "11",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 2,
+      "final_score": -0.117
+    },
+    {
+      "number": 12,
+      "display": "12",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 4,
+      "final_score": -0.117
+    },
+    {
+      "number": 13,
+      "display": "13",
+      "zone_idx": 1,
+      "is_small": true,
+      "omission": 0,
+      "freq10": 3,
+      "final_score": -0.117
     },
     {
       "number": 14,
@@ -1138,70 +1169,34 @@
       "is_small": true,
       "omission": 0,
       "freq10": 4,
-      "final_score": -0.101
+      "final_score": -0.117
     },
     {
-      "number": 15,
-      "display": "15",
+      "number": 9,
+      "display": "09",
       "zone_idx": 1,
-      "is_small": true,
-      "omission": 0,
-      "freq10": 4,
-      "final_score": -0.101
-    },
-    {
-      "number": 16,
-      "display": "16",
-      "zone_idx": 1,
-      "is_small": true,
-      "omission": 0,
-      "freq10": 4,
-      "final_score": -0.101
-    },
-    {
-      "number": 70,
-      "display": "70",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 2,
-      "final_score": -0.163
-    },
-    {
-      "number": 71,
-      "display": "71",
-      "zone_idx": 4,
-      "is_small": false,
-      "omission": 0,
-      "freq10": 4,
-      "final_score": -0.163
-    },
-    {
-      "number": 25,
-      "display": "25",
-      "zone_idx": 2,
       "is_small": true,
       "omission": 0,
       "freq10": 7,
-      "final_score": -0.187
+      "final_score": -0.327
     },
     {
-      "number": 35,
-      "display": "35",
-      "zone_idx": 2,
-      "is_small": true,
+      "number": 49,
+      "display": "49",
+      "zone_idx": 3,
+      "is_small": false,
       "omission": 0,
-      "freq10": 6,
-      "final_score": -0.377
+      "freq10": 5,
+      "final_score": -0.496
     },
     {
-      "number": 17,
-      "display": "17",
-      "zone_idx": 1,
-      "is_small": true,
+      "number": 56,
+      "display": "56",
+      "zone_idx": 3,
+      "is_small": false,
       "omission": 0,
-      "freq10": 6,
-      "final_score": -0.501
+      "freq10": 5,
+      "final_score": -0.496
     }
   ]
 }
