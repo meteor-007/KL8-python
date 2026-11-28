@@ -427,6 +427,14 @@ class PairSelector:
                 }
 
         # 4. 全局打分决胜
+        kline_risk_map = {}
+        try:
+            if len(self.history) >= 100 and candidate_pairs:
+                from backend.modules.kline_pick2.kline_engine import get_kline_risk_map
+                kline_risk_map = get_kline_risk_map(list(candidate_pairs.keys()))
+        except Exception:
+            kline_risk_map = {}
+
         scored_candidates = []
         for pair, meta in candidate_pairs.items():
             a, b = pair
@@ -456,9 +464,20 @@ class PairSelector:
             is_cooling = pair in recent_pairs_set
             cooldown_penalty = 0.15 if is_cooling else 1.0
 
-            total_synergy_score = (single_strength * 0.4 + nom_bonus * 1.2 + lift_score * 1.8 + count_bonus) * kill_penalty * cooldown_penalty
+            # K 线形态与反向排雷系数
+            kl_info = kline_risk_map.get(pair, {})
+            kline_factor = 1.0
+            kl_note = ""
+            if kl_info.get("has_toxic"):
+                kline_factor = 0.75
+                kl_note = f" [K线反向避坑: {','.join(kl_info.get('toxic_signals', []))}]"
+            elif kl_info.get("has_positive"):
+                kline_factor = 1.15
+                kl_note = f" [K线蓄势共振: {','.join(kl_info.get('positive_signals', []))}]"
 
-            reason_text = meta['primary_reason']
+            total_synergy_score = (single_strength * 0.4 + nom_bonus * 1.2 + lift_score * 1.8 + count_bonus) * kill_penalty * cooldown_penalty * kline_factor
+
+            reason_text = meta['primary_reason'] + kl_note
             if is_cooling:
                 reason_text += " [防死守冷冻中: 触发连推降权换马]"
 

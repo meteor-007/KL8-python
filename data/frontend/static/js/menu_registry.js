@@ -48,6 +48,7 @@
         { key: 'hidden_energy', title: 'Hidden Energy 5 特供码', shortTitle: 'Hidden Energy', icon: '🌟' },
         { key: 'jingle_cockpit', title: '顺口溜组合带出研判', shortTitle: '顺口溜口诀', icon: '📜' },
         { key: 'table10_shadow_cockpit', title: '表10同数值影子观察舱（只记账不投票）', shortTitle: '表10同数值(观察)', icon: '🔭' },
+        { key: 'kline_pick2_cockpit', title: '选二K线形态与反向排雷驾驶舱', shortTitle: '选二K线形态', icon: '📈' },
         { key: 'psychological_game', title: '心理博弈与逆向均值回归', shortTitle: '心理博弈', icon: '🧠' },
         { key: 'datasource_cockpit', title: '数据源1×2 深层关联大屏（需点位）', shortTitle: '数据源关联', icon: '🧬' },
         { key: 'suppression_cockpit', title: '未开点位高压反弹驾驶舱（需点位）', shortTitle: '未开点位反弹', icon: '🪞' },

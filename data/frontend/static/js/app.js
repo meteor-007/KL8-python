@@ -333,6 +333,8 @@ const App = {
         fetchJingleReview(jingleReviewPeriods.value);
       } else if (key === 'table10_shadow_cockpit') {
         fetchTable10ShadowSummary();
+      } else if (key === 'kline_pick2_cockpit') {
+        fetchKlinePick2Summary();
       } else if (key === 'follow_cockpit') {
         fetchFollowSummary();
         fetchFollowConditions();
@@ -3961,6 +3963,97 @@ const App = {
       }
     };
 
+    // 选二 K 线形态与反向排雷引擎
+    const klinePick2Summary = ref(null);
+    const klinePick2Chart = ref(null);
+    const klinePick2Loading = ref(false);
+    const klineInputA = ref(17);
+    const klineInputB = ref(35);
+    let klineChartInstance = null;
+
+    const renderKlinePick2Chart = (chartData) => {
+      nextTick(() => {
+        const dom = document.getElementById('klinePick2ChartDom');
+        if (!dom || typeof echarts === 'undefined') return;
+        if (!klineChartInstance) {
+          klineChartInstance = echarts.init(dom);
+        }
+        const candles = chartData.candles || [];
+        const xData = candles.map((c) => String(c.end_period));
+        const ohlc = candles.map((c) => [c.open, c.close, c.low, c.high]);
+        const ma5 = candles.map((c) => c.ma5);
+        const ma10 = candles.map((c) => c.ma10);
+        const vols = candles.map((c) => c.volume);
+
+        klineChartInstance.setOption({
+          backgroundColor: 'transparent',
+          tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
+          legend: { data: ['5期K线', 'MA5', 'MA10', '双中次数'], textStyle: { color: '#94a3b8', fontSize: 11 } },
+          grid: [
+            { left: '8%', right: '4%', top: '12%', height: '55%' },
+            { left: '8%', right: '4%', top: '74%', height: '16%' }
+          ],
+          xAxis: [
+            { type: 'category', data: xData, axisLabel: { color: '#64748b', fontSize: 10 }, gridIndex: 0 },
+            { type: 'category', data: xData, axisLabel: { show: false }, gridIndex: 1 }
+          ],
+          yAxis: [
+            { scale: true, splitLine: { lineStyle: { color: '#1e293b' } }, axisLabel: { color: '#94a3b8', fontSize: 10 }, gridIndex: 0 },
+            { min: 0, splitNumber: 2, splitLine: { show: false }, axisLabel: { color: '#94a3b8', fontSize: 10 }, gridIndex: 1 }
+          ],
+          series: [
+            {
+              name: '5期K线',
+              type: 'candlestick',
+              data: ohlc,
+              xAxisIndex: 0,
+              yAxisIndex: 0,
+              itemStyle: { color: '#10b981', color0: '#f43f5e', borderColor: '#10b981', borderColor0: '#f43f5e' }
+            },
+            { name: 'MA5', type: 'line', data: ma5, smooth: true, showSymbol: false, lineStyle: { width: 1.5, color: '#38bdf8' }, xAxisIndex: 0, yAxisIndex: 0 },
+            { name: 'MA10', type: 'line', data: ma10, smooth: true, showSymbol: false, lineStyle: { width: 1.5, color: '#f59e0b' }, xAxisIndex: 0, yAxisIndex: 0 },
+            { name: '双中次数', type: 'bar', data: vols, xAxisIndex: 1, yAxisIndex: 1, itemStyle: { color: '#a855f7' } }
+          ]
+        });
+        klineChartInstance.resize();
+      });
+    };
+
+    const fetchKlinePick2Chart = async (a, b) => {
+      if (!a || !b || a === b) return;
+      klineInputA.value = a;
+      klineInputB.value = b;
+      try {
+        const res = await fetch(`${API_BASE}/api/kline-pick2/chart/${a}/${b}`);
+        if (res.ok) {
+          const data = await res.json();
+          klinePick2Chart.value = data;
+          renderKlinePick2Chart(data);
+        }
+      } catch (e) {
+        console.error('获取选二K线图失败', e);
+      }
+    };
+
+    const fetchKlinePick2Summary = async () => {
+      klinePick2Loading.value = true;
+      try {
+        const res = await fetch(`${API_BASE}/api/kline-pick2/summary`);
+        if (res.ok) {
+          const data = await res.json();
+          klinePick2Summary.value = data;
+          const first = data.top_positive?.[0]?.pair;
+          if (first && first.length === 2) {
+            await fetchKlinePick2Chart(first[0], first[1]);
+          }
+        }
+      } catch (e) {
+        console.error('获取选二K线总览失败', e);
+      } finally {
+        klinePick2Loading.value = false;
+      }
+    };
+
     return {
       ...__k8PageBindings,
       visitedTabs,
@@ -4565,7 +4658,15 @@ const App = {
       table10ShadowLoading,
       selectedTable10PeriodSummary,
       fetchTable10ShadowSummary,
-      fetchTable10ShadowDetail
+      fetchTable10ShadowDetail,
+      // 选二 K 线形态与反向排雷
+      klinePick2Summary,
+      klinePick2Chart,
+      klinePick2Loading,
+      klineInputA,
+      klineInputB,
+      fetchKlinePick2Summary,
+      fetchKlinePick2Chart
     };
   }
 };

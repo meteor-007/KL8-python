@@ -162,6 +162,11 @@ MODULE_SEED: Dict[str, Dict[str, Any]] = {
         "decree": {"status": "observation", "date": "2026-11-28",
                    "reason": "影子观察舱：只记账不投票，待纯净样本≥15期且Lift≥1.12x再评估转正"},
     },
+    "kline_pick2": {
+        "name": "选二K线形态与反向排雷", "cohort": "registered", "lane": "daily",
+        "decree": {"status": "observation", "date": "2026-11-28",
+                   "reason": "K线5期蜡烛形态+反向毒药信号排雷辅助PairSelector"},
+    },
     "aggregation": {
         "name": "子系统汇总陈列", "cohort": "legacy", "lane": "daily",
         "decree": {"status": "votable", "date": "2026-09-15",

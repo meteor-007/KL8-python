@@ -843,6 +843,31 @@ class FullReportEngine:
                 except Exception as t10e:
                     logger.warning(f"表10同数值影子观察模块报告输出异常: {t10e}")
 
+                # 4.8 选二 K 线形态与反向排雷引擎
+                try:
+                    from backend.modules.kline_pick2.kline_engine import get_kline_summary as _get_kl_sum
+                    kl = _get_kl_sum(oos_window=120)
+                    if kl.get("status") == "success":
+                        oos = kl["oos_audit"]
+                        f.write("### 4.8. 📈 选二 K 线形态与反向排雷引擎 (K-Line Pick2)\n\n")
+                        f.write("> **老派操盘手大白话提示**：把每组选二的近10期命中总和画成5期蜡烛图，只留「箱体蓄势/江恩时间窗/量价配合/0.382回撤」加分，坚决对 OOS 实测亏钱的「V型反转/次级回调/上升趋势线」做反向排雷避坑。\n\n")
+                        top5_kl = ", ".join(
+                            f"`{x['pair'][0]:02d}-{x['pair'][1]:02d}`(分{x['net_score']},{'+'.join(x['positive_signals'])})"
+                            for x in kl.get("top_positive", [])[:5]
+                        )
+                        tox5_kl = ", ".join(
+                            f"`{x['pair'][0]:02d}-{x['pair'][1]:02d}`({','.join(x['toxic_signals'])})"
+                            for x in kl.get("top_toxic", [])[:5]
+                        )
+                        f.write(f"- **🟢 K线健康度 Top 5**：{top5_kl or '无'}\n")
+                        f.write(f"- **🔴 反向踩坑警示(建议回避)**：{tox5_kl or '无'}\n")
+                        f.write(
+                            f"- **📊 近{oos['window']}期样本外对比**：正向Top5双中率 `{oos['pos_top5_dual_rate']*100:.2f}%` (Lift=`{oos['pos_top5_lift']:.2f}x`, 至少中1 `{oos['pos_top5_any1_rate']*100:.1f}%`) "
+                            f"vs 反向踩坑组 `{oos['toxic_dual_rate']*100:.2f}%` (Lift=`{oos['toxic_lift']:.2f}x`)\n\n"
+                        )
+                except Exception as kle:
+                    logger.warning(f"选二K线形态模块报告输出异常: {kle}")
+
                 f.write(f"### 5. 首席战略官特供 · Hidden Energy 5\n")
                 f.write(f"- **共振逻辑**：`{b3_info['logic']}`\n")
                 f.write(f"- **B3质量分**：`{b3_info['quality_score']:.2f}`\n")

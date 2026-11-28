@@ -27,7 +27,7 @@
   <!-- Marked for Markdown -->
   <script src="/static/vendor/marked.min.js"></script>
   <!-- Custom Cyber Theme -->
-  <link rel="stylesheet" href="/static/css/cyber_theme.css?v=20261128_163320">
+  <link rel="stylesheet" href="/static/css/cyber_theme.css?v=20261128_174442">
   <style>
     [v-cloak] { display: none; }
   </style>
@@ -3373,6 +3373,158 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SUBVIEW: hub_engine/kline_pick2/view.html ═══ -->
+<div v-show="activeTab === 'kline_pick2_cockpit'" class="space-y-6">
+  <!-- 头部概览 -->
+  <div class="glass-panel p-5">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xl">📈</span>
+          <h2 class="text-lg font-bold text-amber-300">选二 K 线形态与反向排雷驾驶舱</h2>
+          <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono border border-emerald-500/30">
+            全扫 3160 对 · 去伪存真版
+          </span>
+          <span v-if="klinePick2Summary" class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono">
+            目标期: {{ klinePick2Summary.target_issue }} (基准: {{ klinePick2Summary.latest_issue }})
+          </span>
+        </div>
+        <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+          💡 大白话原理：把每对选二「近10期中出总和」翻译成 5 期一根的蜡烛 K 线（成交量=双码同开次数）。只留实证正向的「箱体蓄势 / 江恩同开时间窗 / 量价配合 / 0.382回撤」加分，坚决剔除实证反向的「V型反转 / 次级回调 / 上升趋势线」坑人组合。
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button @click="fetchKlinePick2Summary()" :disabled="klinePick2Loading" class="cyber-btn cyber-btn-cyan text-xs !py-1.5">
+          🔄 刷新全盘扫描
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4大核心指标卡片 -->
+  <div v-if="klinePick2Summary && klinePick2Summary.oos_audit" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="glass-panel p-4 border-l-4 border-l-cyan-400">
+      <div class="text-xs text-slate-400">全盘扫描规模</div>
+      <div class="text-2xl font-black text-cyan-300 mt-1">{{ klinePick2Summary.total_pairs_scanned }} <span class="text-xs font-normal text-slate-400">对</span></div>
+      <div class="text-[11px] text-slate-500 mt-1">历史期数: {{ klinePick2Summary.total_draws }} 期</div>
+    </div>
+
+    <div class="glass-panel p-4 border-l-4 border-l-emerald-400">
+      <div class="text-xs text-slate-400">正向信号精选 / 反向排雷</div>
+      <div class="text-2xl font-black text-emerald-300 mt-1">
+        {{ klinePick2Summary.positive_count }} <span class="text-xs font-normal text-slate-400">正向</span>
+        <span class="text-sm font-semibold text-rose-300 ml-1">/ {{ klinePick2Summary.toxic_count }} 坑</span>
+      </div>
+      <div class="text-[11px] text-slate-500 mt-1">已自动联动 PairSelector 降权避坑</div>
+    </div>
+
+    <div class="glass-panel p-4 border-l-4 border-l-amber-400">
+      <div class="text-xs text-slate-400">近{{ klinePick2Summary.oos_audit.window }}期正向 Top5 表现</div>
+      <div class="text-2xl font-black text-amber-300 mt-1">
+        {{ (klinePick2Summary.oos_audit.pos_top5_dual_rate * 100).toFixed(2) }}%
+        <span class="text-xs font-mono text-cyan-300 ml-1">Lift {{ klinePick2Summary.oos_audit.pos_top5_lift }}x</span>
+      </div>
+      <div class="text-[11px] text-slate-500 mt-1">至少中1率: {{ (klinePick2Summary.oos_audit.pos_top5_any1_rate * 100).toFixed(1) }}% (双中基线 6.01%)</div>
+    </div>
+
+    <div class="glass-panel p-4 border-l-4 border-l-rose-400">
+      <div class="text-xs text-slate-400">反向踩坑组 OOS 实测</div>
+      <div class="text-2xl font-black text-rose-300 mt-1">
+        {{ (klinePick2Summary.oos_audit.toxic_dual_rate * 100).toFixed(2) }}%
+        <span class="text-xs font-mono text-slate-400 ml-1">Lift {{ klinePick2Summary.oos_audit.toxic_lift }}x</span>
+      </div>
+      <div class="text-[11px] text-slate-500 mt-1">识别 V型反转/次级回调/上升趋势线</div>
+    </div>
+  </div>
+
+  <!-- K线图表 + TOP10 精选 -->
+  <div v-if="klinePick2Summary" class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+    <!-- 左侧 TOP10 卡片 -->
+    <div class="lg:col-span-5 glass-panel p-4 space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="text-sm font-bold text-slate-100">🟢 K线健康度 TOP 10 组合</h3>
+        <span class="text-[11px] text-slate-400">点击查看蜡烛图</span>
+      </div>
+      <div class="space-y-2 max-h-[460px] overflow-y-auto pr-1">
+        <div v-for="(item, idx) in (klinePick2Summary.top_positive || [])" :key="'klp-'+idx"
+             @click="fetchKlinePick2Chart(item.pair[0], item.pair[1])"
+             class="p-3 rounded-lg border cursor-pointer transition"
+             :class="klinePick2Chart && klinePick2Chart.pair && klinePick2Chart.pair[0] === item.pair[0] && klinePick2Chart.pair[1] === item.pair[1]
+               ? 'bg-cyan-500/15 border-cyan-400'
+               : 'bg-slate-900/60 border-slate-700/60 hover:border-slate-500'">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-mono text-slate-400">#{{ idx + 1 }}</span>
+              <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono font-bold text-sm">
+                {{ String(item.pair[0]).padStart(2, '0') }} - {{ String(item.pair[1]).padStart(2, '0') }}
+              </span>
+            </div>
+            <div class="text-xs font-mono text-emerald-300 font-bold">净分 {{ item.net_score }}</div>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span v-for="sig in item.positive_signals" :key="'ps-'+sig"
+                  class="px-1.5 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              {{ sig }}
+            </span>
+            <span class="px-1.5 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 font-mono">
+              近10和 {{ item.close_now }} ｜ ≥1率 {{ (item.any1_rate * 100).toFixed(1) }}%
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧 ECharts 蜡烛图 -->
+    <div class="lg:col-span-7 glass-panel p-4 space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <h3 class="text-sm font-bold text-slate-100">
+            🕯️ 5期蜡烛 K 线图
+            <span v-if="klinePick2Chart && klinePick2Chart.pair" class="text-cyan-300 font-mono ml-1">
+              [{{ String(klinePick2Chart.pair[0]).padStart(2, '0') }} - {{ String(klinePick2Chart.pair[1]).padStart(2, '0') }}]
+            </span>
+          </h3>
+        </div>
+        <div class="flex items-center gap-1.5 text-xs">
+          <input v-model.number="klineInputA" type="number" min="1" max="80" placeholder="号1"
+                 class="w-14 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-cyan-300 font-mono text-center">
+          <span class="text-slate-500">-</span>
+          <input v-model.number="klineInputB" type="number" min="1" max="80" placeholder="号2"
+                 class="w-14 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-cyan-300 font-mono text-center">
+          <button @click="fetchKlinePick2Chart(klineInputA, klineInputB)" class="cyber-btn cyber-btn-cyan text-xs !py-1 !px-2.5">
+            查图
+          </button>
+        </div>
+      </div>
+
+      <div v-if="klinePick2Chart && klinePick2Chart.status === 'success'" class="flex flex-wrap gap-2 text-xs">
+        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">最新收盘: {{ klinePick2Chart.close_now }}</span>
+        <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">历史同开: {{ klinePick2Chart.dual_hits_total }} 次</span>
+        <span v-for="s in klinePick2Chart.positive_signals" :key="'cp-'+s" class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">{{ s }}</span>
+        <span v-for="s in klinePick2Chart.toxic_signals" :key="'cn-'+s" class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300">{{ s }}</span>
+      </div>
+
+      <div id="klinePick2ChartDom" class="w-full h-[380px] rounded-lg bg-slate-950/50 border border-slate-800"></div>
+    </div>
+  </div>
+
+  <!-- 反向排雷避坑警示 -->
+  <div v-if="klinePick2Summary && klinePick2Summary.top_toxic && klinePick2Summary.top_toxic.length" class="glass-panel p-5">
+    <div class="flex items-center gap-2 mb-3">
+      <span class="text-lg">⛔</span>
+      <h3 class="text-sm font-bold text-rose-300">本期反向毒药信号避坑警示（建议降低权重或回避）</h3>
+    </div>
+    <div class="flex flex-wrap gap-2.5">
+      <div v-for="(item, idx) in klinePick2Summary.top_toxic" :key="'klx-'+idx"
+           @click="fetchKlinePick2Chart(item.pair[0], item.pair[1])"
+           class="px-3 py-2 rounded-lg bg-rose-950/30 border border-rose-500/30 cursor-pointer hover:border-rose-400 transition">
+        <span class="font-mono font-bold text-rose-300">{{ String(item.pair[0]).padStart(2, '0') }}-{{ String(item.pair[1]).padStart(2, '0') }}</span>
+        <span class="text-[11px] text-slate-400 ml-2">{{ item.toxic_signals.join(' + ') }}</span>
+      </div>
     </div>
   </div>
 </div>
@@ -13963,35 +14115,35 @@
   
 
   <!-- Vue App Logic: registry → page mixins → shell -->
-  <script src="/static/js/k8_pages.js?v=20261128_163320"></script>
-  <script src="/static/js/menu_registry.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/jingle.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/data_hub.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/ops.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/expert_cockpit.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/retired.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/suppression.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/point_omission.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/gold_pick2.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/aggregation.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/sixteen.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/cockpit_live.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/datasource.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/reviews_audit.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/unified_brain.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/psychological_game.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/linear_algebra.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/random_forest.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/error_correction.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/genetic.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/markov_line.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/tprd_v40.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/dtw.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/transformer.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/matrix_profile.js?v=20261128_163320"></script>
-  <script src="/static/js/pages/tda.js?v=20261128_163320"></script>
-  <script src="/static/js/app.js?v=20261128_163320"></script>
+  <script src="/static/js/k8_pages.js?v=20261128_174442"></script>
+  <script src="/static/js/menu_registry.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/jingle.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/data_hub.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/ops.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/expert_cockpit.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/retired.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/suppression.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/point_omission.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/gold_pick2.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/aggregation.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/sixteen.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/cockpit_live.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/datasource.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/reviews_audit.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/unified_brain.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/psychological_game.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/linear_algebra.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/random_forest.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/error_correction.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/genetic.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/markov_line.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/tprd_v40.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/dtw.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/transformer.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/matrix_profile.js?v=20261128_174442"></script>
+  <script src="/static/js/pages/tda.js?v=20261128_174442"></script>
+  <script src="/static/js/app.js?v=20261128_174442"></script>
   <!-- AI 智能操盘大脑中继助手 -->
-  <script src="/static/js/ai_assistant.js?v=20261128_163320"></script>
+  <script src="/static/js/ai_assistant.js?v=20261128_174442"></script>
 </body>
 </html>

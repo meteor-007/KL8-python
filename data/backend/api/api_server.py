@@ -121,6 +121,7 @@ from backend.modules.legacy.follow.routes import router as follow_router
 from backend.modules.legacy.spatial_points.routes import router as spatial_points_router
 from backend.modules.expert_intelligence.routes import router as expert_router
 from backend.modules.table10_shadow.routes import router as table10_shadow_router
+from backend.modules.kline_pick2.routes import router as kline_pick2_router
 
 # ══════════════════════════════════════════════════════════
 #  路由挂载门禁
@@ -182,6 +183,7 @@ _MODULE_ROUTERS = [
     ("spatial_points", spatial_points_router),
     ("genetic", genetic_router),
     ("table10_shadow", table10_shadow_router),
+    ("kline_pick2", kline_pick2_router),
 ]
 
 RETIRED_ROUTERS_SKIPPED: list[str] = []
