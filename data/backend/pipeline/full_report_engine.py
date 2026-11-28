@@ -819,6 +819,30 @@ class FullReportEngine:
                 except Exception as je:
                     logger.warning(f"顺口溜口诀 模块报告输出异常: {je}")
 
+                # 4.7 表10「同数值」影子观察台账 (只记账不投票)
+                try:
+                    from backend.modules.table10_shadow.service import get_shadow_summary as _get_t10_shadow
+                    t10 = _get_t10_shadow()
+                    if t10.get("status") == "success" and t10.get("latest"):
+                        lat = t10["latest"]
+                        met = t10["metrics"]
+                        f.write("### 4.7. 🔭 表10「同数值」影子观察台账 (只记账不投票)\n\n")
+                        f.write("> **老派操盘手大白话提示**：记录表10（前三排行）里并列同数值（红字）与左右交叉信号，严格只记账不投票，攒够样本再决定是否转正。\n\n")
+                        f.write(f"- **当前台账期号**：`{lat['period']}` ({lat['status']} · {lat['source']})\n")
+                        if lat.get("rf_numbers"):
+                            f.write(f"- **🔴 同数值(红字)池**：`{' '.join(f'{x:02d}' for x in lat['rf_numbers'])}`\n")
+                        if lat.get("cross_overlap"):
+                            f.write(f"- **🔀 左右榜单交叉号**：`{' '.join(f'{x:02d}' for x in lat['cross_overlap'])}`\n")
+                        if lat.get("double_resonance"):
+                            f.write(f"- **⚡ 交叉/同数值 × 点位共振**：`{' '.join(f'{x:02d}' for x in lat['double_resonance'])}`\n")
+                        f.write(
+                            f"- **📊 累计纯净期胜率**：已收录 `{met['total_periods']}` 期（纯净开奖前 `{met['clean_periods']}/{met['graduation_target_periods']}` 期）"
+                            f"｜红字同数值 `{met['clean_rf_hits']}/{met['clean_rf_total']}` (`{met['clean_rf_hit_rate']*100:.1f}%`, Lift=`{met['clean_rf_lift']:.2f}x`) "
+                            f"vs 黑字 `{met['clean_blk_hits']}/{met['clean_blk_total']}` (`{met['clean_blk_hit_rate']*100:.1f}%`)\n\n"
+                        )
+                except Exception as t10e:
+                    logger.warning(f"表10同数值影子观察模块报告输出异常: {t10e}")
+
                 f.write(f"### 5. 首席战略官特供 · Hidden Energy 5\n")
                 f.write(f"- **共振逻辑**：`{b3_info['logic']}`\n")
                 f.write(f"- **B3质量分**：`{b3_info['quality_score']:.2f}`\n")

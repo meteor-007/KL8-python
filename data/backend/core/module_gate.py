@@ -157,6 +157,11 @@ MODULE_SEED: Dict[str, Dict[str, Any]] = {
         "decree": {"status": "observation", "date": "2026-09-15",
                    "reason": "日常舱陈列，不作主推"},
     },
+    "table10_shadow": {
+        "name": "表10同数值影子观察", "cohort": "registered", "lane": "daily",
+        "decree": {"status": "observation", "date": "2026-11-28",
+                   "reason": "影子观察舱：只记账不投票，待纯净样本≥15期且Lift≥1.12x再评估转正"},
+    },
     "aggregation": {
         "name": "子系统汇总陈列", "cohort": "legacy", "lane": "daily",
         "decree": {"status": "votable", "date": "2026-09-15",

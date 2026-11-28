@@ -35,6 +35,7 @@ ORDERED_VIEWS = [
     "hub_engine/datasource/view.html",
     "hub_engine/gold_pick2/view.html",
     "hub_engine/jingle/view.html",
+    "hub_engine/table10_shadow/view.html",
     "hub_engine/sixteen/view.html",
     "hub_engine/suppression/view.html",
     "hub_engine/psychological_game/view.html",

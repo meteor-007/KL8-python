@@ -1,0 +1,234 @@
+<div v-show="activeTab === 'table10_shadow_cockpit'" class="space-y-6">
+  <!-- 头部概览 -->
+  <div class="glass-panel p-5">
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div>
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xl">🔭</span>
+          <h2 class="text-lg font-bold text-amber-300">表10「同数值」影子观察驾驶舱</h2>
+          <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono border border-amber-500/30">
+            观察期 · 只记账不投票
+          </span>
+          <span v-if="table10ShadowSummary && table10ShadowSummary.latest" class="text-xs px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono">
+            最新期号: {{ table10ShadowSummary.latest.period }} ({{ table10ShadowSummary.latest.status }})
+          </span>
+        </div>
+        <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+          💡 大白话规则：记录表10（前三排行）里同一遗漏层中指标并列打平的「红字同数值」及左右交叉信号，自动对接开奖历史算胜率。严格只记账不投票，攒够 {{ table10ShadowSummary?.metrics?.graduation_target_periods || 15 }} 期纯净样本且 Lift ≥ {{ table10ShadowSummary?.metrics?.graduation_target_lift || 1.12 }}x 再评估转正。
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button @click="fetchTable10ShadowSummary()" :disabled="table10ShadowLoading" class="cyber-btn cyber-btn-cyan text-xs !py-1.5">
+          🔄 刷新台账数据
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4大核心指标卡片 -->
+  <div v-if="table10ShadowSummary && table10ShadowSummary.metrics" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="glass-panel p-4 border-l-4 border-l-cyan-400">
+      <div class="text-xs text-slate-400">已收录 / 纯净对照期数</div>
+      <div class="text-2xl font-black text-cyan-300 mt-1">
+        {{ table10ShadowSummary.metrics.total_periods }} <span class="text-xs font-normal text-slate-400">期</span>
+        <span class="text-sm font-semibold text-emerald-300 ml-1">/ 纯净 {{ table10ShadowSummary.metrics.clean_periods }} 期</span>
+      </div>
+      <div class="text-[11px] text-slate-500 mt-1">开奖前未涂红底的纯净样本才计入胜率</div>
+    </div>
+
+    <div class="glass-panel p-4 border-l-4 border-l-rose-400">
+      <div class="text-xs text-slate-400">纯净期红字(同数值)胜率</div>
+      <div class="text-2xl font-black text-rose-300 mt-1">
+        {{ ((table10ShadowSummary.metrics.clean_rf_hit_rate || 0) * 100).toFixed(1) }}%
+        <span class="text-xs font-mono text-amber-300 ml-1">Lift {{ (table10ShadowSummary.metrics.clean_rf_lift || 0).toFixed(2) }}x</span>
+      </div>
+      <div class="text-[11px] text-slate-500 mt-1">
+        红字 {{ table10ShadowSummary.metrics.clean_rf_hits }}/{{ table10ShadowSummary.metrics.clean_rf_total }} vs 黑字 {{ table10ShadowSummary.metrics.clean_blk_hits }}/{{ table10ShadowSummary.metrics.clean_blk_total }} ({{ ((table10ShadowSummary.metrics.clean_blk_hit_rate || 0) * 100).toFixed(1) }}%)
+      </div>
+    </div>
+
+    <div class="glass-panel p-4 border-l-4 border-l-amber-400">
+      <div class="text-xs text-slate-400">转正门槛进度</div>
+      <div class="text-2xl font-black text-amber-300 mt-1">
+        {{ table10ShadowSummary.metrics.clean_periods }} / {{ table10ShadowSummary.metrics.graduation_target_periods }}
+        <span class="text-xs font-normal text-slate-400">期</span>
+      </div>
+      <div class="text-[11px] text-slate-500 mt-1">
+        {{ table10ShadowSummary.metrics.ready_to_graduate ? '✅ 已达转正门槛，可评估开通投票权' : '⏳ 观察攒样本中（暂不参与主系统投票）' }}
+      </div>
+    </div>
+
+    <div class="glass-panel p-4 border-l-4 border-l-emerald-400">
+      <div class="text-xs text-slate-400">最新期左右交叉 / 点位共振</div>
+      <div class="text-2xl font-black text-emerald-300 mt-1">
+        {{ table10ShadowSummary.latest?.cross_overlap?.length || 0 }} <span class="text-xs font-normal text-slate-400">交叉</span>
+        <span class="text-sm font-semibold text-cyan-300 ml-1">/ {{ table10ShadowSummary.latest?.double_resonance?.length || 0 }} 共振</span>
+      </div>
+      <div class="text-[11px] text-slate-500 mt-1">左右榜单同时上榜 + 点位图匹配</div>
+    </div>
+  </div>
+
+  <!-- 最新期号信号池 + 逐期矩阵查看 -->
+  <div v-if="table10ShadowSummary && table10ShadowSummary.latest" class="glass-panel p-5 space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="text-lg">🔍</span>
+        <h3 class="text-sm font-bold text-slate-100">逐期表10矩阵明细与同数值标红对照</h3>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-slate-400">切换期号：</span>
+        <select v-model="table10ShadowSelectedPeriod" @change="fetchTable10ShadowDetail(table10ShadowSelectedPeriod)"
+                class="bg-slate-900/80 border border-slate-700 rounded px-2.5 py-1 text-xs text-cyan-300 font-mono">
+          <option v-for="p in table10ShadowSummary.periods" :key="'t10opt-'+p.period" :value="p.period">
+            {{ p.period }}期 ({{ p.status }})
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 当期选定信号摘要 -->
+    <div v-if="table10ShadowDetail && table10ShadowDetail.status === 'success'" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+        <div class="bg-slate-900/60 border border-slate-700/60 rounded-lg p-3">
+          <div class="text-rose-300 font-bold mb-1.5">🔴 红字(同数值)池</div>
+          <div class="flex flex-wrap gap-1.5">
+            <span v-for="n in (selectedTable10PeriodSummary?.rf_numbers || [])" :key="'rf-'+n"
+                  class="px-2 py-0.5 rounded font-mono font-bold border"
+                  :class="(selectedTable10PeriodSummary?.rf_hit_numbers || []).includes(n) ? 'bg-red-600/80 text-white border-red-400' : 'bg-rose-500/15 text-rose-300 border-rose-500/40'">
+              {{ String(n).padStart(2, '0') }}
+            </span>
+            <span v-if="!(selectedTable10PeriodSummary?.rf_numbers || []).length" class="text-slate-500">本期为App点位图或未标红字</span>
+          </div>
+        </div>
+
+        <div class="bg-slate-900/60 border border-slate-700/60 rounded-lg p-3">
+          <div class="text-amber-300 font-bold mb-1.5">🔀 左右榜单交叉号</div>
+          <div class="flex flex-wrap gap-1.5">
+            <span v-for="n in (selectedTable10PeriodSummary?.cross_overlap || [])" :key="'ov-'+n"
+                  class="px-2 py-0.5 rounded font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/40">
+              {{ String(n).padStart(2, '0') }}
+            </span>
+            <span v-if="!(selectedTable10PeriodSummary?.cross_overlap || []).length" class="text-slate-500">无左右交叉</span>
+          </div>
+        </div>
+
+        <div class="bg-slate-900/60 border border-slate-700/60 rounded-lg p-3">
+          <div class="text-emerald-300 font-bold mb-1.5">⚡ 交叉/同数值 × 点位共振</div>
+          <div class="flex flex-wrap gap-1.5">
+            <span v-for="n in (selectedTable10PeriodSummary?.double_resonance || [])" :key="'res-'+n"
+                  class="px-2 py-0.5 rounded font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+              {{ String(n).padStart(2, '0') }}
+            </span>
+            <span v-if="!(selectedTable10PeriodSummary?.double_resonance || []).length" class="text-slate-500">无点位共振</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 遗漏分层矩阵 -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-700 text-slate-400">
+              <th class="py-2 px-3 w-20 text-center">遗漏值</th>
+              <th class="py-2 px-3">最大值(前三)</th>
+              <th class="py-2 px-3">最小值(前三)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in table10ShadowDetail.matrix" :key="'m-'+row.out_val" class="border-b border-slate-800/70 hover:bg-slate-800/30">
+              <td class="py-2 px-3 text-center font-mono font-bold text-cyan-300">{{ row.out_val }}</td>
+              <td class="py-2 px-3">
+                <div class="flex flex-wrap gap-1.5">
+                  <span v-for="(it, idx) in row.max" :key="'max-'+row.out_val+'-'+idx"
+                        class="px-2 py-0.5 rounded font-mono border text-[11px]"
+                        :class="{
+                          'bg-red-600 text-white border-red-400 font-bold': it.is_hit || it.mark_bg === '开奖红底',
+                          'bg-pink-500/25 text-pink-200 border-pink-400/50': !(it.is_hit || it.mark_bg === '开奖红底') && it.mark_bg === '点位',
+                          'bg-rose-500/15 text-rose-400 border-rose-500/50 font-bold': !(it.is_hit || it.mark_bg === '开奖红底') && it.is_red_font,
+                          'bg-slate-800/80 text-slate-300 border-slate-700': !(it.is_hit || it.mark_bg === '开奖红底') && !it.is_red_font && it.mark_bg !== '点位'
+                        }">
+                    {{ it.raw_text }}<span v-if="it.is_hit" class="ml-0.5 text-[10px]">✓</span>
+                  </span>
+                </div>
+              </td>
+              <td class="py-2 px-3">
+                <div class="flex flex-wrap gap-1.5">
+                  <span v-for="(it, idx) in row.min" :key="'min-'+row.out_val+'-'+idx"
+                        class="px-2 py-0.5 rounded font-mono border text-[11px]"
+                        :class="{
+                          'bg-red-600 text-white border-red-400 font-bold': it.is_hit || it.mark_bg === '开奖红底',
+                          'bg-pink-500/25 text-pink-200 border-pink-400/50': !(it.is_hit || it.mark_bg === '开奖红底') && it.mark_bg === '点位',
+                          'bg-rose-500/15 text-rose-400 border-rose-500/50 font-bold': !(it.is_hit || it.mark_bg === '开奖红底') && it.is_red_font,
+                          'bg-slate-800/80 text-slate-300 border-slate-700': !(it.is_hit || it.mark_bg === '开奖红底') && !it.is_red_font && it.mark_bg !== '点位'
+                        }">
+                    {{ it.raw_text }}<span v-if="it.is_hit" class="ml-0.5 text-[10px]">✓</span>
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 逐期影子对账流水表 -->
+  <div v-if="table10ShadowSummary && table10ShadowSummary.periods" class="glass-panel p-5">
+    <div class="flex items-center gap-2 mb-3">
+      <span class="text-lg">📒</span>
+      <h3 class="text-sm font-bold text-slate-100">表10 逐期影子观察对账流水</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs text-left border-collapse">
+        <thead>
+          <tr class="border-b border-slate-700 text-slate-400">
+            <th class="py-2 px-2">期号</th>
+            <th class="py-2 px-2">状态</th>
+            <th class="py-2 px-2">数据源</th>
+            <th class="py-2 px-2 text-center">可见红字(同数值)</th>
+            <th class="py-2 px-2 text-center">红字命中</th>
+            <th class="py-2 px-2 text-center">可见黑字</th>
+            <th class="py-2 px-2 text-center">黑字命中</th>
+            <th class="py-2 px-2 text-center">表10总命中</th>
+            <th class="py-2 px-2">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="p in table10ShadowSummary.periods" :key="'t10row-'+p.period" class="border-b border-slate-800/70 hover:bg-slate-800/30">
+            <td class="py-2 px-2 font-mono font-bold text-cyan-300">{{ p.period }}</td>
+            <td class="py-2 px-2">
+              <span class="px-1.5 py-0.5 rounded text-[10px]"
+                    :class="p.status === '已开奖' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'">
+                {{ p.status }}
+              </span>
+            </td>
+            <td class="py-2 px-2 text-slate-400">{{ p.source }}</td>
+            <td class="py-2 px-2 text-center font-mono text-rose-300">{{ p.rf_count }}</td>
+            <td class="py-2 px-2 text-center font-mono">
+              <span v-if="p.is_clean_pre_draw && p.rf_count > 0" class="text-rose-300 font-bold">
+                {{ p.rf_hits }}/{{ p.rf_count }} ({{ (p.rf_hit_rate*100).toFixed(1) }}%)
+              </span>
+              <span v-else-if="p.has_red_bg_mask" class="text-slate-500">红底遮盖</span>
+              <span v-else class="text-slate-500">--</span>
+            </td>
+            <td class="py-2 px-2 text-center font-mono text-slate-300">{{ p.blk_count }}</td>
+            <td class="py-2 px-2 text-center font-mono">
+              <span v-if="p.is_clean_pre_draw && p.blk_count > 0" class="text-slate-300">
+                {{ p.blk_hits }}/{{ p.blk_count }} ({{ (p.blk_hit_rate*100).toFixed(1) }}%)
+              </span>
+              <span v-else-if="p.has_red_bg_mask" class="text-slate-500">红底遮盖</span>
+              <span v-else class="text-slate-500">--</span>
+            </td>
+            <td class="py-2 px-2 text-center font-mono text-emerald-300 font-bold">
+              {{ p.all_hits_count !== null ? p.all_hits_count : '--' }}
+            </td>
+            <td class="py-2 px-2">
+              <button @click="table10ShadowSelectedPeriod = p.period; fetchTable10ShadowDetail(p.period)"
+                      class="text-cyan-400 hover:underline text-[11px]">查看明细</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

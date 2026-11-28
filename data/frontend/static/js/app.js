@@ -331,6 +331,8 @@ const App = {
         fetchJingleReview(jingleReviewPeriods.value);
       } else if (key === 'jingle_review') {
         fetchJingleReview(jingleReviewPeriods.value);
+      } else if (key === 'table10_shadow_cockpit') {
+        fetchTable10ShadowSummary();
       } else if (key === 'follow_cockpit') {
         fetchFollowSummary();
         fetchFollowConditions();
@@ -3918,6 +3920,47 @@ const App = {
       window.removeEventListener('scroll', closeTabContextMenu, true);
     });
 
+    // 表10「同数值」影子观察模块 (只记账不投票)
+    const table10ShadowSummary = ref(null);
+    const table10ShadowDetail = ref(null);
+    const table10ShadowSelectedPeriod = ref(null);
+    const table10ShadowLoading = ref(false);
+    const selectedTable10PeriodSummary = computed(() => {
+      const periods = table10ShadowSummary.value?.periods || [];
+      return periods.find((x) => x.period === table10ShadowSelectedPeriod.value) || table10ShadowSummary.value?.latest || null;
+    });
+    const fetchTable10ShadowDetail = async (period) => {
+      if (!period) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/table10-shadow/period/${period}`);
+        if (res.ok) {
+          table10ShadowDetail.value = await res.json();
+        }
+      } catch (e) {
+        console.error('获取表10期号明细失败', e);
+      }
+    };
+    const fetchTable10ShadowSummary = async () => {
+      table10ShadowLoading.value = true;
+      try {
+        const res = await fetch(`${API_BASE}/api/table10-shadow/summary`);
+        if (res.ok) {
+          const data = await res.json();
+          table10ShadowSummary.value = data;
+          if (data.latest && data.latest.period) {
+            if (!table10ShadowSelectedPeriod.value) {
+              table10ShadowSelectedPeriod.value = data.latest.period;
+            }
+            await fetchTable10ShadowDetail(table10ShadowSelectedPeriod.value);
+          }
+        }
+      } catch (e) {
+        console.error('获取表10同数值影子观察数据失败', e);
+      } finally {
+        table10ShadowLoading.value = false;
+      }
+    };
+
     return {
       ...__k8PageBindings,
       visitedTabs,
@@ -4514,7 +4557,15 @@ const App = {
       loadExpertData,
       loadExpertReview,
       parseRawText,
-      submitExpertForm
+      submitExpertForm,
+      // 表10同数值影子观察
+      table10ShadowSummary,
+      table10ShadowDetail,
+      table10ShadowSelectedPeriod,
+      table10ShadowLoading,
+      selectedTable10PeriodSummary,
+      fetchTable10ShadowSummary,
+      fetchTable10ShadowDetail
     };
   }
 };
