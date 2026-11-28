@@ -464,16 +464,13 @@ class PairSelector:
             is_cooling = pair in recent_pairs_set
             cooldown_penalty = 0.15 if is_cooling else 1.0
 
-            # K 线形态与反向排雷系数
+            # K 线形态与反向排雷系数 (只做反向避坑降权，不给未经OOS显著验证的正向形态盲目加分)
             kl_info = kline_risk_map.get(pair, {})
             kline_factor = 1.0
             kl_note = ""
             if kl_info.get("has_toxic"):
                 kline_factor = 0.75
                 kl_note = f" [K线反向避坑: {','.join(kl_info.get('toxic_signals', []))}]"
-            elif kl_info.get("has_positive"):
-                kline_factor = 1.15
-                kl_note = f" [K线蓄势共振: {','.join(kl_info.get('positive_signals', []))}]"
 
             total_synergy_score = (single_strength * 0.4 + nom_bonus * 1.2 + lift_score * 1.8 + count_bonus) * kill_penalty * cooldown_penalty * kline_factor
 
